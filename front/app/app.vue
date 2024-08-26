@@ -5,4 +5,5 @@
   </NuxtLayout>
 </template>
 <script setup lang="ts">
+navigateTo('/all')
 </script>
