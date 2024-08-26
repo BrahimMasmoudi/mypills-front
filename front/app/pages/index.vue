@@ -1,5 +1,5 @@
 <template>
-  Home page
+  <TemplatesPills/>
 </template>
 <script setup lang="ts">
 
