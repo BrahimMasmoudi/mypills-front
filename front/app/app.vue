@@ -1,9 +1,8 @@
 <template>
-  <NuxtLayout>
+  <NuxtLayout name="default">
     <NuxtLoadingIndicator color="primary"/>
     <NuxtPage/>
   </NuxtLayout>
 </template>
 <script setup lang="ts">
-navigateTo('/all')
 </script>
