@@ -25,9 +25,9 @@ export const useUserStore = defineStore('userStore', () => {
     }
 
     return {
+        callFunction,
         login,
         logOut,
-        callFunction,
         userCredentials,
         user
     }
