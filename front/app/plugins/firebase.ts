@@ -41,14 +41,14 @@ export default defineNuxtPlugin(async ({provide, $config}) => {
 
     const firebaseApp = initializeApp(data.value as any)
 
-    const baseURL = functions.enableEmulator
-        ? `http://${functions.emulatorHost}:${functions.emulatorPort}/${firebaseApp.options.projectId}/europe-west3`
-        : `https://europe-west3-${firebaseApp.options.projectId}.cloudfunctions.net`
-    provide('functionsURL', baseURL)
+    // const baseURL = functions.enableEmulator
+    //     ? `http://${functions.emulatorHost}:${functions.emulatorPort}/${firebaseApp.options.projectId}/europe-west3`
+    //     : `https://europe-west3-${firebaseApp.options.projectId}.cloudfunctions.net`
+    // provide('functionsURL', baseURL)
 
     // Functions
     if (functions.enable) {
-        const functionsInstance = getFunctions(firebaseApp, 'europe-west1')
+        const functionsInstance = getFunctions(firebaseApp, 'us-central1')
         connectFunctionsEmulator(
             functionsInstance,
             functions.emulatorHost,
