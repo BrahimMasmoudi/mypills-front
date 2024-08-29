@@ -26,6 +26,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "RESPIWELL",
 //             "bareCode": "",
 //             "medicationId": "3TrUX0JMrWhqL9koMStx",
+//             "image": "pill-1"
 //
 //         },
 //         "4GJqkhgMCGpJw3uz5L8C": {
@@ -42,6 +43,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Anesderm",
 //             "bareCode": "",
 //             "medicationId": "4GJqkhgMCGpJw3uz5L8C",
+//             "image": "pill-2"
 //
 //         },
 //         "5hMTyfWQRo1vZkMcIDFI": {
@@ -58,6 +60,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "ALLERGICA",
 //             "bareCode": "",
 //             "medicationId": "5hMTyfWQRo1vZkMcIDFI",
+//             "image": "pill-3"
 //
 //         },
 //         "7HhF8Qr9kF4eEPak911Q": {
@@ -74,7 +77,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Hydroxyzine",
 //             "bareCode": "",
 //             "medicationId": "7HhF8Qr9kF4eEPak911Q",
-//
+//             "image": "pill-4"
 //         },
 //         "7skKDwumbozEuRPbx7lB": {
 //             "expiryDate": {
@@ -90,7 +93,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "L52",
 //             "bareCode": "",
 //             "medicationId": "7skKDwumbozEuRPbx7lB",
-//
+//             "image": "pill-5"
 //         },
 //         "9WU3i4TnaNebq8I6KSk4": {
 //             "expiryDate": {
@@ -106,7 +109,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "DOMPER",
 //             "bareCode": "",
 //             "medicationId": "9WU3i4TnaNebq8I6KSk4",
-//
+//             "image": "pill-6"
 //         },
 //         "CQaYoSSAdwLBUiLWgv2X": {
 //             "expiryDate": {
@@ -122,7 +125,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "DOXY",
 //             "bareCode": "",
 //             "medicationId": "CQaYoSSAdwLBUiLWgv2X",
-//
+//             "image": "pill-7"
 //         },
 //         "DQLkyfl4zNNTxJneQ1ym": {
 //             "expiryDate": {
@@ -138,7 +141,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "medicationId": "DQLkyfl4zNNTxJneQ1ym",
 //             "name": "ANTISEPTIQUE",
 //             "bareCode": "",
-//
+//             "image": "pill-8"
 //         },
 //         "EI9Ecfoe0lrktSenmDoR": {
 //             "expiryDate": {
@@ -154,7 +157,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "medicationId": "EI9Ecfoe0lrktSenmDoR",
 //             "name": "LEVOSTAMINE",
 //             "bareCode": "",
-//
+//             "image": "pill-9"
 //         },
 //         "Fe1ggX2gZ4dvwSz8SY1l": {
 //             "expiryDate": {
@@ -170,7 +173,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Racecadotril",
 //             "bareCode": "",
 //             "medicationId": "Fe1ggX2gZ4dvwSz8SY1l",
-//
+//             "image": "pill-10"
 //         },
 //         "G9zhAH7dQu8kh6YfviSb": {
 //             "expiryDate": {
@@ -186,7 +189,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Dolirhume",
 //             "bareCode": "",
 //             "medicationId": "G9zhAH7dQu8kh6YfviSb",
-//
+//             "image": "pill-11"
 //         },
 //         "GdyOfZElTElZEAdgUj0w": {
 //             "expiryDate": {
@@ -202,7 +205,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "PRANAROM",
 //             "bareCode": "",
 //             "medicationId": "GdyOfZElTElZEAdgUj0w",
-//
+//             "image": "pill-12"
 //         },
 //         "I723XWH3Ndc1nKX70WU7": {
 //             "expiryDate": {
@@ -218,7 +221,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "MOVICOL",
 //             "bareCode": "",
 //             "medicationId": "I723XWH3Ndc1nKX70WU7",
-//
+//             "image": "pill-13"
 //         },
 //         "IQilcdHYjCEbrs7yL4Vd": {
 //             "expiryDate": {
@@ -234,7 +237,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "ASPIRINE",
 //             "bareCode": "",
 //             "medicationId": "IQilcdHYjCEbrs7yL4Vd",
-//
+//             "image": "pill-14"
 //         },
 //         "K4w39lCvLitfBGNHQEOp": {
 //             "expiryDate": {
@@ -250,7 +253,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "XYLIX",
 //             "bareCode": "",
 //             "medicationId": "K4w39lCvLitfBGNHQEOp",
-//
+//             "image": "pill-15"
 //         },
 //         "Ko7R6KnFU0tHNuR8Wucg": {
 //             "expiryDate": {
@@ -266,7 +269,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Spastop",
 //             "bareCode": "",
 //             "medicationId": "Ko7R6KnFU0tHNuR8Wucg",
-//
+//             "image": "pill-15"
 //         },
 //         "Nkkk56T7kwKr8q7AJwmi": {
 //             "expiryDate": {
@@ -282,7 +285,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "medicationId": "Nkkk56T7kwKr8q7AJwmi",
 //             "name": "HEXASPRAY",
 //             "bareCode": "",
-//
+//             "image": "pill-15"
 //         },
 //         "Ocpa7wfzWSUCileiOlVN": {
 //             "expiryDate": {
@@ -298,7 +301,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "CORTINASE",
 //             "bareCode": "",
 //             "medicationId": "Ocpa7wfzWSUCileiOlVN",
-//
+//             "image": "pill-15"
 //         },
 //         "Puzm42C4i1DztdaF6XRS": {
 //             "expiryDate": {
@@ -314,7 +317,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Doliprane",
 //             "bareCode": "",
 //             "medicationId": "Puzm42C4i1DztdaF6XRS",
-//
+//             "image": "pill-15"
 //         },
 //         "Qvk46tUW2MNWuVKDhxBu": {
 //             "expiryDate": {
@@ -330,7 +333,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "After sun gel",
 //             "bareCode": "",
 //             "medicationId": "Qvk46tUW2MNWuVKDhxBu",
-//
+//             "image": "pill-15"
 //         },
 //         "SvZefJ6LVNDZxeSqxCzV": {
 //             "expiryDate": {
@@ -346,7 +349,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "medicationId": "SvZefJ6LVNDZxeSqxCzV",
 //             "name": "LANSOPRAL LANSOPRASOLE",
 //             "bareCode": "",
-//
+//             "image": "pill-15"
 //         },
 //         "YgpcGtx9EAjQpnke17Yc": {
 //             "expiryDate": {
@@ -362,7 +365,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "RACECADOTRIL",
 //             "bareCode": "",
 //             "medicationId": "YgpcGtx9EAjQpnke17Yc",
-//
+//             "image": "pill-15"
 //         },
 //         "Z71zBXC8vbh9wb0rFtRc": {
 //             "expiryDate": {
@@ -378,7 +381,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Desloratadine",
 //             "bareCode": "",
 //             "medicationId": "Z71zBXC8vbh9wb0rFtRc",
-//
+//             "image": "pill-15"
 //         },
 //         "ZAQQu73Zx36Xfoats3VU": {
 //             "expiryDate": {
@@ -394,7 +397,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "VERAX BLUE",
 //             "bareCode": "",
 //             "medicationId": "ZAQQu73Zx36Xfoats3VU",
-//
+//             "image": "pill-15"
 //         },
 //         "ZDUZSv76hT0FUs6MEGFw": {
 //             "expiryDate": {
@@ -410,7 +413,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "RHINOMAXIL",
 //             "bareCode": "",
 //             "medicationId": "ZDUZSv76hT0FUs6MEGFw",
-//
+//             "image": "pill-15"
 //         },
 //         "ZTrwMWoEdjYcPIgjIPg6": {
 //             "expiryDate": {
@@ -426,7 +429,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "HEXASPRAY",
 //             "bareCode": "",
 //             "medicationId": "ZTrwMWoEdjYcPIgjIPg6",
-//
+//             "image": "pill-15"
 //         },
 //         "c69ZwKjbDeMgDJGbqVZ3": {
 //             "expiryDate": {
@@ -442,7 +445,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "PURGATIF",
 //             "bareCode": "",
 //             "medicationId": "c69ZwKjbDeMgDJGbqVZ3",
-//
+//             "image": "pill-15"
 //         },
 //         "c9MupNl2gDY8ZxVMDNCS": {
 //             "expiryDate": {
@@ -458,7 +461,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "SYNTHOL",
 //             "bareCode": "",
 //             "medicationId": "c9MupNl2gDY8ZxVMDNCS",
-//
+//             "image": "pill-15"
 //         },
 //         "dyrmNsvhxz6duVhPoOTE": {
 //             "expiryDate": {
@@ -474,7 +477,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "RISOMAX",
 //             "bareCode": "",
 //             "medicationId": "dyrmNsvhxz6duVhPoOTE",
-//
+//             "image": "pill-15"
 //         },
 //         "e8rlgbKy180I9nNXNgno": {
 //             "expiryDate": {
@@ -490,7 +493,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "medicationId": "e8rlgbKy180I9nNXNgno",
 //             "name": "TAVAFLOX",
 //             "bareCode": "",
-//
+//             "image": "pill-15"
 //         },
 //         "ewKvv3AT1uwbKMHLpaon": {
 //             "expiryDate": {
@@ -506,7 +509,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "medicationId": "ewKvv3AT1uwbKMHLpaon",
 //             "name": "DIPRED",
 //             "bareCode": "",
-//
+//             "image": "pill-15"
 //         },
 //         "ffF8JCA6C8d74zUr9j1F": {
 //             "expiryDate": {
@@ -522,7 +525,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Ipproton",
 //             "bareCode": "",
 //             "medicationId": "ffF8JCA6C8d74zUr9j1F",
-//
+//             "image": "pill-15"
 //         },
 //         "gGtGpQMrX3QCmWzHEcAR": {
 //             "expiryDate": {
@@ -538,7 +541,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Esomeprazole",
 //             "bareCode": "",
 //             "medicationId": "gGtGpQMrX3QCmWzHEcAR",
-//
+//             "image": "pill-15"
 //         },
 //         "hlpnuI7SmYkPmSR4Xphw": {
 //             "expiryDate": {
@@ -554,7 +557,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "GAVISCON",
 //             "bareCode": "",
 //             "medicationId": "hlpnuI7SmYkPmSR4Xphw",
-//
+//             "image": "pill-15"
 //         },
 //         "hqW7mBpBcWFHfxJGCJv8": {
 //             "expiryDate": {
@@ -570,7 +573,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Pansement",
 //             "bareCode": "",
 //             "medicationId": "hqW7mBpBcWFHfxJGCJv8",
-//
+//             "image": "pill-15"
 //         },
 //         "jkOxWSKZ4fT0tTEH2o29": {
 //             "expiryDate": {
@@ -586,7 +589,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "CLARIMAX",
 //             "bareCode": "",
 //             "medicationId": "jkOxWSKZ4fT0tTEH2o29",
-//
+//             "image": "pill-15"
 //         },
 //         "jutS9mymjXXlUvSxvuhm": {
 //             "expiryDate": {
@@ -602,7 +605,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "ZITHOCARE",
 //             "bareCode": "",
 //             "medicationId": "jutS9mymjXXlUvSxvuhm",
-//
+//             "image": "pill-15"
 //         },
 //         "kerYLGXRGDaUnnCR2IdO": {
 //             "expiryDate": {
@@ -618,7 +621,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Desloratadine",
 //             "bareCode": "",
 //             "medicationId": "kerYLGXRGDaUnnCR2IdO",
-//
+//             "image": "pill-15"
 //         },
 //         "n6bsK7FFMTuGu5uG8eez": {
 //             "expiryDate": {
@@ -634,7 +637,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "PYOSTACINE",
 //             "bareCode": "",
 //             "medicationId": "n6bsK7FFMTuGu5uG8eez",
-//
+//             "image": "pill-15"
 //         },
 //         "nnUD7iGZGe0CpY1r9GKR": {
 //             "expiryDate": {
@@ -650,7 +653,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "VITAMINE A A DULCIS",
 //             "bareCode": "",
 //             "medicationId": "nnUD7iGZGe0CpY1r9GKR",
-//
+//             "image": "pill-15"
 //         },
 //         "ooFUxMUWKt9Y9DVlBNN8": {
 //             "expiryDate": {
@@ -666,7 +669,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "Upsa vitamine c",
 //             "bareCode": "",
 //             "medicationId": "ooFUxMUWKt9Y9DVlBNN8",
-//
+//             "image": "pill-15"
 //         },
 //         "qMbsTpSmSMHeoVZ2gyoC": {
 //             "expiryDate": {
@@ -682,7 +685,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "DESLOR",
 //             "bareCode": "",
 //             "medicationId": "qMbsTpSmSMHeoVZ2gyoC",
-//
+//             "image": "pill-15"
 //         },
 //         "rnnbzgy4YxaHX9TOodJv": {
 //             "expiryDate": {
@@ -698,7 +701,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "LEVOFAST",
 //             "bareCode": "",
 //             "medicationId": "rnnbzgy4YxaHX9TOodJv",
-//
+//             "image": "pill-15"
 //         },
 //         "u7J4sEiiBd64Eo8TjrKI": {
 //             "expiryDate": {
@@ -714,7 +717,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "COPRED",
 //             "bareCode": "",
 //             "medicationId": "u7J4sEiiBd64Eo8TjrKI",
-//
+//             "image": "pill-15"
 //         },
 //         "xf9DykH3vco5Yu9fT6eb": {
 //             "expiryDate": {
@@ -730,7 +733,7 @@ exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
 //             "name": "ENPHYTOSE NUIT",
 //             "bareCode": "",
 //             "medicationId": "xf9DykH3vco5Yu9fT6eb",
-//
+//             "image": "pill-15"
 //         }
 //     }
 //     for (const [docId, docData] of Object.entries(backup)) {

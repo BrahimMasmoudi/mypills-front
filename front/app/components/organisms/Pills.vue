@@ -29,7 +29,7 @@ import type {Medication} from "~/types/medications";
 
 const {medications} = defineProps<{
   filter: Filter
-  medications: Medication[]
+  medications: Medication[] | undefined
 }>()
 
 const validMedication = computed(() => medications.filter((med: Medication) => !med.expired) ?? [])
