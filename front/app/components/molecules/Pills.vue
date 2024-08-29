@@ -17,7 +17,7 @@ import type {Medication} from "~/types/medications";
 const {t} = useI18n()
 const {isExpired} = defineProps<{
   isExpired: boolean
-  medications : Medication[]
+  medications : Medication[] | undefined
 }>()
 
 const title = computed(() => isExpired ? t('expired') : t('valid'))

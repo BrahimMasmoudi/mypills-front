@@ -1,0 +1,11 @@
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+    <defs>
+        <style>.cls-4{fill:#fff}</style>
+    </defs>
+    <rect x="15.08" y="5.23" width="33.84" height="53.54" rx="16.92" transform="rotate(-45 32.002 31.994)"
+          style="fill:#dfe8f4"/>
+    <path transform="rotate(-45 33.831 33.827)" style="fill:#ccd8e5" d="M16.92 31.27h33.84v5.13H16.92z"/>
+    <path d="M13.07 13.07a16.92 16.92 0 0 0 0 23.93l7 7L44 20l-7-7a16.92 16.92 0 0 0-23.93 0z" style="fill:#0795ff"/>
+    <circle class="cls-4" cx="16.38" cy="23.63" r="3.63"/>
+    <circle class="cls-4" cx="16.88" cy="31.88" r="1.25"/>
+</svg>

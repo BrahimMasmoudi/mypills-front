@@ -7,7 +7,7 @@ import type {Medication} from "~/types/medications";
 
 defineProps<{
   filter : Filter
-  medications: Medication[]
+  medications: Medication[] | undefined
 }>()
 </script>
 
