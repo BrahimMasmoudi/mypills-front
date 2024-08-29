@@ -30,7 +30,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main class="d-flex align-center justify-center">
+    <v-main>
       <slot/>
     </v-main>
   </v-app>
