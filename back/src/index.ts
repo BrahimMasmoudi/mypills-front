@@ -1,14 +1,20 @@
 import {onCall} from 'firebase-functions/v2/https';
 import {initializeApp} from 'firebase-admin/app'
 import {getFirestore} from 'firebase-admin/firestore'
+import {Medication} from "./types/medication";
 
 initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
 exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
     // await createData()
-    return (await database.get()).docs.map((doc) => doc.data())
-});
+    return (await database.orderBy('expiryDate','desc').get()).docs.map((doc) => doc.data())
+})
+
+exports.createMedication = onCall({region: 'us-central1'}, async ({data}) => {
+    const medication = data.medication as Medication
+    return await database.doc(medication.medicationId).set(medication)
+})
 
 // const createData = async () => {
 //     const backup = {
