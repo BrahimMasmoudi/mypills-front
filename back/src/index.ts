@@ -6,10 +6,10 @@ import {Medication} from "./types/medication";
 initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
-exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
+// exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
     // await createData()
-    return (await database.orderBy('expiryDate','desc').get()).docs.map((doc) => doc.data())
-})
+    // return (await database.orderBy('expiryDate','desc').get()).docs.map((doc) => doc.data())
+// })
 
 exports.createMedication = onCall({region: 'us-central1'}, async ({data}) => {
     const medication = data.medication as Medication
