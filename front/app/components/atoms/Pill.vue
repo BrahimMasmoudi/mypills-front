@@ -18,7 +18,7 @@
   </v-card>
 </template>
 <script setup lang="ts">
-import type {Medication} from "~/types/medications";
+import type {Medication} from "~/types/medication";
 import {parseDate} from "~/composables/parseDate";
 
 defineProps<{

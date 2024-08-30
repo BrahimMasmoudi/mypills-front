@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
-import { httpsCallable } from 'firebase/functions';
-import type {Medication} from "~/types/medications";
+import {httpsCallable} from 'firebase/functions';
+import type {Medication} from "~/types/medication";
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
     const {$functions} = useNuxtApp()
@@ -13,7 +13,13 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         return data
     }
 
+    const createMedication = async (medication: Medication) => {
+        const create = httpsCallable($functions, 'createMedication')
+        return await create({medication})
+    }
+
     return {
         getMedications,
+        createMedication
     }
 })
