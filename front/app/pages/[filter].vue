@@ -10,8 +10,7 @@ import {useMedicationsStore} from "~/store/medications";
 import type {Medication} from "~/types/medication";
 
 const medicationStore = useMedicationsStore()
-const {data: medications} = await useLazyAsyncData(() => medicationStore.getMedications())
-
+const medications = medicationStore.getMedications()
 
 const createMedication = async (medication: Medication) => {
   await medicationStore.createMedication(medication)

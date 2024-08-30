@@ -3,10 +3,10 @@ import DateFnsAdapter from "@date-io/date-fns";
 import {useI18n} from "vue-i18n";
 import {enGB, fr} from 'date-fns/locale'
 
-export const parseDate = (date: { _seconds: string, _nanoseconds: string } | Date) => {
+export const parseDate = (date: { seconds: string, nanoseconds: string } | Date) => {
     const {locale} = useI18n()
-    if (date._seconds)
-        return formatDistance(new Date(date._seconds * 1000), new Date(), {
+    if (date.seconds)
+        return formatDistance(new Date(date.seconds * 1000), new Date(), {
             addSuffix: true,
             locale: locale.value === 'fr' ? fr : enGB
         })

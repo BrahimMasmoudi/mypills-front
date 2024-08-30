@@ -5,6 +5,7 @@ import {
 } from '@firebase/analytics'
 import {initializeApp} from "@firebase/app"
 import {connectFunctionsEmulator, getFunctions} from "@firebase/functions";
+import {connectFirestoreEmulator, getFirestore} from "@firebase/firestore";
 
 type RemoteConfig = {}
 
@@ -36,17 +37,20 @@ declare module '@vue/runtime-core' {
 }
 
 export default defineNuxtPlugin(async ({provide, $config}) => {
-    const {functions} = $config.public.firebase
+    const {functions, firestore} = $config.public.firebase
     const {data} = await useFetch('/__/firebase/init.json')
-
     const firebaseApp = initializeApp(data.value as any)
 
-    // const baseURL = functions.enableEmulator
-    //     ? `http://${functions.emulatorHost}:${functions.emulatorPort}/${firebaseApp.options.projectId}/europe-west3`
-    //     : `https://europe-west3-${firebaseApp.options.projectId}.cloudfunctions.net`
-    // provide('functionsURL', baseURL)
+    if (firestore.enable) {
+        const firestoreInstance = getFirestore(firebaseApp)
+        connectFirestoreEmulator(
+            firestoreInstance,
+            '127.0.0.1',
+            '8080'
+        )
+        provide('firestore', firestoreInstance)
+    }
 
-    // Functions
     if (functions.enable) {
         const functionsInstance = getFunctions(firebaseApp, 'us-central1')
         connectFunctionsEmulator(

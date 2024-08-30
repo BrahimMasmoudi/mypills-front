@@ -42,6 +42,9 @@ export default defineNuxtConfig({
             enabled: true,
             sessionCookie: false
         },
+        firestore: {
+            enable: true,
+        },
         config: {
             apiKey: "AIzaSyAh_3ly1d-i2hCXdFakNbcrpc9LBwMx_Qs",
             authDomain: "my-pills-cf64c.firebaseapp.com",
