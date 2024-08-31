@@ -16,8 +16,24 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         return await create({medication})
     }
 
+    const incrementPills = async (medication: Medication) => {
+        const increase = httpsCallable($functions, 'incrementPills')
+        return await increase({medication})
+    }
+    const decrementPills = async (medication: Medication) => {
+        const increase = httpsCallable($functions, 'decrementPills')
+        return await increase({medication})
+    }
+    const deletePills = async (medication: Medication) => {
+        const increase = httpsCallable($functions, 'deletePills')
+        return await increase({medication})
+    }
+
     return {
         getMedications,
-        createMedication
+        createMedication,
+        incrementPills,
+        decrementPills,
+        deletePills
     }
 })
