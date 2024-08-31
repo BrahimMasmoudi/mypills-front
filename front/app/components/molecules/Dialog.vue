@@ -121,15 +121,21 @@ import {useI18n} from "vue-i18n";
 import type {Medication} from "~/types/medication";
 
 const {t} = useI18n()
-
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenuIsOpen = ref(false)
 const photoMenuIsOpen = ref(false)
 
+const {close, createMedication,userUid} = defineProps<{
+  close: (value: ReturnDialogValue) => void
+  isPersistent: boolean
+  scrim: boolean
+  createMedication: (medication: Medication) => Promise<void>
+  userUid : string
+}>()
 const medication = ref<Medication>({
   expiryDate: new Date(),
-  uid: useId(),
+  uid: userUid,
   expired: false,
   quantity: 1,
   name: 'médicament',
@@ -138,17 +144,12 @@ const medication = ref<Medication>({
   image: "pill-1"
 })
 
-const {close, createMedication} = defineProps<{
-  close: (value: ReturnDialogValue) => void
-  isPersistent: boolean
-  scrim: boolean
-  createMedication: (medication: Medication) => Promise<void>
-}>()
+
 
 const onConfirmClick = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
   try {
-    console.log('medication.value',medication.value)
+    console.log('medication.value', medication.value)
     await createMedication(medication.value)
     close('success')
   } catch (e) {
