@@ -1,19 +1,34 @@
 import {onCall} from 'firebase-functions/v2/https';
 import {initializeApp} from 'firebase-admin/app'
-import {getFirestore} from 'firebase-admin/firestore'
+import {getFirestore, FieldValue} from 'firebase-admin/firestore'
 import {Medication} from "./types/medication";
 
 initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
 // exports.fetchMedications = onCall({region: 'us-central1'}, async () => {
-    // await createData()
-    // return (await database.orderBy('expiryDate','desc').get()).docs.map((doc) => doc.data())
+// await createData()
+// return (await database.orderBy('expiryDate','desc').get()).docs.map((doc) => doc.data())
 // })
 
 exports.createMedication = onCall({region: 'us-central1'}, async ({data}) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).set(medication)
+})
+
+exports.incrementPills = onCall({region: 'us-central1'}, async ({data}) => {
+    const medication = data.medication as Medication
+    return await database.doc(medication.medicationId).update({'quantity': FieldValue.increment(1)})
+})
+
+exports.decrementPills = onCall({region: 'us-central1'}, async ({data}) => {
+    const medication = data.medication as Medication
+    return await database.doc(medication.medicationId).update({'quantity': FieldValue.increment(-1)})
+})
+
+exports.deletePills = onCall({region: 'us-central1'}, async ({data}) => {
+    const medication = data.medication as Medication
+    return await database.doc(medication.medicationId).delete()
 })
 
 // const createData = async () => {

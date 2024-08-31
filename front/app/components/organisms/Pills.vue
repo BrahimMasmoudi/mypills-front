@@ -13,13 +13,17 @@
         :is-expired="false"
         name="Pill"
         :medications="validMedication"
-    />
+        :decrement-pills="decrementPills"
+        :increment-pills="incrementPills"
+        :delete-pills="deletePills"/>
     <MoleculesPills
         v-if="filter === 'all' || filter === 'expired'"
         :is-expired="true"
         name="expired Pill"
         :medications="expiredMedication"
-    />
+        :decrement-pills="decrementPills"
+        :increment-pills="incrementPills"
+        :delete-pills="deletePills"/>
   </v-sheet>
 
   <v-row v-else class="pa-4">
@@ -41,10 +45,13 @@ import {openToast, type ToastType} from "~/composables/openToast";
 const {t} = useI18n()
 const {$open} = useNuxtApp()
 
-const {medications,createMedication} = defineProps<{
+const {medications, createMedication} = defineProps<{
   filter: Filter
   medications: Medication[] | undefined
   createMedication: (medication: Medication) => Promise<void>
+  incrementPills: (medication: Medication) => Promise<void>
+  decrementPills: (medication: Medication) => Promise<void>
+  deletePills: (medication: Medication) => Promise<void>
 }>()
 
 const validMedication = computed(() => medications.filter((med: Medication) => !med.expired) ?? [])

@@ -1,5 +1,9 @@
 <template>
-  <TemplatesPills :filter="$route.params.filter as Filter" :medications="medications"
+  <TemplatesPills :filter="$route.params.filter as Filter"
+                  :medications="medications"
+                  :decrement-pills="decrementPills"
+                  :increment-pills="incrementPills"
+                  :delete-pills="deletePills"
                   :create-medication="createMedication"/>
 </template>
 <script setup lang="ts">
@@ -14,6 +18,16 @@ const medications = medicationStore.getMedications()
 
 const createMedication = async (medication: Medication) => {
   await medicationStore.createMedication(medication)
+}
+
+const incrementPills = async (medication: Medication) => {
+  await medicationStore.incrementPills(medication)
+}
+const decrementPills = async (medication: Medication) => {
+  await medicationStore.decrementPills(medication)
+}
+const deletePills = async (medication: Medication) => {
+  await medicationStore.deletePills(medication)
 }
 
 </script>
