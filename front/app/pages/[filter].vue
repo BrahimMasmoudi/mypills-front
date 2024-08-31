@@ -14,7 +14,8 @@ import {useMedicationsStore} from "~/store/medications";
 import type {Medication} from "~/types/medication";
 
 const medicationStore = useMedicationsStore()
-const medications = medicationStore.getMedications()
+const user = await getCurrentUser()
+const medications = medicationStore.getMedications(user)
 
 const createMedication = async (medication: Medication) => {
   await medicationStore.createMedication(medication)

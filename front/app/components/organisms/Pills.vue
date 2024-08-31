@@ -26,7 +26,7 @@
         :increment-pills="incrementPills"
         :delete-pills="deletePills"/>
 
-    <v-row v-if="!medications || medications.length === 0" class="pa-4">
+    <v-row v-if="!medications" class="pa-4">
       <v-col v-for="i in 8"
              :key="i"
              cols="6"

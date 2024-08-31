@@ -9,7 +9,7 @@ const database = firestore.collection('medications')
 
 exports.createMedication = onCall({region: 'us-central1'}, async ({data}) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).set(medication)
+    return await database.doc(medication.medicationId).set(medication, {merge: false})
 })
 
 exports.incrementPills = onCall({region: 'us-central1'}, async ({data}) => {

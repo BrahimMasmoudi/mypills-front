@@ -1,8 +1,21 @@
 <template>
-  <v-container>
-    <v-card-title for="uname"><b>Username</b></v-card-title>
-    <v-btn @click.prevent="login" class="button">Login with google</v-btn>
-  </v-container>
+  <v-img
+      class="d-flex align-center justify-center"
+      :src="getImageSrc('/assets/img/store-background.svg')"
+      cover
+      width="100%"
+      height="100%"
+      max-width="100%"
+  >
+    <div class="text-center">
+      <v-btn @click.prevent="login" class="button" height="50">
+        <template #prepend>
+          <nuxt-icon filled name="google"/>
+        </template>
+        Login with Google
+      </v-btn>
+    </div>
+  </v-img>
 </template>
 <script lang="ts" setup>
 
@@ -12,10 +25,20 @@ const userStore = useUserStore()
 definePageMeta({
   layout: false,
 })
-if(userStore.user) navigateTo('/all')
+if (userStore.user) navigateTo('/all')
 
 const login = async () => {
   await userStore.login()
   navigateTo('/all')
-};
+}
+
+const getImageSrc = (iconUrl: string) => {
+  return useAsset(iconUrl)
+}
 </script>
+<style scoped>
+>>> svg {
+  width: 24px !important;
+  height: 24px !important;
+}
+</style>

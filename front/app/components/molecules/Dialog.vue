@@ -149,7 +149,6 @@ const medication = ref<Medication>({
 const onConfirmClick = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
   try {
-    console.log('medication.value', medication.value)
     await createMedication(medication.value)
     close('success')
   } catch (e) {

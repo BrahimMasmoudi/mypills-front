@@ -1,13 +1,14 @@
 import {defineStore} from 'pinia'
 import {httpsCallable} from 'firebase/functions';
 import type {Medication} from "~/types/medication";
-import {collection, orderBy, query} from "firebase/firestore";
+import {collection, orderBy, query, where} from "firebase/firestore";
+import type {User} from "@firebase/auth";
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
     const {$functions, $firestore} = useNuxtApp()
 
-    const getMedications = () => {
-        const q = query(collection($firestore, 'medications'), orderBy('expiryDate', 'desc'))
+    const getMedications = (user : User) => {
+        const q = query(collection($firestore, 'medications'), orderBy('expiryDate', 'desc'), where('uid', '==' , user?.uid))
         return useCollection(q)
     }
 
