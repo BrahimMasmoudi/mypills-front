@@ -6,6 +6,7 @@ export  type Medication = {
     expiryDate: Date
     expired: boolean,
     quantity: number
-    image: string
+    image: string,
+    email : string
 }
 
