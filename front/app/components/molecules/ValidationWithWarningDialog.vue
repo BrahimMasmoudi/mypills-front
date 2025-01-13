@@ -169,7 +169,7 @@ div:deep(.v-card-item__append) {
 div:deep(.v-field__clearable) {
   padding-top: 10px !important;
 }
->>> svg {
+:deep(svg) {
   width: 24px !important;
   height: 24px !important;
 }

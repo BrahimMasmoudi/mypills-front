@@ -126,12 +126,13 @@ const loading = ref(false)
 const dateMenuIsOpen = ref(false)
 const photoMenuIsOpen = ref(false)
 
-const {close, createMedication,userUid} = defineProps<{
-  close: (value: ReturnDialogValue) => void
+const {close, createMedication,userUid, email} = defineProps<{
+  close: (value : any) => void
   isPersistent: boolean
   scrim: boolean
   createMedication: (medication: Medication) => Promise<void>
   userUid : string
+  email : string
 }>()
 const medication = ref<Medication>({
   expiryDate: new Date(),
@@ -141,7 +142,8 @@ const medication = ref<Medication>({
   name: 'médicament',
   bareCode: '',
   medicationId: useId(),
-  image: "pill-1"
+  image: "pill-1",
+  email
 })
 
 
