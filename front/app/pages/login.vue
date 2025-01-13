@@ -29,6 +29,7 @@ if (userStore.user) navigateTo('/all')
 
 const login = async () => {
   await userStore.login()
+  console.log('brahim',userStore.user)
   navigateTo('/all')
 }
 
@@ -37,7 +38,7 @@ const getImageSrc = (iconUrl: string) => {
 }
 </script>
 <style scoped>
->>> svg {
+:deep(svg) {
   width: 24px !important;
   height: 24px !important;
 }
