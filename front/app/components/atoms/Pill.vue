@@ -54,13 +54,11 @@ const {medication, incrementPills, decrementPills, deletePills} = defineProps<{
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
 }>()
-const buttons = computed(()=> [
+const buttons = computed(() => [
   {
     disabled: medication.quantity === 1,
     icon: 'mdi-minus',
-    onClick: () => {
-      decrementPills(medication)
-    }
+    onClick: () => decrementPills(medication)
   },
   {
     disabled: false,
@@ -96,7 +94,7 @@ const buttons = computed(()=> [
 </script>
 
 <style scoped>
->>> svg {
+:deep(svg) {
   width: 48px !important;
   height: 48px !important;
 }

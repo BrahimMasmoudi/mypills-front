@@ -67,7 +67,8 @@ const openDialog = async () => {
     scrim: true,
     isPersistent: false,
     createMedication,
-    userUid: user?.uid
+    userUid: user?.uid,
+    email : user?.email
   })
   openToast(toastType, t(toastType))
 }
@@ -83,7 +84,7 @@ const openDialog = async () => {
   letter-spacing: 0.27px;
 }
 
-v-btn >>> svg {
+v-btn :deep(svg) {
   width: 18px !important;
   height: 18px !important;
   margin-top: 2px;

@@ -8,7 +8,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     const {$functions, $firestore} = useNuxtApp()
 
     const getMedications = (user : User) => {
-        const q = query(collection($firestore, 'medications'), orderBy('expiryDate', 'desc'), where('uid', '==' , user?.uid))
+        const q = query(collection($firestore, 'medications'), orderBy('expiryDate', 'desc'), where('email', '==' , user?.email))
         return useCollection(q)
     }
 
