@@ -35,8 +35,6 @@
       </v-col>
     </v-row>
   </v-sheet>
-
-
 </template>
 <script setup lang="ts">
 import type {Filter} from "~/types/Filter";
