@@ -107,26 +107,3 @@ const buttons = computed(() => [
   color: red !important;
 }
 </style>
-<i18n lang="yaml">
-fr:
-  title:
-    delete: Es-tu sûr de vouloir supprimer ce médicament ?
-  message:
-    delete: Attention, la suppression du médicament est définitive et irréversible.
-
-  success:
-    delete: "Le médicament est supprimée avec succes"
-  error:
-    delete: "Échec lors de la suppression."
-en:
-  title:
-    delete: Are you sure you want to delete this medicament ?
-  message:
-    delete: Please note, the deletion of the medicament is permanent and irreversible.
-
-  success:
-    delete: The medicament is deleted
-  error:
-    delete: Deletion failed. Try again
-
-</i18n>

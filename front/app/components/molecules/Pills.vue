@@ -24,7 +24,7 @@
   <v-sheet width="100%" height="100%" v-else
            class="d-flex flex-column align-center font-weight-bold">
     <v-img :src="useAsset('/assets/img/no-result.png')" max-height="400" width="400"/>
-    {{ t('no-result') }}
+    {{ t('meds.no-result') }}
   </v-sheet>
 </template>
 
@@ -46,7 +46,7 @@ const {isExpired, medications, incrementPills, decrementPills, deletePills} = de
 const title = computed(() => (isExpired ? t('expired') : t('valid')))
 const showAll = ref(false)
 
-const meds = computed(() => showAll.value ? medications : useSlice(medications, 0, 7))
+const meds = computed(() => showAll.value ? medications : medications?.slice(0, 7))
 
 const rest = computed(() => (medications?.length ?? 0) - (meds.value?.length ?? 0))
 
@@ -54,19 +54,3 @@ const showRest = () => {
   showAll.value = true
 }
 </script>
-
-<style scoped>
-/* Add your styles here */
-</style>
-
-<i18n>
-fr:
-  expired: Medicaments expirés
-  valid: Medicaments valides
-  no-result: Pas de medicaments trouvés
-en:
-  expired: Expired meds
-  valid: Valid meds
-  no-result: No meds found
-
-</i18n>

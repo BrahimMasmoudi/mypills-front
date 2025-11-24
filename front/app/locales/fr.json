@@ -1,0 +1,33 @@
+{
+  "return": "Retour",
+  "confirm": "Valider",
+  "cancel": "Annuler",
+  "title": "Bienvenu à mon pharmaHome",
+  "select": "Sélectionner",
+  "add-pill": "Ajouter",
+  "success": "Le medicament est ajouté avec succès",
+  "error": "Une erreur est survenue",
+  "dialogDelete": {
+    "title": "Es-tu sûr de vouloir supprimer ce médicament ?",
+    "message": "Attention, la suppression du médicament est définitive et irréversible.",
+    "success": "Le médicament est supprimé avec succès",
+    "error": "Échec lors de la suppression."
+  },
+  "dialogCreate": {
+    "title": "Vous voulez ajouter un médicament",
+    "choose-date-title": "Choisir une date",
+    "cancel": "Annuler",
+    "confirm": "Valider"
+  },
+  "meds": {
+    "expired": "Medicaments expirés",
+    "valid": "Medicaments valides",
+    "no-result": "Pas de medicaments trouvés"
+  },
+  "home": {
+    "title": "Bienvenu à MY PILLS"
+  },
+  "login": {
+    "google": "se connecter avec google"
+  }
+}

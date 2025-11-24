@@ -1,4 +1,3 @@
-import {useUserStore} from "~/store/userStore";
 import {getCurrentUser} from "vuefire";
 
 export default defineNuxtRouteMiddleware(async (to) => {
