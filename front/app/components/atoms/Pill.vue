@@ -67,17 +67,17 @@ const buttons = computed(() => [
       const toastType = await $open<ToastType>(ValidationWithWarningDialog, {
         scrim: true,
         isPersistent: true,
-        title: t('title.delete'),
-        message: t('message.delete')
+        title: t('dialogDelete.title'),
+        message: t('dialogDelete.message')
       })
       switch (toastType) {
         case 'success' : {
           await deletePills(medication)
-          openToast(toastType, t(`${toastType}.delete`))
+          openToast(toastType, t(`dialogDelete.${toastType}`))
           break
         }
         case 'error' : {
-          openToast(toastType, t(`${toastType}.delete`))
+          openToast(toastType, t(`dialogDelete.${toastType}`))
           break
         }
         case 'canceled' :
