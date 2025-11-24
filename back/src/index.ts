@@ -1,31 +1,93 @@
-import { onCall } from 'firebase-functions/v2/https';
-import { initializeApp } from 'firebase-admin/app'
-import { getFirestore, FieldValue } from 'firebase-admin/firestore'
-import { Medication } from "./types/medication";
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
 
-initializeApp()
-const firestore = getFirestore()
-const database = firestore.collection('medications')
+admin.initializeApp();
+const firestore = admin.firestore();
+const database = firestore.collection('medications');
 
-exports.createMedication = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).set(medication, { merge: false })
-})
+const FRONTEND_URL = "https://my-pills.netlify.app";
 
-exports.incrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(1) })
-})
+function setCorsHeaders(res: functions.Response) {
+    res.set("Access-Control-Allow-Origin", FRONTEND_URL);
+    res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+}
 
-exports.decrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(-1) })
-})
+// ---------------- CREATE MEDICATION ----------------
+export const createMedication = functions.https.onRequest(async (req, res): Promise<void> => {
+    setCorsHeaders(res);
 
-exports.deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).delete()
-})
+    if (req.method === "OPTIONS") {
+        res.status(204).send("");
+        return;
+    }
+    if (req.method !== "POST") {
+        res.status(405).send("Method Not Allowed");
+        return;
+    }
+
+    try {
+        const medication = req.body.medication;
+        await database.doc(medication.medicationId).set(medication, { merge: false });
+        res.status(200).json({ success: true });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ---------------- INCREMENT PILLS ----------------
+export const incrementPills = functions.https.onRequest(async (req, res): Promise<void> => {
+    setCorsHeaders(res);
+
+    if (req.method === "OPTIONS") { res.status(204).send(""); return; }
+    if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
+
+    try {
+        const medication = req.body.medication;
+        await database.doc(medication.medicationId).update({
+            quantity: admin.firestore.FieldValue.increment(1),
+        });
+        res.status(200).json({ success: true });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ---------------- DECREMENT PILLS ----------------
+export const decrementPills = functions.https.onRequest(async (req, res): Promise<void> => {
+    setCorsHeaders(res);
+
+    if (req.method === "OPTIONS") { res.status(204).send(""); return; }
+    if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
+
+    try {
+        const medication = req.body.medication;
+        await database.doc(medication.medicationId).update({
+            quantity: admin.firestore.FieldValue.increment(-1),
+        });
+        res.status(200).json({ success: true });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ---------------- DELETE PILLS ----------------
+export const deletePills = functions.https.onRequest(async (req, res): Promise<void> => {
+    setCorsHeaders(res);
+
+    if (req.method === "OPTIONS") { res.status(204).send(""); return; }
+    if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
+
+    try {
+        const medication = req.body.medication;
+        await database.doc(medication.medicationId).delete();
+        res.status(200).json({ success: true });
+    } catch (error: any) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 
 // const createData = async () => {
 //     const backup = {
