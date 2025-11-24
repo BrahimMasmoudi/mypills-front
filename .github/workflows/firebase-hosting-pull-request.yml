@@ -13,7 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: yarn install --frozen-lockfile
+        working-directory: back
       - run: yarn build
+        working-directory: back
+      - run: yarn install --frozen-lockfile
+        working-directory: front
+      - run: yarn build
+        working-directory: front
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

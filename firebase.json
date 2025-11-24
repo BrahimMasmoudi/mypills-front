@@ -22,7 +22,7 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "public",
+    "public": "front/.output/public",
     "ignore": [
       "firebase.json",
       "**/.*",
