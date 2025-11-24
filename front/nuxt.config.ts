@@ -2,10 +2,6 @@
 import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 
 export default defineNuxtConfig({
-    compatibilityDate: "2024-08-12",
-    future: {
-        compatibilityVersion: 4,
-    },
     experimental: {
         viewTransition: true
     },
@@ -17,10 +13,10 @@ export default defineNuxtConfig({
     },
     devServerHandlers: [],
     app: {
-        head: {title: 'MyEfficiency'},
+        head: { title: 'MyPills' },
         viewTransition: true
     },
-    typescript: {strict: true},
+    typescript: { strict: true },
     ssr: false,
     modules: [
         'vuetify-nuxt-module',
@@ -29,7 +25,8 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         '@nuxtjs/device',
-        'nuxt-vuefire'
+        'nuxt-vuefire',
+        '@nuxt/ui'
     ],
     device: {
         refreshOnResize: true
@@ -46,13 +43,13 @@ export default defineNuxtConfig({
             enable: true,
         },
         config: {
-            apiKey: "AIzaSyAh_3ly1d-i2hCXdFakNbcrpc9LBwMx_Qs",
-            authDomain: "my-pills-cf64c.firebaseapp.com",
-            projectId: "my-pills-cf64c",
-            storageBucket: "my-pills-cf64c.appspot.com",
-            messagingSenderId: "826103098803",
-            appId: "1:826103098803:web:3dd50eeac43182323c2fc6",
-            measurementId: "G-SE154W52YJ"
+            apiKey: process.env.FIREBASE_API_KEY,
+            authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+            appId: process.env.FIREBASE_APP_ID,
+            measurementId: process.env.FIREBASE_MEASUREMENT_ID
         },
     },
 
@@ -63,28 +60,28 @@ export default defineNuxtConfig({
             env: 'localhost',
             version: 'local',
             firebase: {
-              firestore: {
-                enable: true,
-              },
-              functions: {
-                enable: true,
-                location: 'europe-west3',
-                enableEmulator: process.env.NODE_ENV !== 'production',
-                emulatorPort: 5001,
-                emulatorHost: '127.0.0.1',
-              },
-              auth: {
-                enable: false,
-              },
-              appCheck: {
-                enable: false,
-              },
-              performance: {
-                enable: false,
-              },
-              analytics: {
-                enable: ['production', 'staging'].includes(process.env.ENVIRONMENT!),
-              }
+                firestore: {
+                    enable: true,
+                },
+                functions: {
+                    enable: true,
+                    location: 'europe-west3',
+                    enableEmulator: process.env.NODE_ENV !== 'production',
+                    emulatorPort: 5001,
+                    emulatorHost: '127.0.0.1',
+                },
+                auth: {
+                    enable: false,
+                },
+                appCheck: {
+                    enable: false,
+                },
+                performance: {
+                    enable: false,
+                },
+                analytics: {
+                    enable: ['production', 'staging'].includes(process.env.ENVIRONMENT!),
+                }
             },
         }
     },
@@ -103,7 +100,7 @@ export default defineNuxtConfig({
                 propsDestructure: true,
             },
         },
-        plugins: [vueI18n({defaultSFCLang: 'yaml'}),]
+        plugins: [vueI18n({ defaultSFCLang: 'yaml' }),]
     },
     vuetify: {
         vuetifyOptions: {
@@ -128,5 +125,9 @@ export default defineNuxtConfig({
                 }
             },
         }
+    },
+    ui: {
+        // @ts-ignore
+        fonts: false
     }
 })
