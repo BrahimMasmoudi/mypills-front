@@ -48,9 +48,3 @@ const handleSignOut = async () => {
   navigateTo('/login')
 }
 </script>
-<i18n>
-fr:
-  title: Bienvenu à MY PILLS
-en:
-  title: Welcome to MY PILLS
-</i18n>

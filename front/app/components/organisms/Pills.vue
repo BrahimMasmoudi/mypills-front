@@ -1,5 +1,5 @@
 <template>
-  <v-sheet  width="100%"
+  <v-sheet width="100%"
            class="d-flex flex-column align-start justify-start fill-height pa-4">
     <v-btn color="primary" position="absolute" location="right end" class="mr-5" @click="openDialog">
       <template #prepend>
@@ -68,7 +68,7 @@ const openDialog = async () => {
     isPersistent: false,
     createMedication,
     userUid: user?.uid,
-    email : user?.email
+    email: user?.email
   })
   openToast(toastType, t(toastType))
 }
@@ -90,13 +90,3 @@ v-btn :deep(svg) {
   margin-top: 2px;
 }
 </style>
-<i18n>
-fr:
-  add-pill: Ajouter
-  success: Le medicament est ajouté avec succss
-  error: une erreur est survenue
-en:
-  add-pill: Create
-  success: The pills are added successfully
-  error: an error happened, please try again
-</i18n>

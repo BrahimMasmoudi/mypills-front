@@ -54,19 +54,3 @@ const showRest = () => {
   showAll.value = true
 }
 </script>
-
-<style scoped>
-/* Add your styles here */
-</style>
-
-<i18n>
-fr:
-  expired: Medicaments expirés
-  valid: Medicaments valides
-  no-result: Pas de medicaments trouvés
-en:
-  expired: Expired meds
-  valid: Valid meds
-  no-result: No meds found
-
-</i18n>

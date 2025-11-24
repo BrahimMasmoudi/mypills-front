@@ -235,17 +235,3 @@ div:deep(.v-field__clearable) {
 }
 
 </style>
-
-<i18n lang="yaml">
-fr:
-  cancel: Annuler
-  confirm: Valider
-  title: Vous voulez ajouter un medicament
-  choose-date-title: Choisir une date
-
-en:
-  title: You want to add a medication
-  choose-date-title: Select a date
-  cancel: Cancel
-  confirm: Confirm
-</i18n>

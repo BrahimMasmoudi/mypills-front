@@ -1,0 +1,33 @@
+{
+  "return": "Return",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "select": "Select",
+  "add-pill": "Create",
+  "success": "The pills are added successfully",
+  "error": "An error happened",
+
+  "dialogDelete": {
+    "title": "Are you sure you want to delete this medication?",
+    "message": "Please note, the deletion of the medication is permanent and irreversible.",
+    "success": "The medication has been deleted",
+    "error": "Deletion failed. Try again."
+  },
+
+  "dialogCreate": {
+    "title": "You want to add a medication",
+    "choose-date-title": "Select a date",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+
+  "meds": {
+    "expired": "Expired meds",
+    "valid": "Valid meds",
+    "no-result": "No meds found"
+  },
+
+  "home": {
+    "title": "Welcome to MY PILLS"
+  }
+}
