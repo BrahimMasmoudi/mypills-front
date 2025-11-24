@@ -12,8 +12,8 @@
         "*.local"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
+        "yarn --cwd \"$RESOURCE_DIR\" run lint",
+        "yarn --cwd \"$RESOURCE_DIR\" run build"
       ]
     }
   ],
@@ -22,11 +22,17 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "front/.output/public",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
     ]
   },
   "emulators": {
@@ -45,6 +51,12 @@
     "hosting": {
       "port": 5000
     },
-    "singleProjectMode": true
+    "singleProjectMode": true,
+    "storage": {
+      "port": 9199
+    }
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }
