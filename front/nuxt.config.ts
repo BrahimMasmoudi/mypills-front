@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     ssr: false,
     modules: [
         'vuetify-nuxt-module',
+        'nuxt-lodash',
         'nuxt-icons',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',

@@ -1,8 +1,8 @@
-import {useUserStore} from "~/store/userStore";
 import {getCurrentUser} from "vuefire";
 
 export default defineNuxtRouteMiddleware(async (to) => {
     const user = await getCurrentUser()
+    console.log(user)
 
     if (user && to.path === '/login') return
 

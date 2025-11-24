@@ -46,7 +46,7 @@ const {isExpired, medications, incrementPills, decrementPills, deletePills} = de
 const title = computed(() => (isExpired ? t('expired') : t('valid')))
 const showAll = ref(false)
 
-const meds = computed(() => showAll.value ? medications : useSlice(medications, 0, 7))
+const meds = computed(() => showAll.value ? medications : medications?.slice(0, 7))
 
 const rest = computed(() => (medications?.length ?? 0) - (meds.value?.length ?? 0))
 
