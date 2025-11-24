@@ -32,7 +32,6 @@ if (userStore.user) navigateTo('/all')
 
 const login = async () => {
   await userStore.login()
-  console.log('brahim', userStore.user)
   navigateTo('/all')
 }
 
