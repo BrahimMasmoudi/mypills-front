@@ -10,7 +10,7 @@ const database = firestore.collection('medications')
 const cors = [
     /http:\/\/localhost:\d+/,
     "https://my-pills.netlify.app"
-];
+]
 
 exports.createMedication = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
     const medication = data.medication as Medication
