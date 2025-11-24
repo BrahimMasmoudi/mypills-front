@@ -46,6 +46,15 @@ jobs:
           NODE_ENV: production
 
       # Deploy to Firebase using firebase-action
+      - name: Debug Secrets
+        run: |
+          if [ -z "${{ secrets.FIREBASE_PROJECT_ID }}" ]; then
+            echo "::error::FIREBASE_PROJECT_ID is EMPTY! Check your GitHub Secrets."
+            exit 1
+          else
+            echo "FIREBASE_PROJECT_ID is set (masked)"
+          fi
+
       - name: Deploy to Firebase (Staging)
         uses: w9jds/firebase-action@v13.16.0
         with:
@@ -93,6 +102,15 @@ jobs:
           NODE_ENV: production
 
       # Deploy to Firebase using firebase-action
+      - name: Debug Secrets
+        run: |
+          if [ -z "${{ secrets.FIREBASE_PROJECT_ID }}" ]; then
+            echo "::error::FIREBASE_PROJECT_ID is EMPTY! Check your GitHub Secrets."
+            exit 1
+          else
+            echo "FIREBASE_PROJECT_ID is set (masked)"
+          fi
+
       - name: Deploy to Firebase (Production)
         uses: w9jds/firebase-action@v13.16.0
         with:
