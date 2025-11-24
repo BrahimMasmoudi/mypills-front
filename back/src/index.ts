@@ -1,28 +1,28 @@
-import {onCall} from 'firebase-functions/v2/https';
-import {initializeApp} from 'firebase-admin/app'
-import {getFirestore, FieldValue} from 'firebase-admin/firestore'
-import {Medication} from "./types/medication";
+import { onCall } from 'firebase-functions/v2/https';
+import { initializeApp } from 'firebase-admin/app'
+import { getFirestore, FieldValue } from 'firebase-admin/firestore'
+import { Medication } from "./types/medication";
 
 initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
 
-exports.createMedication = onCall({region: 'us-central1'}, async ({data}) => {
+exports.createMedication = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).set(medication, {merge: false})
+    return await database.doc(medication.medicationId).set(medication, { merge: false })
 })
 
-exports.incrementPills = onCall({region: 'us-central1'}, async ({data}) => {
+exports.incrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({'quantity': FieldValue.increment(1)})
+    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(1) })
 })
 
-exports.decrementPills = onCall({region: 'us-central1'}, async ({data}) => {
+exports.decrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({'quantity': FieldValue.increment(-1)})
+    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(-1) })
 })
 
-exports.deletePills = onCall({region: 'us-central1'}, async ({data}) => {
+exports.deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).delete()
 })
