@@ -1,91 +1,36 @@
-import * as functions from "firebase-functions";
-import * as admin from "firebase-admin";
+import { onCall } from 'firebase-functions/v2/https';
+import { initializeApp } from 'firebase-admin/app'
+import { getFirestore, FieldValue } from 'firebase-admin/firestore'
+import { Medication } from "./types/medication";
 
-admin.initializeApp();
-const firestore = admin.firestore();
-const database = firestore.collection('medications');
+initializeApp()
+const firestore = getFirestore()
+const database = firestore.collection('medications')
 
-const FRONTEND_URL = "https://my-pills.netlify.app";
+const cors = [
+    /http:\/\/localhost:\d+/,
+    "https://my-pills.netlify.app"
+];
 
-function setCorsHeaders(res: functions.Response) {
-    res.set("Access-Control-Allow-Origin", FRONTEND_URL);
-    res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-}
+exports.createMedication = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
+    const medication = data.medication as Medication
+    return await database.doc(medication.medicationId).set(medication, { merge: false })
+})
 
-// ---------------- CREATE MEDICATION ----------------
-export const createMedication = functions.https.onRequest(async (req, res): Promise<void> => {
-    setCorsHeaders(res);
+exports.incrementPills = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
+    const medication = data.medication as Medication
+    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(1) })
+})
 
-    if (req.method === "OPTIONS") {
-        res.status(204).send("");
-        return;
-    }
-    if (req.method !== "POST") {
-        res.status(405).send("Method Not Allowed");
-        return;
-    }
+exports.decrementPills = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
+    const medication = data.medication as Medication
+    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(-1) })
+})
 
-    try {
-        const medication = req.body.medication;
-        await database.doc(medication.medicationId).set(medication, { merge: false });
-        res.status(200).json({ success: true });
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// ---------------- INCREMENT PILLS ----------------
-export const incrementPills = functions.https.onRequest(async (req, res): Promise<void> => {
-    setCorsHeaders(res);
-
-    if (req.method === "OPTIONS") { res.status(204).send(""); return; }
-    if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
-
-    try {
-        const medication = req.body.medication;
-        await database.doc(medication.medicationId).update({
-            quantity: admin.firestore.FieldValue.increment(1),
-        });
-        res.status(200).json({ success: true });
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// ---------------- DECREMENT PILLS ----------------
-export const decrementPills = functions.https.onRequest(async (req, res): Promise<void> => {
-    setCorsHeaders(res);
-
-    if (req.method === "OPTIONS") { res.status(204).send(""); return; }
-    if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
-
-    try {
-        const medication = req.body.medication;
-        await database.doc(medication.medicationId).update({
-            quantity: admin.firestore.FieldValue.increment(-1),
-        });
-        res.status(200).json({ success: true });
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// ---------------- DELETE PILLS ----------------
-export const deletePills = functions.https.onRequest(async (req, res): Promise<void> => {
-    setCorsHeaders(res);
-
-    if (req.method === "OPTIONS") { res.status(204).send(""); return; }
-    if (req.method !== "POST") { res.status(405).send("Method Not Allowed"); return; }
-
-    try {
-        const medication = req.body.medication;
-        await database.doc(medication.medicationId).delete();
-        res.status(200).json({ success: true });
-    } catch (error: any) {
-        res.status(500).json({ error: error.message });
-    }
-});
+exports.deletePills = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
+    const medication = data.medication as Medication
+    return await database.doc(medication.medicationId).delete()
+})
 
 
 
