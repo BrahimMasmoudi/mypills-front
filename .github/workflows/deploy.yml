@@ -42,12 +42,21 @@ jobs:
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
           NODE_ENV: production
 
-      - name: Deploy to Firebase (Staging)
-        uses: google-github-actions/deploy-firebase@v4
+      - name: Deploy to Firebase Hosting (Staging)
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          service_credentials: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
           channelId: live
+          entryPoint: front
+
+      - name: Deploy Functions and Firestore (Staging)
+        run: |
+          npm install -g firebase-tools
+          firebase deploy --only functions,firestore:rules --project ${{ secrets.FIREBASE_PROJECT_ID }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
 
   deploy-prod:
     if: github.ref == 'refs/heads/main'
@@ -84,9 +93,18 @@ jobs:
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
           NODE_ENV: production
 
-      - name: Deploy to Firebase (Production)
-        uses: google-github-actions/deploy-firebase@v4
+      - name: Deploy to Firebase Hosting (Production)
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          service_credentials: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
           channelId: live
+          entryPoint: front
+
+      - name: Deploy Functions and Firestore (Production)
+        run: |
+          npm install -g firebase-tools
+          firebase deploy --only functions,firestore:rules --project ${{ secrets.FIREBASE_PROJECT_ID }}
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

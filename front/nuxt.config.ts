@@ -2,10 +2,6 @@
 import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 
 export default defineNuxtConfig({
-    compatibilityDate: "2024-08-12",
-    future: {
-        compatibilityVersion: 4,
-    },
     experimental: {
         viewTransition: true
     },
