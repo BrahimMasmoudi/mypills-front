@@ -52,6 +52,7 @@ jobs:
           args: deploy --only hosting,functions --project ${{ secrets.FIREBASE_PROJECT_ID }}
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
 
   deploy-prod:
     if: github.ref == 'refs/heads/main'
@@ -98,3 +99,4 @@ jobs:
           args: deploy --only hosting,functions --project ${{ secrets.FIREBASE_PROJECT_ID }}
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
