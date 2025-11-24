@@ -51,9 +51,11 @@ jobs:
 
       # Deploy frontend + functions
       - name: Deploy to Firebase (Staging)
-        run: firebase deploy --only hosting,functions --project ${{ secrets.FIREBASE_PROJECT_ID }}
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $HOME/gcloud-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json
+          firebase deploy --only hosting:${{ secrets.FIREBASE_PROJECT_ID }},functions --project ${{ secrets.FIREBASE_PROJECT_ID }}
+          rm $HOME/gcloud-key.json
 
   deploy-prod:
     if: github.ref == 'refs/heads/main'
@@ -99,6 +101,8 @@ jobs:
 
       # Deploy frontend + functions
       - name: Deploy to Firebase (Production)
-        run: firebase deploy --only hosting,functions --project ${{ secrets.FIREBASE_PROJECT_ID }}
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > $HOME/gcloud-key.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud-key.json
+          firebase deploy --only hosting:${{ secrets.FIREBASE_PROJECT_ID }},functions --project ${{ secrets.FIREBASE_PROJECT_ID }}
+          rm $HOME/gcloud-key.json
