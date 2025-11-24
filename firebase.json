@@ -22,7 +22,6 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "site": "default",
     "public": "front/.output/public",
     "ignore": [
       "firebase.json",
