@@ -12,7 +12,7 @@
         <template #prepend>
           <nuxt-icon filled name="google"/>
         </template>
-        Login with Google
+        {{ t('login.google') }}
       </v-btn>
     </div>
   </v-img>
@@ -20,6 +20,9 @@
 <script lang="ts" setup>
 
 import {useUserStore} from "~/store/userStore";
+import {useI18n} from "vue-i18n";
+
+const {t} = useI18n()
 
 const userStore = useUserStore()
 definePageMeta({
@@ -29,7 +32,7 @@ if (userStore.user) navigateTo('/all')
 
 const login = async () => {
   await userStore.login()
-  console.log('brahim',userStore.user)
+  console.log('brahim', userStore.user)
   navigateTo('/all')
 }
 

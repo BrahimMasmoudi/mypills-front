@@ -6,7 +6,6 @@
                style="cursor: pointer">
         <v-avatar size="36" color="primary" class="font-weight-bold">
           {{ userStore.user!.displayName[0].toUpperCase() }}
-
           <v-menu activator="parent" location="bottom">
             <v-list>
               <v-list-item min-height="20" @click="handleSignOut">
@@ -21,7 +20,6 @@
         </v-avatar>
       </v-sheet>
     </v-app-bar>
-
     <v-navigation-drawer>
       <v-list>
         <v-list-item title="Voir tout" to="/all"></v-list-item>
@@ -29,7 +27,6 @@
         <v-list-item title="voir medicament courant" to="/valid"></v-list-item>
       </v-list>
     </v-navigation-drawer>
-
     <v-main>
       <slot/>
     </v-main>

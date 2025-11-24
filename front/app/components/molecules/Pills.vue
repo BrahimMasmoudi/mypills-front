@@ -24,7 +24,7 @@
   <v-sheet width="100%" height="100%" v-else
            class="d-flex flex-column align-center font-weight-bold">
     <v-img :src="useAsset('/assets/img/no-result.png')" max-height="400" width="400"/>
-    {{ t('no-result') }}
+    {{ t('meds.no-result') }}
   </v-sheet>
 </template>
 
