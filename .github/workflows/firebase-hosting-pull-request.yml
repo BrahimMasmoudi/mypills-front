@@ -30,6 +30,8 @@ jobs:
       - name: Build frontend
         run: cd front && yarn generate
         env:
+          NODE_ENV: production
+          ENVIRONMENT: staging
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
