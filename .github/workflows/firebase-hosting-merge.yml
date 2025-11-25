@@ -25,12 +25,12 @@ jobs:
           cd front
           yarn install --frozen-lockfile
 
-      # Install Firebase Functions dependencies
+     # Install Firebase Functions dependencies
       - name: Install Firebase Functions dependencies
         run: |
           cd back
           yarn install --frozen-lockfile
-
+          
       # Build frontend (Nuxt inside /front)
       - name: Build frontend
         run: |
