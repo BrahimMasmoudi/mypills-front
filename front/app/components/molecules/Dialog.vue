@@ -141,7 +141,7 @@ const medication = ref<Medication>({
   quantity: 1,
   name: 'médicament',
   bareCode: '',
-  medicationId: useId(),
+  medicationId: crypto.randomUUID(),
   image: "pill-1",
   email
 })
