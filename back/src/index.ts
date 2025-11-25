@@ -7,27 +7,22 @@ initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
 
-const cors = [
-    /http:\/\/localhost:\d+/,
-    "https://my-pills.netlify.app"
-]
-
-exports.createMedication = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
+exports.createMedication = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).set(medication, { merge: false })
 })
 
-exports.incrementPills = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
+exports.incrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(1) })
 })
 
-exports.decrementPills = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
+exports.decrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(-1) })
 })
 
-exports.deletePills = onCall({ region: 'europe-west3', cors }, async ({ data }) => {
+exports.deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).delete()
 })
