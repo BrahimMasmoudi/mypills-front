@@ -3,17 +3,42 @@
 
 name: Deploy to Firebase Hosting on PR
 on: pull_request
+
 permissions:
   checks: write
   contents: read
   pull-requests: write
+
 jobs:
   build_and_preview:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
+
     steps:
+      # Checkout repo
       - uses: actions/checkout@v4
-      - run: yarn build
+
+      # Install root dependencies
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      # Install Firebase Functions dependencies (inside back/)
+      - name: Install Firebase Functions deps
+        run: |
+          cd back
+          yarn install --frozen-lockfile
+
+      # Build the project (Nuxt / front)
+      - name: Build frontend
+        run: yarn build
+
+      # Build Firebase Functions
+      - name: Build Firebase functions
+        run: |
+          cd back
+          yarn build
+
+      # Deploy preview
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
