@@ -18,29 +18,21 @@ jobs:
       # Checkout repo
       - uses: actions/checkout@v4
 
-      # Install root dependencies
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      # Install Firebase Functions dependencies (inside back/)
-      - name: Install Firebase Functions deps
+      # Install root dependencies if package.json exists
+      - name: Install root dependencies
         run: |
-          cd back
+          if [ -f package.json ]; then
+            yarn install --frozen-lockfile
+          fi
+
+      # Install frontend dependencies
+      - name: Install frontend dependencies
+        run: |
+          cd front
           yarn install --frozen-lockfile
 
-      # Build the project (Nuxt / front)
-      - name: Build frontend
-        run: yarn build
-
-      # Build Firebase Functions
-      - name: Build Firebase functions
+      # Install Firebase Functions dependencies
+      - name: Install Firebase Functions dependencies
         run: |
           cd back
-          yarn build
-
-      # Deploy preview
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_CF64C }}
-          projectId: my-pills-cf64c
+          ya
