@@ -1,4 +1,4 @@
-export  type Medication = {
+export type Medication = {
     medicationId: string
     uid: string
     bareCode: string,
@@ -7,5 +7,6 @@ export  type Medication = {
     expired: boolean,
     quantity: number
     image: string
+    email: string
 }
 
