@@ -28,7 +28,6 @@ exports.deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
 })
 
 
-
 // const createData = async () => {
 //     const backup = {
 //         "3TrUX0JMrWhqL9koMStx": {
