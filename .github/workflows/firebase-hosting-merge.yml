@@ -9,41 +9,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
       - uses: actions/checkout@v4
 
-      # Install root dependencies (if package.json exists at root)
+      # Root deps (optional)
       - name: Install root dependencies
-        run: |
-          if [ -f package.json ]; then
-            yarn install --frozen-lockfile
-          fi
+        run: if [ -f package.json ]; then yarn install --frozen-lockfile; fi
 
-      # Install frontend dependencies
+      # Frontend deps
       - name: Install frontend dependencies
-        run: |
-          cd front
-          yarn install --frozen-lockfile
+        run: cd front && yarn install --frozen-lockfile
 
-     # Install Firebase Functions dependencies
+      # Firebase Functions deps
       - name: Install Firebase Functions dependencies
-        run: |
-          cd back
-          yarn install --frozen-lockfile
-          
-      # Build frontend (Nuxt inside /front)
+        run: cd back && yarn install --frozen-lockfile
+
+      # Build frontend
       - name: Build frontend
-        run: |
-          cd front
-          yarn build
+        run: cd front && yarn build
 
       # Build Firebase Functions
       - name: Build Firebase Functions
-        run: |
-          cd back
-          yarn build
+        run: cd back && yarn build
 
-      # Deploy to Firebase (Hosting + Functions if included)
+      # Deploy
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
