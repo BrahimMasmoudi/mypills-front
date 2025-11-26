@@ -1,8 +1,8 @@
 {
   "projects": {
     "default": "my-pills-staging-460b5",
-    "my-pills-staging": "my-pills-staging-460b5",
-    "production": "mypills-prod"
+    "production": "mypills-prod",
+    "staging": "my-pills-staging-460b5"
   },
   "targets": {},
   "etags": {}
