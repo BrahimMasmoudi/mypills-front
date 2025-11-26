@@ -1,5 +1,5 @@
 <template>
-  <v-sheet width="100%" v-if="medications?.length > 0">
+  <v-sheet width="100%" v-if="medications?.length ?? 0 > 0">
     <AtomsTitle :title="title"/>
     <v-row class="d-flex align-start justify-start my-3">
       <v-col
@@ -13,6 +13,7 @@
             :decrement-pills="decrementPills"
             :increment-pills="incrementPills"
             :delete-pills="deletePills"
+            :update-medication-name="updateMedicationName"
         />
       </v-col>
       <v-col cols="3" v-if="!showAll && rest">
@@ -35,15 +36,16 @@ import type {Medication} from '~/types/medication'
 
 const {t} = useI18n()
 
-const {isExpired, medications, incrementPills, decrementPills, deletePills} = defineProps<{
+const {isExpired, medications, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
   isExpired: boolean
   medications: Medication[] | undefined
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
+  updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 
-const title = computed(() => (isExpired ? t('expired') : t('valid')))
+const title = computed(() => (isExpired ? t('meds.expired') : t('meds.valid')))
 const showAll = ref(false)
 
 const meds = computed(() => showAll.value ? medications : medications?.slice(0, 7))

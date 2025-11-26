@@ -44,9 +44,9 @@ jobs:
       - name: Build Firebase functions
         run: cd back && yarn build
 
-      # Deploy preview
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: '🚀 Deploy to Firebase'
+        uses: w9jds/firebase-action@v13.16.0
         with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_CF64C }}
-          projectId: my-pills-cf64c
+          args: deploy --only functions,hosting --project my-pills-staging-460b5 --force
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}

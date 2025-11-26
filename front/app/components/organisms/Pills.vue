@@ -1,6 +1,6 @@
 <template>
   <v-sheet width="100%"
-           class="d-flex flex-column align-start justify-start fill-height pa-4">
+           class="d-flex flex-column align-start justify-space-between fill-height pa-4">
     <v-btn color="primary" position="absolute" location="right end" class="mr-5" @click="openDialog">
       <template #prepend>
         <nuxt-icon name="add"/>
@@ -10,21 +10,23 @@
       </span>
     </v-btn>
     <MoleculesPills
-        v-if="(filter === 'all' || filter === 'valid') && medications?.length >0"
+        v-if="(filter === 'all' || filter === 'valid') && (medications?.length ?? 0) >0"
         :is-expired="false"
-        name="Pill"
+        name="valide pills"
         :medications="validMedication"
         :decrement-pills="decrementPills"
         :increment-pills="incrementPills"
-        :delete-pills="deletePills"/>
+        :delete-pills="deletePills"
+        :update-medication-name="updateMedicationName"/>
     <MoleculesPills
-        v-if="filter === 'all' || filter === 'expired' && medications?.length >0"
+        v-if="filter === 'all' || filter === 'expired' && (medications?.length ?? 0) >0"
         :is-expired="true"
-        name="expired Pill"
+        name="expired pills"
         :medications="expiredMedication"
         :decrement-pills="decrementPills"
         :increment-pills="incrementPills"
-        :delete-pills="deletePills"/>
+        :delete-pills="deletePills"
+        :update-medication-name="updateMedicationName"/>
 
     <v-row v-if="!medications" class="pa-4">
       <v-col v-for="i in 8"
@@ -47,13 +49,14 @@ import {getCurrentUser} from "vuefire";
 const {t} = useI18n()
 const {$open} = useNuxtApp()
 
-const {medications, createMedication} = defineProps<{
+const {medications, createMedication, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
   filter: Filter
   medications: Medication[] | undefined
   createMedication: (medication: Medication) => Promise<void>
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
+  updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 
 const validMedication = computed(() => medications.filter((med: Medication) => !med.expired) ?? [])

@@ -7,25 +7,33 @@ initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
 
-exports.createMedication = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const createMedication = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).set(medication, { merge: false })
 })
 
-exports.incrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const incrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(1) })
 })
 
-exports.decrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const decrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(-1) })
 })
 
-exports.deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).delete()
 })
+
+export const updateMedicationName = onCall({ region: 'europe-west3' }, async ({ data }) => {
+    console.log(data)
+    const medication = data.medication as Medication
+    const newName = data.newName as string
+    return await database.doc(medication.medicationId).update({ 'name': newName })
+})
+
 
 
 // const createData = async () => {

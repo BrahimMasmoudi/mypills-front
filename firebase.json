@@ -53,8 +53,5 @@
       "port": 5000
     },
     "singleProjectMode": true
-  },
-  "storage": {
-    "rules": "storage.rules"
   }
 }
