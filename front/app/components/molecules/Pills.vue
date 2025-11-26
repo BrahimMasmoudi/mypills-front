@@ -13,6 +13,7 @@
             :decrement-pills="decrementPills"
             :increment-pills="incrementPills"
             :delete-pills="deletePills"
+            :update-medication-name="updateMedicationName"
         />
       </v-col>
       <v-col cols="3" v-if="!showAll && rest">
@@ -35,12 +36,13 @@ import type {Medication} from '~/types/medication'
 
 const {t} = useI18n()
 
-const {isExpired, medications, incrementPills, decrementPills, deletePills} = defineProps<{
+const {isExpired, medications, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
   isExpired: boolean
   medications: Medication[] | undefined
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
+  updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 
 const title = computed(() => (isExpired ? t('meds.expired') : t('meds.valid')))

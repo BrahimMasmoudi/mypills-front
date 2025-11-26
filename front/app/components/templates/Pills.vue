@@ -5,6 +5,7 @@
                   :decrement-pills="decrementPills"
                   :increment-pills="incrementPills"
                   :delete-pills="deletePills"
+                  :update-medication-name="updateMedicationName"
   />
 </template>
 <script setup lang="ts">
@@ -18,6 +19,7 @@ defineProps<{
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
+  updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 </script>
 

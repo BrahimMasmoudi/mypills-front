@@ -4,7 +4,8 @@
                   :decrement-pills="decrementPills"
                   :increment-pills="incrementPills"
                   :delete-pills="deletePills"
-                  :create-medication="createMedication"/>
+                  :create-medication="createMedication"
+                  :update-medication-name="updateMedicationName"/>
 </template>
 <script setup lang="ts">
 
@@ -30,6 +31,11 @@ const decrementPills = async (medication: Medication) => {
 const deletePills = async (medication: Medication) => {
   await medicationStore.deletePills(medication)
 }
+
+const updateMedicationName = async (medication: Medication, newName: string) => {
+  await medicationStore.updateMedicationName(medication, newName)
+}
+
 
 </script>
 

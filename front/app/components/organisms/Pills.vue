@@ -16,7 +16,8 @@
         :medications="validMedication"
         :decrement-pills="decrementPills"
         :increment-pills="incrementPills"
-        :delete-pills="deletePills"/>
+        :delete-pills="deletePills"
+        :update-medication-name="updateMedicationName"/>
     <MoleculesPills
         v-if="filter === 'all' || filter === 'expired' && (medications?.length ?? 0) >0"
         :is-expired="true"
@@ -24,7 +25,8 @@
         :medications="expiredMedication"
         :decrement-pills="decrementPills"
         :increment-pills="incrementPills"
-        :delete-pills="deletePills"/>
+        :delete-pills="deletePills"
+        :update-medication-name="updateMedicationName"/>
 
     <v-row v-if="!medications" class="pa-4">
       <v-col v-for="i in 8"
@@ -47,13 +49,14 @@ import {getCurrentUser} from "vuefire";
 const {t} = useI18n()
 const {$open} = useNuxtApp()
 
-const {medications, createMedication} = defineProps<{
+const {medications, createMedication, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
   filter: Filter
   medications: Medication[] | undefined
   createMedication: (medication: Medication) => Promise<void>
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
+  updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 
 const validMedication = computed(() => medications.filter((med: Medication) => !med.expired) ?? [])
