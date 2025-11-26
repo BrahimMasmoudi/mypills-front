@@ -47,12 +47,11 @@ jobs:
       - name: Install Firebase CLI
         run: yarn global add firebase-tools
 
-      # Authenticate with service account
-      - name: Authenticate Firebase
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_PROD }}' > $HOME/gcloud-service-key.json
+      # Authenticate with Google Cloud
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_PROD }}'
 
       # Deploy to Firebase (functions + hosting + firestore)
       - name: Deploy to Firebase Production
         run: firebase deploy --only functions,hosting,firestore --project mypills-prod
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.HOME }}/gcloud-service-key.json
