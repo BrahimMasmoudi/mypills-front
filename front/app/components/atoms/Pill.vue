@@ -2,7 +2,7 @@
   <v-hover v-slot="{ isHovering, props }">
     <v-card
         :color="isExpired ? '#FF000090' : ''"
-        :class="{ 'on-hover': isHovering }"
+        :class="{ 'on-hover': isHovering, 'hover-filter': isHovering }"
         :elevation="isHovering ? 12 : 2"
         v-bind="props"
         class="d-flex flex-column align-center justify-center position-relative px-4 pt-7 pb-11 "
@@ -100,7 +100,13 @@ const buttons = computed(() => [
 }
 
 .v-card {
-  transition: opacity .4s ease-in-out;
+  transition: all .3s ease-in-out;
+  transform: scale(1);
+}
+
+.v-card.hover-filter {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(54, 67, 186, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .show-btns {

@@ -43,7 +43,7 @@ const {isExpired, medications, incrementPills, decrementPills, deletePills} = de
   deletePills: (medication: Medication) => Promise<void>
 }>()
 
-const title = computed(() => (isExpired ? t('expired') : t('valid')))
+const title = computed(() => (isExpired ? t('meds.expired') : t('meds.valid')))
 const showAll = ref(false)
 
 const meds = computed(() => showAll.value ? medications : medications?.slice(0, 7))

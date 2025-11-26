@@ -1,6 +1,6 @@
 <template>
   <v-sheet width="100%"
-           class="d-flex flex-column align-start justify-start fill-height pa-4">
+           class="d-flex flex-column align-start justify-space-between fill-height pa-4">
     <v-btn color="primary" position="absolute" location="right end" class="mr-5" @click="openDialog">
       <template #prepend>
         <nuxt-icon name="add"/>
@@ -10,17 +10,17 @@
       </span>
     </v-btn>
     <MoleculesPills
-        v-if="(filter === 'all' || filter === 'valid') && medications?.length >0"
+        v-if="(filter === 'all' || filter === 'valid') && (medications?.length ?? 0) >0"
         :is-expired="false"
-        name="Pill"
+        name="valide pills"
         :medications="validMedication"
         :decrement-pills="decrementPills"
         :increment-pills="incrementPills"
         :delete-pills="deletePills"/>
     <MoleculesPills
-        v-if="filter === 'all' || filter === 'expired' && medications?.length >0"
+        v-if="filter === 'all' || filter === 'expired' && (medications?.length ?? 0) >0"
         :is-expired="true"
-        name="expired Pill"
+        name="expired pills"
         :medications="expiredMedication"
         :decrement-pills="decrementPills"
         :increment-pills="incrementPills"

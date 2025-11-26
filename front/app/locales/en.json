@@ -3,7 +3,7 @@
   "confirm": "Confirm",
   "cancel": "Cancel",
   "select": "Select",
-  "title": "Welcome to my pharmaHome",
+  "title": "MyPills - Your Medication Hub",
   "add-pill": "Create",
   "success": "The pills are added successfully",
   "error": "An error happened",
@@ -26,6 +26,14 @@
   },
   "home": {
     "title": "Welcome to MY PILLS"
+  },
+  "nav": {
+    "all-medications": "All Medications",
+    "valid-medications": "Valid Medications",
+    "expired-medications": "Expired Medications"
+  },
+  "user-menu": {
+    "disconnect": "Disconnect"
   },
   "login": {
     "google": "Login with Google"
