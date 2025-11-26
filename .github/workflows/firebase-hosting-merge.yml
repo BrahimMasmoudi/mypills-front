@@ -24,9 +24,6 @@ jobs:
       - name: Install Firebase Functions dependencies
         run: cd back && yarn install --frozen-lockfile
 
-      - name: Clean public folder
-        run: rm -f front/public/init.json
-
       # Build frontend
       - name: Build frontend
         run: cd front && yarn generate
