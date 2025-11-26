@@ -26,7 +26,8 @@
     "public": "front/.output/public",
     "ignore": [
       "firebase.json",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "**/__/firebase/**"
     ],
     "cleanUrls": true,
     "rewrites": [
