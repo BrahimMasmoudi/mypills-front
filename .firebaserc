@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "my-pills-cf64c"
-  }
+    "default": "my-pills-staging-460b5",
+    "my-pills-staging": "my-pills-staging-460b5"
+  },
+  "targets": {},
+  "etags": {}
 }
