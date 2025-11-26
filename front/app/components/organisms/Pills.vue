@@ -10,7 +10,7 @@
       </span>
     </v-btn>
     <MoleculesPills
-        v-if="(filter === 'all' || filter === 'valid') && (medications?.length ?? 0) >0"
+        v-if="medications && (filter === 'valid' || (filter === 'all' && (validMedication.length > 0 || expiredMedication.length === 0)))"
         :is-expired="false"
         name="valide pills"
         :medications="validMedication"
@@ -19,7 +19,7 @@
         :delete-pills="deletePills"
         :update-medication-name="updateMedicationName"/>
     <MoleculesPills
-        v-if="filter === 'all' || filter === 'expired' && (medications?.length ?? 0) >0"
+        v-if="medications && (filter === 'expired' || (filter === 'all' && expiredMedication.length > 0))"
         :is-expired="true"
         name="expired pills"
         :medications="expiredMedication"
@@ -59,8 +59,8 @@ const {medications, createMedication, incrementPills, decrementPills, deletePill
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 
-const validMedication = computed(() => medications.filter((med: Medication) => !med.expired) ?? [])
-const expiredMedication = computed(() => medications.filter((med: Medication) => med.expired) ?? [])
+const validMedication = computed(() => medications?.filter((med: Medication) => !med.expired) ?? [])
+const expiredMedication = computed(() => medications?.filter((med: Medication) => med.expired) ?? [])
 
 
 const openDialog = async () => {

@@ -3,7 +3,8 @@
     <AtomsTitle :title="title"/>
     <v-row class="d-flex align-start justify-start my-3">
       <v-col
-          cols="3"
+          lg="3"
+          sm="6"
           v-for="medication in meds"
           :key="medication.medicationId"
       >
