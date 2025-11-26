@@ -1,5 +1,5 @@
 <template>
-  <v-sheet width="100%" v-if="medications?.length > 0">
+  <v-sheet width="100%" v-if="medications?.length ?? 0 > 0">
     <AtomsTitle :title="title"/>
     <v-row class="d-flex align-start justify-start my-3">
       <v-col
