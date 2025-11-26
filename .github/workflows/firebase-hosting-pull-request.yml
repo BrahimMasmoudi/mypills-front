@@ -44,9 +44,17 @@ jobs:
       - name: Build Firebase functions
         run: cd back && yarn build
 
-      # Deploy preview
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_CF64C }}
-          projectId: my-pills-cf64c
+      # Install Firebase CLI
+      - name: Install Firebase CLI
+        run: yarn global add firebase-tools
+
+      # Authenticate with service account
+      - name: Authenticate Firebase
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_CF64C }}' > $HOME/gcloud-service-key.json
+
+      # Deploy to Firebase (functions + hosting + firestore)
+      - name: Deploy to Firebase Staging
+        run: firebase deploy --only functions,hosting,firestore --project my-pills-cf64c
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.HOME }}/gcloud-service-key.json
+
