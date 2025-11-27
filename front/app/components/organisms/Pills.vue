@@ -1,7 +1,7 @@
 <template>
   <v-sheet width="100%"
            class="d-flex flex-column align-start fill-height pa-4">
-    <v-btn color="primary" position="absolute" location="right end" class="mr-5" @click="openDialog">
+    <v-btn v-if="$device.isDesktop" color="primary" position="absolute" location="right end" class="mr-5" @click="openDialog">
       <template #prepend>
         <nuxt-icon name="add"/>
       </template>
@@ -29,6 +29,16 @@
         :increment-pills="incrementPills"
         :delete-pills="deletePills"
         :update-medication-name="updateMedicationName"/>
+
+    <v-fab
+        v-if="$device.isMobile"
+        color="primary"
+        icon="mdi-plus"
+        size="large"
+        location="bottom end"
+        app
+        @click="openDialog"
+    />
 
     <v-row v-if="!medications" class="pa-4">
       <v-col v-for="i in 8"
