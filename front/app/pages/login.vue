@@ -1,21 +1,12 @@
 <template>
-  <v-img
-      class="d-flex align-center justify-center"
-      :src="getImageSrc('/assets/img/store-background.svg')"
-      cover
-      width="100%"
-      height="100%"
-      max-width="100%"
-  >
-    <div class="text-center">
-      <v-btn @click.prevent="login" class="button" height="50">
-        <template #prepend>
-          <nuxt-icon filled name="google"/>
-        </template>
-        {{ t('login.google') }}
-      </v-btn>
-    </div>
-  </v-img>
+  <div class="login-container">
+    <v-btn @click.prevent="login" class="login-button" height="50">
+      <template #prepend>
+        <nuxt-icon filled name="google"/>
+      </template>
+      {{ t('login.google') }}
+    </v-btn>
+  </div>
 </template>
 <script lang="ts" setup>
 
@@ -34,12 +25,20 @@ const login = async () => {
   await userStore.login()
   navigateTo('/all')
 }
-
-const getImageSrc = (iconUrl: string) => {
-  return useAsset(iconUrl)
-}
 </script>
 <style scoped>
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #3643BA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 :deep(svg) {
   width: 24px !important;
   height: 24px !important;

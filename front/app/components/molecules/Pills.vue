@@ -24,7 +24,7 @@
   </v-sheet>
 
   <v-sheet width="100%" height="100%" v-else
-           class="d-flex flex-column align-center font-weight-bold">
+           class="d-flex flex-column align-center justify-center font-weight-bold">
     <v-img :src="useAsset('/assets/img/no-result.png')" max-height="400" width="400"/>
     {{ t('meds.no-result') }}
   </v-sheet>
@@ -38,20 +38,25 @@ import type {Medication} from '~/types/medication'
 const {t} = useI18n()
 const {$device} = useNuxtApp()
 
-const {isExpired, medications, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
+const {isExpired, medications, incrementPills, decrementPills, deletePills, updateMedicationName, hasBothCategories = false} = defineProps<{
   isExpired: boolean
   medications: Medication[] | undefined
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
+  hasBothCategories?: boolean
 }>()
 
 const title = computed(() => (isExpired ? t('meds.expired') : t('meds.valid')))
 const showAll = ref(false)
 
 const meds = computed(() => {
-  const limit = $device.isDesktop ? 7 : 3
+  // When both categories are showing, use smaller limits
+  // When only one category is showing, use larger limits
+  const limit = hasBothCategories 
+    ? ($device.isDesktop ? 7 : 3)
+    : ($device.isDesktop ? 11 : 8)
   return showAll.value ? medications : medications?.slice(0, limit)
 })
 

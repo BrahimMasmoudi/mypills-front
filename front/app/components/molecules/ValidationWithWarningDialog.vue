@@ -50,23 +50,15 @@
             :persistent="isPersistent"
             :scrim="scrim"
             @keydown.esc="cancelAndClose">
-    <v-card class="border pa-8" variant="flat">
+    <v-card class="border px-5 py-8" variant="flat">
       <v-card-title class="d-flex justify-center pt-0 pl-0 pb-4 mb-2 title-mobile">
         {{ title }}
       </v-card-title>
-      <span class="title-mobile d-flex align-start">
-      <b>{{ t('subtitle-list') }}</b>
-      </span>
       <v-card variant="flat" class="mb-8 pa-2 text-red d-flex text-subtitle-2" style="background-color: #D7032124">
-        <template #prepend>
-          <suspense>
-            <nuxt-icon class="small" name="error-warning"/>
-          </suspense>
-        </template>
         {{ message }}
       </v-card>
       <v-card-actions class="pa-0">
-        <v-btn class="mx-auto mb-8"
+        <v-btn class="mx-auto"
                height="45"
                style="font-weight: 700;border-radius: 4px;border: 1px solid #DDD;background: #FFF;"
                @click="cancelAndClose"
@@ -77,7 +69,7 @@
          </span>
         </v-btn>
 
-        <v-btn class="mx-auto mb-8"
+        <v-btn class="mx-auto"
                color="primary"
                height="45"
                style="font-weight: 700;"
@@ -139,7 +131,7 @@ div:deep(.v-field__input) {
   font-size: 0.825rem !important;
   font-style: normal !important;
   font-weight: 700 !important;
-  line-height: normal !important;
+  line-height: 1.5 !important;
 }
 
 .confirm {

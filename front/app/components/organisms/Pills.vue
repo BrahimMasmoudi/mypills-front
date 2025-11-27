@@ -1,7 +1,7 @@
 <template>
   <v-sheet width="100%"
-           class="d-flex flex-column align-start justify-space-between fill-height pa-4">
-    <v-btn color="primary" position="absolute" location="right end" class="mr-5" @click="openDialog">
+           class="d-flex flex-column align-start fill-height pa-4">
+    <v-btn v-if="$device.isDesktop" color="primary" position="absolute" location="right end" class="mr-5" @click="openDialog">
       <template #prepend>
         <nuxt-icon name="add"/>
       </template>
@@ -14,6 +14,7 @@
         :is-expired="false"
         name="valide pills"
         :medications="validMedication"
+        :has-both-categories="filter === 'all' && validMedication.length > 0 && expiredMedication.length > 0"
         :decrement-pills="decrementPills"
         :increment-pills="incrementPills"
         :delete-pills="deletePills"
@@ -23,10 +24,21 @@
         :is-expired="true"
         name="expired pills"
         :medications="expiredMedication"
+        :has-both-categories="filter === 'all' && validMedication.length > 0 && expiredMedication.length > 0"
         :decrement-pills="decrementPills"
         :increment-pills="incrementPills"
         :delete-pills="deletePills"
         :update-medication-name="updateMedicationName"/>
+
+    <v-fab
+        v-if="$device.isMobile"
+        color="primary"
+        icon="mdi-plus"
+        size="large"
+        location="bottom end"
+        app
+        @click="openDialog"
+    />
 
     <v-row v-if="!medications" class="pa-4">
       <v-col v-for="i in 8"
@@ -68,7 +80,7 @@ const openDialog = async () => {
 
   const toastType = await $open<ToastType>(Dialog, {
     scrim: true,
-    isPersistent: false,
+    isPersistent: true,
     createMedication,
     userUid: user?.uid,
     email: user?.email

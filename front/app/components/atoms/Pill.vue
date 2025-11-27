@@ -2,7 +2,8 @@
   <v-hover v-slot="{ isHovering, props }">
     <v-card
         v-if="$device.isDesktop"
-        :color="isExpired ? '#FF000090' : ''"
+        :color="isExpired ? '#FFEBEE' : ''"
+        :style="isExpired ? 'border: 2px solid #FF0000; opacity: 0.9;' : ''"
         :class="{ 'on-hover': isHovering, 'hover-filter': isHovering }"
         :elevation="isHovering ? 12 : 2"
         v-bind="props"
@@ -41,12 +42,12 @@
         </template>
       </v-text-field>
 
-      <v-badge color="red"  offset-x="-160" offset-y="-95" style="min-height: 12px;">
+      <v-badge color="red" fixed offset-x="-160" offset-y="-95" style="min-height: 12px;">
         <template #badge>
           {{ medication.quantity }}
         </template>
       </v-badge>
-      <span class="mt-n2 single-line">
+      <span class="mt-n2 single-line text-truncate">
       {{ parseDate(medication.expiryDate) }}
       </span>
       <div class="align-self-center"
@@ -67,7 +68,8 @@
 
     <v-card
         v-else
-        :color="isExpired ? '#FF000090' : ''"
+        :color="isExpired ? '#FFEBEE' : ''"
+        :style="isExpired ? 'border: 2px solid #FF0000; opacity: 0.9;' : ''"
         :class="{ 'on-hover': showMobileMenu, 'hover-filter': showMobileMenu }"
         :elevation="showMobileMenu ? 12 : 2"
         v-bind="props"
@@ -78,7 +80,7 @@
       <div v-if="!isEditing"
            class="d-flex align-center justify-center w-100 mt-n2 cursor-pointer"
            @click.stop="startEdit">
-        <span class="font-weight-bold text-subtitle-2 text-truncate">{{ medication.name }}</span>
+        <span class="font-weight-bold text-subtitle-2 text-truncate" >{{ medication.name }}</span>
         <v-icon
             v-if="showMobileMenu"
             icon="mdi-pencil"
@@ -91,6 +93,7 @@
           v-else
           v-model="editedName"
           variant="plain"
+          hide-details
           class="medication-name-field w-100 mt-n2 text-center"
           @blur="toggleEdit"
           @keydown.enter="toggleEdit">
@@ -104,7 +107,7 @@
         </template>
       </v-text-field>
 
-      <v-badge color="red"  offset-x="-70" offset-y="-75" style="min-height: 12px;">
+      <v-badge color="red" fixed  offset-x="-70" offset-y="-75" style="min-height: 12px;">
         <template #badge>
           {{ medication.quantity }}
         </template>
@@ -121,7 +124,6 @@
             density="compact"
             class="mx-2"
             :class="{'show-btns': showMobileMenu }"
-            :color="showMobileMenu ? '#FF000090' : 'transparent'"
             :icon="button.icon"
             @click.stop="button.onClick"
             variant="text"
