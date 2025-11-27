@@ -36,6 +36,12 @@ const updateMedicationName = async (medication: Medication, newName: string) => 
   await medicationStore.updateMedicationName(medication, newName)
 }
 
+// Check and update expired medications when data is loaded
+watch(medications, async (newMeds) => {
+  if (newMeds && newMeds.length > 0) {
+    await medicationStore.checkAndUpdateExpiredMedications(newMeds as Medication[])
+  }
+}, { immediate: true })
 
 </script>
 

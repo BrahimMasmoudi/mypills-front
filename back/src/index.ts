@@ -34,6 +34,39 @@ export const updateMedicationName = onCall({ region: 'europe-west3' }, async ({ 
     return await database.doc(medication.medicationId).update({ 'name': newName })
 })
 
+export const updateExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data }) => {
+    const medicationIds = data.medicationIds as string[]
+
+    if (!medicationIds || medicationIds.length === 0) {
+        return { updated: 0 }
+    }
+
+    try {
+        // Process in batches of 500 (Firestore limit)
+        const batchSize = 500
+        let totalUpdated = 0
+
+        for (let i = 0; i < medicationIds.length; i += batchSize) {
+            const batch = firestore.batch()
+            const batchIds = medicationIds.slice(i, i + batchSize)
+
+            for (const id of batchIds) {
+                const docRef = database.doc(id)
+                batch.update(docRef, { expired: true })
+            }
+
+            await batch.commit()
+            totalUpdated += batchIds.length
+        }
+
+        console.log(`Updated ${totalUpdated} medications to expired status`)
+        return { updated: totalUpdated }
+    } catch (error) {
+        console.error('Error updating expired status:', error)
+        throw error
+    }
+})
+
 
 
 // const createData = async () => {
