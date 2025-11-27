@@ -37,12 +37,37 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         return await update({ medication, newName })
     }
 
+    const checkAndUpdateExpiredMedications = async (medications: Medication[]) => {
+        const now = new Date()
+        const expiredIds: string[] = []
+
+        for (const med of medications) {
+            // Skip if already marked as expired
+            if (med.expired) continue
+
+            const expiryDate = med.expiryDate instanceof Date
+                ? med.expiryDate
+                : new Date(med.expiryDate)
+
+            if (expiryDate < now) {
+                expiredIds.push(med.medicationId)
+            }
+        }
+
+        if (expiredIds.length > 0) {
+            console.log(`Found ${expiredIds.length} expired medications, updating...`)
+            const updateExpired = httpsCallable($functions, 'updateExpiredStatus')
+            await updateExpired({ medicationIds: expiredIds })
+        }
+    }
+
     return {
         getMedications,
         createMedication,
         incrementPills,
         decrementPills,
         deletePills,
-        updateMedicationName
+        updateMedicationName,
+        checkAndUpdateExpiredMedications
     }
 })
