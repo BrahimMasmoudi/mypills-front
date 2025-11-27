@@ -268,7 +268,9 @@ const medication = ref<Medication>({
 const onConfirmClick = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
   try {
+    loading.value = true
     await createMedication(medication.value)
+    loading.value = false
     close('success')
   } catch (e) {
     close('error')
