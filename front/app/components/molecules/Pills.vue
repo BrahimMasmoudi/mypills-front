@@ -3,8 +3,8 @@
     <AtomsTitle :title="title"/>
     <v-row class="d-flex align-start justify-start my-3">
       <v-col
-          lg="3"
-          sm="6"
+          md="3"
+          cols="6"
           v-for="medication in meds"
           :key="medication.medicationId"
       >
@@ -17,8 +17,8 @@
             :update-medication-name="updateMedicationName"
         />
       </v-col>
-      <v-col cols="3" v-if="!showAll && rest">
-        <MoleculesShowMorePills :rest="rest" @click="showRest"/>
+      <v-col cols="6" md="3" v-if="!showAll && rest">
+        <MoleculesShowMorePills :style="{height: $device.isMobile ? '140px !important' : '190px'}" :rest="rest" @click="showRest"/>
       </v-col>
     </v-row>
   </v-sheet>
@@ -36,6 +36,7 @@ import {useI18n} from 'vue-i18n'
 import type {Medication} from '~/types/medication'
 
 const {t} = useI18n()
+const {$device} = useNuxtApp()
 
 const {isExpired, medications, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
   isExpired: boolean
@@ -49,7 +50,10 @@ const {isExpired, medications, incrementPills, decrementPills, deletePills, upda
 const title = computed(() => (isExpired ? t('meds.expired') : t('meds.valid')))
 const showAll = ref(false)
 
-const meds = computed(() => showAll.value ? medications : medications?.slice(0, 7))
+const meds = computed(() => {
+  const limit = $device.isDesktop ? 7 : 3
+  return showAll.value ? medications : medications?.slice(0, limit)
+})
 
 const rest = computed(() => (medications?.length ?? 0) - (meds.value?.length ?? 0))
 
