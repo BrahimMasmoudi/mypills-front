@@ -108,7 +108,7 @@
       <div class="quantity-badge">
         {{ medication.quantity }}
       </div>
-      <span class="mt-n2 single-line">
+      <span class="mt-n2 single-line text-truncate">
       {{ parseDate(medication.expiryDate) }}
       </span>
       <div v-if="showMobileMenu" class="d-flex align-center justify-center mt-2 w-100">
