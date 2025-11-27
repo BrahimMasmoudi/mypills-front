@@ -14,10 +14,12 @@
     "error": "Deletion failed. Try again."
   },
   "dialogCreate": {
-    "title": "You want to add a medication",
+    "title": "Add a medication",
     "choose-date-title": "Select a date",
     "cancel": "Cancel",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "medicationLabel": "Medication Name",
+    "quantity": "Quantity"
   },
   "meds": {
     "expired": "Expired meds",

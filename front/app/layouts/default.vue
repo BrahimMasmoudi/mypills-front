@@ -3,7 +3,7 @@
     <v-app-bar elevation="1">
       <template #title>
         <div class="d-flex align-center">
-          <v-app-bar-nav-icon class="mr-2" :icon="drawer ? 'mdi-close' : 'mdi-menu'" @click.stop="drawer = !drawer" />
+          <v-icon class="mr-2" :icon="drawer ? 'mdi-close' : 'mdi-menu'" @click.stop="drawer = !drawer" />
           <nuxt-icon name="pill-1" class="app-title-icon mr-2"/>
           <span class="app-title-text">{{ t('title') }}</span>
         </div>

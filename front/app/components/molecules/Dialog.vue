@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="isActive"
+  <v-dialog v-if="$device.isDesktop" v-model="isActive"
             :persistent="isPersistent"
             :scrim="scrim"
             @keydown.esc="cancelAndClose"
@@ -8,7 +8,7 @@
       <v-card class="border" style="padding: 48px 72px 24px 72px !important;" variant="flat">
 
         <v-card-title class="d-flex justify-center pt-0 pl-0 title">
-          {{ t('title') }}
+          {{ t('dialogCreate.title') }}
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -21,7 +21,7 @@
                 <AtomsDialogButton :loading="loading">
                   <template #default>
                       <span v-if="medication.expiryDate">
-                          {{ new Date(medication.expiryDate).toLocaleDateString($i18n.locale) }}
+                          {{ new Date(medication.expiryDate).toLocaleDateString(locale) }}
                       </span>
                     <span v-else>
                       {{ t('choose-date-title') }}
@@ -115,12 +115,129 @@
       </v-card>
     </suspense>
   </v-dialog>
+  
+  <v-dialog v-else v-model="isActive"
+            :persistent="isPersistent"
+            :scrim="scrim"
+            @keydown.esc="cancelAndClose">
+    <suspense>
+      <v-card class="border pa-8" variant="flat">
+
+        <v-card-title class="d-flex justify-center pt-0 pl-0 title-mobile">
+          {{ t('dialogCreate.title') }}
+        </v-card-title>
+        <v-card-text class="px-0">
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <AtomsDialogInput :label="t('dialogCreate.medicationLabel')" v-model="medication.name" type="string"/>
+              </v-col>
+
+              <v-col cols="12">
+                <AtomsDialogButton :loading="loading">
+                  <template #default>
+                      <span v-if="medication.expiryDate">
+                          {{ new Date(medication.expiryDate).toLocaleDateString(locale) }}
+                      </span>
+                    <span v-else>
+                      {{ t('choose-date-title') }}
+                    </span>
+                  </template>
+                  <template #append>
+                    <nuxt-icon class="small" filled name="calendar"/>
+                  </template>
+                  <template #menu>
+                    <AtomsDialogMenu v-model="dateMenuIsOpen">
+                      <template #menu-details>
+                        <v-date-picker v-model="medication.expiryDate"
+                                       elevation="1"
+                                       title=""
+                                       :min="new Date()"
+                                       @update:model-value="dateMenuIsOpen = false"
+                                       :header="t('choose-date-title')"
+                                       color="primary"
+                                       show-adjacent-months/>
+                      </template>
+                    </AtomsDialogMenu>
+                  </template>
+                </AtomsDialogButton>
+              </v-col>
+
+              <v-col cols="12">
+                <AtomsDialogInput :label="t('dialogCreate.quantity')" v-model="medication.quantity" type="number"/>
+              </v-col>
+
+              <v-col cols="12">
+                <AtomsDialogButton :loading="loading">
+                  <template #default>
+                    <span v-if="medication.image">
+                      <nuxt-icon filled class="selected-icon" :name="medication.image"/>
+                    </span>
+                    <span v-else>
+                      Select Image
+                    </span>
+                  </template>
+                  <template #append>
+                    <nuxt-icon class="small" filled name="picto"/>
+                  </template>
+                  <template #menu>
+                    <AtomsDialogMenu v-model="photoMenuIsOpen">
+                      <template #menu-details>
+                        <v-card class="bg-white">
+                          <v-container>
+                            <v-row>
+                              <v-col v-for="index in 14" :key="index" cols="3">
+                                <nuxt-icon
+                                    filled class="icon-mobile"
+                                    :name="`pill-${index+1}`"
+                                    @click="()=>setImage(`pill-${index+1}`)"/>
+                              </v-col>
+                            </v-row>
+                          </v-container>
+                        </v-card>
+                      </template>
+                    </AtomsDialogMenu>
+                  </template>
+                </AtomsDialogButton>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-btn class="mx-auto mb-4"
+                 height="45"
+                 style="font-weight: 700;border-radius: 4px;border: 1px solid #DDD;background: #FFF;"
+                 @click="cancelAndClose"
+                 variant="outlined"
+                 width="120">
+         <span class="confirm text-primary">
+             {{ t('cancel') }}
+         </span>
+          </v-btn>
+          <v-btn class="mx-auto mb-4"
+                 color="primary"
+                 height="45"
+                 style="font-weight: 700;"
+                 :loading="loading"
+                 variant="flat"
+                 @click="onConfirmClick"
+                 width="120">
+         <span class="confirm">
+             {{ t('confirm') }}
+         </span>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </suspense>
+  </v-dialog>
 </template>
 <script lang="ts" setup>
 import {useI18n} from "vue-i18n";
 import type {Medication} from "~/types/medication";
 
-const {t} = useI18n()
+const {t, locale} = useI18n()
+const {$device} = useNuxtApp()
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenuIsOpen = ref(false)
@@ -182,6 +299,17 @@ div:deep(.v-field__input) {
   line-height: normal !important;
 }
 
+.title-mobile {
+  color: #000 !important;
+  text-align: center !important;
+  font-feature-settings: 'clig' off, 'liga' off !important;
+  font-family: Roboto, sans-serif !important;
+  font-size: 1rem !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: normal !important;
+}
+
 .confirm {
   font-feature-settings: 'clig' off, 'liga' off !important;
   font-family: Roboto, sans-serif !important;
@@ -227,6 +355,15 @@ div:deep(.v-field__clearable) {
 .icon >>> svg {
   width: 48px !important;
   height: 48px !important;
+}
+
+.icon-mobile {
+  cursor: pointer;
+}
+
+.icon-mobile >>> svg {
+  width: 36px !important;
+  height: 36px !important;
 }
 
 .selected-icon >>> svg {

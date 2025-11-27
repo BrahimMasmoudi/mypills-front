@@ -14,10 +14,12 @@
     "error": "Échec lors de la suppression."
   },
   "dialogCreate": {
-    "title": "Vous voulez ajouter un médicament",
+    "title": "Ajouter un médicament",
+    "medicationLabel": "Nom du médicament",
     "choose-date-title": "Choisir une date",
     "cancel": "Annuler",
-    "confirm": "Valider"
+    "confirm": "Valider",
+    "quantity": "Quantité"
   },
   "meds": {
     "expired": "Medicaments expirés",
