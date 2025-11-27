@@ -41,12 +41,12 @@
         </template>
       </v-text-field>
 
-      <v-badge color="red"  offset-x="-160" offset-y="-95" style="min-height: 12px;">
+      <v-badge color="red" fixed offset-x="-160" offset-y="-95" style="min-height: 12px;">
         <template #badge>
           {{ medication.quantity }}
         </template>
       </v-badge>
-      <span class="mt-n2 single-line">
+      <span class="mt-n2 single-line text-truncate">
       {{ parseDate(medication.expiryDate) }}
       </span>
       <div class="align-self-center"
@@ -104,7 +104,7 @@
         </template>
       </v-text-field>
 
-      <v-badge color="red"  offset-x="-70" offset-y="-75" style="min-height: 12px;">
+      <v-badge color="red" fixed  offset-x="-70" offset-y="-75" style="min-height: 12px;">
         <template #badge>
           {{ medication.quantity }}
         </template>

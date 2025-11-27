@@ -8,8 +8,8 @@
   "success": "Le medicament est ajouté avec succès",
   "error": "Une erreur est survenue",
   "dialogDelete": {
-    "title": "Es-tu sûr de vouloir supprimer ce médicament ?",
-    "message": "Attention, la suppression du médicament est définitive et irréversible.",
+    "title": "Es-tu sûr de supprimer ce médicament ?",
+    "message": "Attention, la suppression du médicament est irréversible.",
     "success": "Le médicament est supprimé avec succès",
     "error": "Échec lors de la suppression."
   },
