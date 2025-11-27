@@ -39,6 +39,9 @@ export default defineNuxtConfig({
             enabled: true,
             sessionCookie: false
         },
+        analytics: {
+            enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || '')
+        },
         firestore: {
             enable: true,
         },
