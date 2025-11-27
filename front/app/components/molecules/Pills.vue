@@ -4,7 +4,7 @@
     <v-row class="d-flex align-start justify-start my-3">
       <v-col
           md="3"
-          cols="12"
+          cols="6"
           v-for="medication in meds"
           :key="medication.medicationId"
       >
@@ -17,8 +17,8 @@
             :update-medication-name="updateMedicationName"
         />
       </v-col>
-      <v-col cols="12" md="3" v-if="!showAll && rest">
-        <MoleculesShowMorePills :rest="rest" @click="showRest"/>
+      <v-col cols="6" md="3" v-if="!showAll && rest">
+        <MoleculesShowMorePills :class="$device.isMobile ? 'pa-10' : 'pa-13'" :rest="rest" @click="showRest"/>
       </v-col>
     </v-row>
   </v-sheet>

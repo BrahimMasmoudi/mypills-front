@@ -4,7 +4,7 @@
       <template #title>
         <div class="d-flex align-center">
           <v-app-bar-nav-icon class="mr-2" :icon="drawer ? 'mdi-close' : 'mdi-menu'" @click.stop="drawer = !drawer" />
-          <nuxt-icon name="pill-1" class="app-title-icon"/>
+          <nuxt-icon name="pill-1" class="app-title-icon mr-2"/>
           <span class="app-title-text">{{ t('title') }}</span>
         </div>
       </template>
@@ -43,7 +43,7 @@
         </v-avatar>
       </v-sheet>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer">
+    <v-navigation-drawer v-model="drawer" :permanent="$device.isDesktop">
       <v-list color="primary" class="pa-2 mt-2">
         <v-list-item :title="t('nav.all-medications')" to="/all" rounded="xl" class="mb-1">
           <template #prepend>
@@ -74,7 +74,7 @@ import {useUserStore} from "~/store/userStore";
 
 const userStore = useUserStore()
 const {t} = useI18n()
-const drawer = ref(true)
+const drawer = ref(false)
 
 const handleSignOut = async () => {
   await userStore.logOut()

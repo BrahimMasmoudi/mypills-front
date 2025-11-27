@@ -78,7 +78,7 @@
       <div v-if="!isEditing"
            class="d-flex align-center justify-center w-100 mt-n2 cursor-pointer"
            @click.stop="startEdit">
-        <span class="font-weight-bold text-h6">{{ medication.name }}</span>
+        <span class="font-weight-bold text-subtitle-2 text-truncate">{{ medication.name }}</span>
         <v-icon
             v-if="showMobileMenu"
             icon="mdi-pencil"
@@ -91,9 +91,7 @@
           v-else
           v-model="editedName"
           variant="plain"
-          hide-details
           class="medication-name-field w-100 mt-n2 text-center"
-          autofocus
           @blur="toggleEdit"
           @keydown.enter="toggleEdit">
         <template #append-inner>
@@ -106,7 +104,7 @@
         </template>
       </v-text-field>
 
-      <v-badge color="red"  offset-x="-160" offset-y="-85" style="min-height: 12px;">
+      <v-badge color="red"  offset-x="-70" offset-y="-75" style="min-height: 12px;">
         <template #badge>
           {{ medication.quantity }}
         </template>
@@ -114,12 +112,14 @@
       <span class="mt-n2 single-line">
       {{ parseDate(medication.expiryDate) }}
       </span>
-      <div v-if="showMobileMenu" class="align-self-center mt-2">
+      <div v-if="showMobileMenu" class="d-flex align-center justify-center mt-2 w-100">
         <v-btn
             v-for="(button, index) in buttons"
             :key="index"
             :disabled="button.disabled"
-            class="mb-2"
+            size="small"
+            density="compact"
+            class="mx-2"
             :class="{'show-btns': showMobileMenu }"
             :color="showMobileMenu ? '#FF000090' : 'transparent'"
             :icon="button.icon"
@@ -228,9 +228,6 @@ const buttons = computed(() => [
   color: red !important;
 }
 
-.medication-name-field :deep(.v-field__input) {
-  font-weight: 700;
-}
 
 /* NEW: Rule to center the text input */
 .medication-name-field.text-center :deep(.v-field__input) {
