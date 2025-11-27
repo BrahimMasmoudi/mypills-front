@@ -68,15 +68,19 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
     // Initialize Analytics if enabled
     const analyticsConfig = $config.public.firebase.analytics
     if (analyticsConfig?.enable) {
-        const { getAnalytics, setUserId } = await import('@firebase/analytics')
+        const { getAnalytics, setUserId, setUserProperties } = await import('@firebase/analytics')
         const { getCurrentUser } = await import('vuefire')
 
         const analyticsInstance = getAnalytics(firebaseApp)
 
-        // Set user ID for analytics tracking
+        // Set user ID and properties for analytics tracking
         const user = await getCurrentUser()
         if (user?.uid) {
             setUserId(analyticsInstance, user.uid)
+            setUserProperties(analyticsInstance, {
+                email: user.email,
+                displayName: user.displayName
+            })
         }
 
         provide('analytics', analyticsInstance)
