@@ -3,8 +3,8 @@
     <AtomsTitle :title="title"/>
     <v-row class="d-flex align-start justify-start my-3">
       <v-col
-          lg="3"
-          sm="6"
+          md="3"
+          cols="12"
           v-for="medication in meds"
           :key="medication.medicationId"
       >
@@ -17,7 +17,7 @@
             :update-medication-name="updateMedicationName"
         />
       </v-col>
-      <v-col cols="3" v-if="!showAll && rest">
+      <v-col cols="12" md="3" v-if="!showAll && rest">
         <MoleculesShowMorePills :rest="rest" @click="showRest"/>
       </v-col>
     </v-row>

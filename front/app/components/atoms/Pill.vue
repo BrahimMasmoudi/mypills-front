@@ -1,6 +1,7 @@
 <template>
   <v-hover v-slot="{ isHovering, props }">
     <v-card
+        v-if="$device.isDesktop"
         :color="isExpired ? '#FF000090' : ''"
         :class="{ 'on-hover': isHovering, 'hover-filter': isHovering }"
         :elevation="isHovering ? 12 : 2"
@@ -8,31 +9,44 @@
         class="d-flex flex-column align-center justify-center px-4 pt-7 pb-11"
         height="165px">
       <nuxt-icon filled :name="medication.image" class="mb-3"/>
-      
+
+      <div v-if="!isEditing"
+           class="d-flex align-center justify-center w-100 mt-n2 cursor-pointer"
+           @click="startEdit">
+        <span class="font-weight-bold text-h6">{{ medication.name }}</span>
+        <v-icon
+            v-if="isHovering"
+            icon="mdi-pencil"
+            size="small"
+            class="ml-2 edit-icon"
+        />
+      </div>
+
       <v-text-field
-      v-model="editedName"
-      :readonly="!isEditing"
-      variant="plain"
-      hide-details
-      class="medication-name-field w-100 mt-n2 text-center"
-      @click="!isEditing && startEdit()" >
+          v-else
+          v-model="editedName"
+          variant="plain"
+          hide-details
+          class="medication-name-field w-100 mt-n2 text-center"
+          autofocus
+          @blur="toggleEdit"
+          @keydown.enter="toggleEdit">
         <template #append-inner>
           <v-icon
-            v-if="isHovering"
-            :icon="isEditing ? 'mdi-check' : 'mdi-pencil'"
-            size="small"
-            @click.stop="toggleEdit"
-            class="edit-icon"
+              icon="mdi-check"
+              size="small"
+              @click.stop="toggleEdit"
+              class="edit-icon"
           />
         </template>
       </v-text-field>
 
-      <v-badge color="red" offset-x="-130" offset-y="-85" style="min-height: 12px;">
+      <v-badge color="red"  offset-x="-130" offset-y="-85" style="min-height: 12px;">
         <template #badge>
           {{ medication.quantity }}
         </template>
       </v-badge>
-      <span class="mt-n2">
+      <span class="mt-n2 single-line">
       {{ parseDate(medication.expiryDate) }}
       </span>
       <div class="align-self-center"
@@ -51,6 +65,70 @@
       </div>
     </v-card>
 
+    <v-card
+        v-else
+        :color="isExpired ? '#FF000090' : ''"
+        :class="{ 'on-hover': showMobileMenu, 'hover-filter': showMobileMenu }"
+        :elevation="showMobileMenu ? 12 : 2"
+        v-bind="props"
+        class="d-flex flex-column align-center justify-center px-4 py-4"
+        @click="showMobileMenu = !showMobileMenu">
+      <nuxt-icon filled :name="medication.image" class="mb-3"/>
+
+      <div v-if="!isEditing"
+           class="d-flex align-center justify-center w-100 mt-n2 cursor-pointer"
+           @click.stop="startEdit">
+        <span class="font-weight-bold text-h6">{{ medication.name }}</span>
+        <v-icon
+            v-if="showMobileMenu"
+            icon="mdi-pencil"
+            size="small"
+            class="ml-2 edit-icon"
+        />
+      </div>
+
+      <v-text-field
+          v-else
+          v-model="editedName"
+          variant="plain"
+          hide-details
+          class="medication-name-field w-100 mt-n2 text-center"
+          autofocus
+          @blur="toggleEdit"
+          @keydown.enter="toggleEdit">
+        <template #append-inner>
+          <v-icon
+              icon="mdi-check"
+              size="small"
+              @click.stop="toggleEdit"
+              class="edit-icon"
+          />
+        </template>
+      </v-text-field>
+
+      <v-badge color="red"  offset-x="-160" offset-y="-85" style="min-height: 12px;">
+        <template #badge>
+          {{ medication.quantity }}
+        </template>
+      </v-badge>
+      <span class="mt-n2 single-line">
+      {{ parseDate(medication.expiryDate) }}
+      </span>
+      <div v-if="showMobileMenu" class="align-self-center mt-2">
+        <v-btn
+            v-for="(button, index) in buttons"
+            :key="index"
+            :disabled="button.disabled"
+            class="mb-2"
+            :class="{'show-btns': showMobileMenu }"
+            :color="showMobileMenu ? '#FF000090' : 'transparent'"
+            :icon="button.icon"
+            @click.stop="button.onClick"
+            variant="text"
+        />
+      </div>
+    </v-card>
+
   </v-hover>
 </template>
 <script setup lang="ts">
@@ -59,7 +137,7 @@ import {parseDate} from "~/composables/parseDate";
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue";
 import {useI18n} from "vue-i18n";
 
-const {$open} = useNuxtApp()
+const {$open, $device} = useNuxtApp()
 const {t} = useI18n()
 const {medication, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
   medication: Medication
@@ -71,6 +149,7 @@ const {medication, incrementPills, decrementPills, deletePills, updateMedication
 }>()
 
 const isEditing = ref(false)
+const showMobileMenu = ref(false)
 const editedName = ref(medication.name)
 
 const startEdit = () => {
@@ -171,5 +250,14 @@ const buttons = computed(() => [
 .medication-name-field.editing :deep(.v-field) {
   background-color: rgba(54, 67, 186, 0.05);
   border-radius: 4px;
+}
+
+.single-line {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
