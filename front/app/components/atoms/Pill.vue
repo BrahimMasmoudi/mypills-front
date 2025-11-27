@@ -7,7 +7,7 @@
         :elevation="isHovering ? 12 : 2"
         v-bind="props"
         class="d-flex flex-column align-center justify-center px-4 pt-7 pb-11"
-        height="165px">
+        height="190px">
       <nuxt-icon filled :name="medication.image" class="mb-3"/>
 
       <div v-if="!isEditing"
@@ -41,7 +41,7 @@
         </template>
       </v-text-field>
 
-      <v-badge color="red"  offset-x="-130" offset-y="-85" style="min-height: 12px;">
+      <v-badge color="red"  offset-x="-160" offset-y="-95" style="min-height: 12px;">
         <template #badge>
           {{ medication.quantity }}
         </template>
