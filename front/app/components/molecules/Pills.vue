@@ -18,7 +18,7 @@
         />
       </v-col>
       <v-col cols="6" md="3" v-if="!showAll && rest">
-        <MoleculesShowMorePills :style="{height: $device.isMobile ? '140px !important' : '190px'}" :rest="rest" @click="showRest"/>
+        <MoleculesShowMorePills :style="{height: $device.isMobile ? '130px !important' : '190px'}" :rest="rest" @click="showRest"/>
       </v-col>
     </v-row>
   </v-sheet>
