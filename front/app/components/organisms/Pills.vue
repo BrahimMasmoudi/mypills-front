@@ -40,14 +40,17 @@
         @click="openDialog"
     />
 
-    <v-row v-if="!medications" class="pa-4">
-      <v-col v-for="i in 8"
-             :key="i"
-             cols="6"
-             sm="6" md="6" lg="3">
-        <AtomsLoadingMed/>
-      </v-col>
-    </v-row>
+
+    <v-sheet width="100%" v-if="!medications || medications.length === 0">
+       <v-row class="d-flex align-start justify-start my-3">
+        <v-col v-for="i in 8"
+               :key="i"
+               md="3"
+               cols="6">
+          <AtomsLoadingMed/>
+        </v-col>
+      </v-row>
+    </v-sheet>
   </v-sheet>
 </template>
 <script setup lang="ts">
