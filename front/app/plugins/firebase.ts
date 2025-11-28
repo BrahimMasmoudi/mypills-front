@@ -39,7 +39,7 @@ declare module '@vue/runtime-core' {
 }
 
 export default defineNuxtPlugin(async ({ provide, $config }) => {
-    const { functions: functionsConfig, firestore: firestoreConfig, analytics: analyticsConfig, appCheck: appCheckConfig } = $config.public.firebase
+    const { functions: functionsConfig, firestore: firestoreConfig, analytics: analyticsConfig } = $config.public.firebase
 
     const firebaseApp = useFirebaseApp()
     if (firestoreConfig.enable) {

@@ -42,7 +42,7 @@ export default defineNuxtConfig({
         appCheck: {
             enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
             provider: 'ReCaptchaV3',
-            key: process.env.FIREBASE_APP_CHECK_SITE_KEY ?? '',
+            siteKey: process.env.FIREBASE_APP_CHECK_SITE_KEY ?? '',
             isTokenAutoRefreshEnabled: true,
         },
         config: {
@@ -72,17 +72,6 @@ export default defineNuxtConfig({
                     enableEmulator: process.env.NODE_ENV !== 'production',
                     emulatorPort: 5001,
                     emulatorHost: '127.0.0.1',
-                },
-                auth: {
-                    enable: false,
-                },
-                appCheck: {
-                    debug: process.env.NODE_ENV !== 'production',
-                    enable: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
-                    siteKey: process.env.FIREBASE_APP_CHECK_SITE_KEY ?? '',
-                },
-                performance: {
-                    enable: false,
                 },
                 analytics: {
                     enable: ['production', 'staging'].includes(process.env.ENVIRONMENT!),
