@@ -2,11 +2,11 @@
 import type { Firestore } from '@firebase/firestore/lite'
 import type { Functions } from '@firebase/functions'
 import {
-    getAnalytics,
-    type Analytics,
+    getAnalytics, setUserId, setUserProperties, type Analytics,
 } from '@firebase/analytics'
 import { connectFunctionsEmulator, getFunctions } from "@firebase/functions";
-import { useFirebaseApp, useFirestore } from 'vuefire'
+import { useFirestore } from 'vuefire'
+import { type FirebaseOptions, initializeApp } from '@firebase/app'
 
 type RemoteConfig = {}
 
@@ -40,7 +40,11 @@ declare module '@vue/runtime-core' {
 export default defineNuxtPlugin(async ({ provide, $config }) => {
     const { functions: functionsConfig, firestore: firestoreConfig } = $config.public.firebase
 
-    const firebaseApp = useFirebaseApp()
+    const { data } = await useFetch<FirebaseOptions>('/__/firebase/init.json')
+    if (!data.value) {
+        return
+    }
+    const firebaseApp = initializeApp(data.value)
     if (firestoreConfig.enable) {
         const firestoreInstance = useFirestore()
         provide('firestore', firestoreInstance)
@@ -68,7 +72,6 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
     // Initialize Analytics if enabled
     const analyticsConfig = $config.public.firebase.analytics
     if (analyticsConfig?.enable) {
-        const { getAnalytics, setUserId, setUserProperties } = await import('@firebase/analytics')
         const { getCurrentUser } = await import('vuefire')
 
         const analyticsInstance = getAnalytics(firebaseApp)
