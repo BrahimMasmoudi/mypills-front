@@ -42,11 +42,9 @@
         </template>
       </v-text-field>
 
-      <v-badge color="red" fixed offset-x="-160" offset-y="-95" style="min-height: 12px;">
-        <template #badge>
-          {{ medication.quantity }}
-        </template>
-      </v-badge>
+      <div class="quantity-badge">
+        {{ medication.quantity }}
+      </div>
       <span class="mt-n2 single-line text-truncate">
       {{ parseDate(medication.expiryDate) }}
       </span>
@@ -107,12 +105,10 @@
         </template>
       </v-text-field>
 
-      <v-badge color="red" fixed  offset-x="-70" offset-y="-75" style="min-height: 12px;">
-        <template #badge>
-          {{ medication.quantity }}
-        </template>
-      </v-badge>
-      <span class="mt-n2 single-line">
+      <div class="quantity-badge">
+        {{ medication.quantity }}
+      </div>
+      <span class="mt-n2 single-line text-truncate">
       {{ parseDate(medication.expiryDate) }}
       </span>
       <div v-if="showMobileMenu" class="d-flex align-center justify-center mt-2 w-100">
@@ -258,5 +254,24 @@ const buttons = computed(() => [
 }
 .cursor-pointer {
   cursor: pointer;
+}
+
+.quantity-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #F44336;
+  color: white;
+  border-radius: 12px;
+  padding: 0 8px;
+  height: 24px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 5;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 </style>

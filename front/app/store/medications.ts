@@ -3,10 +3,10 @@ import { httpsCallable } from 'firebase/functions';
 import type { Medication } from "~/types/medication";
 import { collection, orderBy, query, where } from "firebase/firestore";
 import type { User } from "@firebase/auth";
+import { logEvent } from "@firebase/analytics";
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
-    const { $functions, $firestore } = useNuxtApp()
-
+    const { $functions, $firestore, $analytics } = useNuxtApp()
     const getMedications = (user: User) => {
         const q = query(collection($firestore, 'medications'), orderBy('expiryDate', 'desc'), where('email', '==', user?.email))
         return useCollection(q)
@@ -14,27 +14,66 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
 
     const createMedication = async (medication: Medication) => {
         const create = httpsCallable($functions, 'createMedication')
-        return await create({ medication })
+        const result = await create({ medication })
+
+
+        if ($analytics) {
+            logEvent($analytics, 'create_medication', {
+                medication_name: medication.name,
+                expiry_date: medication.expiryDate
+            })
+        }
+        return result
     }
 
     const incrementPills = async (medication: Medication) => {
         const increase = httpsCallable($functions, 'incrementPills')
-        return await increase({ medication })
+        const result = await increase({ medication })
+        if ($analytics) {
+            logEvent($analytics, 'increment_pills', {
+                medication_name: medication.name,
+                medication_id: medication.medicationId
+            })
+        }
+        return result
     }
     const decrementPills = async (medication: Medication) => {
         const increase = httpsCallable($functions, 'decrementPills')
-        return await increase({ medication })
+        const result = await increase({ medication })
+
+        if ($analytics) {
+            logEvent($analytics, 'decrement_pills', {
+                medication_name: medication.name,
+                medication_id: medication.medicationId
+            })
+        }
+        return result
     }
     const deletePills = async (medication: Medication) => {
         const increase = httpsCallable($functions, 'deletePills')
-        return await increase({ medication })
+        const result = await increase({ medication })
+
+        if ($analytics) {
+            logEvent($analytics, 'delete_medication', {
+                medication_name: medication.name,
+                medication_id: medication.medicationId
+            })
+        }
+        return result
     }
 
     const updateMedicationName = async (medication: Medication, newName: string) => {
-        console.log(medication)
-        console.log(newName)
         const update = httpsCallable($functions, 'updateMedicationName')
-        return await update({ medication, newName })
+        const result = await update({ medication, newName })
+
+        if ($analytics) {
+            logEvent($analytics, 'update_medication_name', {
+                old_name: medication.name,
+                new_name: newName,
+                medication_id: medication.medicationId
+            })
+        }
+        return result
     }
 
     const checkAndUpdateExpiredMedications = async (medications: Medication[]) => {
@@ -56,8 +95,8 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
 
         if (expiredIds.length > 0) {
             console.log(`Found ${expiredIds.length} expired medications, updating...`)
-            const updateExpired = httpsCallable($functions, 'updateExpiredStatus')
-            await updateExpired({ medicationIds: expiredIds })
+            const setExpiredStatus = httpsCallable($functions, 'setExpiredStatus')
+            await setExpiredStatus({ medicationIds: expiredIds })
         }
     }
 
