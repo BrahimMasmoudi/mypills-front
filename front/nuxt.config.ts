@@ -39,6 +39,9 @@ export default defineNuxtConfig({
             enabled: true,
             sessionCookie: false
         },
+        appCheck: {
+            enable: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
+        },
         analytics: {
             enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || '')
         },
@@ -77,7 +80,8 @@ export default defineNuxtConfig({
                     enable: false,
                 },
                 appCheck: {
-                    enable: false,
+                    enable: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
+                    siteKey: process.env.FIREBASE_APP_CHECK_SITE_KEY,
                 },
                 performance: {
                     enable: false,

@@ -7,6 +7,7 @@ import {
 } from '@firebase/analytics'
 import { connectFunctionsEmulator, getFunctions } from "@firebase/functions";
 import { useFirebaseApp, useFirestore } from 'vuefire'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 type RemoteConfig = {}
 
@@ -38,7 +39,7 @@ declare module '@vue/runtime-core' {
 }
 
 export default defineNuxtPlugin(async ({ provide, $config }) => {
-    const { functions: functionsConfig, firestore: firestoreConfig } = $config.public.firebase
+    const { functions: functionsConfig, firestore: firestoreConfig, analytics: analyticsConfig, appCheck: appCheckConfig } = $config.public.firebase
 
     const firebaseApp = useFirebaseApp()
     if (firestoreConfig.enable) {
@@ -66,7 +67,6 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
     }
 
     // Initialize Analytics if enabled
-    const analyticsConfig = $config.public.firebase.analytics
     if (analyticsConfig?.enable) {
         const { getAnalytics, setUserId, setUserProperties } = await import('@firebase/analytics')
         const { getCurrentUser } = await import('vuefire')
@@ -84,5 +84,12 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
         }
 
         provide('analytics', analyticsInstance)
+    }
+
+    if (appCheckConfig.enable) {
+        initializeAppCheck(firebaseApp, {
+            provider: new ReCaptchaV3Provider(appCheckConfig.siteKey),
+            isTokenAutoRefreshEnabled: true,
+        })
     }
 })
