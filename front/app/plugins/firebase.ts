@@ -85,11 +85,4 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
 
         provide('analytics', analyticsInstance)
     }
-
-    if (appCheckConfig.enable) {
-        initializeAppCheck(firebaseApp, {
-            provider: new ReCaptchaV3Provider(appCheckConfig.siteKey),
-            isTokenAutoRefreshEnabled: true,
-        })
-    }
 })

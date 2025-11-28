@@ -40,13 +40,10 @@ export default defineNuxtConfig({
             sessionCookie: false
         },
         appCheck: {
-            enable: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
-        },
-        analytics: {
-            enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || '')
-        },
-        firestore: {
-            enable: true,
+            enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
+            provider: 'ReCaptchaV3',
+            key: process.env.FIREBASE_APP_CHECK_SITE_KEY ?? '',
+            isTokenAutoRefreshEnabled: true,
         },
         config: {
             apiKey: process.env.FIREBASE_API_KEY,
@@ -80,8 +77,9 @@ export default defineNuxtConfig({
                     enable: false,
                 },
                 appCheck: {
+                    debug: process.env.NODE_ENV !== 'production',
                     enable: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
-                    siteKey: process.env.FIREBASE_APP_CHECK_SITE_KEY,
+                    siteKey: process.env.FIREBASE_APP_CHECK_SITE_KEY ?? '',
                 },
                 performance: {
                     enable: false,
