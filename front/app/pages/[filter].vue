@@ -1,21 +1,26 @@
 <template>
-  <TemplatesPills :filter="$route.params.filter as Filter"
-                  :medications="medications"
+    <TemplatesPills :filter="$route.params.filter as Filter"
+                  :medications="medications ?? []"
                   :decrement-pills="decrementPills"
                   :increment-pills="incrementPills"
                   :delete-pills="deletePills"
                   :create-medication="createMedication"
+                  :medication-loading="medicationLoading"
                   :update-medication-name="updateMedicationName"/>
 </template>
 <script setup lang="ts">
 
 import type {Filter} from "~/types/Filter";
+import {useI18n} from "vue-i18n";
 
 import {useMedicationsStore} from "~/store/medications";
 import type {Medication} from "~/types/medication";
 
+
 const medicationStore = useMedicationsStore()
+const {t} = useI18n()
 const user = await getCurrentUser()
+const medicationLoading = ref(true)
 const medications = medicationStore.getMedications(user)
 
 const createMedication = async (medication: Medication) => {
@@ -39,12 +44,13 @@ const updateMedicationName = async (medication: Medication, newName: string) => 
 // Check and update expired medications when data is loaded
 watch(medications, async (newMeds) => {
   if (newMeds && newMeds.length > 0) {
+      medicationLoading.value = false
     await medicationStore.checkAndUpdateExpiredMedications(newMeds as Medication[])
   }
-}, { immediate: true })
+
+  if(newMeds.length === 0) {
+    medicationLoading.value = false
+  }
+})
 
 </script>
-
-<style scoped>
-
-</style>

@@ -18,15 +18,9 @@
         />
       </v-col>
       <v-col cols="6" md="3" v-if="!showAll && rest">
-        <MoleculesShowMorePills :style="{height: $device.isMobile ? '140px !important' : '190px'}" :rest="rest" @click="showRest"/>
+        <MoleculesShowMorePills :style="{height: $device.isMobile ? '130px !important' : '190px'}" :rest="rest" @click="showRest"/>
       </v-col>
     </v-row>
-  </v-sheet>
-
-  <v-sheet width="100%" height="100%" v-else
-           class="d-flex flex-column align-center justify-center font-weight-bold">
-    <v-img :src="useAsset('/assets/img/no-result.png')" max-height="400" width="400"/>
-    {{ t('meds.no-result') }}
   </v-sheet>
 </template>
 

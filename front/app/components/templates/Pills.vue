@@ -5,6 +5,7 @@
                   :decrement-pills="decrementPills"
                   :increment-pills="incrementPills"
                   :delete-pills="deletePills"
+                  :medication-loading="medicationLoading"
                   :update-medication-name="updateMedicationName"
   />
 </template>
@@ -20,6 +21,7 @@ defineProps<{
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
+  medicationLoading: boolean
 }>()
 </script>
 

@@ -4,9 +4,11 @@ import type { Functions } from '@firebase/functions'
 import {
     getAnalytics,
     type Analytics,
+    setUserId, setUserProperties
 } from '@firebase/analytics'
 import { connectFunctionsEmulator, getFunctions } from "@firebase/functions";
 import { useFirebaseApp, useFirestore } from 'vuefire'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 type RemoteConfig = {}
 
@@ -38,7 +40,7 @@ declare module '@vue/runtime-core' {
 }
 
 export default defineNuxtPlugin(async ({ provide, $config }) => {
-    const { functions: functionsConfig, firestore: firestoreConfig } = $config.public.firebase
+    const { functions: functionsConfig, firestore: firestoreConfig, analytics: analyticsConfig } = $config.public.firebase
 
     const firebaseApp = useFirebaseApp()
     if (firestoreConfig.enable) {
@@ -48,7 +50,7 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
 
     if (functionsConfig.enable) {
         // functions usually need region
-        const functionsInstance = getFunctions(firebaseApp, functionsConfig.location || 'us-central1')
+        const functionsInstance = getFunctions(firebaseApp, 'europe-west3')
 
         if (functionsConfig.enableEmulator) {
             try {
@@ -66,9 +68,7 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
     }
 
     // Initialize Analytics if enabled
-    const analyticsConfig = $config.public.firebase.analytics
     if (analyticsConfig?.enable) {
-        const { getAnalytics, setUserId, setUserProperties } = await import('@firebase/analytics')
         const { getCurrentUser } = await import('vuefire')
 
         const analyticsInstance = getAnalytics(firebaseApp)

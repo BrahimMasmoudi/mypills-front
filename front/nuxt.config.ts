@@ -73,15 +73,6 @@ export default defineNuxtConfig({
                     emulatorPort: 5001,
                     emulatorHost: '127.0.0.1',
                 },
-                auth: {
-                    enable: false,
-                },
-                appCheck: {
-                    enable: false,
-                },
-                performance: {
-                    enable: false,
-                },
                 analytics: {
                     enable: ['production', 'staging'].includes(process.env.ENVIRONMENT!),
                 }

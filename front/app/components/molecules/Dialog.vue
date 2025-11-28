@@ -18,7 +18,7 @@
               </v-col>
 
               <v-col cols="12">
-                <AtomsDialogButton :loading="loading">
+                <AtomsDialogButton>
                   <template #default>
                       <span v-if="medication.expiryDate">
                           {{ new Date(medication.expiryDate).toLocaleDateString(locale) }}
@@ -52,7 +52,7 @@
               </v-col>
 
               <v-col cols="12">
-                <AtomsDialogButton :loading="loading">
+                <AtomsDialogButton >
                   <template #default>
                     <span v-if="medication.image">
                       <nuxt-icon filled class="selected-icon" :name="medication.image"/>
@@ -134,7 +134,7 @@
               </v-col>
 
               <v-col cols="12">
-                <AtomsDialogButton :loading="loading">
+                <AtomsDialogButton>
                   <template #default>
                       <span v-if="medication.expiryDate">
                           {{ new Date(medication.expiryDate).toLocaleDateString(locale) }}
@@ -168,7 +168,7 @@
               </v-col>
 
               <v-col cols="12">
-                <AtomsDialogButton :loading="loading">
+                <AtomsDialogButton>
                   <template #default>
                     <span v-if="medication.image">
                       <nuxt-icon filled class="selected-icon" :name="medication.image"/>
@@ -269,6 +269,7 @@ const onConfirmClick = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
   try {
     loading.value = true
+    medication.value.quantity = Number(medication.value.quantity)
     await createMedication(medication.value)
     loading.value = false
     close('success')
