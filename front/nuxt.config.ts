@@ -42,7 +42,7 @@ export default defineNuxtConfig({
         appCheck: {
             enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
             provider: 'ReCaptchaV3',
-            siteKey: process.env.FIREBASE_APP_CHECK_SITE_KEY ?? '',
+            key: process.env.FIREBASE_APP_CHECK_SITE_KEY ?? '',
             isTokenAutoRefreshEnabled: true,
         },
         config: {
