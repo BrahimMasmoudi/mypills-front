@@ -1,7 +1,7 @@
 <template>
   <v-sheet width="100%"
            class="d-flex flex-column align-start fill-height pa-4">
-    <v-btn v-if="$device.isDesktop" color="primary" position="absolute" location="right end" class="mr-5" @click="openDialog">
+    <v-btn v-if="$device.isDesktop" color="primary" position="absolute" location="right end" class="mr-5 mt-2" @click="openDialog">
       <template #prepend>
         <nuxt-icon name="add"/>
       </template>
@@ -9,6 +9,19 @@
         {{ t('add-pill') }}
       </span>
     </v-btn>
+    <div class="w-100">
+      <v-text-field
+          v-model="searchQuery"
+          :label="t('search')"
+          variant="outlined"
+          :width="$device.isMobile ? '100%' : '25%'"
+          hide-details
+      >
+        <template #append-inner>
+          <v-icon icon="mdi-magnify"/>
+        </template>
+      </v-text-field>
+    </div>
     <MoleculesPills
         v-if="medications && (filter === 'valid' || (filter === 'all' && (validMedication.length > 0 || expiredMedication.length === 0)))"
         :is-expired="false"
@@ -34,7 +47,7 @@
         v-if="$device.isMobile"
         color="primary"
         icon="mdi-plus"
-        size="large"
+        size="x-large"
         location="bottom end"
         app
         @click="openDialog"
@@ -68,6 +81,7 @@ import {getCurrentUser} from "vuefire";
 
 const {t} = useI18n()
 const {$open} = useNuxtApp()
+const searchQuery = ref('')
 
 const {medications, createMedication, incrementPills, decrementPills, deletePills, updateMedicationName, medicationLoading} = defineProps<{
   filter: Filter
@@ -80,8 +94,16 @@ const {medications, createMedication, incrementPills, decrementPills, deletePill
   medicationLoading: boolean
 }>()
 
-const validMedication = computed(() => medications?.filter((med: Medication) => !med.expired) ?? [])
-const expiredMedication = computed(() => medications?.filter((med: Medication) => med.expired) ?? [])
+const validMedication = computed(() => {
+  const filtered = medications?.filter((med: Medication) => !med.expired) ?? []
+  if (!searchQuery.value) return filtered
+  return filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+})
+const expiredMedication = computed(() => {
+  const filtered = medications?.filter((med: Medication) => med.expired) ?? []
+  if (!searchQuery.value) return filtered
+  return filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+})
 
 
 const openDialog = async () => {
