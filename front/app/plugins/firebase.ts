@@ -1,37 +1,88 @@
+
+import type { Firestore } from '@firebase/firestore/lite'
+import type { Functions } from '@firebase/functions'
+import {
+    getAnalytics,
+    type Analytics,
+    setUserId, setUserProperties
+} from '@firebase/analytics'
+import { connectFunctionsEmulator, getFunctions } from "@firebase/functions";
 import { useFirebaseApp, useFirestore } from 'vuefire'
-import { getFunctions, connectFunctionsEmulator } from '@firebase/functions'
-import { getAnalytics, setUserId, setUserProperties } from '@firebase/analytics'
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
+
+type RemoteConfig = {}
+
+declare module '#app' {
+    interface NuxtApp {
+        $firestore: Firestore
+        $functions: Functions
+        $remoteConfig: RemoteConfig
+        $analytics: Analytics
+    }
+}
+
+declare module 'vue' {
+    interface ComponentCustomProperties {
+        $firestore: Firestore
+        $remoteConfig: RemoteConfig
+        $functions: Functions
+        $analytics: Analytics
+    }
+}
+
+declare module '@vue/runtime-core' {
+    interface ComponentCustomProperties {
+        $firestore: Firestore
+        $remoteConfig: RemoteConfig
+        $functions: Functions
+        $analytics: Analytics
+    }
+}
 
 export default defineNuxtPlugin(async ({ provide, $config }) => {
-    const app = useFirebaseApp() // USE VueFire's already initialized app
+    const { functions: functionsConfig, firestore: firestoreConfig, analytics: analyticsConfig } = $config.public.firebase
 
-    // Firestore
-    const firestore = useFirestore()
-    provide('firestore', firestore)
-
-    // Functions
-    const functions = getFunctions(app, $config.public.firebase.functions.location || 'europe-west3')
-    if ($config.public.firebase.functions.enableEmulator) {
-        connectFunctionsEmulator(
-            functions,
-            $config.public.firebase.functions.emulatorHost || '127.0.0.1',
-            $config.public.firebase.functions.emulatorPort || 5001
-        )
+    const firebaseApp = useFirebaseApp()
+    if (firestoreConfig.enable) {
+        const firestoreInstance = useFirestore()
+        provide('firestore', firestoreInstance)
     }
-    provide('functions', functions)
 
-    // Analytics
-    if ($config.public.firebase.analytics.enable) {
-        const analytics = getAnalytics(app)
+    if (functionsConfig.enable) {
+        // functions usually need region
+        const functionsInstance = getFunctions(firebaseApp, 'europe-west3')
+
+        if (functionsConfig.enableEmulator) {
+            try {
+                connectFunctionsEmulator(
+                    functionsInstance,
+                    functionsConfig.emulatorHost || '127.0.0.1',
+                    functionsConfig.emulatorPort || 5001
+                )
+            } catch (e) {
+                // Ignore if already connected
+                console.warn('Failed to connect functions emulator (maybe already connected):', e)
+            }
+        }
+        provide('functions', functionsInstance)
+    }
+
+    // Initialize Analytics if enabled
+    if (analyticsConfig?.enable) {
         const { getCurrentUser } = await import('vuefire')
+
+        const analyticsInstance = getAnalytics(firebaseApp)
+
+        // Set user ID and properties for analytics tracking
         const user = await getCurrentUser()
         if (user?.uid) {
-            setUserId(analytics, user.uid)
-            setUserProperties(analytics, {
+            setUserId(analyticsInstance, user.uid)
+            setUserProperties(analyticsInstance, {
                 email: user.email,
                 displayName: user.displayName
             })
         }
-        provide('analytics', analytics)
+
+        provide('analytics', analyticsInstance)
     }
 })
