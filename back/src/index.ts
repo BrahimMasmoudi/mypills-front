@@ -34,7 +34,7 @@ export const updateMedicationName = onCall({ region: 'europe-west3' }, async ({ 
     return await database.doc(medication.medicationId).update({ 'name': newName })
 })
 
-export const setExpiredStatus = onCall({ region: 'europe-west3', enforceAppCheck: true }, async ({ data }) => {
+export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medicationIds = data.medicationIds as string[]
 
     if (!medicationIds || medicationIds.length === 0) {
