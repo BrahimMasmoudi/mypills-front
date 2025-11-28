@@ -50,7 +50,7 @@ const meds = computed(() => {
   // When only one category is showing, use larger limits
   const limit = hasBothCategories 
     ? ($device.isDesktop ? 7 : 3)
-    : ($device.isDesktop ? 11 : 8)
+    : ($device.isDesktop ? 11 : 7)
   return showAll.value ? medications : medications?.slice(0, limit)
 })
 
