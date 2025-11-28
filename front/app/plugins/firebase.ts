@@ -48,7 +48,7 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
 
     if (functionsConfig.enable) {
         // functions usually need region
-        const functionsInstance = getFunctions(firebaseApp, functionsConfig.location || 'us-central1')
+        const functionsInstance = getFunctions(firebaseApp, functionsConfig.location || 'europe-west3')
 
         if (functionsConfig.enableEmulator) {
             try {

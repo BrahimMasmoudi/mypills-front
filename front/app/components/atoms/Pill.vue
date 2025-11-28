@@ -78,7 +78,7 @@
       <div v-if="!isEditing"
            class="d-flex align-center justify-center w-100 mt-n2 cursor-pointer"
            @click.stop="startEdit">
-        <span class="font-weight-bold text-subtitle-2 text-truncate" >{{ medication.name }}</span>
+        <span class="font-weight-bold text-subtitle-1 text-truncate" >{{ medication.name }}</span>
         <v-icon
             v-if="showMobileMenu"
             icon="mdi-pencil"
@@ -108,7 +108,7 @@
       <div class="quantity-badge">
         {{ medication.quantity }}
       </div>
-      <span class="mt-n2 single-line text-truncate">
+      <span class="mt-n2 single-line text-truncate text-subtitle-2">
       {{ parseDate(medication.expiryDate) }}
       </span>
       <div v-if="showMobileMenu" class="d-flex align-center justify-center mt-2 w-100">
@@ -258,14 +258,13 @@ const buttons = computed(() => [
 
 .quantity-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 5px;
+  right: 5px;
   background-color: #F44336;
   color: white;
   border-radius: 12px;
-  padding: 0 8px;
-  height: 24px;
-  min-width: 24px;
+  height: 18px;
+  min-width: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
