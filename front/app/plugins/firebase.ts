@@ -7,8 +7,7 @@ import {
     setUserId, setUserProperties
 } from '@firebase/analytics'
 import { connectFunctionsEmulator, getFunctions } from "@firebase/functions";
-import { useFirebaseApp, useFirestore } from 'vuefire'
-import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
+import { useFirebaseApp, useFirestore, getCurrentUser } from 'vuefire'
 
 type RemoteConfig = {}
 
@@ -69,8 +68,6 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
 
     // Initialize Analytics if enabled
     if (analyticsConfig?.enable) {
-        const { getCurrentUser } = await import('vuefire')
-
         const analyticsInstance = getAnalytics(firebaseApp)
 
         // Set user ID and properties for analytics tracking
