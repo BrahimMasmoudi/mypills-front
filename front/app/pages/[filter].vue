@@ -1,6 +1,6 @@
 <template>
   <TemplatesPills :filter="$route.params.filter as Filter"
-                  :medications="medications"
+                  :medications="medications ?? []"
                   :decrement-pills="decrementPills"
                   :increment-pills="incrementPills"
                   :delete-pills="deletePills"

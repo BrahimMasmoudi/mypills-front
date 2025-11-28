@@ -41,7 +41,7 @@
     />
 
 
-    <v-sheet width="100%" v-if="!medications || medications.length === 0">
+    <v-sheet width="100%" v-if="!medications">
        <v-row class="d-flex align-start justify-start my-3">
         <v-col v-for="i in 8"
                :key="i"
