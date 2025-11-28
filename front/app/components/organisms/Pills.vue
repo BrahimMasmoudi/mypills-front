@@ -40,8 +40,7 @@
         @click="openDialog"
     />
 
-
-    <v-sheet width="100%" v-if="!medications">
+    <v-sheet width="100%" v-if="medicationLoading">
        <v-row class="d-flex align-start justify-start my-3">
         <v-col v-for="i in 8"
                :key="i"
@@ -51,6 +50,12 @@
         </v-col>
       </v-row>
     </v-sheet>
+
+    <v-sheet width="100%" height="100%" v-else-if="!medications || medications.length === 0"
+           class="d-flex flex-column align-center justify-center font-weight-bold">
+    <v-img :src="useAsset('/assets/img/no-result.svg')" max-height="400" width="400"/>
+    {{ t('meds.no-result') }}
+  </v-sheet>
   </v-sheet>
 </template>
 <script setup lang="ts">
@@ -64,7 +69,7 @@ import {getCurrentUser} from "vuefire";
 const {t} = useI18n()
 const {$open} = useNuxtApp()
 
-const {medications, createMedication, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
+const {medications, createMedication, incrementPills, decrementPills, deletePills, updateMedicationName, medicationLoading} = defineProps<{
   filter: Filter
   medications: Medication[] | undefined
   createMedication: (medication: Medication) => Promise<void>
@@ -72,6 +77,7 @@ const {medications, createMedication, incrementPills, decrementPills, deletePill
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
+  medicationLoading: boolean
 }>()
 
 const validMedication = computed(() => medications?.filter((med: Medication) => !med.expired) ?? [])

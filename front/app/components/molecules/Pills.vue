@@ -22,12 +22,6 @@
       </v-col>
     </v-row>
   </v-sheet>
-
-  <v-sheet width="100%" height="100%" v-else
-           class="d-flex flex-column align-center justify-center font-weight-bold">
-    <v-img :src="useAsset('/assets/img/no-result.svg')" max-height="400" width="400"/>
-    {{ t('meds.no-result') }}
-  </v-sheet>
 </template>
 
 <script setup lang="ts">

@@ -18,7 +18,7 @@
               </v-col>
 
               <v-col cols="12">
-                <AtomsDialogButton :loading="loading">
+                <AtomsDialogButton>
                   <template #default>
                       <span v-if="medication.expiryDate">
                           {{ new Date(medication.expiryDate).toLocaleDateString(locale) }}
@@ -52,7 +52,7 @@
               </v-col>
 
               <v-col cols="12">
-                <AtomsDialogButton :loading="loading">
+                <AtomsDialogButton >
                   <template #default>
                     <span v-if="medication.image">
                       <nuxt-icon filled class="selected-icon" :name="medication.image"/>
@@ -134,7 +134,7 @@
               </v-col>
 
               <v-col cols="12">
-                <AtomsDialogButton :loading="loading">
+                <AtomsDialogButton>
                   <template #default>
                       <span v-if="medication.expiryDate">
                           {{ new Date(medication.expiryDate).toLocaleDateString(locale) }}
@@ -168,7 +168,7 @@
               </v-col>
 
               <v-col cols="12">
-                <AtomsDialogButton :loading="loading">
+                <AtomsDialogButton>
                   <template #default>
                     <span v-if="medication.image">
                       <nuxt-icon filled class="selected-icon" :name="medication.image"/>
