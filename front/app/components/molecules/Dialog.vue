@@ -269,6 +269,7 @@ const onConfirmClick = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
   try {
     loading.value = true
+    medication.value.quantity = Number(medication.value.quantity)
     await createMedication(medication.value)
     loading.value = false
     close('success')
