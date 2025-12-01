@@ -42,7 +42,7 @@
         </template>
       </v-text-field>
 
-      <div class="quantity-badge">
+      <div class="quantity-badge" :class="isExpired ? 'bg-red' : 'bg-primary'">
         {{ medication.quantity }}
       </div>
       <span class="mt-n2 single-line text-truncate">
@@ -105,7 +105,7 @@
         </template>
       </v-text-field>
 
-      <div class="quantity-badge">
+      <div class="quantity-badge" :class="isExpired ? 'bg-red' : 'bg-primary'">
         {{ medication.quantity }}
       </div>
       <span class="mt-n2 single-line text-truncate text-subtitle-2">
@@ -260,7 +260,6 @@ const buttons = computed(() => [
   position: absolute;
   top: 5px;
   right: 5px;
-  background-color: #F44336;
   color: white;
   border-radius: 12px;
   height: 18px;
