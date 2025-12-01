@@ -40,5 +40,15 @@
   },
   "login": {
     "google": "Login with Google"
+  },
+  "landing": {
+    "title": "MyPills",
+    "subtitle": "Manage your medications simply and effectively",
+    "features": {
+      "expiry": "Track Expiry Dates",
+      "inventory": "Inventory Management",
+      "access": "Easy Access Anywhere"
+    },
+    "cta": "Start Managing Now"
   }
 }
