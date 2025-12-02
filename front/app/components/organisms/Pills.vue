@@ -116,7 +116,7 @@ const openDialog = async () => {
     userUid: user?.uid,
     email: user?.email
   })
-  openToast(toastType, t(toastType))
+  if(toastType !== 'canceled') openToast(toastType, t(toastType))
 }
 </script>
 <style scoped>
