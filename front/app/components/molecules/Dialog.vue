@@ -257,7 +257,7 @@ const dateMenuIsOpen = ref(false)
 const photoMenuIsOpen = ref(false)
 
 const {close, createMedication,userUid, email} = defineProps<{
-  close: (value : any) => void
+  close: (value : ToastType) => void
   isPersistent: boolean
   scrim: boolean
   createMedication: (medication: Medication) => Promise<void>
@@ -318,7 +318,7 @@ const setImage = (image: string) => {
   medication.value.image = image
 }
 
-const cancelAndClose = () => close({toastType: 'cancel'})
+const cancelAndClose = () => close('canceled')
 </script>
 <style scoped>
 div:deep(.v-field__input) {
