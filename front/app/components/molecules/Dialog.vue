@@ -21,10 +21,10 @@
                 <AtomsDialogButton>
                   <template #default>
                       <span v-if="medication.expiryDate">
-                          {{ new Date(medication.expiryDate).toLocaleDateString(locale) }}
+                          {{ formatDate(medication.expiryDate) }}
                       </span>
                     <span v-else>
-                      {{ t('choose-date-title') }}
+                      {{ t('dialogCreate.choose-date-title') }}
                     </span>
                   </template>
                   <template #append>
@@ -33,14 +33,17 @@
                   <template #menu>
                     <AtomsDialogMenu v-model="dateMenuIsOpen">
                       <template #menu-details>
-                        <v-date-picker v-model="medication.expiryDate"
-                                       elevation="1"
-                                       title=""
-                                       :min="new Date()"
-                                       @update:model-value="dateMenuIsOpen = false"
-                                       :header="t('choose-date-title')"
-                                       color="primary"
-                                       show-adjacent-months/>
+                        <v-date-picker  :view-mode="viewMode"
+                                          elevation="1"
+                                          title=""
+                                          :min="new Date()"
+                                          @update:model-value="dateMenuIsOpen = false"
+                                          :header="t('dialogCreate.choose-date-title')"
+                                          color="primary"
+                                          @update:year="updateYear"
+                                          @update:view-mode="updateViewMode"
+                                          @update:month="updateMonth"
+                                        />
                       </template>
                     </AtomsDialogMenu>
                   </template>
@@ -137,10 +140,10 @@
                 <AtomsDialogButton>
                   <template #default>
                       <span v-if="medication.expiryDate">
-                          {{ new Date(medication.expiryDate).toLocaleDateString(locale) }}
+                          {{ formatDate(medication.expiryDate) }}
                       </span>
                     <span v-else>
-                      {{ t('choose-date-title') }}
+                      {{ t('dialogCreate.choose-date-title') }}
                     </span>
                   </template>
                   <template #append>
@@ -149,14 +152,18 @@
                   <template #menu>
                     <AtomsDialogMenu v-model="dateMenuIsOpen">
                       <template #menu-details>
-                        <v-date-picker v-model="medication.expiryDate"
-                                       elevation="1"
-                                       title=""
-                                       :min="new Date()"
-                                       @update:model-value="dateMenuIsOpen = false"
-                                       :header="t('choose-date-title')"
-                                       color="primary"
-                                       show-adjacent-months/>
+                  
+                      <v-date-picker  :view-mode="viewMode"
+                                      elevation="1"
+                                      title=""
+                                      :min="new Date()"
+                                      @update:model-value="dateMenuIsOpen = false"
+                                      :header="t('dialogCreate.choose-date-title')"
+                                      color="primary"
+                                      @update:year="updateYear"
+                                      @update:view-mode="updateViewMode"
+                                      @update:month="updateMonth"
+                                        />
                       </template>
                     </AtomsDialogMenu>
                   </template>
@@ -235,9 +242,15 @@
 <script lang="ts" setup>
 import {useI18n} from "vue-i18n";
 import type {Medication} from "~/types/medication";
+import { format } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 
 const {t, locale} = useI18n()
 const {$device} = useNuxtApp()
+
+const locales: Record<string, any> = { en: enUS, fr: fr };
+
+
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenuIsOpen = ref(false)
@@ -263,6 +276,28 @@ const medication = ref<Medication>({
   email
 })
 
+ const viewMode = ref<"month" | "months" | "year">('year')
+  const selectedYear = ref()
+  const selectedMonth = ref()
+
+  const updateViewMode = (mode : 'year' | 'months') => {
+    viewMode.value = mode === 'year' ? 'year' : 'months'
+  }
+
+  const updateYear = (year : number) => {
+    selectedYear.value = year
+  }
+
+  const updateMonth = (month : number) => {
+    selectedMonth.value = month
+    dateMenuIsOpen.value = false
+    medication.value.expiryDate = new Date(selectedYear.value, selectedMonth.value)
+  }
+
+  const formatDate = (date: Date | string) => {
+  if (!date) return '';
+  return format(new Date(date), 'MMMM yyyy', { locale: locales[locale.value] || enUS });
+}
 
 
 const onConfirmClick = async () => {
