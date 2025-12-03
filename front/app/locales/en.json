@@ -22,6 +22,7 @@
     "medicationLabel": "Medication Name",
     "quantity": "Quantity"
   },
+  "qty": "Qty",
   "meds": {
     "expired": "Expired meds",
     "valid": "Valid meds",

@@ -22,6 +22,7 @@
     "confirm": "Valider",
     "quantity": "Quantité"
   },
+  "qty": "Qté",
   "meds": {
     "expired": "Medicaments expirés",
     "valid": "Medicaments valides",
