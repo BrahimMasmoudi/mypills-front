@@ -1,7 +1,7 @@
 <template>
   <v-sheet width="100%" v-if="medications?.length ?? 0 > 0">
-    <AtomsTitle :title="title"/>
-    <v-row class="d-flex align-start justify-start my-3">
+    <AtomsTitle :title="title" class="my-4"/>
+    <v-row class="d-flex align-stretch justify-start">
       <v-col
           md="3"
           cols="6"
@@ -18,7 +18,7 @@
         />
       </v-col>
       <v-col cols="6" md="3" v-if="!showAll && rest">
-        <MoleculesShowMorePills :style="{height: $device.isMobile ? '130px !important' : '190px'}" :rest="rest" @click="showRest"/>
+        <MoleculesShowMorePills :rest="rest" @click="showRest"/>
       </v-col>
     </v-row>
   </v-sheet>

@@ -8,40 +8,71 @@
           <span class="app-title-text">{{ t('title') }}</span>
         </div>
       </template>
-      <v-sheet v-if="userStore.user"
-               class="mr-4 d-flex flex-column justify-center align-center condensed"
-               style="cursor: pointer">
-        <v-avatar size="36" color="primary" class="font-weight-bold">
-          {{ userStore.user!.displayName[0].toUpperCase() }}
-          <v-menu activator="parent" location="bottom">
-            <v-card min-width="250" class="rounded-lg">
-              <v-list>
-                <v-list-item
-                    :title="userStore.user.displayName"
-                    :subtitle="userStore.user.email"
-                >
-                  <template #prepend>
-                    <v-avatar color="primary" size="40">
-                      <span class="text-h6 text-white">{{ userStore.user.displayName[0].toUpperCase() }}</span>
-                    </v-avatar>
-                  </template>
-                </v-list-item>
-              </v-list>
+      <div v-if="userStore.user" class="mr-2">
+        <v-menu location="bottom end" transition="slide-y-transition" :offset="8">
+          <template v-slot:activator="{ props }">
+            <v-btn
+                v-bind="props"
+                variant="text"
+                rounded="xl"
+                class="text-none px-2"
+                height="48"
+            >
+              <v-avatar size="32" color="primary" class="mr-2">
+                <v-icon icon="mdi-account" color="white" size="small" />
+              </v-avatar>
+              
+              <div v-if="$device.isDesktop" class="d-flex flex-column align-start mr-2">
+                <span class="text-subtitle-2 font-weight-bold line-height-1 text-capitalize">
+                  {{ userStore.user.displayName }}
+                </span>
+              </div>
 
-              <v-divider></v-divider>
+              <v-icon
+                  v-if="$device.isDesktop"
+                  icon="mdi-chevron-down"
+                  size="small"
+                  color="medium-emphasis"
+              />
+            </v-btn>
+          </template>
 
-              <v-list density="compact" nav class="d-flex align-center justify-center">
-          
-               <v-list-item :title="t('user-menu.disconnect')" value="disconnect" rounded="xl" @click="handleSignOut" color="error">
-                  <template #prepend>
-                    <nuxt-icon name="undo" class="mr-2"/>
-                  </template>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-menu>
-        </v-avatar>
-      </v-sheet>
+          <v-card min-width="280" rounded="lg" elevation="4" class="mt-2">
+            <div class="pa-4 d-flex align-center bg-grey-lighten-5">
+              <v-avatar size="48" color="primary" class="mr-3">
+                <v-icon icon="mdi-account" color="white" />
+              </v-avatar>
+              <div class="d-flex flex-column overflow-hidden">
+                <span class="text-subtitle-1 font-weight-bold text-truncate text-capitalize">
+                  {{ userStore.user.displayName }}
+                </span>
+                <span class="text-caption text-medium-emphasis text-truncate">
+                  {{ userStore.user.email }}
+                </span>
+              </div>
+            </div>
+
+            <v-divider />
+
+            <v-list density="comfortable" nav class="pa-2">
+              <v-list-item
+                  value="disconnect"
+                  rounded="lg"
+                  @click="handleSignOut"
+                  color="error"
+                  class="mb-0"
+              >
+                <template #prepend>
+                  <v-icon icon="mdi-logout" color="error" class="mr-2" size="small" />
+                </template>
+                <v-list-item-title class="text-error">
+                  {{ t('user-menu.disconnect') }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-menu>
+      </div>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" :permanent="$device.isDesktop">
       <v-list color="primary" class="pa-2 mt-2">
@@ -74,6 +105,7 @@ import {useUserStore} from "~/store/userStore";
 
 const userStore = useUserStore()
 const {t} = useI18n()
+const { $device } = useNuxtApp()
 const drawer = ref(false)
 
 const handleSignOut = async () => {
@@ -99,5 +131,9 @@ const handleSignOut = async () => {
 .app-title-icon :deep(svg) {
   width: 28px !important;
   height: 28px !important;
+}
+
+.line-height-1 {
+  line-height: 1;
 }
 </style>

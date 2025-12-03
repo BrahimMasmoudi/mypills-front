@@ -5,94 +5,90 @@
             @keydown.esc="cancelAndClose"
             width="600">
     <suspense>
-      <v-card class="border" style="padding: 48px 72px 24px 72px !important;" variant="flat">
+      <v-card class="border pa-5" variant="flat">
 
         <v-card-title class="d-flex justify-center pt-0 pl-0 title">
           {{ t('dialogCreate.title') }}
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="py-0">
           <v-container>
-            <v-row>
-              <v-col cols="12">
-                <AtomsDialogInput label="Medication Name" v-model="medication.name" type="string"/>
-              </v-col>
+              <!-- Medication Name -->
+          <div class="mb-5">
+            <v-text-field
+                v-model="medication.name"
+                :label="t('dialogCreate.medicationLabel')"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                bg-color="grey-lighten-5"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-pill"
+                class="font-weight-medium"
+            />
+          </div>
 
-              <v-col cols="12">
-                <AtomsDialogButton>
-                  <template #default>
-                      <span v-if="medication.expiryDate">
-                          {{ formatDate(medication.expiryDate) }}
-                      </span>
-                    <span v-else>
-                      {{ t('dialogCreate.choose-date-title') }}
-                    </span>
-                  </template>
-                  <template #append>
-                    <nuxt-icon class="small" filled name="calendar"/>
-                  </template>
-                  <template #menu>
-                    <AtomsDialogMenu v-model="dateMenuIsOpen">
-                      <template #menu-details>
-                        <v-date-picker  :view-mode="viewMode"
-                                          elevation="1"
-                                          title=""
+          <!-- Expiry Date -->
+          <div class="mb-5">
+            <v-menu
+                v-model="dateMenuIsOpen"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                min-width="auto"
+                location="center"
+            >
+              <template v-slot:activator="{ props }">
+                <v-text-field
+                    v-bind="props"
+                    :model-value="formatDate(medication.expiryDate)"
+                    :label="t('dialogCreate.choose-date-title')"
+                    variant="outlined"
+                    density="comfortable"
+                    color="primary"
+                    bg-color="grey-lighten-5"
+                    hide-details="auto"
+                    rounded="lg"
+                    prepend-inner-icon="mdi-calendar"
+                    readonly
+                    class="font-weight-medium cursor-pointer"
+                />
+              </template>
+                      <v-date-picker  :view-mode="viewMode"
+                                          elevation="4"
                                           :min="new Date()"
                                           @update:model-value="dateMenuIsOpen = false"
-                                          :header="t('dialogCreate.choose-date-title')"
-                                          color="primary"
+                                          hide-header
+                                          rounded="lg"
+                                          style="color: rgb(var(--v-theme-primary)) !important;"
                                           @update:year="updateYear"
                                           @update:view-mode="updateViewMode"
                                           @update:month="updateMonth"
                                         />
-                      </template>
-                    </AtomsDialogMenu>
-                  </template>
-                </AtomsDialogButton>
-              </v-col>
+            </v-menu>
+          </div>
 
-              <v-col cols="12">
-                <AtomsDialogInput label="Quantity" v-model="medication.quantity" type="number"/>
-              </v-col>
-
-              <v-col cols="12">
-                <AtomsDialogButton >
-                  <template #default>
-                    <span v-if="medication.image">
-                      <nuxt-icon filled class="selected-icon" :name="medication.image"/>
-                    </span>
-                    <span v-else>
-                      Select Image
-                    </span>
-                  </template>
-                  <template #append>
-                    <nuxt-icon class="small" filled name="picto"/>
-                  </template>
-                  <template #menu>
-                    <AtomsDialogMenu v-model="photoMenuIsOpen">
-                      <template #menu-details>
-                        <v-card class="bg-white" style="max-width: 300px;">
-                          <v-container>
-                            <v-row>
-                              <v-col v-for="index in 14" :key="index" cols="3">
-                                <nuxt-icon
-                                    filled class="icon"
-                                    :name="`pill-${index+1}`"
-                                    @click="()=>setImage(`pill-${index+1}`)"/>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card>
-                      </template>
-                    </AtomsDialogMenu>
-                  </template>
-                </AtomsDialogButton>
-              </v-col>
-            </v-row>
+          <!-- Quantity -->
+          <div>
+            <v-text-field
+                v-model.number="medication.quantity"
+                :label="t('dialogCreate.quantity')"
+                type="number"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                bg-color="grey-lighten-5"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-counter"
+                min="1"
+                class="font-weight-medium"
+            />
+          </div>
           </v-container>
         </v-card-text>
 
         <v-card-actions>
-          <v-btn class="mx-auto mb-8"
+          <v-btn class="mx-auto"
                  height="45"
                  style="font-weight: 700;border-radius: 4px;border: 1px solid #DDD;background: #FFF;"
                  @click="cancelAndClose"
@@ -102,7 +98,7 @@
              {{ t('cancel') }}
          </span>
           </v-btn>
-          <v-btn class="mx-auto mb-8"
+          <v-btn class="mx-auto"
                  color="primary"
                  height="45"
                  style="font-weight: 700;"
@@ -129,90 +125,83 @@
         <v-card-title class="d-flex justify-center pt-0 pl-0 title-mobile">
           {{ t('dialogCreate.title') }}
         </v-card-title>
-        <v-card-text class="px-0">
+        <v-card-text class="pa-0">
           <v-container>
-            <v-row>
-              <v-col cols="12">
-                <AtomsDialogInput :label="t('dialogCreate.medicationLabel')" v-model="medication.name" type="string"/>
-              </v-col>
+            <div class="mb-5">
+            <v-text-field
+                v-model="medication.name"
+                :label="t('dialogCreate.medicationLabel')"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                bg-color="grey-lighten-5"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-pill"
+                class="font-weight-medium"
+            />
+          </div>
 
-              <v-col cols="12">
-                <AtomsDialogButton>
-                  <template #default>
-                      <span v-if="medication.expiryDate">
-                          {{ formatDate(medication.expiryDate) }}
-                      </span>
-                    <span v-else>
-                      {{ t('dialogCreate.choose-date-title') }}
-                    </span>
-                  </template>
-                  <template #append>
-                    <nuxt-icon class="small" filled name="calendar"/>
-                  </template>
-                  <template #menu>
-                    <AtomsDialogMenu v-model="dateMenuIsOpen">
-                      <template #menu-details>
-                  
+          <!-- Expiry Date -->
+          <div class="mb-5">
+            <v-menu
+                v-model="dateMenuIsOpen"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                min-width="auto"
+                location="center"
+            >
+              <template v-slot:activator="{ props }">
+                <v-text-field
+                    v-bind="props"
+                    :model-value="formatDate(medication.expiryDate)"
+                    :label="t('dialogCreate.choose-date-title')"
+                    variant="outlined"
+                    density="comfortable"
+                    color="primary"
+                    bg-color="grey-lighten-5"
+                    hide-details="auto"
+                    rounded="lg"
+                    prepend-inner-icon="mdi-calendar"
+                    readonly
+                    class="font-weight-medium cursor-pointer"
+                />
+              </template>
                       <v-date-picker  :view-mode="viewMode"
-                                      elevation="1"
-                                      title=""
-                                      :min="new Date()"
-                                      @update:model-value="dateMenuIsOpen = false"
-                                      :header="t('dialogCreate.choose-date-title')"
-                                      color="primary"
-                                      @update:year="updateYear"
-                                      @update:view-mode="updateViewMode"
-                                      @update:month="updateMonth"
+                                          elevation="4"
+                                          :min="new Date()"
+                                          @update:model-value="dateMenuIsOpen = false"
+                                          hide-header
+                                          rounded="lg"
+                                          style="color: rgb(var(--v-theme-primary)) !important;"
+                                          @update:year="updateYear"
+                                          @update:view-mode="updateViewMode"
+                                          @update:month="updateMonth"
                                         />
-                      </template>
-                    </AtomsDialogMenu>
-                  </template>
-                </AtomsDialogButton>
-              </v-col>
+            </v-menu>
+          </div>
 
-              <v-col cols="12">
-                <AtomsDialogInput :label="t('dialogCreate.quantity')" v-model="medication.quantity" type="number"/>
-              </v-col>
+          <!-- Quantity -->
 
-              <v-col cols="12">
-                <AtomsDialogButton>
-                  <template #default>
-                    <span v-if="medication.image">
-                      <nuxt-icon filled class="selected-icon" :name="medication.image"/>
-                    </span>
-                    <span v-else>
-                      Select Image
-                    </span>
-                  </template>
-                  <template #append>
-                    <nuxt-icon class="small" filled name="picto"/>
-                  </template>
-                  <template #menu>
-                    <AtomsDialogMenu v-model="photoMenuIsOpen">
-                      <template #menu-details>
-                        <v-card class="bg-white">
-                          <v-container>
-                            <v-row>
-                              <v-col v-for="index in 14" :key="index" cols="3">
-                                <nuxt-icon
-                                    filled class="icon-mobile"
-                                    :name="`pill-${index+1}`"
-                                    @click="()=>setImage(`pill-${index+1}`)"/>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card>
-                      </template>
-                    </AtomsDialogMenu>
-                  </template>
-                </AtomsDialogButton>
-              </v-col>
-            </v-row>
+            <v-text-field
+                v-model.number="medication.quantity"
+                :label="t('dialogCreate.quantity')"
+                type="number"
+                variant="outlined"
+                density="comfortable"
+                color="primary"
+                bg-color="grey-lighten-5"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-counter"
+                min="1"
+                class="font-weight-medium"
+            />
           </v-container>
         </v-card-text>
 
         <v-card-actions>
-          <v-btn class="mx-auto mb-4"
+          <v-btn class="mx-auto"
                  height="45"
                  style="font-weight: 700;border-radius: 4px;border: 1px solid #DDD;background: #FFF;"
                  @click="cancelAndClose"
@@ -222,7 +211,7 @@
              {{ t('cancel') }}
          </span>
           </v-btn>
-          <v-btn class="mx-auto mb-4"
+          <v-btn class="mx-auto"
                  color="primary"
                  height="45"
                  style="font-weight: 700;"
@@ -254,7 +243,6 @@ const locales: Record<string, any> = { en: enUS, fr: fr };
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenuIsOpen = ref(false)
-const photoMenuIsOpen = ref(false)
 
 const {close, createMedication,userUid, email} = defineProps<{
   close: (value : ToastType) => void
@@ -302,6 +290,10 @@ const medication = ref<Medication>({
 
 const onConfirmClick = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
+  // Assign random pill icon from pill-1 to pill-30
+  const randomIconNumber = Math.floor(Math.random() * 30) + 1
+  medication.value.image = `pill-${randomIconNumber}`
+  
   try {
     loading.value = true
     medication.value.quantity = Number(medication.value.quantity)
@@ -311,11 +303,6 @@ const onConfirmClick = async () => {
   } catch (e) {
     close('error')
   }
-}
-
-const setImage = (image: string) => {
-  photoMenuIsOpen.value = false
-  medication.value.image = image
 }
 
 const cancelAndClose = () => close('canceled')
