@@ -87,7 +87,7 @@
       <v-chip
           :color="isExpired ? 'error' : 'success'"
           :variant="isExpired ? 'flat' : 'tonal'"
-          size="x-small"
+          :size="$device.isMobile ? 'x-small' : 'small'"
           class="mb-2 font-weight-medium"
       >
         <v-icon start icon="mdi-calendar-clock" size="x-small" />

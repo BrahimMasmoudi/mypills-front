@@ -1,7 +1,7 @@
 <template>
   <v-sheet width="100%" v-if="medications?.length ?? 0 > 0">
-    <AtomsTitle :title="title"/>
-    <v-row class="d-flex align-stretch justify-start my-3">
+    <AtomsTitle :title="title" class="my-4"/>
+    <v-row class="d-flex align-stretch justify-start">
       <v-col
           md="3"
           cols="6"
