@@ -9,6 +9,8 @@
           variant="solo"
           density="comfortable"
           hide-details
+          single-line
+          clearable
           rounded="pill"
           class="search-field-centered"
           style="max-width: 500px;"
@@ -39,7 +41,9 @@
           variant="solo"
           density="comfortable"
           hide-details
+          single-line
           rounded="pill"
+          clearable
           class="search-field-mobile"
       >
         <template #prepend-inner>
