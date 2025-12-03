@@ -19,6 +19,7 @@
     "medicationLabel": "Nom du médicament",
     "cancel": "Annuler",
     "confirm": "Valider",
+    "choose-date-title": "Choisir une date",
     "quantity": "Quantité"
   },
   "qty": "Qté",
