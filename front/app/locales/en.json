@@ -16,7 +16,6 @@
   },
   "dialogCreate": {
     "title": "Add a medication",
-    "choose-date-title": "Select a date",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "medicationLabel": "Medication Name",

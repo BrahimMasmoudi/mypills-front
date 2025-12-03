@@ -17,7 +17,6 @@
   "dialogCreate": {
     "title": "Ajouter un médicament",
     "medicationLabel": "Nom du médicament",
-    "choose-date-title": "Choisir une date",
     "cancel": "Annuler",
     "confirm": "Valider",
     "quantity": "Quantité"

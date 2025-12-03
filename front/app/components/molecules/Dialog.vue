@@ -68,7 +68,7 @@
           </div>
 
           <!-- Quantity -->
-          <div class="mb-5">
+          <div>
             <v-text-field
                 v-model.number="medication.quantity"
                 :label="t('dialogCreate.quantity')"
@@ -84,42 +84,6 @@
                 class="font-weight-medium"
             />
           </div>
-
-            <v-row>
-              <v-col cols="12">
-                <AtomsDialogButton class="bg-grey-lighten-5">
-                  <template #default>
-                    <span v-if="medication.image">
-                      <nuxt-icon filled class="selected-icon" :name="medication.image"/>
-                    </span>
-                    <span v-else>
-                      Select Image
-                    </span>
-                  </template>
-                  <template #append>
-                    <nuxt-icon class="small" filled name="picto"/>
-                  </template>
-                  <template #menu>
-                    <AtomsDialogMenu v-model="photoMenuIsOpen" location="bottom center">
-                      <template #menu-details>
-                        <v-card class="bg-white" style="max-width: 300px;">
-                          <v-container>
-                            <v-row>
-                              <v-col v-for="index in 30" :key="index" cols="3">
-                                <nuxt-icon
-                                    filled class="icon"
-                                    :name="`pill-${index+1}`"
-                                    @click="()=>setImage(`pill-${index+1}`)"/>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card>
-                      </template>
-                    </AtomsDialogMenu>
-                  </template>
-                </AtomsDialogButton>
-              </v-col>
-            </v-row>
           </v-container>
         </v-card-text>
 
@@ -218,7 +182,7 @@
           </div>
 
           <!-- Quantity -->
-          <div class="mb-5">
+
             <v-text-field
                 v-model.number="medication.quantity"
                 :label="t('dialogCreate.quantity')"
@@ -233,42 +197,6 @@
                 min="1"
                 class="font-weight-medium"
             />
-          </div>
-            <v-row>
-              <v-col cols="12">
-                <AtomsDialogButton>
-                  <template #default>
-                    <span v-if="medication.image">
-                      <nuxt-icon filled class="selected-icon" :name="medication.image"/>
-                    </span>
-                    <span v-else>
-                      Select Image
-                    </span>
-                  </template>
-                  <template #append>
-                    <nuxt-icon class="small" filled name="picto"/>
-                  </template>
-                  <template #menu>
-                    <AtomsDialogMenu v-model="photoMenuIsOpen">
-                      <template #menu-details>
-                        <v-card class="bg-white">
-                          <v-container>
-                            <v-row>
-                              <v-col v-for="index in 30" :key="index" cols="3">
-                                <nuxt-icon
-                                    filled class="icon-mobile"
-                                    :name="`pill-${index+1}`"
-                                    @click="()=>setImage(`pill-${index+1}`)"/>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card>
-                      </template>
-                    </AtomsDialogMenu>
-                  </template>
-                </AtomsDialogButton>
-              </v-col>
-            </v-row>
           </v-container>
         </v-card-text>
 
@@ -315,7 +243,6 @@ const locales: Record<string, any> = { en: enUS, fr: fr };
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenuIsOpen = ref(false)
-const photoMenuIsOpen = ref(false)
 
 const {close, createMedication,userUid, email} = defineProps<{
   close: (value : ToastType) => void
@@ -363,6 +290,10 @@ const medication = ref<Medication>({
 
 const onConfirmClick = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
+  // Assign random pill icon from pill-1 to pill-30
+  const randomIconNumber = Math.floor(Math.random() * 30) + 1
+  medication.value.image = `pill-${randomIconNumber}`
+  
   try {
     loading.value = true
     medication.value.quantity = Number(medication.value.quantity)
@@ -372,11 +303,6 @@ const onConfirmClick = async () => {
   } catch (e) {
     close('error')
   }
-}
-
-const setImage = (image: string) => {
-  photoMenuIsOpen.value = false
-  medication.value.image = image
 }
 
 const cancelAndClose = () => close('canceled')
