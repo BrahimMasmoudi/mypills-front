@@ -1,24 +1,49 @@
 <template>
   <v-sheet width="100%"
            class="d-flex flex-column align-start fill-height pa-4">
-    <v-btn v-if="$device.isDesktop" color="primary" position="absolute" location="right end" class="mr-5 mt-2" @click="openDialog">
-      <template #prepend>
-        <nuxt-icon name="add"/>
-      </template>
-      <span class="create-title">
-        {{ t('add-pill') }}
-      </span>
-    </v-btn>
-    <div class="w-100">
+    <!-- Desktop Header -->
+    <div v-if="$device.isDesktop" class="w-100 mb-8 d-flex justify-center align-center position-relative">
       <v-text-field
           v-model="searchQuery"
           :label="t('search')"
-          variant="outlined"
-          :width="$device.isMobile ? '100%' : '25%'"
+          variant="solo"
+          density="comfortable"
           hide-details
+          rounded="pill"
+          class="search-field-centered"
+          style="max-width: 500px;"
       >
-        <template #append-inner>
-          <v-icon icon="mdi-magnify"/>
+        <template #prepend-inner>
+          <v-icon icon="mdi-magnify" color="primary"/>
+        </template>
+      </v-text-field>
+      
+      <v-btn
+          color="primary"
+          size="x-large"
+          variant="elevated"
+          rounded="pill"
+          class="add-pill-btn-floating ml-4"
+          @click="openDialog"
+      >
+        <v-icon icon="mdi-plus" class="mr-2"/>
+        {{ t('add-pill') }}
+      </v-btn>
+    </div>
+
+    <!-- Mobile Header -->
+    <div v-else class="w-100 mb-4">
+      <v-text-field
+          v-model="searchQuery"
+          :label="t('search')"
+          variant="solo"
+          density="comfortable"
+          hide-details
+          rounded="pill"
+          class="search-field-mobile"
+      >
+        <template #prepend-inner>
+          <v-icon icon="mdi-magnify" color="primary"/>
         </template>
       </v-text-field>
     </div>
@@ -120,19 +145,36 @@ const openDialog = async () => {
 }
 </script>
 <style scoped>
-.create-title {
-  font-feature-settings: 'clig' off, 'liga' off;
-  font-family: Roboto, sans-serif;
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: 0.27px;
+.search-field-centered {
+  transition: all 0.3s ease;
 }
 
-v-btn :deep(svg) {
-  width: 18px !important;
-  height: 18px !important;
-  margin-top: 2px;
+.search-field-centered:deep(.v-field) {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.search-field-centered:deep(.v-field:hover) {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
+}
+
+.search-field-mobile {
+  transition: all 0.3s ease;
+}
+
+.search-field-mobile:deep(.v-field) {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.add-pill-btn-floating {
+  transition: all 0.3s ease;
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.add-pill-btn-floating:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.35) !important;
 }
 </style>
