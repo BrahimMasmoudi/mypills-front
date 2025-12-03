@@ -24,9 +24,9 @@
   },
   "qty": "Qté",
   "meds": {
-    "expired": "Medicaments expirés",
-    "valid": "Medicaments valides",
-    "no-result": "Pas de medicaments trouvés"
+    "expired": "Médicaments expirés",
+    "valid": "Médicaments valides",
+    "no-result": "Pas de médicaments trouvés"
   },
   "home": {
     "title": "Bienvenu à MY PILLS"
