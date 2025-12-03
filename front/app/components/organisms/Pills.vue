@@ -2,7 +2,7 @@
   <v-sheet width="100%"
            class="d-flex flex-column align-start fill-height pa-4">
     <!-- Desktop Header -->
-    <div v-if="$device.isDesktop" class="w-100 mb-8 d-flex justify-center align-center position-relative">
+    <div v-if="$device.isDesktop" class="w-100 d-flex justify-center align-center position-relative">
       <v-text-field
           v-model="searchQuery"
           :label="t('search')"
@@ -34,7 +34,7 @@
     </div>
 
     <!-- Mobile Header -->
-    <div v-else class="w-100 mb-4">
+    <div v-else class="w-100">
       <v-text-field
           v-model="searchQuery"
           :label="t('search')"
