@@ -42,6 +42,7 @@
     "google": "se connecter avec google"
   },
   "landing": {
+    "welcome": "Bienvenue à MyPills",
     "title": "MyPills",
     "subtitle": "Gérez vos médicaments simplement et efficacement",
     "features": {

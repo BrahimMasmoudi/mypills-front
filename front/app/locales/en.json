@@ -42,6 +42,7 @@
     "google": "Login with Google"
   },
   "landing": {
+    "welcome": "Welcome to MyPills",
     "title": "MyPills",
     "subtitle": "Manage your medications simply and effectively",
     "features": {
