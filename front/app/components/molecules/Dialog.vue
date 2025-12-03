@@ -10,7 +10,7 @@
         <v-card-title class="d-flex justify-center pt-0 pl-0 title">
           {{ t('dialogCreate.title') }}
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="py-0">
           <v-container>
               <!-- Medication Name -->
           <div class="mb-5">
@@ -35,12 +35,12 @@
                 :close-on-content-click="false"
                 transition="scale-transition"
                 min-width="auto"
-                location="bottom center"
+                location="center"
             >
               <template v-slot:activator="{ props }">
                 <v-text-field
                     v-bind="props"
-                    :model-value="formattedExpiryDate"
+                    :model-value="formatDate(medication.expiryDate)"
                     :label="t('dialogCreate.choose-date-title')"
                     variant="outlined"
                     density="comfortable"
@@ -54,12 +54,12 @@
                 />
               </template>
                       <v-date-picker  :view-mode="viewMode"
-                                          elevation="1"
-                                          title=""
+                                          elevation="4"
                                           :min="new Date()"
                                           @update:model-value="dateMenuIsOpen = false"
-                                          :header="t('dialogCreate.choose-date-title')"
-                                          color="primary"
+                                          hide-header
+                                          rounded="lg"
+                                          style="color: rgb(var(--v-theme-primary)) !important;"
                                           @update:year="updateYear"
                                           @update:view-mode="updateViewMode"
                                           @update:month="updateMonth"
@@ -105,7 +105,7 @@
                         <v-card class="bg-white" style="max-width: 300px;">
                           <v-container>
                             <v-row>
-                              <v-col v-for="index in 14" :key="index" cols="3">
+                              <v-col v-for="index in 30" :key="index" cols="3">
                                 <nuxt-icon
                                     filled class="icon"
                                     :name="`pill-${index+1}`"
@@ -161,7 +161,7 @@
         <v-card-title class="d-flex justify-center pt-0 pl-0 title-mobile">
           {{ t('dialogCreate.title') }}
         </v-card-title>
-        <v-card-text class="px-0">
+        <v-card-text class="pa-0">
           <v-container>
             <div class="mb-5">
             <v-text-field
@@ -185,7 +185,7 @@
                 :close-on-content-click="false"
                 transition="scale-transition"
                 min-width="auto"
-                location="bottom center"
+                location="center"
             >
               <template v-slot:activator="{ props }">
                 <v-text-field
@@ -204,12 +204,12 @@
                 />
               </template>
                       <v-date-picker  :view-mode="viewMode"
-                                          elevation="1"
-                                          title=""
+                                          elevation="4"
                                           :min="new Date()"
                                           @update:model-value="dateMenuIsOpen = false"
-                                          :header="t('dialogCreate.choose-date-title')"
-                                          color="primary"
+                                          hide-header
+                                          rounded="lg"
+                                          style="color: rgb(var(--v-theme-primary)) !important;"
                                           @update:year="updateYear"
                                           @update:view-mode="updateViewMode"
                                           @update:month="updateMonth"
@@ -254,7 +254,7 @@
                         <v-card class="bg-white">
                           <v-container>
                             <v-row>
-                              <v-col v-for="index in 14" :key="index" cols="3">
+                              <v-col v-for="index in 30" :key="index" cols="3">
                                 <nuxt-icon
                                     filled class="icon-mobile"
                                     :name="`pill-${index+1}`"
