@@ -8,13 +8,12 @@
       @click="handleCardClick"
   >
     <!-- Delete Button (Top Right) -->
-    <div class="position-absolute top-0 right-0 mr-2 ma-1 z-index-1">
+    <div class="position-absolute top-0 right-0 ma-1 z-index-1">
       <v-btn
-          icon="mdi-delete"
+          icon="mdi-delete-outline"
           variant="text"
-          color="white"
-          size="x-small"
-          class="bg-red"
+          color="error"
+          size="small"
           density="comfortable"
           @click.stop="confirmDelete"
       />
@@ -38,7 +37,7 @@
         <div
             v-if="!isEditing"
             class="d-flex align-center justify-center cursor-pointer name-display py-1 px-2 rounded w-100"
-            @click.stop="startEdit"
+            @click="handleNameClick"
         >
           <span
               class="font-weight-bold text-center"
@@ -50,10 +49,11 @@
             {{ medication.name }}
           </span>
           <v-icon
-              v-if="!$device.isMobile"
+              v-if="!$device.isMobile || showFooterMobile"
               icon="mdi-pencil"
               size="14"
               class="ml-2 text-medium-emphasis opacity-0 hover-opacity-1 flex-shrink-0"
+              :class="{'opacity-100': showFooterMobile}"
           />
         </div>
 
@@ -158,6 +158,14 @@ const handleCardClick = () => {
   }
 }
 
+const handleNameClick = (e: Event) => {
+  if ($device.isMobile && !showFooterMobile.value) {
+    return // Let it bubble to handleCardClick to open footer
+  }
+  e.stopPropagation()
+  startEdit()
+}
+
 const startEdit = () => {
   editedName.value = props.medication.name
   isEditing.value = true
@@ -256,5 +264,9 @@ const confirmDelete = async () => {
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.2;
+}
+
+.opacity-100 {
+  opacity: 1 !important;
 }
 </style>

@@ -10,7 +10,7 @@
       <v-card-title class="d-flex justify-start pt-0 pl-0 pb-4 mb-2 title mx-auto">
         {{ title }}
       </v-card-title>
-      <v-card variant="flat" class="mb-8 pa-2 text-red d-flex text-subtitle-2" style="background-color: #D7032124">
+      <v-card variant="flat" class="mb-8 pa-1 mx-1 text-red d-flex text-subtitle-2  d-flex align-center justify-center" style="background-color: #D7032124">
         <template #prepend>
           <suspense>
             <nuxt-icon class="small" name="error-warning"/>
