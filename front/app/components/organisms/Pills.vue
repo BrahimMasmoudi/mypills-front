@@ -1,56 +1,17 @@
 <template>
   <v-sheet width="100%"
            class="d-flex flex-column align-start fill-height pa-4">
-    <!-- Desktop Header -->
-    <div v-if="$device.isDesktop" class="w-100 d-flex justify-center align-center position-relative">
-      <v-text-field
-          v-model="searchQuery"
-          :label="t('search')"
-          variant="solo"
-          density="comfortable"
-          hide-details
-          single-line
-          clearable
-          rounded="pill"
-          class="search-field-centered"
-          style="max-width: 500px;"
-      >
-        <template #prepend-inner>
-          <v-icon icon="mdi-magnify" color="primary"/>
-        </template>
-      </v-text-field>
-      
-      <v-btn
-          color="primary"
-          size="x-large"
-          variant="elevated"
-          rounded="pill"
-          class="add-pill-btn-floating ml-4"
-          @click="openDialog"
-      >
-        <v-icon icon="mdi-plus" class="mr-2"/>
-        {{ t('add-pill') }}
-      </v-btn>
-    </div>
-
-    <!-- Mobile Header -->
-    <div v-else class="w-100">
-      <v-text-field
-          v-model="searchQuery"
-          :label="t('search')"
-          variant="solo"
-          density="comfortable"
-          hide-details
-          single-line
-          rounded="pill"
-          clearable
-          class="search-field-mobile"
-      >
-        <template #prepend-inner>
-          <v-icon icon="mdi-magnify" color="primary"/>
-        </template>
-      </v-text-field>
-    </div>
+    <!-- Search and Sort Controls -->
+    <MoleculesMedicationSearchSort
+        v-model:search-query="searchQuery"
+        v-model:sort-by="sortBy"
+        :sort-order="sortOrder"
+        :sort-options="sortOptions"
+        :is-mobile="$device.isMobile"
+        @toggle-sort-order="toggleSortOrder"
+        @create="openDialog"
+    />
+    
     <MoleculesPills
         v-if="medications && (filter === 'valid' || (filter === 'all' && (validMedication.length > 0 || expiredMedication.length === 0)))"
         :is-expired="false"
@@ -95,7 +56,7 @@
 
     <v-sheet width="100%" height="100%" v-else-if="!medications || medications.length === 0"
            class="d-flex flex-column align-center justify-center font-weight-bold">
-    <v-img :src="useAsset('/assets/img/no-result.svg')" max-height="400" width="400"/>
+    <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
     {{ t('meds.no-result') }}
   </v-sheet>
   </v-sheet>
@@ -109,8 +70,60 @@ import {openToast, type ToastType} from "~/composables/openToast";
 import {getCurrentUser} from "vuefire";
 
 const {t} = useI18n()
-const {$open} = useNuxtApp()
+const {$open, $device} = useNuxtApp()
 const searchQuery = ref('')
+const sortBy = ref<'name' | 'expiryDate' | 'quantity' | null>(null)
+const sortOrder = ref<'asc' | 'desc'>('asc')
+const sortOptions = [
+  { value: 'name' as const, label: 'sort.name', icon: 'mdi-alphabetical' },
+  { value: 'expiryDate' as const, label: 'sort.expiryDate', icon: 'mdi-calendar-clock' },
+  { value: 'quantity' as const, label: 'sort.quantity', icon: 'mdi-counter' }
+]
+
+const toggleSortOrder = () => {
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+}
+
+const sortMedications = (meds: Medication[]) => {
+  if (!sortBy.value) return meds
+  
+  const sorted = [...meds].sort((a, b) => {
+    let comparison = 0
+    
+    switch (sortBy.value) {
+      case 'name':
+        comparison = a.name.localeCompare(b.name)
+        break
+      case 'expiryDate':
+        // Handle Firestore Timestamp objects, Date objects, and date strings
+        const getDateValue = (dateValue: any): number => {
+          // Check if it's a Firestore Timestamp (has toDate method)
+          if (dateValue && typeof dateValue.toDate === 'function') {
+            return dateValue.toDate().getTime()
+          }
+          // Check if it's already a Date object
+          if (dateValue instanceof Date) {
+            return dateValue.getTime()
+          }
+          // Otherwise treat as string and convert
+          return new Date(dateValue).getTime()
+        }
+        
+        const timeA = getDateValue(a.expiryDate)
+        const timeB = getDateValue(b.expiryDate)
+        
+        comparison = timeA - timeB
+        break
+      case 'quantity':
+        comparison = a.quantity - b.quantity
+        break
+    }
+    
+    return sortOrder.value === 'asc' ? comparison : -comparison
+  })
+  
+  return sorted
+}
 
 const {medications, createMedication, incrementPills, decrementPills, deletePills, updateMedicationName, medicationLoading} = defineProps<{
   filter: Filter
@@ -125,13 +138,18 @@ const {medications, createMedication, incrementPills, decrementPills, deletePill
 
 const validMedication = computed(() => {
   const filtered = medications?.filter((med: Medication) => !med.expired) ?? []
-  if (!searchQuery.value) return filtered
-  return filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  const searched = !searchQuery.value 
+    ? filtered 
+    : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  return sortMedications(searched)
 })
+
 const expiredMedication = computed(() => {
   const filtered = medications?.filter((med: Medication) => med.expired) ?? []
-  if (!searchQuery.value) return filtered
-  return filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  const searched = !searchQuery.value 
+    ? filtered 
+    : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  return sortMedications(searched)
 })
 
 
@@ -180,5 +198,17 @@ const openDialog = async () => {
 .add-pill-btn-floating:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.35) !important;
+}
+
+.sort-btn {
+  transition: all 0.3s ease;
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.sort-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--v-theme-primary), 0.25) !important;
 }
 </style>
