@@ -1,170 +1,17 @@
 <template>
   <v-sheet width="100%"
            class="d-flex flex-column align-start fill-height pa-4">
-    <!-- Desktop Header -->
-    <div v-if="$device.isDesktop" class="w-100 d-flex justify-center align-center position-relative mb-4">
-      <v-text-field
-          v-model="searchQuery"
-          :label="t('search')"
-          variant="solo"
-          density="comfortable"
-          hide-details
-          single-line
-          clearable
-          rounded="pill"
-          class="search-field-centered"
-          style="max-width: 500px;"
-      >
-        <template #prepend-inner>
-          <v-icon icon="mdi-magnify" color="primary"/>
-        </template>
-      </v-text-field>
-      
-      <v-menu offset-y>
-        <template v-slot:activator="{ props }">
-          <v-btn
-              v-bind="props"
-              color="primary"
-              :variant="sortBy ? 'elevated' : 'outlined'"
-              size="large"
-              rounded="pill"
-              class="sort-btn ml-3"
-          >
-            <v-icon :icon="sortBy ? getSortIcon() : 'mdi-sort'" class="mr-2"/>
-            <span v-if="sortBy">{{ t(getSortLabel()) }}</span>
-            <span v-else>{{ t('sort.label') }}</span>
-            <v-icon 
-              :icon="sortOrder === 'asc' ? 'mdi-arrow-up' : 'mdi-arrow-down'" 
-              v-if="sortBy"
-              size="small"
-              class="ml-2"
-            />
-          </v-btn>
-        </template>
-        <v-list density="compact">
-          <v-list-item
-              v-for="option in sortOptions"
-              :key="option.value"
-              @click="sortBy = option.value"
-              :active="sortBy === option.value"
-          >
-            <v-list-item-title>
-              <v-icon :icon="option.icon" size="small" class="mr-2"/>
-              {{ t(option.label) }}
-            </v-list-item-title>
-          </v-list-item>
-          <v-divider v-if="sortBy"/>
-          <v-list-item v-if="sortBy" @click="sortBy = null">
-            <v-list-item-title class="text-error">
-              <v-icon icon="mdi-close" size="small" class="mr-2"/>
-              {{ t('sort.clear') }}
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-      
-      <v-btn
-          v-if="sortBy"
-          icon
-          variant="text"
-          size="small"
-          class="ml-2"
-          @click="toggleSortOrder"
-          :title="sortOrder === 'asc' ? t('sort.ascending') : t('sort.descending')"
-      >
-        <v-icon :icon="sortOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending'"/>
-      </v-btn>
-      
-      <v-btn
-          color="primary"
-          size="x-large"
-          variant="elevated"
-          rounded="pill"
-          class="add-pill-btn-floating ml-4"
-          @click="openDialog"
-      >
-        <v-icon icon="mdi-plus" class="mr-2"/>
-        {{ t('add-pill') }}
-      </v-btn>
-    </div>
-
-    <!-- Mobile Header -->
-    <div v-else class="w-100 mb-3">
-      <div class="d-flex align-center mb-2">
-        <v-text-field
-            v-model="searchQuery"
-            :label="t('search')"
-            variant="solo"
-            density="comfortable"
-            hide-details
-            single-line
-            rounded="pill"
-            clearable
-            class="search-field-mobile flex-grow-1"
-        >
-          <template #prepend-inner>
-            <v-icon icon="mdi-magnify" color="primary"/>
-          </template>
-        </v-text-field>
-        
-        <v-btn
-            icon="mdi-sort"
-            color="primary"
-            class="ml-2"
-            @click="sortSheet = true"
-        >
-          <v-icon v-if="sortBy" :icon="getSortIcon()"/>
-          <v-icon v-else icon="mdi-sort"/>
-        </v-btn>
-        
-        <v-btn
-            v-if="sortBy"
-            icon
-            variant="outlined"
-            class="ml-2"
-            color="primary"
-            @click="toggleSortOrder"
-            :title="sortOrder === 'asc' ? t('sort.ascending') : t('sort.descending')"
-        >
-          <v-icon :icon="sortOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending'"/>
-        </v-btn>
-      </div>
-      
-      <v-bottom-sheet v-model="sortSheet">
-        <v-card>
-          <v-card-title class="text-center">{{ t('sort.label') }}</v-card-title>
-          <v-list>
-            <v-list-item
-                v-for="option in sortOptions"
-                :key="option.value"
-                @click="sortBy = option.value; sortSheet = false"
-                :active="sortBy === option.value"
-            >
-              <template #prepend>
-                <v-icon :icon="option.icon" class="mr-3"/>
-              </template>
-              <v-list-item-title>{{ t(option.label) }}</v-list-item-title>
-            </v-list-item>
-            <v-divider v-if="sortBy"/>
-            <v-list-item v-if="sortBy" @click="sortBy = null; sortSheet = false">
-              <template #prepend>
-                <v-icon icon="mdi-close" class="mr-3"/>
-              </template>
-              <v-list-item-title class="text-error">{{ t('sort.clear') }}</v-list-item-title>
-            </v-list-item>
-            <v-divider/>
-            <v-list-item @click="toggleSortOrder">
-              <template #prepend>
-                <v-icon :icon="sortOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending'" class="mr-3"/>
-              </template>
-              <v-list-item-title>
-                {{ sortOrder === 'asc' ? t('sort.ascending') : t('sort.descending') }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-bottom-sheet>
-    </div>
+    <!-- Search and Sort Controls -->
+    <MoleculesMedicationSearchSort
+        v-model:search-query="searchQuery"
+        v-model:sort-by="sortBy"
+        :sort-order="sortOrder"
+        :sort-options="sortOptions"
+        :is-mobile="$device.isMobile"
+        @toggle-sort-order="toggleSortOrder"
+        @create="openDialog"
+    />
+    
     <MoleculesPills
         v-if="medications && (filter === 'valid' || (filter === 'all' && (validMedication.length > 0 || expiredMedication.length === 0)))"
         :is-expired="false"
@@ -227,8 +74,6 @@ const {$open, $device} = useNuxtApp()
 const searchQuery = ref('')
 const sortBy = ref<'name' | 'expiryDate' | 'quantity' | null>(null)
 const sortOrder = ref<'asc' | 'desc'>('asc')
-const sortSheet = ref(false)
-
 const sortOptions = [
   { value: 'name' as const, label: 'sort.name', icon: 'mdi-alphabetical' },
   { value: 'expiryDate' as const, label: 'sort.expiryDate', icon: 'mdi-calendar-clock' },
@@ -237,16 +82,6 @@ const sortOptions = [
 
 const toggleSortOrder = () => {
   sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
-}
-
-const getSortIcon = () => {
-  const option = sortOptions.find(opt => opt.value === sortBy.value)
-  return option?.icon || 'mdi-sort'
-}
-
-const getSortLabel = () => {
-  const option = sortOptions.find(opt => opt.value === sortBy.value)
-  return option?.label || 'sort.label'
 }
 
 const sortMedications = (meds: Medication[]) => {
