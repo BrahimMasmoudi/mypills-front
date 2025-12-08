@@ -52,5 +52,14 @@
       "access": "Easy Access Anywhere"
     },
     "cta": "Start Managing Now"
+  },
+  "sort": {
+    "label": "Sort",
+    "name": "Name",
+    "expiryDate": "Expiry Date",
+    "quantity": "Quantity",
+    "ascending": "Ascending",
+    "descending": "Descending",
+    "clear": "Clear Sort"
   }
 }

@@ -52,5 +52,14 @@
       "access": "Accès facile partout"
     },
     "cta": "Commencer maintenant"
+  },
+  "sort": {
+    "label": "Trier",
+    "name": "Nom",
+    "expiryDate": "Date d'expiration",
+    "quantity": "Quantité",
+    "ascending": "Croissant",
+    "descending": "Décroissant",
+    "clear": "Effacer le tri"
   }
 }
