@@ -41,8 +41,8 @@
     </div>
 
     <!-- Mobile Layout -->
-    <div v-else class="w-100 mb-3">
-      <div class="d-flex align-center mb-2">
+    <div v-else class="w-100">
+      <div class="d-flex align-center">
         <AtomsSearchInput
             :model-value="searchQuery"
             @update:model-value="$emit('update:searchQuery', $event)"

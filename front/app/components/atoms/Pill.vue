@@ -95,11 +95,10 @@
       </v-chip>
     </div>
 
-    <v-divider v-if="shouldShowFooter" />
+    <v-divider />
 
     <!-- Actions Footer -->
-    <v-expand-transition>
-      <div v-if="shouldShowFooter" class="d-flex align-center justify-space-between px-2 py-2">
+      <div class="d-flex align-center justify-space-between px-2 py-2">
         <v-btn
             icon="mdi-minus"
             variant="tonal"
@@ -122,7 +121,6 @@
             @click.stop="incrementPills(medication)"
         />
       </div>
-    </v-expand-transition>
   </v-card>
 </template>
 
@@ -148,10 +146,6 @@ const isEditing = ref(false)
 const editedName = ref(props.medication.name)
 const showFooterMobile = ref(false)
 
-const shouldShowFooter = computed(() => {
-  return $device.isDesktop || showFooterMobile.value
-})
-
 const handleCardClick = () => {
   if ($device.isMobile) {
     showFooterMobile.value = !showFooterMobile.value
@@ -160,7 +154,7 @@ const handleCardClick = () => {
 
 const handleNameClick = (e: Event) => {
   if ($device.isMobile && !showFooterMobile.value) {
-    return // Let it bubble to handleCardClick to open footer
+    return
   }
   e.stopPropagation()
   startEdit()
