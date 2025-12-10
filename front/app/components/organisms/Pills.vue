@@ -1,6 +1,6 @@
 <template>
   <v-sheet width="100%"
-           class="d-flex flex-column align-start fill-height pa-4">
+           class="d-flex flex-column align-start fill-height pa-4 mb-2">
     <!-- Tabs Header -->
     <v-sheet class="w-100 flex-shrink-0" min-height="60">
       <v-tabs
