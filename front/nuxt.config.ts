@@ -26,7 +26,8 @@ export default defineNuxtConfig({
         '@pinia-plugin-persistedstate/nuxt',
         '@nuxtjs/device',
         'nuxt-vuefire',
-        '@nuxt/ui'
+        '@nuxt/ui',
+        '@vite-pwa/nuxt'
     ],
     device: {
         refreshOnResize: true
@@ -123,5 +124,72 @@ export default defineNuxtConfig({
     ui: {
         // @ts-ignore
         fonts: false
-    }
+    },
+    pwa: {
+        registerType: 'autoUpdate',
+        manifest: {
+            name: 'MyPills - Medication Manager',
+            short_name: 'MyPills',
+            description: 'Manage your medications easily and never miss a dose',
+            start_url: '/',
+            display: 'standalone',
+            theme_color: '#3643BA',
+            background_color: '#ffffff',
+            icons: [
+                {
+                    src: '/icon-48x48.png',
+                    sizes: '48x48',
+                    type: 'image/png',
+                    purpose: 'any'
+                },
+                {
+                    src: '/icon-72x72.png',
+                    sizes: '72x72',
+                    type: 'image/png',
+                    purpose: 'any'
+                },
+                {
+                    src: '/icon-96x96.png',
+                    sizes: '96x96',
+                    type: 'image/png',
+                    purpose: 'any'
+                },
+                {
+                    src: '/icon-144x144.png',
+                    sizes: '144x144',
+                    type: 'image/png',
+                    purpose: 'any'
+                },
+                {
+                    src: '/icon-192x192.png',
+                    sizes: '192x192',
+                    type: 'image/png',
+                    purpose: 'any maskable'
+                },
+                {
+                    src: '/icon-384x384.png',
+                    sizes: '384x384',
+                    type: 'image/png',
+                    purpose: 'any'
+                },
+                {
+                    src: '/icon-512x512.png',
+                    sizes: '512x512',
+                    type: 'image/png',
+                    purpose: 'any maskable'
+                }
+            ]
+        },
+        workbox: {
+            navigateFallback: '/',
+            globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+        },
+        client: {
+            installPrompt: true,
+        },
+        devOptions: {
+            enabled: true,
+            type: 'module',
+        },
+    },
 })
