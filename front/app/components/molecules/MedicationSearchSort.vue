@@ -41,7 +41,7 @@
     </div>
 
     <!-- Mobile Layout -->
-    <div v-else class="w-100">
+    <div v-else class="w-100 mb-3">
       <div class="d-flex align-center">
         <AtomsSearchInput
             :model-value="searchQuery"

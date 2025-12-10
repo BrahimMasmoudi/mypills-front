@@ -1,6 +1,55 @@
 <template>
   <v-sheet width="100%"
            class="d-flex flex-column align-start fill-height pa-4">
+    <!-- Tabs Header -->
+    <v-sheet class="w-100 flex-shrink-0" min-height="60">
+      <v-tabs
+        v-model="tab"
+        align-tabs="center"
+        class="mb-2 w-100"
+        hide-slider
+        height="60"
+        :selected-class="tab === 'valid' ? 'bg-primary-lighten' : 'bg-error-lighten'"
+      >
+        <v-tab
+            value="valid"
+            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-primary"
+            height="48"
+            :class="{'bg-primary-lighten': tab === 'valid'}"
+            color="primary"
+            variant="text"
+        >
+          <template #prepend v-if="!$device.isMobile">
+            <nuxt-icon name="validate-edit-action"/>
+          </template>
+          {{ $device.isMobile ? t('meds.valid') : t('meds.valid_long') }}
+          <v-badge
+            :content="validMedication.length"
+            color="primary"
+            inline
+          />
+        </v-tab>
+        
+        <v-tab
+            value="expired"
+            height="48"
+            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-error"
+            :color="tab === 'expired' ? 'error' : 'default'"
+            variant="text"
+        >
+          <template #prepend v-if="!$device.isMobile">
+            <nuxt-icon name="error-warning"/>
+          </template>
+          {{ $device.isMobile ? t('meds.expired') : t('meds.expired_long') }}
+          <v-badge
+            :content="expiredMedication.length"
+            color="error"
+            inline
+          />
+        </v-tab>
+      </v-tabs>
+    </v-sheet>
+
     <!-- Search and Sort Controls -->
     <MoleculesMedicationSearchSort
         v-model:search-query="searchQuery"
@@ -11,27 +60,45 @@
         @toggle-sort-order="toggleSortOrder"
         @create="openDialog"
     />
-    
-    <MoleculesPills
-        v-if="medications && (filter === 'valid' || (filter === 'all' && (validMedication.length > 0 || expiredMedication.length === 0)))"
-        :is-expired="false"
-        name="valide pills"
-        :medications="validMedication"
-        :has-both-categories="filter === 'all' && validMedication.length > 0 && expiredMedication.length > 0"
-        :decrement-pills="decrementPills"
-        :increment-pills="incrementPills"
-        :delete-pills="deletePills"
-        :update-medication-name="updateMedicationName"/>
-    <MoleculesPills
-        v-if="medications && (filter === 'expired' || (filter === 'all' && expiredMedication.length > 0))"
-        :is-expired="true"
-        name="expired pills"
-        :medications="expiredMedication"
-        :has-both-categories="filter === 'all' && validMedication.length > 0 && expiredMedication.length > 0"
-        :decrement-pills="decrementPills"
-        :increment-pills="incrementPills"
-        :delete-pills="deletePills"
-        :update-medication-name="updateMedicationName"/>
+
+    <!-- Tabs Content -->
+    <v-window v-model="tab" class="w-100 fill-height">
+      <v-window-item value="valid" class="fill-height">
+        <MoleculesPills
+            v-if="validMedication.length > 0"
+            :is-expired="false"
+            name="valide pills"
+            :medications="validMedication"
+            :decrement-pills="decrementPills"
+            :increment-pills="incrementPills"
+            :delete-pills="deletePills"
+            :update-medication-name="updateMedicationName"/>
+        
+        <v-sheet width="100%" height="100%" v-else
+               class="d-flex flex-column align-center justify-center font-weight-bold">
+          <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
+          {{ t('meds.no-result') }}
+        </v-sheet>
+      </v-window-item>
+
+      <v-window-item value="expired" class="w-100 fill-height">
+        <MoleculesPills
+            v-if="expiredMedication.length > 0"
+            :is-expired="true"
+            name="expired pills"
+            :medications="expiredMedication"
+            :decrement-pills="decrementPills"
+            :increment-pills="incrementPills"
+            :delete-pills="deletePills"
+            :update-medication-name="updateMedicationName"/>
+
+        <v-sheet width="100%" height="100%" v-else
+               class="d-flex flex-column align-center justify-center font-weight-bold">
+          <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
+          {{ t('meds.no-result') }}
+        </v-sheet>
+      </v-window-item>
+    </v-window>
 
     <v-fab
         v-if="$device.isMobile"
@@ -43,8 +110,8 @@
         @click="openDialog"
     />
 
-    <v-sheet width="100%" v-if="medicationLoading">
-       <v-row class="d-flex align-start justify-start my-3">
+    <v-sheet width="100%" v-if="medicationLoading" class="position-absolute top-0 left-0 h-100 d-flex align-center justify-center bg-surface opacity-80" style="z-index: 5;">
+       <v-row class="d-flex align-start justify-start my-3 w-100">
         <v-col v-for="i in 8"
                :key="i"
                md="3"
@@ -53,12 +120,6 @@
         </v-col>
       </v-row>
     </v-sheet>
-
-    <v-sheet width="100%" height="100%" v-else-if="!medications || medications.length === 0"
-           class="d-flex flex-column align-center justify-center font-weight-bold">
-    <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
-    {{ t('meds.no-result') }}
-  </v-sheet>
   </v-sheet>
 </template>
 <script setup lang="ts">
@@ -125,7 +186,7 @@ const sortMedications = (meds: Medication[]) => {
   return sorted
 }
 
-const {medications, createMedication, incrementPills, decrementPills, deletePills, updateMedicationName, medicationLoading} = defineProps<{
+const props = defineProps<{
   filter: Filter
   medications: Medication[] | undefined
   createMedication: (medication: Medication) => Promise<void>
@@ -137,7 +198,7 @@ const {medications, createMedication, incrementPills, decrementPills, deletePill
 }>()
 
 const validMedication = computed(() => {
-  const filtered = medications?.filter((med: Medication) => !med.expired) ?? []
+  const filtered = props.medications?.filter((med: Medication) => !med.expired) ?? []
   const searched = !searchQuery.value 
     ? filtered 
     : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
@@ -145,13 +206,15 @@ const validMedication = computed(() => {
 })
 
 const expiredMedication = computed(() => {
-  const filtered = medications?.filter((med: Medication) => med.expired) ?? []
+  const filtered = props.medications?.filter((med: Medication) => med.expired) ?? []
   const searched = !searchQuery.value 
     ? filtered 
     : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
   return sortMedications(searched)
 })
 
+// Tab Logic
+const tab = ref<string>('valid')
 
 const openDialog = async () => {
   const user = await getCurrentUser()
@@ -159,7 +222,7 @@ const openDialog = async () => {
   const toastType = await $open<ToastType>(Dialog, {
     scrim: true,
     isPersistent: true,
-    createMedication,
+    createMedication: props.createMedication,
     userUid: user?.uid,
     email: user?.email
   })
@@ -210,5 +273,17 @@ const openDialog = async () => {
 .sort-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(var(--v-theme-primary), 0.25) !important;
+}
+
+.bg-primary-lighten {
+  background-color: rgba(var(--v-theme-primary), 0.2) !important;
+}
+
+.bg-error-lighten {
+  background-color: rgba(var(--v-theme-error), 0.2) !important;
+}
+
+.v-tabs--density-default {
+  height: 60px !important;
 }
 </style>

@@ -24,8 +24,10 @@
   },
   "qty": "Qté",
   "meds": {
-    "expired": "Médicaments expirés",
-    "valid": "Médicaments valides",
+    "expired": "Expirés",
+    "expired_long": "Médicaments expirés",
+    "valid": "Valides",
+    "valid_long": "Médicaments valides",
     "no-result": "Pas de médicaments trouvés"
   },
   "home": {
