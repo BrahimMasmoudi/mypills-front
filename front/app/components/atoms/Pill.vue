@@ -31,7 +31,7 @@
           class="pill-image-container mb-2"
           :class="$device.isMobile ? 'mobile-image' : ''"
       >
-        <nuxt-icon filled :name="medication.image" class="pill-icon" />
+        <nuxt-icon filled :name="medication.image" class="pill-icon" :class="isExpired ? 'text-error' : 'text-primary'" />
       </div>
 
       <!-- Name (Editable) -->
@@ -44,7 +44,7 @@
           <span
               class="font-weight-bold text-center"
               :class="[
-                  $device.isMobile ? 'text-body-2 text-wrap' : 'text-h6 text-truncate',
+                  $device.isMobile ? 'text-body-2 text-wrap' : 'text-h6 text-truncate ml-6',
                   {'line-clamp-2': $device.isMobile}
               ]"
           >
