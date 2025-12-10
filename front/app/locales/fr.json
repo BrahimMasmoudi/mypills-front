@@ -40,7 +40,8 @@
     "disconnect": "Déconnexion"
   },
   "login": {
-    "google": "se connecter avec google"
+    "google": "se connecter avec google",
+    "completing": "Connexion en cours..."
   },
   "landing": {
     "welcome": "Bienvenue à MyPills",

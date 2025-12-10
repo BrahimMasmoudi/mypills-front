@@ -40,7 +40,8 @@
     "disconnect": "Disconnect"
   },
   "login": {
-    "google": "Login with Google"
+    "google": "Login with Google",
+    "completing": "Completing login..."
   },
   "landing": {
     "welcome": "Welcome to MyPills",

@@ -66,6 +66,8 @@
                       block
                       class="text-none font-weight-bold mb-4 google-btn"
                       rounded="lg"
+                      :loading="isLoading"
+                      :disabled="isLoading"
                   >
                     <template #prepend>
                       <nuxt-icon filled name="google" class="mr-2"/>
@@ -126,6 +128,8 @@
                   block
                   class="text-none font-weight-bold mb-3 google-btn"
                   rounded="lg"
+                  :loading="isLoading"
+                  :disabled="isLoading"
               >
                 <template #prepend>
                   <nuxt-icon filled name="google" class="mr-2"/>
@@ -137,6 +141,18 @@
         </v-row>
       </v-container>
     </v-main>
+
+    <v-overlay
+        :model-value="isLoading"
+        class="align-center justify-center"
+        persistent
+        z-index="2000"
+    >
+      <div class="d-flex flex-column align-center">
+        <v-progress-circular indeterminate color="white" size="64"></v-progress-circular>
+        <div class="mt-4 font-weight-bold text-white text-h6">{{ t('login.completing') }}</div>
+      </div>
+    </v-overlay>
   </v-app>
 </template>
 
@@ -152,11 +168,21 @@ definePageMeta({
   layout: false,
 })
 
+const isLoading = ref(false)
+
 if (userStore.user) navigateTo('/all')
 
 const login = async () => {
-  await userStore.login()
-  navigateTo('/all')
+  if (isLoading.value) return
+  isLoading.value = true
+  try {
+    await userStore.login()
+    await navigateTo('/all')
+  } catch (e) {
+    console.error('Login failed', e)
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
