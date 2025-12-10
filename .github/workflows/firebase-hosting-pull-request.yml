@@ -29,7 +29,7 @@ jobs:
 
       # Build frontend
       - name: Build frontend
-        run: cd front && yarn generate
+        run: cd front && yarn build
         env:
           NODE_ENV: production
           ENVIRONMENT: staging
