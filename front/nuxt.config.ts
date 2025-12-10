@@ -197,8 +197,5 @@ export default defineNuxtConfig({
             enabled: true,
             type: 'module',
         },
-    },
-    nitro: {
-        preset: 'firebase-hosting-static'
     }
 })
