@@ -28,7 +28,6 @@ export const deletePills = onCall({ region: 'europe-west3' }, async ({ data }) =
 })
 
 export const updateMedicationName = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    console.log(data)
     const medication = data.medication as Medication
     const newName = data.newName as string
     return await database.doc(medication.medicationId).update({ 'name': newName })
@@ -58,8 +57,6 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
             await batch.commit()
             totalUpdated += batchIds.length
         }
-
-        console.log(`Updated ${totalUpdated} medications to expired status`)
         return { updated: totalUpdated }
     } catch (error) {
         console.error('Error updating expired status:', error)

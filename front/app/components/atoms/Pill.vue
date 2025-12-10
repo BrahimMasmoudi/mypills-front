@@ -15,6 +15,8 @@
           color="error"
           size="small"
           density="comfortable"
+          :loading="isDeleting"
+          :disabled="isDeleting"
           @click.stop="confirmDelete"
       />
     </div>
@@ -29,7 +31,7 @@
           class="pill-image-container mb-2"
           :class="$device.isMobile ? 'mobile-image' : ''"
       >
-        <nuxt-icon filled :name="medication.image" class="pill-icon" />
+        <nuxt-icon filled :name="medication.image" class="pill-icon" :class="isExpired ? 'text-error' : 'text-primary'" />
       </div>
 
       <!-- Name (Editable) -->
@@ -42,7 +44,7 @@
           <span
               class="font-weight-bold text-center"
               :class="[
-                  $device.isMobile ? 'text-body-2 text-wrap' : 'text-h6 text-truncate',
+                  $device.isMobile ? 'text-body-2 text-wrap' : 'text-h6 text-truncate ml-6',
                   {'line-clamp-2': $device.isMobile}
               ]"
           >
@@ -67,12 +69,22 @@
             bg-color="surface"
             autofocus
             single-line
+            :loading="isUpdatingName"
+            :disabled="isUpdatingName"
             @blur="toggleEdit"
             @keydown.enter="toggleEdit"
             @click.stop
         >
           <template #append-inner>
+            <v-progress-circular
+                v-if="isUpdatingName"
+                indeterminate
+                size="20"
+                width="2"
+                color="primary"
+            />
             <v-icon
+                v-else
                 icon="mdi-check"
                 color="success"
                 size="small"
@@ -104,13 +116,20 @@
             variant="tonal"
             color="primary"
             size="x-small"
-            :disabled="medication.quantity <= 1"
-            @click.stop="decrementPills(medication)"
+            :loading="isDecrementing"
+            :disabled="medication.quantity <= 1 || isDecrementing"
+            @click.stop="handleDecrement"
         />
 
         <div class="d-flex flex-column align-center mx-2">
-          <span class="text-caption text-medium-emphasis text-uppercase font-weight-bold" style="font-size: 0.6rem !important;">{{ t('qty') }}</span>
-          <span class="text-subtitle-2 font-weight-bold primary--text line-height-1">{{ medication.quantity }}</span>
+          <span
+            class="text-caption text-medium-emphasis text-uppercase font-weight-bold"
+            :style="{ fontSize: $device.isMobile ? '0.6rem !important' : '0.8rem !important' }"
+          >{{ t('qty') }}</span>
+          <span
+            class="font-weight-bold primary--text line-height-1"
+            :class="$device.isMobile ? 'text-subtitle-2' : 'text-subtitle-1'"
+          >{{ medication.quantity }}</span>
         </div>
 
         <v-btn
@@ -118,7 +137,9 @@
             variant="flat"
             color="primary"
             size="x-small"
-            @click.stop="incrementPills(medication)"
+            :loading="isIncrementing"
+            :disabled="isIncrementing"
+            @click.stop="handleIncrement"
         />
       </div>
   </v-card>
@@ -146,6 +167,13 @@ const isEditing = ref(false)
 const editedName = ref(props.medication.name)
 const showFooterMobile = ref(false)
 
+// Loading states
+const isIncrementing = ref(false)
+const isDecrementing = ref(false)
+const isDeleting = ref(false)
+
+const isUpdatingName = ref(false)
+
 const handleCardClick = () => {
   if ($device.isMobile) {
     showFooterMobile.value = !showFooterMobile.value
@@ -168,11 +196,20 @@ const startEdit = () => {
 const toggleEdit = async () => {
   if (isEditing.value) {
     if (editedName.value.trim() && editedName.value !== props.medication.name) {
-      await props.updateMedicationName(props.medication, editedName.value.trim())
+      if (isUpdatingName.value) return
+      isUpdatingName.value = true
+      try {
+        await props.updateMedicationName(props.medication, editedName.value.trim())
+        isEditing.value = false
+      } catch (error) {
+        console.error('Failed to update name:', error)
+      } finally {
+        isUpdatingName.value = false
+      }
     } else {
       editedName.value = props.medication.name
+      isEditing.value = false
     }
-    isEditing.value = false
   }
 }
 
@@ -185,10 +222,35 @@ const confirmDelete = async () => {
   })
 
   if (toastType === 'success') {
-    await props.deletePills(props.medication)
-    openToast(toastType, t(`dialogDelete.${toastType}`))
+    isDeleting.value = true
+    try {
+      await props.deletePills(props.medication)
+      openToast(toastType, t(`dialogDelete.${toastType}`))
+    } finally {
+      isDeleting.value = false
+    }
   } else if (toastType === 'error') {
     openToast(toastType, t(`dialogDelete.${toastType}`))
+  }
+}
+
+const handleIncrement = async () => {
+  if (isIncrementing.value) return
+  isIncrementing.value = true
+  try {
+    await props.incrementPills(props.medication)
+  } finally {
+    isIncrementing.value = false
+  }
+}
+
+const handleDecrement = async () => {
+  if (isDecrementing.value) return
+  isDecrementing.value = true
+  try {
+    await props.decrementPills(props.medication)
+  } finally {
+    isDecrementing.value = false
   }
 }
 </script>

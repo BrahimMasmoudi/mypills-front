@@ -7,12 +7,12 @@ export const useUserStore = defineStore('userStore', () => {
     const userCredentials = ref<UserCredential>()
     const user = ref<User>()
     const login = async () => {
-        userCredentials.value = await signInWithPopup(auth, new GoogleAuthProvider())
+        userCredentials.value = await signInWithPopup(auth!, new GoogleAuthProvider())
         user.value = userCredentials.value?.user
     }
 
     const logOut = async () => {
-        await signOut(auth)
+        await signOut(auth!)
         user.value = undefined
     }
 

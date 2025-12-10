@@ -3,7 +3,6 @@
     <v-app-bar elevation="1">
       <template #title>
         <div class="d-flex align-center">
-          <v-icon class="mr-2" :icon="drawer ? 'mdi-close' : 'mdi-menu'" @click.stop="drawer = !drawer" />
           <nuxt-icon name="application-icon" filled class="app-title-icon mr-1"/>
           <span class="app-title-text">{{ t('title') }}</span>
         </div>
@@ -44,7 +43,7 @@
 
           <v-card min-width="280" rounded="lg" elevation="4" class="mt-2">
             <div class="pa-4 d-flex align-center bg-grey-lighten-5">
-              <v-avatar size="48" class="mr-3">
+            <v-avatar size="36" class="mr-7" color="primary">
                 <v-img 
                   v-if="userStore.user.photoURL" 
                   :src="userStore.user.photoURL" 
@@ -84,25 +83,6 @@
         </v-menu>
       </div>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" :permanent="$device.isDesktop">
-      <v-list color="primary" class="pa-2 mt-2">
-        <v-list-item :title="t('nav.all-medications')" to="/all" rounded="xl" class="mb-1">
-          <template #prepend>
-            <nuxt-icon name="all-medications" class="mr-4"/>
-          </template>
-        </v-list-item>
-        <v-list-item :title="t('nav.valid-medications')" to="/valid" rounded="xl" class="mb-1">
-          <template #prepend>
-            <nuxt-icon name="validate-edit-action" class="mr-4"/>
-          </template>
-        </v-list-item>
-        <v-list-item :title="t('nav.expired-medications')" to="/expired" rounded="xl" class="mb-1">
-          <template #prepend>
-            <nuxt-icon name="error-warning" class="mr-4"/>
-          </template>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
     <v-main>
       <slot/>
     </v-main>
@@ -116,7 +96,6 @@ import {useUserStore} from "~/store/userStore";
 const userStore = useUserStore()
 const {t} = useI18n()
 const { $device } = useNuxtApp()
-const drawer = ref(false)
 
 const handleSignOut = async () => {
   await userStore.logOut()

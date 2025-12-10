@@ -94,7 +94,6 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         }
 
         if (expiredIds.length > 0) {
-            console.log(`Found ${expiredIds.length} expired medications, updating...`)
             const setExpiredStatus = httpsCallable($functions, 'setExpiredStatus')
             await setExpiredStatus({ medicationIds: expiredIds })
         }

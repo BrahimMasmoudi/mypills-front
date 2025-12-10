@@ -24,8 +24,10 @@
   },
   "qty": "Qty",
   "meds": {
-    "expired": "Expired meds",
-    "valid": "Valid meds",
+    "expired": "Expired",
+    "expired_long": "Expired meds",
+    "valid": "Valid",
+    "valid_long": "Valid meds",
     "no-result": "No meds found"
   },
   "home": {
@@ -40,7 +42,8 @@
     "disconnect": "Disconnect"
   },
   "login": {
-    "google": "Login with Google"
+    "google": "Login with Google",
+    "completing": "Completing login..."
   },
   "landing": {
     "welcome": "Welcome to MyPills",
