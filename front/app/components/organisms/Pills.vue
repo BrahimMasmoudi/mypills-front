@@ -51,7 +51,6 @@
     </v-sheet>
 </template>
 <script setup lang="ts">
-import type {Filter} from "~/types/Filter";
 import type {Medication} from "~/types/medication";
 import {useI18n} from "vue-i18n";
 import Dialog from "~/components/molecules/Dialog.vue";
@@ -75,16 +74,17 @@ const toggleSortOrder = () => {
 
 const sortMedications = (meds: Medication[]) => {
   if (!sortBy.value) return meds
-  
-  const sorted = [...meds].sort((a, b) => {
+
+  return [...meds].sort((a, b) => {
     let comparison = 0
-    
+
     switch (sortBy.value) {
       case 'name':
         comparison = a.name.localeCompare(b.name)
         break
       case 'expiryDate':
         // Handle Firestore Timestamp objects, Date objects, and date strings
+      {
         const getDateValue = (dateValue: any): number => {
           // Check if it's a Firestore Timestamp (has toDate method)
           if (dateValue && typeof dateValue.toDate === 'function') {
@@ -97,25 +97,23 @@ const sortMedications = (meds: Medication[]) => {
           // Otherwise treat as string and convert
           return new Date(dateValue).getTime()
         }
-        
+
         const timeA = getDateValue(a.expiryDate)
         const timeB = getDateValue(b.expiryDate)
-        
+
         comparison = timeA - timeB
         break
+      }
       case 'quantity':
         comparison = a.quantity - b.quantity
         break
     }
-    
+
     return sortOrder.value === 'asc' ? comparison : -comparison
   })
-  
-  return sorted
 }
 
 const props = defineProps<{
-  filter: Filter
   medications: Medication[] | undefined
   createMedication: (medication: Medication) => Promise<void>
   incrementPills: (medication: Medication) => Promise<void>
