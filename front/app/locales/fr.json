@@ -10,12 +10,13 @@
   "error": "Une erreur est survenue",
   "dialogDelete": {
     "title": "Es-tu sûr de supprimer ce médicament ?",
-    "message": "Attention, la suppression du médicament est irréversible.",
+    "message": "Attention, la suppression du médicament est irréversible",
     "success": "Le médicament est supprimé avec succès",
     "error": "Échec lors de la suppression."
   },
   "dialogCreate": {
     "title": "Ajouter un médicament",
+    "subtitle": "Remplissez les détails pour l'ajouter à votre répertoire",
     "medicationLabel": "Nom du médicament",
     "cancel": "Annuler",
     "confirm": "Valider",

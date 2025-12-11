@@ -1,91 +1,122 @@
 <template>
-  <v-dialog v-if="$device.isDesktop" v-model="isActive"
-            :persistent="isPersistent"
-            :scrim="scrim"
-            data-cy="validation-with-warning-dialog"
-            @keydown.esc="cancelAndClose"
-            :width="width">
-    <v-card class="border" style="padding: 48px 72px 0 72px !important;" variant="flat">
+  <!-- Desktop Layout -->
+  <v-dialog
+      v-if="$device.isDesktop"
+      v-model="isActive"
+      :persistent="isPersistent"
+      :scrim="scrim"
+      :width="width"
+      content-class="elevation-0"
+      @keydown.esc="cancelAndClose"
+  >
+    <v-card class="rounded-xl pa-6" elevation="24">
+      <div class="d-flex flex-column align-center text-center">
+        <!-- Icon -->
+        <v-avatar color="red-lighten-5" size="80" class="mb-4">
+          <v-icon icon="mdi-alert-circle-outline" color="error" size="48" />
+        </v-avatar>
 
-      <v-card-title class="d-flex justify-start pt-0 pl-0 pb-4 mb-2 title mx-auto">
-        {{ title }}
-      </v-card-title>
-      <v-card variant="flat" class="mb-8 pa-1 mx-1 text-red d-flex text-subtitle-2  d-flex align-center justify-center" style="background-color: #D7032124">
-        <template #prepend>
-          <suspense>
-            <nuxt-icon class="small" name="error-warning"/>
-          </suspense>
-        </template>
-        {{ message }}
-      </v-card>
-      <v-card-actions class="pa-0">
-        <v-btn class="mx-auto mb-8"
-               height="45"
-               style="font-weight: 700;border-radius: 4px;border: 1px solid #DDD;background: #FFF;"
-               @click="cancelAndClose"
-               variant="outlined"
-               width="200">
-         <span class="confirm text-primary">
-             {{ t('cancel') }}
-         </span>
-        </v-btn>
+        <!-- Title -->
+        <v-card-title class="text-h5 font-weight-bold pt-0 pb-2">
+          {{ title }}
+        </v-card-title>
 
-        <v-btn class="mx-auto mb-8"
-               color="primary"
-               height="45"
-               style="font-weight: 700;"
-               :loading="loading"
-               data-cy="confirm-button"
-               variant="flat"
-               @click="onConfirmClick"
-               width="200">
-         <span class="confirm">
-             {{ t('confirm') }}
-         </span>
-        </v-btn>
-      </v-card-actions>
+        <!-- Dynamic Content/Message -->
+        <v-card-text class="text-body-1 text-medium-emphasis py-2 px-6">
+          {{ message }}
+        </v-card-text>
+
+        <!-- Actions -->
+        <v-card-actions class="w-100 justify-center pt-6 gap-4">
+          <v-btn
+              variant="outlined"
+              size="large"
+              color="grey-darken-1"
+              class="flex-grow-1 text-capitalize font-weight-bold"
+              height="48"
+              @click="cancelAndClose"
+          >
+            {{ t('cancel') }}
+          </v-btn>
+
+          <v-btn
+              color="error"
+              variant="flat"
+              size="large"
+              class="flex-grow-1 text-capitalize font-weight-bold"
+              height="48"
+              :loading="loading"
+              @click="onConfirmClick"
+          >
+            {{ t('confirm') }}
+          </v-btn>
+        </v-card-actions>
+      </div>
     </v-card>
   </v-dialog>
-  <v-dialog v-else v-model="isActive"
-            :persistent="isPersistent"
-            :scrim="scrim"
-            @keydown.esc="cancelAndClose">
-    <v-card class="border px-5 py-8" variant="flat">
-      <v-card-title class="d-flex justify-center pt-0 pl-0 pb-4 mb-2 title-mobile">
-        {{ title }}
-      </v-card-title>
-      <v-card variant="flat" class="mb-8 pa-2 text-red d-flex text-subtitle-2" style="background-color: #D7032124">
-        {{ message }}
-      </v-card>
-      <v-card-actions class="pa-0">
-        <v-btn class="mx-auto"
-               height="45"
-               style="font-weight: 700;border-radius: 4px;border: 1px solid #DDD;background: #FFF;"
-               @click="cancelAndClose"
-               variant="outlined"
-               width="100">
-         <span class="confirm text-primary">
-             {{ t('cancel') }}
-         </span>
-        </v-btn>
 
-        <v-btn class="mx-auto"
-               color="primary"
-               height="45"
-               style="font-weight: 700;"
-               :loading="loading"
-               data-cy="confirm-button"
-               variant="flat"
-               @click="onConfirmClick"
-               width="100">
-         <span class="confirm">
-             {{ t('confirm') }}
-         </span>
-        </v-btn>
-      </v-card-actions>
+  <!-- Mobile Layout (Bottom Sheet Style) -->
+  <v-dialog
+      v-else
+      v-model="isActive"
+      :persistent="isPersistent"
+      :scrim="scrim"
+      color="transparent"
+      width="100%"
+      class="align-end ma-0"
+      @keydown.esc="cancelAndClose"
+  >
+    <v-card class="rounded-t-xl pa-5 pb-8" elevation="0">
+      <div class="d-flex flex-column align-center text-center">
+        <!-- Drag Handle Indicator -->
+        <v-sheet
+            color="grey-lighten-2"
+            height="4"
+            width="40"
+            class="rounded-pill mb-6"
+        />
+
+        <v-avatar color="red-lighten-5" size="72" class="mb-4">
+          <v-icon icon="mdi-alert-circle-outline" color="error" size="40" />
+        </v-avatar>
+
+        <h3 class="text-h6 font-weight-bold mb-2">
+          {{ title }}
+        </h3>
+
+        <p class="text-body-2 text-medium-emphasis px-4 mb-6">
+          {{ message }}
+        </p>
+
+        <div class="d-flex flex-column w-100 gap-3">
+          <v-btn
+              block
+              color="error"
+              variant="flat"
+              size="x-large"
+              class="text-capitalize font-weight-bold rounded-lg"
+              :loading="loading"
+              @click="onConfirmClick"
+          >
+            {{ t('confirm') }}
+          </v-btn>
+
+          <v-btn
+              block
+              variant="text"
+              size="large"
+              color="grey-darken-1"
+              class="text-capitalize font-weight-bold mt-2"
+              @click="cancelAndClose"
+          >
+            {{ t('cancel') }}
+          </v-btn>
+        </div>
+      </div>
     </v-card>
   </v-dialog>
 </template>
+
 <script lang="ts" setup>
 import {useI18n} from "vue-i18n";
 import type {ToastType} from "~/composables/openToast";
@@ -93,7 +124,7 @@ import type {ToastType} from "~/composables/openToast";
 const {t} = useI18n()
 const isActive = ref(true)
 const loading = ref(false)
-const {close, width = 600} = defineProps<{
+const {close, width = 550} = defineProps<{
   close: (toastType: ToastType) => void
   isPersistent: boolean
   scrim: boolean
@@ -106,63 +137,12 @@ const onConfirmClick = () => close('success')
 
 const cancelAndClose = () => close('canceled')
 </script>
+
 <style scoped>
-div:deep(.v-field__input) {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+.gap-4 {
+  gap: 16px;
 }
-
-.title {
-  color: #000 !important;
-  text-align: center !important;
-  font-feature-settings: 'clig' off, 'liga' off !important;
-  font-family: Roboto, sans-serif !important;
-  font-size: 1.125rem !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  line-height: normal !important;
-}
-
-.title-mobile {
-  color: #000 !important;
-  text-align: center !important;
-  font-feature-settings: 'clig' off, 'liga' off !important;
-  font-family: Roboto, sans-serif !important;
-  font-size: 0.825rem !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  line-height: 1.5 !important;
-}
-
-.confirm {
-  font-feature-settings: 'clig' off, 'liga' off !important;
-  font-family: Roboto, sans-serif !important;
-  font-size: 1rem !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  line-height: normal !important;
-  letter-spacing: 0.27px !important;
-}
-
-div:deep(.v-card-item__append) {
-  padding-left: 5px !important;
-}
-
-.v-textarea:deep(.v-field__input) {
-  margin-top: 10px;
-  margin-left: 10px;
-  mask-image: none !important;
-}
-
-.v-btn {
-  text-transform: unset !important;
-}
-
-div:deep(.v-field__clearable) {
-  padding-top: 10px !important;
-}
-:deep(svg) {
-  width: 24px !important;
-  height: 24px !important;
+.gap-3 {
+  gap: 12px;
 }
 </style>

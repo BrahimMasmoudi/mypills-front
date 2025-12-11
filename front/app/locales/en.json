@@ -10,12 +10,13 @@
   "error": "An error happened",
   "dialogDelete": {
     "title": "Are you sure you want to delete this medication?",
-    "message": "Please note, the deletion of the medication is permanent and irreversible.",
+    "message": "Please note, the deletion of the medication is permanent and irreversible",
     "success": "The medication has been deleted",
     "error": "Deletion failed. Try again."
   },
   "dialogCreate": {
     "title": "Add a medication",
+    "subtitle": "Fill in the details to add to your directory",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "medicationLabel": "Medication Name",
