@@ -16,6 +16,7 @@
   },
   "dialogCreate": {
     "title": "Ajouter un médicament",
+    "subtitle": "Remplissez les détails pour l'ajouter à votre répertoire",
     "medicationLabel": "Nom du médicament",
     "cancel": "Annuler",
     "confirm": "Valider",

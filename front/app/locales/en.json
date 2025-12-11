@@ -16,6 +16,7 @@
   },
   "dialogCreate": {
     "title": "Add a medication",
+    "subtitle": "Fill in the details to add to your directory",
     "cancel": "Cancel",
     "confirm": "Confirm",
     "medicationLabel": "Medication Name",

@@ -1,233 +1,245 @@
 <template>
-  <v-dialog v-if="$device.isDesktop" v-model="isActive"
-            :persistent="isPersistent"
-            :scrim="scrim"
-            @keydown.esc="cancelAndClose"
-            width="600">
-    <suspense>
-      <v-card class="border pa-5" variant="flat">
-
-        <v-card-title class="d-flex justify-center pt-0 pl-0 title">
+  <!-- Desktop Layout -->
+  <v-dialog
+      v-if="$device.isDesktop"
+      v-model="isActive"
+      :persistent="isPersistent"
+      :scrim="scrim"
+      @keydown.esc="cancelAndClose"
+      width="550"
+      content-class="elevation-0"
+  >
+    <v-card class="rounded-xl pa-6" elevation="24">
+      <!-- Header -->
+      <div class="d-flex flex-column align-center text-center mb-6">
+        <v-avatar color="primary-lighten-5" size="64">
+          <v-icon icon="mdi-pill" color="primary" size="46" />
+        </v-avatar>
+        <v-card-title class="text-h5 font-weight-bold pt-0 pb-1">
           {{ t('dialogCreate.title') }}
         </v-card-title>
-        <v-card-text class="py-0">
-          <v-container>
-              <!-- Medication Name -->
-          <div class="mb-5">
-            <v-text-field
-                v-model="medication.name"
-                :label="t('dialogCreate.medicationLabel')"
-                variant="outlined"
-                density="comfortable"
-                color="primary"
-                bg-color="grey-lighten-5"
-                hide-details="auto"
-                rounded="lg"
-                prepend-inner-icon="mdi-pill"
-                class="font-weight-medium"
-            />
-          </div>
+        <div class="text-body-2 text-medium-emphasis">
+          {{ t('dialogCreate.subtitle') }}
+        </div>
+      </div>
 
-          <!-- Expiry Date -->
-          <div class="mb-5">
-            <v-menu
-                v-model="dateMenuIsOpen"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                min-width="auto"
-                location="center"
-            >
-              <template v-slot:activator="{ props }">
-                <v-text-field
-                    v-bind="props"
-                    :model-value="formatDate(medication.expiryDate)"
-                    :label="t('dialogCreate.choose-date-title')"
-                    variant="outlined"
-                    density="comfortable"
-                    color="primary"
-                    bg-color="grey-lighten-5"
-                    hide-details="auto"
-                    rounded="lg"
-                    prepend-inner-icon="mdi-calendar"
-                    readonly
-                    class="font-weight-medium cursor-pointer"
-                />
-              </template>
-                      <v-date-picker  :view-mode="viewMode"
-                                          elevation="4"
-                                          :min="new Date()"
-                                          @update:model-value="dateMenuIsOpen = false"
-                                          hide-header
-                                          rounded="lg"
-                                          style="color: rgb(var(--v-theme-primary)) !important;"
-                                          @update:year="updateYear"
-                                          @update:view-mode="updateViewMode"
-                                          @update:month="updateMonth"
-                                        />
-            </v-menu>
-          </div>
+      <v-card-text class="pa-0">
+        <div class="d-flex flex-column gap-4">
+          <!-- Medication Name -->
+          <v-text-field
+              v-model="medication.name"
+              :label="t('dialogCreate.medicationLabel')"
+              variant="outlined"
+              color="primary"
+              prepend-inner-icon="mdi-pill"
+              hide-details="auto"
+              rounded="lg"
+              class="font-weight-medium text-black"
+          />
+          <v-menu
+              v-model="dateMenuIsOpen"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              min-width="auto"
+              location="center"
+          >
+            <template v-slot:activator="{ props }">
+              <v-text-field
+                  v-bind="props"
+                  :model-value="formatDate(medication.expiryDate)"
+                  :label="t('dialogCreate.choose-date-title')"
+                  variant="outlined"
+                  color="primary"
+                  hide-details="auto"
+                  rounded="lg"
+                  prepend-inner-icon="mdi-calendar-blank"
+                  readonly
+                  class="font-weight-medium cursor-pointer elegant-input"
+              />
+            </template>
+            <v-date-picker 
+                :view-mode="viewMode"
+                elevation="4"
+                :min="new Date()"
+                @update:model-value="dateMenuIsOpen = false"
+                hide-header
+                rounded="lg"
+               style="color: rgb(var(--v-theme-primary)) !important;"
+                @update:year="updateYear"
+                @update:view-mode="updateViewMode"
+                @update:month="updateMonth"
+            />
+          </v-menu>
 
           <!-- Quantity -->
-          <div>
-            <v-text-field
-                v-model.number="medication.quantity"
-                :label="t('dialogCreate.quantity')"
-                type="number"
-                variant="outlined"
-                density="comfortable"
-                color="primary"
-                bg-color="grey-lighten-5"
-                hide-details="auto"
-                rounded="lg"
-                prepend-inner-icon="mdi-counter"
-                min="1"
-                class="font-weight-medium"
-            />
-          </div>
-          </v-container>
-        </v-card-text>
+          <v-text-field
+              v-model.number="medication.quantity"
+              :label="t('dialogCreate.quantity')"
+              type="number"
+              variant="outlined"
+              color="primary"
+              hide-details="auto"
+              rounded="lg"
+              prepend-inner-icon="mdi-pill"
+              min="1"
+              class="font-weight-medium elegant-input"
+          />
+        </div>
+      </v-card-text>
 
-        <v-card-actions>
-          <v-btn class="mx-auto"
-                 height="45"
-                 style="font-weight: 700;border-radius: 4px;border: 1px solid #DDD;background: #FFF;"
-                 @click="cancelAndClose"
-                 variant="outlined"
-                 width="200">
-         <span class="confirm text-primary">
-             {{ t('cancel') }}
-         </span>
-          </v-btn>
-          <v-btn class="mx-auto"
-                 color="primary"
-                 height="45"
-                 style="font-weight: 700;"
-                 :loading="loading"
-                 variant="flat"
-                 @click="onConfirmClick"
-                 width="200">
-         <span class="confirm">
-             {{ t('confirm') }}
-         </span>
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </suspense>
+      <!-- Actions -->
+      <v-card-actions class="w-100 justify-center pt-8 gap-3 px-0">
+        <v-btn
+            variant="outlined"
+            size="large"
+            color="grey-darken-1"
+            class="flex-grow-1 text-capitalize font-weight-bold"
+            height="48"
+            @click="cancelAndClose"
+        >
+          {{ t('cancel') }}
+        </v-btn>
+
+        <v-btn
+            color="primary"
+            variant="flat"
+            size="large"
+            class="flex-grow-1 text-capitalize font-weight-bold"
+            height="48"
+            :loading="loading"
+            @click="onConfirmClick"
+        >
+          {{ t('confirm') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
-  
-  <v-dialog v-else v-model="isActive"
-            :persistent="isPersistent"
-            :scrim="scrim"
-            @keydown.esc="cancelAndClose">
-    <suspense>
-      <v-card class="border pa-8" variant="flat">
 
-        <v-card-title class="d-flex justify-center pt-0 pl-0 title-mobile">
+  <!-- Mobile Layout (Bottom Sheet) -->
+  <v-dialog
+      v-else
+      v-model="isActive"
+      :persistent="isPersistent"
+      :scrim="scrim"
+      color="transparent"
+      width="100%"
+      class="align-end ma-0"
+      @keydown.esc="cancelAndClose"
+  >
+    <v-card class="rounded-t-xl pa-5 pb-8" elevation="0">
+      <div class="d-flex flex-column align-center text-center mb-6">
+        <!-- Drag Handle -->
+        <v-sheet
+            color="grey-lighten-2"
+            height="4"
+            width="40"
+            class="rounded-pill mb-6"
+        />
+
+        <v-avatar color="primary-lighten-5" size="56" class="mb-3">
+          <v-icon icon="mdi-pill" color="primary" size="28" />
+        </v-avatar>
+
+        <h3 class="text-h6 font-weight-bold mb-1">
           {{ t('dialogCreate.title') }}
-        </v-card-title>
-        <v-card-text class="pa-0">
-          <v-container>
-            <div class="mb-5">
+        </h3>
+        <div class="text-body-2 text-medium-emphasis">
+          {{ t('dialogCreate.subtitle') }}
+        </div>
+      </div>
+
+      <div class="d-flex flex-column gap-4 mb-6">
+        <!-- Medication Name -->
+        <v-text-field
+            v-model="medication.name"
+            :label="t('dialogCreate.medicationLabel')"
+            variant="outlined"
+            color="primary"
+            hide-details="auto"
+            rounded="lg"
+            class="font-weight-medium"
+        />
+
+        <!-- Expiry Date -->
+        <v-menu
+            v-model="dateMenuIsOpen"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            min-width="auto"
+            location="center"
+        >
+          <template v-slot:activator="{ props }">
             <v-text-field
-                v-model="medication.name"
-                :label="t('dialogCreate.medicationLabel')"
+                v-bind="props"
+                :model-value="formatDate(medication.expiryDate)"
+                :label="t('dialogCreate.choose-date-title')"
                 variant="outlined"
-                density="comfortable"
                 color="primary"
-                bg-color="grey-lighten-5"
                 hide-details="auto"
                 rounded="lg"
-                prepend-inner-icon="mdi-pill"
-                class="font-weight-medium"
+                prepend-inner-icon="mdi-calendar-blank"
+                readonly
+                class="font-weight-medium cursor-pointer"
             />
-          </div>
+          </template>
+          <v-date-picker 
+              :view-mode="viewMode"
+              elevation="4"
+              :min="new Date()"
+              @update:model-value="dateMenuIsOpen = false"
+              hide-header
+              rounded="lg"
+              style="color: rgb(var(--v-theme-primary)) !important;"
+              @update:year="updateYear"
+              @update:view-mode="updateViewMode"
+              @update:month="updateMonth"
+          />
+        </v-menu>
 
-          <!-- Expiry Date -->
-          <div class="mb-5">
-            <v-menu
-                v-model="dateMenuIsOpen"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                min-width="auto"
-                location="center"
-            >
-              <template v-slot:activator="{ props }">
-                <v-text-field
-                    v-bind="props"
-                    :model-value="formatDate(medication.expiryDate)"
-                    :label="t('dialogCreate.choose-date-title')"
-                    variant="outlined"
-                    density="comfortable"
-                    color="primary"
-                    bg-color="grey-lighten-5"
-                    hide-details="auto"
-                    rounded="lg"
-                    prepend-inner-icon="mdi-calendar"
-                    readonly
-                    class="font-weight-medium cursor-pointer"
-                />
-              </template>
-                      <v-date-picker  :view-mode="viewMode"
-                                          elevation="4"
-                                          :min="new Date()"
-                                          @update:model-value="dateMenuIsOpen = false"
-                                          hide-header
-                                          rounded="lg"
-                                          style="color: rgb(var(--v-theme-primary)) !important;"
-                                          @update:year="updateYear"
-                                          @update:view-mode="updateViewMode"
-                                          @update:month="updateMonth"
-                                        />
-            </v-menu>
-          </div>
+        <!-- Quantity -->
+        <v-text-field
+            v-model.number="medication.quantity"
+            :label="t('dialogCreate.quantity')"
+            type="number"
+            variant="outlined"
+            color="primary"
+            hide-details="auto"
+            rounded="lg"
+            prepend-inner-icon="mdi-counter"
+            min="1"
+            class="font-weight-medium"
+        />
+      </div>
 
-          <!-- Quantity -->
+      <!-- Mobile Actions -->
+      <div class="d-flex flex-column w-100 gap-3">
+        <v-btn
+            block
+            color="primary"
+            variant="flat"
+            size="x-large"
+            class="text-capitalize font-weight-bold rounded-lg"
+            :loading="loading"
+            @click="onConfirmClick"
+        >
+          {{ t('confirm') }}
+        </v-btn>
 
-            <v-text-field
-                v-model.number="medication.quantity"
-                :label="t('dialogCreate.quantity')"
-                type="number"
-                variant="outlined"
-                density="comfortable"
-                color="primary"
-                bg-color="grey-lighten-5"
-                hide-details="auto"
-                rounded="lg"
-                prepend-inner-icon="mdi-counter"
-                min="1"
-                class="font-weight-medium"
-            />
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-btn class="mx-auto"
-                 height="45"
-                 style="font-weight: 700;border-radius: 4px;border: 1px solid #DDD;background: #FFF;"
-                 @click="cancelAndClose"
-                 variant="outlined"
-                 width="120">
-         <span class="confirm text-primary">
-             {{ t('cancel') }}
-         </span>
-          </v-btn>
-          <v-btn class="mx-auto"
-                 color="primary"
-                 height="45"
-                 style="font-weight: 700;"
-                 :loading="loading"
-                 variant="flat"
-                 @click="onConfirmClick"
-                 width="120">
-         <span class="confirm">
-             {{ t('confirm') }}
-         </span>
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </suspense>
+        <v-btn
+            block
+            variant="text"
+            size="large"
+            color="grey-darken-1"
+            class="text-capitalize font-weight-bold mt-2"
+            @click="cancelAndClose"
+        >
+          {{ t('cancel') }}
+        </v-btn>
+      </div>
+    </v-card>
   </v-dialog>
 </template>
+
 <script lang="ts" setup>
 import {useI18n} from "vue-i18n";
 import type {Medication} from "~/types/medication";
@@ -238,7 +250,6 @@ const {t, locale} = useI18n()
 const {$device} = useNuxtApp()
 
 const locales: Record<string, any> = { en: enUS, fr: fr };
-
 
 const isActive = ref(true)
 const loading = ref(false)
@@ -257,7 +268,7 @@ const medication = ref<Medication>({
   uid: userUid,
   expired: false,
   quantity: 1,
-  name: 'médicament',
+  name: '',
   bareCode: '',
   medicationId: crypto.randomUUID(),
   image: "pill-1",
@@ -307,93 +318,17 @@ const onConfirmClick = async () => {
 
 const cancelAndClose = () => close('canceled')
 </script>
+
 <style scoped>
-div:deep(.v-field__input) {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+.gap-4 {
+  gap: 16px;
 }
-
-.title {
-  color: #000 !important;
-  text-align: center !important;
-  font-feature-settings: 'clig' off, 'liga' off !important;
-  font-family: Roboto, sans-serif !important;
-  font-size: 1.125rem !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  line-height: normal !important;
+.gap-3 {
+  gap: 12px;
 }
-
-.title-mobile {
-  color: #000 !important;
-  text-align: center !important;
-  font-feature-settings: 'clig' off, 'liga' off !important;
-  font-family: Roboto, sans-serif !important;
-  font-size: 1rem !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  line-height: normal !important;
+:deep(.v-field__input) {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-height: 56px;
 }
-
-.confirm {
-  font-feature-settings: 'clig' off, 'liga' off !important;
-  font-family: Roboto, sans-serif !important;
-  font-size: 1rem !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  line-height: normal !important;
-  letter-spacing: 0.27px !important;
-}
-
-div:deep(.v-card-item__append) {
-  padding-left: 5px !important;
-}
-
-.v-textarea:deep(.v-field__input) {
-  margin-top: 10px;
-  margin-left: 10px;
-  mask-image: none !important;
-}
-
-.v-btn {
-  text-transform: unset !important;
-}
-
-div:deep(.v-field__clearable) {
-  padding-top: 10px !important;
-}
-
-.confirm {
-  font-feature-settings: 'clig' off, 'liga' off !important;
-  font-family: Roboto, sans-serif !important;
-  font-size: 1rem !important;
-  font-style: normal !important;
-  font-weight: 700 !important;
-  line-height: normal !important;
-  letter-spacing: 0.27px !important;
-}
-
-.icon {
-  cursor: pointer;
-}
-
-.icon >>> svg {
-  width: 48px !important;
-  height: 48px !important;
-}
-
-.icon-mobile {
-  cursor: pointer;
-}
-
-.icon-mobile >>> svg {
-  width: 36px !important;
-  height: 36px !important;
-}
-
-.selected-icon >>> svg {
-  width: 36px !important;
-  height: 36px !important;
-}
-
 </style>

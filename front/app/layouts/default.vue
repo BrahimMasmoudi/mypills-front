@@ -8,9 +8,7 @@
         </div>
       </template>
       <div v-if="userStore.user" class="mr-2 d-flex align-center">
-        <!-- Language Switcher -->
         <MoleculesLanguageSwitcher />
-        <!-- User Menu -->
         <MoleculesUserMenu />
       </div>
     </v-app-bar>

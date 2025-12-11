@@ -5,6 +5,8 @@
           v-bind="props"
           icon
           variant="text"
+          size="small"
+          class="mr-1"
           density="comfortable"
       >
         <nuxt-icon :name="currentFlagIcon" filled class="flag-icon" />
