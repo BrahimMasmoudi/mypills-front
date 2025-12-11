@@ -157,14 +157,14 @@ const features = [
   }
 ]
 
-if (userStore.user) navigateTo('/all')
+if (userStore.user) navigateTo('/')
 
 const login = async () => {
   if (isLoading.value) return
   isLoading.value = true
   try {
     await userStore.login()
-    await navigateTo('/all')
+    await navigateTo('/')
   } catch (e) {
     console.error('Login failed', e)
   } finally {
