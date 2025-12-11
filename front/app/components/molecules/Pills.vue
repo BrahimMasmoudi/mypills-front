@@ -1,6 +1,6 @@
 <template>
   <v-sheet width="100%" v-if="medications?.length ?? 0 > 0">
-    <v-row class="d-flex align-stretch justify-start mt-0">
+    <v-row class="d-flex align-stretch justify-start mt-0 px-1">
       <v-col
           md="3"
           cols="6"
