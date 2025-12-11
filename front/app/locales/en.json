@@ -47,15 +47,27 @@
     "completing": "Completing login..."
   },
   "landing": {
-    "welcome": "Welcome to MyPills",
-    "title": "MyPills",
-    "subtitle": "Manage your medications simply and effectively",
+    "welcome": "Your Smart Personal Pharmacy Manager",
+    "subtitle": "Track, organize, and ensure the safety of your home medication inventory with ease.",
     "features": {
-      "expiry": "Track Expiry Dates",
-      "inventory": "Inventory Management",
-      "access": "Easy Access Anywhere"
+      "track": {
+        "title": "Track Inventory",
+        "desc": "Add medicines with quantity & expiry dates"
+      },
+      "safety": {
+        "title": "Ensure Safety",
+        "desc": "Automatic categorization into Valid and Expired tabs"
+      },
+      "organize": {
+        "title": "Stay Organized",
+        "desc": "Search, filter, and sort medicines quickly"
+      },
+      "bilingual": {
+        "title": "Bilingual Experience",
+        "desc": "Seamless English & French interface"
+      }
     },
-    "cta": "Start Managing Now"
+    "cta": "Connect with Google"
   },
   "sort": {
     "label": "Sort",

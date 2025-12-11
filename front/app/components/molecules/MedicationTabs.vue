@@ -51,7 +51,7 @@
     <!-- Scrollable Window Content -->
     <v-sheet class="flex-grow-1 overflow-hidden position-relative rounded-lg">
        <v-window :model-value="modelValue" class="w-100 h-100">
-        <v-window-item value="valid" class="h-100 overflow-y-auto">
+        <v-window-item value="valid" class="h-100 overflow-y-auto overflow-x-hidden">
           <MoleculesPills
               v-if="validMedication.length > 0"
               :is-expired="false"
