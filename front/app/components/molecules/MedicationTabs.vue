@@ -6,9 +6,9 @@
           :model-value="modelValue"
           @update:model-value="$emit('update:modelValue', $event)"
           align-tabs="center"
-          class="mb-2 w-100"
+          class="mt-2 w-100"
           hide-slider
-          height="60"
+          height="48"
           :selected-class="modelValue === 'valid' ? 'bg-primary-lighten' : 'bg-error-lighten'"
       >
         <v-tab
