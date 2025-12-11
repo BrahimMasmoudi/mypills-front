@@ -3,12 +3,11 @@
     <template v-slot:activator="{ props }">
       <v-btn
           v-bind="props"
-          variant="text"
-          rounded="xl"
-          class="text-none px-2"
+          icon
+          :ripple="false"
           height="48"
       >
-        <v-avatar size="32" class="mr-2" color="primary">
+        <v-avatar size="32"  color="primary">
           <v-img 
             v-if="userStore.user?.photoURL" 
             :src="userStore.user.photoURL" 
@@ -16,12 +15,6 @@
           />
           <v-icon v-else icon="mdi-account" color="white" />
         </v-avatar>
-        <v-icon
-            v-if="$device.isDesktop"
-            icon="mdi-chevron-down"
-            size="small"
-            color="medium-emphasis"
-        />
       </v-btn>
     </template>
 

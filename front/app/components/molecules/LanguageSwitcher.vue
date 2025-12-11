@@ -4,12 +4,10 @@
       <v-btn
           v-bind="props"
           icon
-          variant="text"
-          size="small"
-          class="mr-1"
-          density="comfortable"
       >
-        <nuxt-icon :name="currentFlagIcon" filled class="flag-icon" />
+        <v-avatar size="32">
+       <nuxt-icon :name="currentFlagIcon" filled class="flag-icon" />
+        </v-avatar>
       </v-btn>
     </template>
     
@@ -60,23 +58,12 @@ const switchLocale = (newLocale: string) => {
 </script>
 
 <style scoped>
-.flag-icon {
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .flag-icon :deep(svg) {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
+  margin-top: 2px;
 }
 
-.flag-icon-small {
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .flag-icon-small :deep(svg) {
   width: 24px;
   height: 24px;
