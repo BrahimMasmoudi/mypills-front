@@ -47,15 +47,27 @@
     "completing": "Connexion en cours..."
   },
   "landing": {
-    "welcome": "Bienvenue à MyPills",
-    "title": "MyPills",
-    "subtitle": "Gérez vos médicaments simplement et efficacement",
+    "welcome": "Votre Pharmacien Personnel Intelligent",
+    "subtitle": "Suivez, organisez et assurez la sécurité de votre pharmacie à domicile en toute simplicité.",
     "features": {
-      "expiry": "Suivi des dates d'expiration",
-      "inventory": "Gestion des stocks",
-      "access": "Accès facile partout"
+      "track": {
+        "title": "Suivi des Stocks",
+        "desc": "Ajoutez vos médicaments avec quantité et date de péremption"
+      },
+      "safety": {
+        "title": "Sécurité Garantie",
+        "desc": "Catégorisation automatique des médicaments valides et périmés"
+      },
+      "organize": {
+        "title": "Restez Organisé",
+        "desc": "Recherchez, filtrez et triez vos médicaments rapidement"
+      },
+      "bilingual": {
+        "title": "Expérience Bilingue",
+        "desc": "Interface fluide en Anglais et Français"
+      }
     },
-    "cta": "Commencer maintenant"
+    "cta": "Se connecter avec Google"
   },
   "sort": {
     "label": "Trier",
