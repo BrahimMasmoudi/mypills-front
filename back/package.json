@@ -9,7 +9,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "migrate": "GCLOUD_PROJECT=my-pills-staging-460b5 FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080 yarn fireway migrate --require=ts-node/register --debug --path ./migrations"
+    "migrate": "GCLOUD_PROJECT=my-pills-staging-460b5 FIREBASE_AUTH_EMULATOR_HOST=localhost:9099 FIRESTORE_EMULATOR_HOST=localhost:8080 yarn fireway migrate --require=ts-node/register --debug --path ./migrations",
+    "migrate:prod": "yarn fireway migrate --require=ts-node/register --path ./migrations"
   },
   "engines": {
     "node": "20"
