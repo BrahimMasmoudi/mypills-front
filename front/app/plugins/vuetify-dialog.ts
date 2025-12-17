@@ -15,16 +15,31 @@ declare module 'vue' {
 
 export default defineNuxtPlugin(({ vueApp, provide }) => {
     const $open = (app: App<Element>) => async (component: Component, props?: Record<string, any>, slot?: unknown) => {
-        let el: HTMLElement | null = null
+        // Create a unique container for this dialog instance
+        const container = document.createElement('div')
+        container.setAttribute('data-dialog-container', `dialog-${Date.now()}-${Math.random()}`)
+        const appWrap = document.querySelector('.v-application__wrap')
+        if (appWrap) {
+            appWrap.appendChild(container)
+        } else {
+            document.body.appendChild(container)
+        }
+
         const result = await new Promise((resolve) => {
             const vNode: VNode | null = createVNode(component, {
                 ...props,
                 close: (returnValue: any) => { resolve(returnValue) },
             }, slot)
             vNode.appContext = app._context
-            render(vNode, el = document.querySelector('.v-sheet')! ?? document.querySelector('.v-application__wrap'))
+            render(vNode, container)
         })
-        setTimeout(() => render(null, el!), 200)
+
+        // Clean up only this dialog's container
+        setTimeout(() => {
+            render(null, container)
+            container.remove()
+        }, 200)
+
         return result
     }
     provide('open', $open(vueApp))

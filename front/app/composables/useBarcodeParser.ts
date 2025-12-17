@@ -8,14 +8,17 @@ export const useBarcodeParser = () => {
         let cip13: string | null = null;
         let expiryDate: Date | null = null;
 
-        // Clean input
-        let queryCode = code;
+        // Clean input: remove control chars (including GS 0x1D) and whitespace
+        // This is crucial because some scanners return AIM ID or GS chars
+        const cleanedCode = code.replace(/[\x00-\x1F\x7F]/g, '').trim();
+
+        console.log(`Parsing Code: Raw="${code}", Cleaned="${cleanedCode}"`);
 
         // Handle GS1 DataMatrix (e.g., 010340094153396917280731...)
-        if (code.startsWith('01') && code.length >= 16) {
+        if (cleanedCode.startsWith('01') && cleanedCode.length >= 16) {
             // Extract GTIN (01 + 14 digits)
             // Indices: 01 2.............15
-            const gtin = code.substring(2, 16);
+            const gtin = cleanedCode.substring(2, 16);
 
             // Convert GTIN-14 to CIP13
             if (gtin.length === 14 && gtin.startsWith('0')) {
@@ -26,7 +29,7 @@ export const useBarcodeParser = () => {
             console.log('GS1 DataMatrix detected. Extracted CIP13:', cip13);
 
             // Extract Expiry Date (AI 17)
-            const remainder = code.substring(16);
+            const remainder = cleanedCode.substring(16);
             if (remainder.startsWith('17') && remainder.length >= 8) {
                 // Structure: 17 YYMMDD
                 const rawDate = remainder.substring(2, 8);
@@ -43,10 +46,10 @@ export const useBarcodeParser = () => {
         } else {
             // Standard EAN-13 / CIP13
             // Remove leading zero if present and length is 13
-            if (code.length === 13 && code.startsWith('0')) {
-                cip13 = code.substring(1);
+            if (cleanedCode.length === 13 && cleanedCode.startsWith('0')) {
+                cip13 = cleanedCode.substring(1);
             } else {
-                cip13 = code;
+                cip13 = cleanedCode;
             }
         }
 

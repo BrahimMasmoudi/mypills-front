@@ -16,7 +16,9 @@
   },
   "scanner": {
     "title": "Scan Barcode",
-    "gs1_only": "Only GS1 DataMatrix codes are accepted"
+    "gs1_only": "Only GS1 DataMatrix codes are accepted",
+    "instruction": "Point your camera at the square dot-matrix code on the box",
+    "not_found_message": "Sorry, medication not found. Please scan again or enter data manually."
   },
   "dialogCreate": {
     "title": "Add a medication",

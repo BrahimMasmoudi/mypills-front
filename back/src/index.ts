@@ -1,4 +1,4 @@
-import { onCall } from 'firebase-functions/v2/https';
+import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { initializeApp } from 'firebase-admin/app'
 import { getFirestore, FieldValue } from 'firebase-admin/firestore'
 import { Medication } from "./types/medication";
@@ -89,9 +89,11 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
 
 // -- CIP13 to CIS Migration and Lookup --
 
-export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }): Promise<GetMedicationDetailsResponse | null> => {
+export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }): Promise<GetMedicationDetailsResponse> => {
     const cip13 = data.cip13 as string;
-    if (!cip13) return null;
+    if (!cip13) {
+        throw new HttpsError('invalid-argument', 'CIP13 is required');
+    }
 
     // Bypass SSL validation in emulator
     if (process.env.FUNCTIONS_EMULATOR === 'true') {
@@ -104,11 +106,13 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
 
         if (!docSnap.exists) {
             console.warn(`CIP13 ${cip13} not found in DB`);
-            return null;
+            throw new HttpsError('not-found', 'Medication not found in database');
         }
 
         const cis = docSnap.data()?.cis;
-        if (!cis) return null;
+        if (!cis) {
+            throw new HttpsError('not-found', 'CIS code not found for this medication');
+        }
 
         // 2. Fetch details from Giygas API
         // Note: fetch is available globally in Node 18+ (Firebase Functions Node 20 environment)
@@ -117,7 +121,7 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
 
         if (!response.ok) {
             console.warn(`Giygas API failed for CIS ${cis}: ${response.statusText}`);
-            return null;
+            throw new HttpsError('not-found', 'Medication details not available from external API');
         }
 
         const details = await response.json();
@@ -132,10 +136,16 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
         };
 
     } catch (e: any) {
+        // Re-throw HttpsError as-is
+        if (e instanceof HttpsError) {
+            throw e;
+        }
         console.error('getMedicationDetails error:', e);
-        return null;
+        throw new HttpsError('internal', 'Failed to retrieve medication details');
     }
 });
+
+
 
 
 // const createData = async () => {
