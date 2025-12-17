@@ -29,7 +29,7 @@ export const useBarcodeParser = () => {
             console.log('GS1 DataMatrix detected. Extracted CIP13:', cip13);
 
             // Extract Expiry Date (AI 17)
-            const remainder = code.substring(16);
+            const remainder = cleanedCode.substring(16);
             if (remainder.startsWith('17') && remainder.length >= 8) {
                 // Structure: 17 YYMMDD
                 const rawDate = remainder.substring(2, 8);
@@ -46,10 +46,10 @@ export const useBarcodeParser = () => {
         } else {
             // Standard EAN-13 / CIP13
             // Remove leading zero if present and length is 13
-            if (code.length === 13 && code.startsWith('0')) {
-                cip13 = code.substring(1);
+            if (cleanedCode.length === 13 && cleanedCode.startsWith('0')) {
+                cip13 = cleanedCode.substring(1);
             } else {
-                cip13 = code;
+                cip13 = cleanedCode;
             }
         }
 
