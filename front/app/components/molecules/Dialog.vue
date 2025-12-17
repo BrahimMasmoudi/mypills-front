@@ -32,12 +32,26 @@
               variant="outlined"
               color="primary"
               prepend-inner-icon="mdi-pill"
-              append-inner-icon="mdi-barcode-scan"
-              @click:append-inner="isScannerOpen = true"
               hide-details="auto"
               rounded="lg"
               class="font-weight-medium text-black"
-          />
+          >
+            <template v-slot:append-inner>
+              <v-tooltip location="top" text="Scan Barcode">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                      v-bind="props"
+                      icon="mdi-barcode-scan"
+                      variant="tonal"
+                      color="primary"
+                      size="small"
+                      class="ms-1"
+                      @click="isScannerOpen = true"
+                  />
+                </template>
+              </v-tooltip>
+            </template>
+          </v-text-field>
           <v-menu
               v-model="dateMenuIsOpen"
               :close-on-content-click="false"
@@ -141,7 +155,7 @@
         />
 
         <v-avatar color="primary-lighten-5" size="56" class="mb-3">
-          <v-icon icon="mdi-pill" color="primary" size="28" />
+          <v-icon icon="mdi-pill" color="primary" size="48" />
         </v-avatar>
 
         <h3 class="text-h6 font-weight-bold mb-1">
@@ -160,11 +174,18 @@
             variant="outlined"
             color="primary"
             hide-details="auto"
-            rounded="lg"
-            class="font-weight-medium"
-            append-inner-icon="mdi-barcode-scan"
-            @click:append-inner="isScannerOpen = true"
-        />
+        >
+          <template v-slot:append-inner>
+             <v-btn
+                icon="mdi-barcode-scan"
+                variant="tonal"
+                color="primary"
+                size="small"
+                class="ms-1"
+                @click="isScannerOpen = true"
+             />
+          </template>
+        </v-text-field>
 
         <!-- Expiry Date -->
         <v-menu

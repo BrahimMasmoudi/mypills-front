@@ -44,14 +44,21 @@ const isOpen = computed({
 
 const isLoading = ref(true)
 let html5QrCode: Html5Qrcode | null = null
+const isOpInProgress = ref(false)
 
 const startScanning = async () => {
+    if (isOpInProgress.value || html5QrCode?.isScanning) return;
+    
+    isOpInProgress.value = true
     isLoading.value = true
-    await nextTick() // Wait for DOM element #reader to exist
+    await nextTick()
     
     try {
-        html5QrCode = new Html5Qrcode("reader")
-        
+        // Ensure cleanup if previous instance hung around
+        if (!html5QrCode) {
+             html5QrCode = new Html5Qrcode("reader")
+        }
+
         const config = { 
             fps: 10, 
             qrbox: { width: 250, height: 250 },
@@ -66,32 +73,39 @@ const startScanning = async () => {
             config,
             (decodedText) => {
                 console.log('decodedText,',decodedText)
-                // Success callback
-                stopScanning()
                 emit('detect', decodedText)
-                close()
+                close() // close will call stopScanning
             },
             (errorMessage) => {
-                // Error callback (scanning in progress)
-                // console.log(errorMessage)
+                // scanning...
             }
         )
-        isLoading.value = false
     } catch (err) {
         console.error("Error starting scanner", err)
+    } finally {
         isLoading.value = false
-        // Handle permission errors etc.
+        isOpInProgress.value = false
+        
+        // If dialog was closed while starting, stop now
+        if (!isOpen.value) {
+            stopScanning()
+        }
     }
 }
 
 const stopScanning = async () => {
-    if (html5QrCode) {
+    if (isOpInProgress.value) return; // Prevent stopping while starting
+    
+    if (html5QrCode && html5QrCode.isScanning) {
+        isOpInProgress.value = true
         try {
             await html5QrCode.stop()
             html5QrCode.clear()
-            html5QrCode = null
+            html5QrCode = null // Thorough cleanup
         } catch (err) {
             console.error("Failed to stop scanner", err)
+        } finally {
+            isOpInProgress.value = false
         }
     }
 }
