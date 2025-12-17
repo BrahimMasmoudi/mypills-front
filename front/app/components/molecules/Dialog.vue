@@ -25,13 +25,15 @@
 
       <v-card-text class="pa-0">
         <div class="d-flex flex-column gap-4">
-          <!-- Medication Name -->
+          <!-- Medication Name with Scan -->
           <v-text-field
               v-model="medication.name"
               :label="t('dialogCreate.medicationLabel')"
               variant="outlined"
               color="primary"
               prepend-inner-icon="mdi-pill"
+              append-inner-icon="mdi-barcode-scan"
+              @click:append-inner="isScannerOpen = true"
               hide-details="auto"
               rounded="lg"
               class="font-weight-medium text-black"
@@ -115,6 +117,8 @@
     </v-card>
   </v-dialog>
 
+
+
   <!-- Mobile Layout (Bottom Sheet) -->
   <v-dialog
       v-else
@@ -158,6 +162,8 @@
             hide-details="auto"
             rounded="lg"
             class="font-weight-medium"
+            append-inner-icon="mdi-barcode-scan"
+            @click:append-inner="isScannerOpen = true"
         />
 
         <!-- Expiry Date -->
@@ -238,13 +244,19 @@
       </div>
     </v-card>
   </v-dialog>
+
+  <!-- Scanner Dialog -->
+  <ScannerDialog v-model="isScannerOpen" @detect="onBarcodeDetected" />
 </template>
 
 <script lang="ts" setup>
+import { useFirebaseApp } from 'vuefire'
+import { httpsCallable, getFunctions } from 'firebase/functions'
 import {useI18n} from "vue-i18n";
 import type {Medication} from "~/types/medication";
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
+import ScannerDialog from "~/components/molecules/ScannerDialog.vue";
 
 const {t, locale} = useI18n()
 const {$device} = useNuxtApp()
@@ -254,6 +266,7 @@ const locales: Record<string, any> = { en: enUS, fr: fr };
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenuIsOpen = ref(false)
+const isScannerOpen = ref(false)
 
 const {close, createMedication,userUid, email} = defineProps<{
   close: (value : ToastType) => void
@@ -296,6 +309,39 @@ const medication = ref<Medication>({
   const formatDate = (date: Date | string) => {
   if (!date) return '';
   return format(new Date(date), 'MMMM yyyy', { locale: locales[locale.value] || enUS });
+}
+
+
+
+
+// Barcode Handling
+const onBarcodeDetected = async (code: string) => {
+    loading.value = true
+    try {
+        // 1. Clean code
+        const queryCode = code.length === 13 && code.startsWith('0') ? code.substring(1) : code;
+        
+        // 2. Call Backend Cloud Function
+        const app = useFirebaseApp();
+        const functions = getFunctions(app, 'europe-west3');
+        const getMedicationDetails = httpsCallable(functions, 'getMedicationDetails');
+        
+        const response = await getMedicationDetails({ cip13: queryCode });
+        const data = response.data as any;
+
+        if (data.error) {
+            console.warn('Backend lookup failed:', data.error);
+        } else if (data.name) {
+             medication.value.name = data.name;
+        } else {
+             console.warn('No medication name returned for:', queryCode);
+        }
+
+    } catch (e: any) {
+        console.error('Barcode lookup error:', e);
+    } finally {
+        loading.value = false
+    }
 }
 
 

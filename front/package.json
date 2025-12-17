@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "yarn firebase emulators:exec  --import=./mydir --export-on-exit mydir --ui --only firestore,auth,functions 'nuxi dev'",
+    "dev": "yarn --cwd ../back build & yarn firebase emulators:exec --import=./mydir --export-on-exit mydir --ui --only firestore,auth,functions 'yarn --cwd ../back migrate && NODE_OPTIONS=--openssl-legacy-provider nuxi dev'",
     "kill": "lsof -t -i:8080 -i:3000 -i:4400 -i:4500 -i:9150 -i:9099 -i:5000 -i:5001 -i:4000 -i:9229 | xargs kill -9 ",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -30,6 +30,7 @@
     "@vite-pwa/nuxt": "^1.1.0",
     "firebase": "12.6.0",
     "firebase-tools": "14.26.0",
+    "html5-qrcode": "^2.3.8",
     "nuxt-font-loader": "2.3.5",
     "nuxt-icons": "4.0.0",
     "nuxt-lodash": "2.5.3",

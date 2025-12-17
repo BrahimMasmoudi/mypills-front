@@ -64,6 +64,50 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
     }
 })
 
+// -- CIP13 to CIS Migration and Lookup --
+
+export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }) => {
+    const cip13 = data.cip13 as string;
+    if (!cip13) return { error: 'Missing CIP13 code' };
+
+    try {
+        // 1. Lookup CIS from Firestore
+        const docSnap = await firestore.collection('cip_to_cis').doc(cip13).get();
+
+        if (!docSnap.exists) {
+            console.warn(`CIP13 ${cip13} not found in DB`);
+            return { error: 'Medication not found in database' };
+        }
+
+        const cis = docSnap.data()?.cis;
+        if (!cis) return { error: 'CIS code missing for this medication' };
+
+        // 2. Fetch details from Giygas API
+        // Note: fetch is available globally in Node 18+ (Firebase Functions Node 20 environment)
+        // If not, we might need axios or node-fetch, but let's try native fetch first.
+        const response = await fetch(`https://medicaments-api.giygas.dev/medicament/id/${cis}`);
+
+        if (!response.ok) {
+            console.warn(`Giygas API failed for CIS ${cis}: ${response.statusText}`);
+            return { error: 'Failed to fetch medication details from external API' };
+        }
+
+        const details = await response.json();
+
+        // Return only the name for now as per requirements, or the whole object
+        const name = details.elementPharmaceutique || details.denomination || '';
+
+        return {
+            name,
+            cis,
+            details // return full details just in case frontend needs more later
+        };
+
+    } catch (e: any) {
+        console.error('getMedicationDetails error:', e);
+        return { error: e.message || 'Internal Server Error' };
+    }
+});
 
 
 // const createData = async () => {
@@ -809,4 +853,4 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
 //             console.error(`Error writing document with ID ${docId}: `, error);
 //         }
 //     }
-// }
+// End of file
