@@ -34,8 +34,17 @@
               prepend-inner-icon="mdi-pill"
               hide-details="auto"
               rounded="lg"
+              :loading="scannerIsLoading"
               class="font-weight-medium text-black"
           >
+            <template v-slot:loader>
+                <v-progress-linear
+                  :active="scannerIsLoading"
+                  color="primary"
+                  height="2"
+                  indeterminate
+                ></v-progress-linear>
+            </template>
             <template v-slot:append-inner>
               <v-tooltip location="top" text="Scan Barcode">
                 <template v-slot:activator="{ props }">
@@ -52,6 +61,7 @@
               </v-tooltip>
             </template>
           </v-text-field>
+
           <v-menu
               v-model="dateMenuIsOpen"
               :close-on-content-click="false"
@@ -70,8 +80,18 @@
                   rounded="lg"
                   prepend-inner-icon="mdi-calendar-blank"
                   readonly
+                  loading
                   class="font-weight-medium cursor-pointer elegant-input"
-              />
+              >
+                <template v-slot:loader>
+                    <v-progress-linear
+                      :active="scannerIsLoading"
+                      color="primary"
+                      height="2"
+                      indeterminate
+                    ></v-progress-linear>
+                </template>
+              </v-text-field>
             </template>
             <v-date-picker 
                 :view-mode="viewMode"
@@ -174,7 +194,16 @@
             variant="outlined"
             color="primary"
             hide-details="auto"
+            loading
         >
+          <template v-slot:loader>
+              <v-progress-linear
+                :active="scannerIsLoading"
+                color="primary"
+                height="2"
+                indeterminate
+              ></v-progress-linear>
+          </template>
           <template v-slot:append-inner>
              <v-btn
                 icon="mdi-barcode-scan"
@@ -206,8 +235,18 @@
                 rounded="lg"
                 prepend-inner-icon="mdi-calendar-blank"
                 readonly
+                loading
                 class="font-weight-medium cursor-pointer"
-            />
+            >
+              <template v-slot:loader>
+                  <v-progress-linear
+                    :active="scannerIsLoading"
+                    color="primary"
+                    height="2"
+                    indeterminate
+                  ></v-progress-linear>
+              </template>
+            </v-text-field>
           </template>
           <v-date-picker 
               :view-mode="viewMode"
@@ -271,12 +310,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useFirebaseApp } from 'vuefire'
-import { httpsCallable, getFunctions } from 'firebase/functions'
-import {useI18n} from "vue-i18n";
-import type {Medication} from "~/types/medication";
-import { format } from 'date-fns';
-import { fr, enUS } from 'date-fns/locale';
+import {useI18n} from "vue-i18n"
+import {useMedicationsStore} from "../../store/medications"
+import {useBarcodeParser} from "../../composables/useBarcodeParser"
+import type {Medication} from "../../types/medication"
+import { format } from 'date-fns'
+import { fr, enUS } from 'date-fns/locale'
 import ScannerDialog from "~/components/molecules/ScannerDialog.vue";
 
 const {t, locale} = useI18n()
@@ -286,6 +325,7 @@ const locales: Record<string, any> = { en: enUS, fr: fr };
 
 const isActive = ref(true)
 const loading = ref(false)
+const scannerIsLoading = ref(false)
 const dateMenuIsOpen = ref(false)
 const isScannerOpen = ref(false)
 
@@ -332,85 +372,44 @@ const medication = ref<Medication>({
   return format(new Date(date), 'MMMM yyyy', { locale: locales[locale.value] || enUS });
 }
 
-
-
-
 // Barcode Handling
 const onBarcodeDetected = async (code: string) => {
-    loading.value = true
+    scannerIsLoading.value = true
     try {
-        // 1. Clean code / Parse GS1
-        let queryCode = code;
+        // 1. Parse Code
+        const { parseBarcode } = useBarcodeParser();
+        const { cip13, expiryDate } = parseBarcode(code);
         
-        // Handle GS1 DataMatrix (e.g., 010340094153396917280731...)
-        // Structure: 01 (GTIN-14) + other fields
-        if (code.startsWith('01') && code.length >= 16) {
-           // Extract the 14-digit GTIN following '01'
-           // Example: 01 03400941533969 ...
-           // Indices: 01 2.............15
-           const gtin = code.substring(2, 16);
-           
-           // Convert GTIN-14 to CIP13 (remove valid leading 0)
-           if (gtin.length === 14 && gtin.startsWith('0')) {
-                queryCode = gtin.substring(1);
-           } else {
-                queryCode = gtin;
-           }
-           console.log('GS1 DataMatrix detected. Extracted CIP13:', queryCode);
-
-           // Extract Expiry Date (AI 17)
-           // The GTIN (AI 01) is fixed length (14 digits + 2 digit AI = 16 chars).
-           // We check if the next segment is AI 17 (Expiry Date, YYMMDD).
-           const remainder = code.substring(16);
-           if (remainder.startsWith('17') && remainder.length >= 8) {
-               // Structure: 17 YYMMDD
-               // Indices:   01 234567
-               const rawDate = remainder.substring(2, 8);
-               const yy = parseInt(rawDate.substring(0, 2), 10);
-               const mm = parseInt(rawDate.substring(2, 4), 10);
-               const dd = parseInt(rawDate.substring(4, 6), 10);
-
-               // Handle Year (20xx vs 19xx). Pivot usually 50 years? 
-               // For meds, likely 2000+. Simple assumption: 2000 + yy.
-               const fullYear = 2000 + yy;
-
-               // Create Date (Month is 0-indexed)
-               const expiryDate = new Date(fullYear, mm - 1, dd);
-               
-               // Update medication model
-               medication.value.expiryDate = expiryDate;
-               
-               // Sync picker internal state
-               selectedYear.value = fullYear;
-               selectedMonth.value = mm - 1;
-
-               console.log('GS1 Expiry extracted:', expiryDate);
-           }
-        } else {
-            // Standard cleanup for EAN-13 / CIP13
-            queryCode = code.length === 13 && code.startsWith('0') ? code.substring(1) : code;
+        if (expiryDate) {
+            medication.value.expiryDate = expiryDate;
+            const year = expiryDate.getFullYear();
+            const month = expiryDate.getMonth();
+            
+            // Sync picker internal state if needed
+            selectedYear.value = year;
+            selectedMonth.value = month; 
         }
-        
-        // 2. Call Backend Cloud Function
-        const app = useFirebaseApp();
-        const functions = getFunctions(app, 'europe-west3');
-        const getMedicationDetails = httpsCallable(functions, 'getMedicationDetails');
-        
-        const response = await getMedicationDetails({ cip13: queryCode });
-        const data = response.data as any;
 
-        if (data.error) {
-            console.warn('Backend lookup failed:', data.error);
-        } else if (data.name) {
-             medication.value.name = data.name;
+        if (!cip13) {
+            console.warn('No valid CIP13 found in code:', code);
+            scannerIsLoading.value = false;
+            return;
+        }
+
+        // 2. Call Backend via Store
+        const medicationsStore = useMedicationsStore();
+        const data = await medicationsStore.getMedicationDetails(cip13);
+
+        if (!data) {
+            console.warn('Backend lookup failed: No data returned');
         } else {
-             console.warn('No medication name returned for:', queryCode);
+             medication.value.name = data.name;
         }
 
     } catch (e: any) {
         console.error('Barcode lookup error:', e);
     } finally {
-        loading.value = false
+        scannerIsLoading.value = false
     }
 }
 
@@ -433,6 +432,7 @@ const onConfirmClick = async () => {
 }
 
 const cancelAndClose = () => close('canceled')
+
 </script>
 
 <style scoped>

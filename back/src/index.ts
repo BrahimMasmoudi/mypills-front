@@ -3,6 +3,29 @@ import { initializeApp } from 'firebase-admin/app'
 import { getFirestore, FieldValue } from 'firebase-admin/firestore'
 import { Medication } from "./types/medication";
 
+interface MedicamentResponse {
+    cis: number;
+    elementPharmaceutique: string;
+    formePharmaceutique: string;
+    voiesAdministration: string[];
+    statusAutorisation: string;
+    typeProcedure: string;
+    etatComercialisation: string;
+    dateAMM: string;
+    titulaire: string;
+    surveillanceRenforce: string;
+    composition: object[];
+    generiques: object[];
+    presentation: object[];
+    conditions: string[];
+}
+
+interface GetMedicationDetailsResponse {
+    name: string;
+    cis: string | number;
+    details: MedicamentResponse;
+}
+
 initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
@@ -66,9 +89,9 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
 
 // -- CIP13 to CIS Migration and Lookup --
 
-export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }): Promise<GetMedicationDetailsResponse | null> => {
     const cip13 = data.cip13 as string;
-    if (!cip13) return { error: 'Missing CIP13 code' };
+    if (!cip13) return null;
 
     // Bypass SSL validation in emulator
     if (process.env.FUNCTIONS_EMULATOR === 'true') {
@@ -81,11 +104,11 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
 
         if (!docSnap.exists) {
             console.warn(`CIP13 ${cip13} not found in DB`);
-            return { error: 'Medication not found in database' };
+            return null;
         }
 
         const cis = docSnap.data()?.cis;
-        if (!cis) return { error: 'CIS code missing for this medication' };
+        if (!cis) return null;
 
         // 2. Fetch details from Giygas API
         // Note: fetch is available globally in Node 18+ (Firebase Functions Node 20 environment)
@@ -94,7 +117,7 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
 
         if (!response.ok) {
             console.warn(`Giygas API failed for CIS ${cis}: ${response.statusText}`);
-            return { error: 'Failed to fetch medication details from external API' };
+            return null;
         }
 
         const details = await response.json();
@@ -105,12 +128,12 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
         return {
             name,
             cis,
-            details // return full details just in case frontend needs more later
+            details
         };
 
     } catch (e: any) {
         console.error('getMedicationDetails error:', e);
-        return { error: e.message || 'Internal Server Error' };
+        return null;
     }
 });
 

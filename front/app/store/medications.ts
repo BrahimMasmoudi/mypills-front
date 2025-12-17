@@ -4,6 +4,7 @@ import type { Medication } from "~/types/medication";
 import { collection, orderBy, query, where } from "firebase/firestore";
 import type { User } from "@firebase/auth";
 import { logEvent } from "@firebase/analytics";
+import type { GetMedicationDetailsResponse } from "../types/api";
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
     const { $functions, $firestore, $analytics } = useNuxtApp()
@@ -99,6 +100,12 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         }
     }
 
+    const getMedicationDetails = async (cip13: string): Promise<GetMedicationDetailsResponse | undefined> => {
+        const getDetails = httpsCallable($functions, 'getMedicationDetails')
+        const result = await getDetails({ cip13 })
+        return (result.data as GetMedicationDetailsResponse) || undefined
+    }
+
     return {
         getMedications,
         createMedication,
@@ -106,6 +113,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         decrementPills,
         deletePills,
         updateMedicationName,
-        checkAndUpdateExpiredMedications
+        checkAndUpdateExpiredMedications,
+        getMedicationDetails
     }
 })
