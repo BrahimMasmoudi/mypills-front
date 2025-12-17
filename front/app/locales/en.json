@@ -14,6 +14,10 @@
     "success": "The medication has been deleted",
     "error": "Deletion failed. Try again."
   },
+  "scanner": {
+    "title": "Scan Barcode",
+    "gs1_only": "Only GS1 DataMatrix codes are accepted"
+  },
   "dialogCreate": {
     "title": "Add a medication",
     "subtitle": "Fill in the details to add to your directory",

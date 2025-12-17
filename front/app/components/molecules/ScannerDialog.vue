@@ -2,7 +2,7 @@
   <v-dialog v-model="isOpen" max-width="500" persistent>
     <v-card class="rounded-xl">
       <v-card-title class="d-flex justify-space-between align-center pa-4">
-        <span class="text-h6 font-weight-bold">Scan Barcode</span>
+        <span class="text-h6 mx-auto font-weight-bold">{{ t('scanner.title') }}</span>
         <v-btn icon="mdi-close" variant="text" @click="close"></v-btn>
       </v-card-title>
       
@@ -19,7 +19,18 @@
       </v-card-text>
 
       <v-card-text class="pa-4 text-center text-caption text-medium-emphasis">
-        Point your camera at the DataMatrix or CIP13 barcode on the box.
+        <div class="d-flex flex-column align-center gap-2">
+            <div class="d-flex align-center text-body-2 font-weight-medium mb-2">
+                <v-icon icon="mdi-information" color="primary" class="mr-2" size="small"></v-icon>
+                {{ t('scanner.gs1_only') }}
+            </div>
+            
+            <v-sheet>
+              <suspense>
+              <nuxt-icon name="gs1-datamatrix" filled class="gs1-icon" />
+              </suspense>
+            </v-sheet>
+        </div>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -27,6 +38,9 @@
 
 <script setup lang="ts">
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps<{
   modelValue: boolean
@@ -131,9 +145,15 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+
 .scanner-container {
     width: 100%;
     min-height: 300px;
     background: #000;
+}
+
+.gs1-icon :deep(svg) {
+  width: 36px;
+  height: 36px;
 }
 </style>

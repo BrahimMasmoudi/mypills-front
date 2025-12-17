@@ -14,6 +14,10 @@
     "success": "Le médicament est supprimé avec succès",
     "error": "Échec lors de la suppression."
   },
+  "scanner": {
+    "title": "Scanner un code-barres",
+    "gs1_only": "Seuls les codes GS1 DataMatrix sont acceptés"
+  },
   "dialogCreate": {
     "title": "Ajouter un médicament",
     "subtitle": "Remplissez les détails pour l'ajouter à votre répertoire",
