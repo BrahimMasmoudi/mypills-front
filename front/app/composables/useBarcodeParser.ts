@@ -8,14 +8,17 @@ export const useBarcodeParser = () => {
         let cip13: string | null = null;
         let expiryDate: Date | null = null;
 
-        // Clean input
-        let queryCode = code;
+        // Clean input: remove control chars (including GS 0x1D) and whitespace
+        // This is crucial because some scanners return AIM ID or GS chars
+        const cleanedCode = code.replace(/[\x00-\x1F\x7F]/g, '').trim();
+
+        console.log(`Parsing Code: Raw="${code}", Cleaned="${cleanedCode}"`);
 
         // Handle GS1 DataMatrix (e.g., 010340094153396917280731...)
-        if (code.startsWith('01') && code.length >= 16) {
+        if (cleanedCode.startsWith('01') && cleanedCode.length >= 16) {
             // Extract GTIN (01 + 14 digits)
             // Indices: 01 2.............15
-            const gtin = code.substring(2, 16);
+            const gtin = cleanedCode.substring(2, 16);
 
             // Convert GTIN-14 to CIP13
             if (gtin.length === 14 && gtin.startsWith('0')) {
