@@ -16,7 +16,9 @@
   },
   "scanner": {
     "title": "Scanner un code-barres",
-    "gs1_only": "Seuls les codes GS1 DataMatrix sont acceptés"
+    "gs1_only": "Seuls les codes GS1 DataMatrix sont acceptés",
+    "instruction": "Pointez votre caméra sur le code carré (DataMatrix) sur la boîte",
+    "not_found_message": "Désolé, médicament introuvable. Veuillez scanner à nouveau ou saisir les données manuellement."
   },
   "dialogCreate": {
     "title": "Ajouter un médicament",

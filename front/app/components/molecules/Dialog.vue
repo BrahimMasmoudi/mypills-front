@@ -313,6 +313,7 @@
 import {useI18n} from "vue-i18n"
 import {useMedicationsStore} from "../../store/medications"
 import {useBarcodeParser} from "../../composables/useBarcodeParser"
+import {openToast} from "../../composables/openToast"
 import type {Medication} from "../../types/medication"
 import { format } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
@@ -400,16 +401,20 @@ const onBarcodeDetected = async (code: string) => {
         const medicationsStore = useMedicationsStore();
         const data = await medicationsStore.getMedicationDetails(cip13);
 
+       
         if (!data) {
             console.warn('Backend lookup failed: No data returned');
+            openToast('error', t('scanner.not_found_message'));
         } else {
              medication.value.name = data.name;
         }
 
     } catch (e: any) {
         console.error('Barcode lookup error:', e);
+        openToast('error', t('scanner.not_found_message'));
     } finally {
         scannerIsLoading.value = false
+        isScannerOpen.value = false
     }
 }
 
