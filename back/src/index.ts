@@ -3,6 +3,29 @@ import { initializeApp } from 'firebase-admin/app'
 import { getFirestore, FieldValue } from 'firebase-admin/firestore'
 import { Medication } from "./types/medication";
 
+interface MedicamentResponse {
+    cis: number;
+    elementPharmaceutique: string;
+    formePharmaceutique: string;
+    voiesAdministration: string[];
+    statusAutorisation: string;
+    typeProcedure: string;
+    etatComercialisation: string;
+    dateAMM: string;
+    titulaire: string;
+    surveillanceRenforce: string;
+    composition: object[];
+    generiques: object[];
+    presentation: object[];
+    conditions: string[];
+}
+
+interface GetMedicationDetailsResponse {
+    name: string;
+    cis: string | number;
+    details: MedicamentResponse;
+}
+
 initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
@@ -64,6 +87,55 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
     }
 })
 
+// -- CIP13 to CIS Migration and Lookup --
+
+export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }): Promise<GetMedicationDetailsResponse | null> => {
+    const cip13 = data.cip13 as string;
+    if (!cip13) return null;
+
+    // Bypass SSL validation in emulator
+    if (process.env.FUNCTIONS_EMULATOR === 'true') {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    }
+
+    try {
+        // 1. Lookup CIS from Firestore
+        const docSnap = await firestore.collection('cip_to_cis').doc(cip13).get();
+
+        if (!docSnap.exists) {
+            console.warn(`CIP13 ${cip13} not found in DB`);
+            return null;
+        }
+
+        const cis = docSnap.data()?.cis;
+        if (!cis) return null;
+
+        // 2. Fetch details from Giygas API
+        // Note: fetch is available globally in Node 18+ (Firebase Functions Node 20 environment)
+        // If not, we might need axios or node-fetch, but let's try native fetch first.
+        const response = await fetch(`https://medicaments-api.giygas.dev/medicament/id/${cis}`);
+
+        if (!response.ok) {
+            console.warn(`Giygas API failed for CIS ${cis}: ${response.statusText}`);
+            return null;
+        }
+
+        const details = await response.json();
+
+        // Return only the name for now as per requirements, or the whole object
+        const name = details.elementPharmaceutique || details.denomination || '';
+
+        return {
+            name,
+            cis,
+            details
+        };
+
+    } catch (e: any) {
+        console.error('getMedicationDetails error:', e);
+        return null;
+    }
+});
 
 
 // const createData = async () => {
@@ -809,4 +881,4 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
 //             console.error(`Error writing document with ID ${docId}: `, error);
 //         }
 //     }
-// }
+// End of file

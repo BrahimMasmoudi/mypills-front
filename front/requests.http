@@ -1,0 +1,12 @@
+### Find Medication by Barcode (CIP13 or CIP7)
+# Example using Doliprane 1000mg (CIP13: 3400935165809)
+GET https://api.open-medicaments.fr/api/v1/medicaments?query=3400935165809&limit=1
+
+###
+# The response from above gives us a codeCIS.
+# Example CIS from Doliprane 1000mg: 60234100
+# NOTE: The first API might return a slightly different structure, check the response "codeCIS" field.
+
+### Get Medication Details by CIS
+# Using the CIS code found from the previous request (e.g., 60234100)
+GET https://medicaments-api.giygas.dev/medicament/id/69309629

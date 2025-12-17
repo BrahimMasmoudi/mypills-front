@@ -25,7 +25,7 @@
 
       <v-card-text class="pa-0">
         <div class="d-flex flex-column gap-4">
-          <!-- Medication Name -->
+          <!-- Medication Name with Scan -->
           <v-text-field
               v-model="medication.name"
               :label="t('dialogCreate.medicationLabel')"
@@ -34,8 +34,34 @@
               prepend-inner-icon="mdi-pill"
               hide-details="auto"
               rounded="lg"
+              :loading="scannerIsLoading"
               class="font-weight-medium text-black"
-          />
+          >
+            <template v-slot:loader>
+                <v-progress-linear
+                  :active="scannerIsLoading"
+                  color="primary"
+                  height="2"
+                  indeterminate
+                ></v-progress-linear>
+            </template>
+            <template v-slot:append-inner>
+              <v-tooltip location="top" text="Scan Barcode">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                      v-bind="props"
+                      icon="mdi-barcode-scan"
+                      variant="tonal"
+                      color="primary"
+                      size="small"
+                      class="ms-1"
+                      @click="isScannerOpen = true"
+                  />
+                </template>
+              </v-tooltip>
+            </template>
+          </v-text-field>
+
           <v-menu
               v-model="dateMenuIsOpen"
               :close-on-content-click="false"
@@ -54,8 +80,18 @@
                   rounded="lg"
                   prepend-inner-icon="mdi-calendar-blank"
                   readonly
+                  loading
                   class="font-weight-medium cursor-pointer elegant-input"
-              />
+              >
+                <template v-slot:loader>
+                    <v-progress-linear
+                      :active="scannerIsLoading"
+                      color="primary"
+                      height="2"
+                      indeterminate
+                    ></v-progress-linear>
+                </template>
+              </v-text-field>
             </template>
             <v-date-picker 
                 :view-mode="viewMode"
@@ -115,6 +151,8 @@
     </v-card>
   </v-dialog>
 
+
+
   <!-- Mobile Layout (Bottom Sheet) -->
   <v-dialog
       v-else
@@ -137,7 +175,7 @@
         />
 
         <v-avatar color="primary-lighten-5" size="56" class="mb-3">
-          <v-icon icon="mdi-pill" color="primary" size="28" />
+          <v-icon icon="mdi-pill" color="primary" size="48" />
         </v-avatar>
 
         <h3 class="text-h6 font-weight-bold mb-1">
@@ -156,9 +194,27 @@
             variant="outlined"
             color="primary"
             hide-details="auto"
-            rounded="lg"
-            class="font-weight-medium"
-        />
+            loading
+        >
+          <template v-slot:loader>
+              <v-progress-linear
+                :active="scannerIsLoading"
+                color="primary"
+                height="2"
+                indeterminate
+              ></v-progress-linear>
+          </template>
+          <template v-slot:append-inner>
+             <v-btn
+                icon="mdi-barcode-scan"
+                variant="tonal"
+                color="primary"
+                size="small"
+                class="ms-1"
+                @click="isScannerOpen = true"
+             />
+          </template>
+        </v-text-field>
 
         <!-- Expiry Date -->
         <v-menu
@@ -179,8 +235,18 @@
                 rounded="lg"
                 prepend-inner-icon="mdi-calendar-blank"
                 readonly
+                loading
                 class="font-weight-medium cursor-pointer"
-            />
+            >
+              <template v-slot:loader>
+                  <v-progress-linear
+                    :active="scannerIsLoading"
+                    color="primary"
+                    height="2"
+                    indeterminate
+                  ></v-progress-linear>
+              </template>
+            </v-text-field>
           </template>
           <v-date-picker 
               :view-mode="viewMode"
@@ -238,13 +304,19 @@
       </div>
     </v-card>
   </v-dialog>
+
+  <!-- Scanner Dialog -->
+  <ScannerDialog v-model="isScannerOpen" @detect="onBarcodeDetected" />
 </template>
 
 <script lang="ts" setup>
-import {useI18n} from "vue-i18n";
-import type {Medication} from "~/types/medication";
-import { format } from 'date-fns';
-import { fr, enUS } from 'date-fns/locale';
+import {useI18n} from "vue-i18n"
+import {useMedicationsStore} from "../../store/medications"
+import {useBarcodeParser} from "../../composables/useBarcodeParser"
+import type {Medication} from "../../types/medication"
+import { format } from 'date-fns'
+import { fr, enUS } from 'date-fns/locale'
+import ScannerDialog from "~/components/molecules/ScannerDialog.vue";
 
 const {t, locale} = useI18n()
 const {$device} = useNuxtApp()
@@ -253,7 +325,9 @@ const locales: Record<string, any> = { en: enUS, fr: fr };
 
 const isActive = ref(true)
 const loading = ref(false)
+const scannerIsLoading = ref(false)
 const dateMenuIsOpen = ref(false)
+const isScannerOpen = ref(false)
 
 const {close, createMedication,userUid, email} = defineProps<{
   close: (value : ToastType) => void
@@ -298,6 +372,47 @@ const medication = ref<Medication>({
   return format(new Date(date), 'MMMM yyyy', { locale: locales[locale.value] || enUS });
 }
 
+// Barcode Handling
+const onBarcodeDetected = async (code: string) => {
+    scannerIsLoading.value = true
+    try {
+        // 1. Parse Code
+        const { parseBarcode } = useBarcodeParser();
+        const { cip13, expiryDate } = parseBarcode(code);
+        
+        if (expiryDate) {
+            medication.value.expiryDate = expiryDate;
+            const year = expiryDate.getFullYear();
+            const month = expiryDate.getMonth();
+            
+            // Sync picker internal state if needed
+            selectedYear.value = year;
+            selectedMonth.value = month; 
+        }
+
+        if (!cip13) {
+            console.warn('No valid CIP13 found in code:', code);
+            scannerIsLoading.value = false;
+            return;
+        }
+
+        // 2. Call Backend via Store
+        const medicationsStore = useMedicationsStore();
+        const data = await medicationsStore.getMedicationDetails(cip13);
+
+        if (!data) {
+            console.warn('Backend lookup failed: No data returned');
+        } else {
+             medication.value.name = data.name;
+        }
+
+    } catch (e: any) {
+        console.error('Barcode lookup error:', e);
+    } finally {
+        scannerIsLoading.value = false
+    }
+}
+
 
 const onConfirmClick = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
@@ -317,6 +432,7 @@ const onConfirmClick = async () => {
 }
 
 const cancelAndClose = () => close('canceled')
+
 </script>
 
 <style scoped>
