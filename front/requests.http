@@ -9,4 +9,4 @@ GET https://api.open-medicaments.fr/api/v1/medicaments?query=3400935165809&limit
 
 ### Get Medication Details by CIS
 # Using the CIS code found from the previous request (e.g., 60234100)
-GET https://medicaments-api.giygas.dev/medicament/id/60234100
+GET https://medicaments-api.giygas.dev/medicament/id/69309629

@@ -70,6 +70,11 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
     const cip13 = data.cip13 as string;
     if (!cip13) return { error: 'Missing CIP13 code' };
 
+    // Bypass SSL validation in emulator
+    if (process.env.FUNCTIONS_EMULATOR === 'true') {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    }
+
     try {
         // 1. Lookup CIS from Firestore
         const docSnap = await firestore.collection('cip_to_cis').doc(cip13).get();

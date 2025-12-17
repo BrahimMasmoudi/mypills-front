@@ -318,8 +318,57 @@ const medication = ref<Medication>({
 const onBarcodeDetected = async (code: string) => {
     loading.value = true
     try {
-        // 1. Clean code
-        const queryCode = code.length === 13 && code.startsWith('0') ? code.substring(1) : code;
+        // 1. Clean code / Parse GS1
+        let queryCode = code;
+        
+        // Handle GS1 DataMatrix (e.g., 010340094153396917280731...)
+        // Structure: 01 (GTIN-14) + other fields
+        if (code.startsWith('01') && code.length >= 16) {
+           // Extract the 14-digit GTIN following '01'
+           // Example: 01 03400941533969 ...
+           // Indices: 01 2.............15
+           const gtin = code.substring(2, 16);
+           
+           // Convert GTIN-14 to CIP13 (remove valid leading 0)
+           if (gtin.length === 14 && gtin.startsWith('0')) {
+                queryCode = gtin.substring(1);
+           } else {
+                queryCode = gtin;
+           }
+           console.log('GS1 DataMatrix detected. Extracted CIP13:', queryCode);
+
+           // Extract Expiry Date (AI 17)
+           // The GTIN (AI 01) is fixed length (14 digits + 2 digit AI = 16 chars).
+           // We check if the next segment is AI 17 (Expiry Date, YYMMDD).
+           const remainder = code.substring(16);
+           if (remainder.startsWith('17') && remainder.length >= 8) {
+               // Structure: 17 YYMMDD
+               // Indices:   01 234567
+               const rawDate = remainder.substring(2, 8);
+               const yy = parseInt(rawDate.substring(0, 2), 10);
+               const mm = parseInt(rawDate.substring(2, 4), 10);
+               const dd = parseInt(rawDate.substring(4, 6), 10);
+
+               // Handle Year (20xx vs 19xx). Pivot usually 50 years? 
+               // For meds, likely 2000+. Simple assumption: 2000 + yy.
+               const fullYear = 2000 + yy;
+
+               // Create Date (Month is 0-indexed)
+               const expiryDate = new Date(fullYear, mm - 1, dd);
+               
+               // Update medication model
+               medication.value.expiryDate = expiryDate;
+               
+               // Sync picker internal state
+               selectedYear.value = fullYear;
+               selectedMonth.value = mm - 1;
+
+               console.log('GS1 Expiry extracted:', expiryDate);
+           }
+        } else {
+            // Standard cleanup for EAN-13 / CIP13
+            queryCode = code.length === 13 && code.startsWith('0') ? code.substring(1) : code;
+        }
         
         // 2. Call Backend Cloud Function
         const app = useFirebaseApp();
