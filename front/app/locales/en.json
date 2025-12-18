@@ -20,6 +20,12 @@
     "instruction": "Point your camera at the square dot-matrix code on the box",
     "not_found_message": "Sorry, medication not found. Please scan again or enter data manually."
   },
+  "duplicate": {
+    "title": "Medication Already Exists",
+    "message": "You already have {name} expiring in {date}. Would you like to increment the quantity?",
+    "increment": "Increment Quantity",
+    "cancel": "Cancel"
+  },
   "dialogCreate": {
     "title": "Add a medication",
     "subtitle": "Fill in the details to add to your directory",

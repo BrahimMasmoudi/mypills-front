@@ -150,7 +150,8 @@ const openDialog = async () => {
     isPersistent: true,
     createMedication: props.createMedication,
     userUid: user?.uid,
-    email: user?.email
+    email: user?.email,
+    medications: props.medications
   })
   if(toastType !== 'canceled') openToast(toastType, t(toastType))
 }

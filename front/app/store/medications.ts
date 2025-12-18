@@ -106,6 +106,31 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         return (result.data as GetMedicationDetailsResponse) || undefined
     }
 
+
+    const findDuplicateMedication = (
+        medications: Medication[],
+        name: string,
+        expiryDate: Date
+    ): Medication | null => {
+        const targetMonth = expiryDate.getMonth()
+        const targetYear = expiryDate.getFullYear()
+
+        const duplicate = medications.find(med => {
+            const medDate = med.expiryDate instanceof Date
+                ? med.expiryDate
+                : new Date(med.expiryDate)
+
+            return (
+                med.name.toLowerCase() === name.toLowerCase() &&
+                medDate.getMonth() === targetMonth &&
+                medDate.getFullYear() === targetYear
+            )
+        })
+
+        return duplicate || null
+    }
+
+
     return {
         getMedications,
         createMedication,
@@ -114,6 +139,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         deletePills,
         updateMedicationName,
         checkAndUpdateExpiredMedications,
-        getMedicationDetails
+        getMedicationDetails,
+        findDuplicateMedication
     }
 })

@@ -318,6 +318,7 @@ import type {Medication} from "../../types/medication"
 import { format } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
 import ScannerDialog from "~/components/molecules/ScannerDialog.vue";
+import DuplicateConfirmDialog from "~/components/molecules/DuplicateConfirmDialog.vue";
 
 const {t, locale} = useI18n()
 const {$device} = useNuxtApp()
@@ -330,13 +331,14 @@ const scannerIsLoading = ref(false)
 const dateMenuIsOpen = ref(false)
 const isScannerOpen = ref(false)
 
-const {close, createMedication,userUid, email} = defineProps<{
+const {close, createMedication, userUid, email, medications} = defineProps<{
   close: (value : ToastType) => void
   isPersistent: boolean
   scrim: boolean
   createMedication: (medication: Medication) => Promise<void>
   userUid : string
   email : string
+  medications: Medication[]
 }>()
 const medication = ref<Medication>({
   expiryDate: new Date(),
@@ -406,7 +408,36 @@ const onBarcodeDetected = async (code: string) => {
             console.warn('Backend lookup failed: No data returned');
             openToast('error', t('scanner.not_found_message'));
         } else {
-             medication.value.name = data.name;
+            medication.value.name = data.name;
+            
+            // 3. Check for duplicate medication
+            const duplicate = medicationsStore.findDuplicateMedication(
+                medications,
+                data.name,
+                medication.value.expiryDate
+            );
+            
+            if (duplicate) {
+                // Duplicate found - show confirmation dialog
+                const { $open } = useNuxtApp();
+                const result = await $open<string>(DuplicateConfirmDialog, {
+                    scrim: true,
+                    isPersistent: true,
+                    medicationName: data.name,
+                    expiryDate: medication.value.expiryDate
+                });
+                
+                if (result === 'increment') {
+                    // User confirmed - increment quantity
+                    await medicationsStore.incrementPills(duplicate);
+                    openToast('success', t('success'));
+                    close('success');
+                } else {
+                    // User canceled - reset form
+                    medication.value.name = '';
+                    medication.value.expiryDate = new Date();
+                }
+            }
         }
 
     } catch (e: any) {
