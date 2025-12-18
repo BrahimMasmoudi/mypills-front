@@ -20,6 +20,12 @@
     "instruction": "Pointez votre caméra sur le code carré (DataMatrix) sur la boîte",
     "not_found_message": "Désolé, médicament introuvable. Veuillez scanner à nouveau ou saisir les données manuellement."
   },
+  "duplicate": {
+    "title": "Médicament Déjà Existant",
+    "message": "Vous avez déjà {name} expirant en {date}. Voulez-vous augmenter la quantité ?",
+    "increment": "Augmenter la Quantité",
+    "cancel": "Annuler"
+  },
   "dialogCreate": {
     "title": "Ajouter un médicament",
     "subtitle": "Remplissez les détails pour l'ajouter à votre répertoire",
