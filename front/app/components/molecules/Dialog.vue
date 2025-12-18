@@ -437,6 +437,10 @@ const onBarcodeDetected = async (code: string) => {
                     medication.value.name = '';
                     medication.value.expiryDate = new Date();
                 }
+            } else {
+                // No duplicate - auto create with quantity 1
+                medication.value.quantity = 1;
+                await performCreation();
             }
         }
 
@@ -450,7 +454,7 @@ const onBarcodeDetected = async (code: string) => {
 }
 
 
-const onConfirmClick = async () => {
+const performCreation = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
   // Assign random pill icon from pill-1 to pill-30
   const randomIconNumber = Math.floor(Math.random() * 30) + 1
@@ -463,8 +467,13 @@ const onConfirmClick = async () => {
     loading.value = false
     close('success')
   } catch (e) {
+    loading.value = false
     close('error')
   }
+}
+
+const onConfirmClick = async () => {
+  await performCreation()
 }
 
 const cancelAndClose = () => close('canceled')
