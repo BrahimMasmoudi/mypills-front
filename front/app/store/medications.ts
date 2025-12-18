@@ -106,7 +106,13 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         return (result.data as GetMedicationDetailsResponse) || undefined
     }
 
-
+    /**
+     * Find a duplicate medication by name and expiry date (month/year match)
+     * @param medications - Array of user's medications
+     * @param name - Medication name to search for
+     * @param expiryDate - Expiry date to compare (month and year)
+     * @returns Matching medication or null
+     */
     const findDuplicateMedication = (
         medications: Medication[],
         name: string,
@@ -127,9 +133,32 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
             )
         })
 
+        // Log when duplicate is detected
+        if (duplicate && $analytics) {
+            logEvent($analytics, 'duplicate_medication_detected', {
+                medication_name: name,
+                existing_quantity: duplicate.quantity,
+                expiry_date: expiryDate
+            })
+        }
+
         return duplicate || null
     }
 
+    /**
+     * Increment pills for a duplicate medication (from scanner)
+     * Includes analytics logging for duplicate increment
+     */
+    const incrementPillsFromDuplicate = async (medication: Medication) => {
+        if ($analytics) {
+            logEvent($analytics, 'duplicate_medication_increment', {
+                medication_name: medication.name,
+                medication_id: medication.medicationId,
+                new_quantity: medication.quantity + 1
+            })
+        }
+        return await incrementPills(medication)
+    }
 
     return {
         getMedications,
@@ -140,6 +169,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         updateMedicationName,
         checkAndUpdateExpiredMedications,
         getMedicationDetails,
-        findDuplicateMedication
+        findDuplicateMedication,
+        incrementPillsFromDuplicate,
     }
 })

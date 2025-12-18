@@ -428,8 +428,8 @@ const onBarcodeDetected = async (code: string) => {
                 });
                 
                 if (result === 'increment') {
-                    // User confirmed - increment quantity
-                    await medicationsStore.incrementPills(duplicate);
+                    // User confirmed - increment quantity (analytics handled in store)
+                    await medicationsStore.incrementPillsFromDuplicate(duplicate);
                     openToast('success', t('success'));
                     close('success');
                 } else {
