@@ -78,8 +78,8 @@
       <!-- Features Section -->
       <section>
         <v-container max-width="1200">
-          <v-row>
-            <v-col cols="12" sm="6" lg="3" v-for="(feature, i) in features" :key="i">
+          <v-row justify="center">
+            <v-col cols="12" sm="6" lg="4" v-for="(feature, i) in features" :key="i">
               <v-card
                 class="feature-card h-100 pa-6 rounded-xl border-0"
                 elevation="0"
@@ -132,6 +132,12 @@ const isLoading = ref(false)
 
 const features = [
   {
+    icon: 'mdi-barcode-scan',
+    titleKey: 'landing.features.scan.title',
+    descKey: 'landing.features.scan.desc',
+    colorClass: 'bg-orange'
+  },
+  {
     icon: 'mdi-pill',
     titleKey: 'landing.features.track.title',
     descKey: 'landing.features.track.desc',
@@ -148,6 +154,12 @@ const features = [
     titleKey: 'landing.features.organize.title',
     descKey: 'landing.features.organize.desc',
     colorClass: 'bg-indigo'
+  },
+  {
+    icon: 'mdi-content-duplicate',
+    titleKey: 'landing.features.duplicate.title',
+    descKey: 'landing.features.duplicate.desc',
+    colorClass: 'bg-teal'
   },
   {
     icon: 'mdi-translate',
@@ -183,6 +195,8 @@ const login = async () => {
 .bg-blue { background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%); }
 .bg-indigo { background: linear-gradient(135deg, #818CF8 0%, #6366F1 100%); }
 .bg-purple { background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%); }
+.bg-orange { background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%); }
+.bg-teal { background: linear-gradient(135deg, #2DD4BF 0%, #0D9488 100%); }
 
 .landing-page {
     background: #ffffff;
