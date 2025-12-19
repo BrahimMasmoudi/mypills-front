@@ -28,7 +28,7 @@
 
         <v-btn-toggle
             :model-value="viewType"
-            @update:model-value="$emit('update:viewType', $event)"
+            @update:model-value="handleViewTypeUpdate"
             mandatory
             color="primary"
             variant="outlined"
@@ -99,8 +99,10 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { logEvent } from 'firebase/analytics'
 
 const { t } = useI18n()
+const { $analytics } = useNuxtApp()
 
 const props = defineProps<{
   searchQuery: string
@@ -111,7 +113,7 @@ const props = defineProps<{
   viewType: 'grid' | 'table'
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   'update:searchQuery': [value: string]
   'update:sortBy': [value: string | null]
   'update:viewType': [value: 'grid' | 'table']
@@ -120,6 +122,17 @@ defineEmits<{
 }>()
 
 const sortSheetOpen = ref(false)
+
+const handleViewTypeUpdate = (value: any) => {
+  const newViewType = value as 'grid' | 'table'
+  emit('update:viewType', newViewType)
+  
+  if ($analytics) {
+    logEvent($analytics, 'change_view_type', {
+      view_type: newViewType
+    })
+  }
+}
 
 const currentSortIcon = computed(() => {
   if (!props.sortBy) return 'mdi-sort'
