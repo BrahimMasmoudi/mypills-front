@@ -8,6 +8,23 @@ import type { GetMedicationDetailsResponse } from "../types/api";
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
     const { $functions, $firestore, $analytics } = useNuxtApp()
+
+    /**
+     * Standardizes various date formats (Date, Timestamp, JSON object) into a Date object
+     */
+    const ensureDate = (dateValue: any): Date => {
+        if (!dateValue) return new Date(0) // Return epoch if no date
+        // Firestore Timestamp
+        if (typeof dateValue.toDate === 'function') return dateValue.toDate()
+        // Date object
+        if (dateValue instanceof Date) return dateValue
+        // Object with seconds (Firestore JSON or similar)
+        if (dateValue.seconds !== undefined) return new Date(dateValue.seconds * 1000)
+        // String or number
+        const date = new Date(dateValue)
+        return isNaN(date.getTime()) ? new Date(0) : date
+    }
+
     const getMedications = (user: User) => {
         const q = query(collection($firestore, 'medications'), orderBy('expiryDate', 'desc'), where('email', '==', user?.email))
         return useCollection(q)
@@ -85,9 +102,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
             // Skip if already marked as expired
             if (med.expired) continue
 
-            const expiryDate = med.expiryDate instanceof Date
-                ? med.expiryDate
-                : new Date(med.expiryDate)
+            const expiryDate = ensureDate(med.expiryDate)
 
             if (expiryDate < now) {
                 expiredIds.push(med.medicationId)
@@ -122,9 +137,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         const targetYear = expiryDate.getFullYear()
 
         const duplicate = medications.find(med => {
-            const medDate = med.expiryDate instanceof Date
-                ? med.expiryDate
-                : new Date(med.expiryDate)
+            const medDate = ensureDate(med.expiryDate)
 
             return (
                 med.name.toLowerCase() === name.toLowerCase() &&

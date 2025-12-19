@@ -25,6 +25,20 @@
             @update:sort-by="$emit('update:sortBy', $event)"
             @clear="$emit('update:sortBy', null)"
         />
+
+        <v-btn-toggle
+            :model-value="viewType"
+            @update:model-value="$emit('update:viewType', $event)"
+            mandatory
+            color="primary"
+            variant="outlined"
+            density="comfortable"
+            rounded="pill"
+            class="ml-4 view-toggle"
+        >
+          <v-btn value="grid" icon="mdi-view-grid-outline" />
+          <v-btn value="table" icon="mdi-view-list" />
+        </v-btn-toggle>
         
         <v-btn
             color="primary"
@@ -94,11 +108,13 @@ const props = defineProps<{
   sortOrder: 'asc' | 'desc'
   sortOptions: Array<{ value: string; label: string; icon: string }>
   isMobile: boolean
+  viewType: 'grid' | 'table'
 }>()
 
 defineEmits<{
   'update:searchQuery': [value: string]
   'update:sortBy': [value: string | null]
+  'update:viewType': [value: 'grid' | 'table']
   'toggleSortOrder': []
   'create': []
 }>()
@@ -137,5 +153,10 @@ const currentSortIcon = computed(() => {
 .add-pill-btn-floating:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.35) !important;
+}
+
+.view-toggle :deep(.v-btn--active) {
+  background-color: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-on-primary)) !important;
 }
 </style>

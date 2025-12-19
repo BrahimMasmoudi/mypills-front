@@ -14,6 +14,11 @@
     "success": "The medication has been deleted",
     "error": "Deletion failed. Try again."
   },
+  "dialogRename": {
+    "title": "Rename Medication",
+    "success": "The medication has been renamed",
+    "error": "Rename failed. Try again."
+  },
   "scanner": {
     "title": "Scan Barcode",
     "gs1_only": "Only GS1 DataMatrix codes are accepted",
@@ -35,13 +40,21 @@
     "choose-date-title": "Choose a date",
     "quantity": "Quantity"
   },
+  "save": "Save",
+  "medicationName": "Medication Name",
   "qty": "Qty",
   "meds": {
+    "all": "All",
+    "all_long": "All medications",
     "expired": "Expired",
-    "expired_long": "Expired meds",
+    "expired_long": "Expired medications",
     "valid": "Valid",
-    "valid_long": "Valid meds",
-    "no-result": "No meds found"
+    "valid_long": "Valid medications",
+    "no-result": "No medications found",
+    "name": "Name",
+    "quantity": "Quantity",
+    "expiryDate": "Expiry Date",
+    "actions": "Actions"
   },
   "home": {
     "title": "Welcome to MY PILLS"
