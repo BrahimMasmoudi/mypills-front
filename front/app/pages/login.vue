@@ -1,7 +1,7 @@
 <template>
   <v-app class="landing-page bg-primary-light">
     <!-- Navbar -->
-    <v-app-bar elevation="1" class="bg-primary-light" height="80">
+    <v-app-bar elevation="1" class="bg-primary-light" height="64">
       <v-sheet class="bg-primary-light d-flex align-center justify-space-between px-5" width="100%">
         <div class="d-flex align-center gap-3">
           <v-avatar color="white" size="48" class="elevation-2">
@@ -24,19 +24,19 @@
         <div class="bg-shape shape-2"></div>
 
         <v-container max-width="1200">
-          <v-row align="center" justify="center" class="min-h-[600px]">
+          <v-row align="center" justify="center" class="py-4">
             <!-- Text Content -->
             <v-col cols="12" md="6" class="text-center text-md-left z-index-10">              
-              <h1 class="font-weight-black mb-6 text-dark-blue line-height-tight"
+              <h1 class="font-weight-black mb-2 text-dark-blue line-height-tight"
                 :class="{
-                  'font-size-3': $device.isMobile,
-                  'text-h3': !$device.isMobile
+                  'font-size-2': $device.isMobile,
+                  'text-h4': !$device.isMobile
                 }"
               >
                 {{ t('landing.welcome') }}
               </h1>
               
-              <p class="text-h6 text-medium-emphasis mb-8 font-weight-regular max-width-500 mx-auto mx-md-0">
+              <p class="text-body-1 text-medium-emphasis mb-4 font-weight-regular max-width-500 mx-auto mx-md-0">
                 {{ t('landing.subtitle') }}
               </p>
 
@@ -44,9 +44,9 @@
                 <v-btn
                     @click.prevent="login"
                     color="primary"
-                    size="x-large"
+                    size="large"
                     variant="flat"
-                    height="56"
+                    height="48"
                     class="text-capitalize font-weight-bold px-8 shadow-lg"
                     rounded="pill"
                     :loading="isLoading"
@@ -76,24 +76,29 @@
       </section>
 
       <!-- Features Section -->
-      <section>
-        <v-container max-width="1200">
-          <v-row justify="center">
-            <v-col cols="12" sm="6" lg="4" v-for="(feature, i) in features" :key="i">
+      <section class="pb-4">
+        <v-container max-width="1200" class="py-0">
+          <v-row justify="center" dense>
+            <v-col cols="12" sm="6" lg="4" class="pa-3" v-for="(feature, i) in features" :key="i">
               <v-card
-                class="feature-card h-100 pa-6 rounded-xl border-0"
+                class="feature-card py-2 px-4 rounded-xl border-0 d-flex align-center"
                 elevation="0"
+                height="120"
                 variant="flat"
               >
-                <div class="feature-icon-box mb-4" :class="feature.colorClass">
-                  <v-icon :icon="feature.icon" size="32" color="white" />
+                <div class="d-flex align-center">
+                  <div class="feature-icon-box mr-4" :class="feature.colorClass">
+                    <v-icon :icon="feature.icon" size="24" color="white" />
+                  </div>
+                  <div>
+                    <h3 class="text-subtitle-1 font-weight-bold mb-0 text-dark-blue">
+                      {{ t(feature.titleKey) }}
+                    </h3>
+                    <p class="text-caption text-medium-emphasis mb-0">
+                      {{ t(feature.descKey) }}
+                    </p>
+                  </div>
                 </div>
-                <h3 class="text-h6 font-weight-bold mb-2 text-dark-blue">
-                  {{ t(feature.titleKey) }}
-                </h3>
-                <p class="text-body-2 text-medium-emphasis">
-                  {{ t(feature.descKey) }}
-                </p>
               </v-card>
             </v-col>
           </v-row>
@@ -246,7 +251,7 @@ const login = async () => {
 /* Hero Illustration */
 .hero-image-container {
     position: relative;
-    height: 400px;
+    height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -263,15 +268,15 @@ const login = async () => {
 }
 
 .main-card {
-    width: 240px;
-    height: 240px;
+    width: 180px;
+    height: 180px;
     z-index: 2;
     animation: float 6s ease-in-out infinite;
 }
 
 .hero-icon :deep(svg) {
-    width: 120px;
-    height: 120px;
+    width: 80px;
+    height: 80px;
     color: #2563EB;
 }
 
@@ -310,18 +315,19 @@ const login = async () => {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 .feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 15px -3px rgba(0, 0, 0, 0.08);
 }
 
 .feature-icon-box {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
 .overlay-blur {
