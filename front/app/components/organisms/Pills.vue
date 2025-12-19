@@ -17,7 +17,7 @@
     </div>
 
     <!-- Tabs Content (Handles its own scrolling) -->
-    <div class="w-100 flex-grow-1 overflow-hidden d-flex flex-column mt-4">
+    <div class="w-100 flex-grow-1 overflow-hidden d-flex flex-column">
       <MoleculesMedicationTabs
           v-model="tab"
           :view-type="viewType"
