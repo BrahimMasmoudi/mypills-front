@@ -7,6 +7,7 @@
       <MoleculesMedicationSearchSort
           v-model:search-query="searchQuery"
           v-model:sort-by="sortBy"
+          v-model:view-type="viewType"
           :sort-order="sortOrder"
           :sort-options="sortOptions"
           :is-mobile="$device.isMobile"
@@ -19,6 +20,7 @@
     <div class="w-100 flex-grow-1 overflow-hidden">
       <MoleculesMedicationTabs
           v-model="tab"
+          :view-type="viewType"
           :valid-medication="validMedication"
           :expired-medication="expiredMedication"
           :increment-pills="incrementPills"
@@ -60,6 +62,7 @@ import {getCurrentUser} from "vuefire";
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
 const searchQuery = ref('')
+const viewType = ref<'grid' | 'table'>('grid')
 const sortBy = ref<'name' | 'expiryDate' | 'quantity' | null>(null)
 const sortOrder = ref<'asc' | 'desc'>('asc')
 const sortOptions = [

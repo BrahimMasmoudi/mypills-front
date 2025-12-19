@@ -53,7 +53,16 @@
        <v-window :model-value="modelValue" class="w-100 h-100">
         <v-window-item value="valid" class="h-100 overflow-y-auto overflow-x-hidden">
           <MoleculesPills
-              v-if="validMedication.length > 0"
+              v-if="validMedication.length > 0 && viewType === 'grid'"
+              :is-expired="false"
+              :medications="validMedication"
+              :increment-pills="incrementPills"
+              :decrement-pills="decrementPills"
+              :delete-pills="deletePills"
+              :update-medication-name="updateMedicationName"
+          />
+          <MoleculesMedicationTable
+              v-else-if="validMedication.length > 0 && viewType === 'table' && !$device.isMobile"
               :is-expired="false"
               :medications="validMedication"
               :increment-pills="incrementPills"
@@ -70,13 +79,23 @@
 
         <v-window-item value="expired" class="h-100 overflow-y-auto">
           <MoleculesPills
-              v-if="expiredMedication.length > 0"
+              v-if="expiredMedication.length > 0 && viewType === 'grid'"
               :is-expired="true"
               :medications="expiredMedication"
               :increment-pills="incrementPills"
               :decrement-pills="decrementPills"
               :delete-pills="deletePills"
               :update-medication-name="updateMedicationName"/>
+          
+          <MoleculesMedicationTable
+              v-else-if="expiredMedication.length > 0 && viewType === 'table' && !$device.isMobile"
+              :is-expired="true"
+              :medications="expiredMedication"
+              :increment-pills="incrementPills"
+              :decrement-pills="decrementPills"
+              :delete-pills="deletePills"
+              :update-medication-name="updateMedicationName"
+          />
 
           <v-sheet width="100%" height="100%" v-else
                    class="d-flex flex-column align-center justify-center font-weight-bold">
@@ -100,6 +119,7 @@ const {$device} = useNuxtApp()
 
 defineProps<{
   modelValue: string
+  viewType: 'grid' | 'table'
   validMedication: Medication[]
   expiredMedication: Medication[]
   incrementPills: (medication: Medication) => Promise<void>

@@ -14,6 +14,11 @@
     "success": "Le médicament est supprimé avec succès",
     "error": "Échec lors de la suppression."
   },
+  "dialogRename": {
+    "title": "Renommer le médicament",
+    "success": "Le médicament a été renommé",
+    "error": "Échec du renommage. Réessayez."
+  },
   "scanner": {
     "title": "Scanner un code-barres",
     "gs1_only": "Seuls les codes GS1 DataMatrix sont acceptés",
@@ -35,13 +40,19 @@
     "choose-date-title": "Choisir une date",
     "quantity": "Quantité"
   },
+  "save": "Enregistrer",
+  "medicationName": "Nom du médicament",
   "qty": "Qté",
   "meds": {
     "expired": "Expirés",
     "expired_long": "Médicaments expirés",
     "valid": "Valides",
     "valid_long": "Médicaments valides",
-    "no-result": "Pas de médicaments trouvés"
+    "no-result": "Pas de médicaments trouvés",
+    "name": "Nom",
+    "quantity": "Quantité",
+    "expiryDate": "Date d'expiration",
+    "actions": "Actions"
   },
   "home": {
     "title": "Bienvenu à MY PILLS"
