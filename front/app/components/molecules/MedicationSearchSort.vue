@@ -1,56 +1,50 @@
 <template>
   <div class="w-100 d-flex justify-center align-center position-relative">
     <div v-if="!isMobile" class="desktop-header">
-      <v-sheet class="d-flex align-center justify-center" width="100%">
+      <v-sheet class="d-flex align-center justify-space-between" width="100%">
+        <!-- Left Side: Discovery -->
         <AtomsSearchInput
             :model-value="searchQuery"
             @update:model-value="$emit('update:searchQuery', $event)"
             :label="t('search')"
-            class="search-input-desktop mr-4"
+            class="search-input-desktop"
         />
 
-         <AtomsSortToggleButton
-            v-if="sortBy"
-            :sort-order="sortOrder"
-            color="primary"
-            size="small"
-            class="mr-4"
-            @toggle="$emit('toggleSortOrder')"
-        />
-        
-        <MoleculesSortMenu
-            :sort-by="sortBy"
-            :sort-order="sortOrder"
-            :sort-options="sortOptions"
-            @update:sort-by="$emit('update:sortBy', $event)"
-            @clear="$emit('update:sortBy', null)"
-        />
+        <!-- Right Side: Actions & Controls -->
+        <div class="d-flex align-center">
+          <AtomsSortToggleButton
+              v-if="sortBy"
+              :sort-order="sortOrder"
+              color="primary"
+              size="small"
+              class="mr-4"
+              @toggle="$emit('toggleSortOrder')"
+          />
+          
+          <MoleculesSortMenu
+              :sort-by="sortBy"
+              :sort-order="sortOrder"
+              :sort-options="sortOptions"
+              @update:sort-by="$emit('update:sortBy', $event)"
+              @clear="$emit('update:sortBy', null)"
+          />
 
-        <v-btn-toggle
-            :model-value="viewType"
-            @update:model-value="handleViewTypeUpdate"
-            mandatory
-            color="primary"
-            variant="outlined"
-            density="comfortable"
-            rounded="pill"
+
+          <v-btn-toggle
+              :model-value="viewType"
+              @update:model-value="handleViewTypeUpdate"
+              mandatory
+              color="primary"
+              variant="outlined"
+              density="comfortable"
+              rounded="pill"
             class="ml-4 view-toggle"
-        >
-          <v-btn value="grid" icon="mdi-view-grid-outline" />
-          <v-btn value="table" icon="mdi-view-list" />
-        </v-btn-toggle>
-        
-        <v-btn
-            color="primary"
-            size="large"
-            variant="elevated"
-            rounded="pill"
-            class="add-pill-btn-floating ml-4"
-            @click="$emit('create')"
-        >
-          <v-icon icon="mdi-plus" class="mr-2"/>
-          {{ t('add-pill') }}
-        </v-btn>
+          >
+            <v-btn value="grid" icon="mdi-view-grid-outline" />
+            <v-btn value="table" icon="mdi-view-list" />
+          </v-btn-toggle>
+          
+        </div>
       </v-sheet>
     </div>
 
@@ -148,28 +142,29 @@ const currentSortIcon = computed(() => {
 }
 
 .search-input-desktop {
-  max-width: 500px;
-  flex-shrink: 0;
+  max-width: 600px;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 
 .search-field-centered {
   transition: all 0.3s ease;
 }
 
-.add-pill-btn-floating {
-  transition: all 0.3s ease;
+
+.view-toggle {
+   transition: all 0.3s ease;
   text-transform: none;
   font-weight: 600;
   letter-spacing: 0.3px;
 }
-
-.add-pill-btn-floating:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.35) !important;
-}
-
 .view-toggle :deep(.v-btn--active) {
   background-color: rgb(var(--v-theme-primary)) !important;
   color: rgb(var(--v-theme-on-primary)) !important;
+}
+
+.view-toggle:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(var(--v-theme-primary), 0.35) !important;
 }
 </style>

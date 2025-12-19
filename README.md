@@ -1,12 +1,12 @@
 # MyPills 💊
 
-MyPills is a modern, user-friendly medication management application designed to help users track their medicine inventory, monitor expiration dates, and manage their health efficiently.
+MyPills is a modern, user-friendly medication management application designed to help users track their medicine inventory, monitor expiration dates, and manage their health efficiently. **Supports instant medication entry via GS1 DataMatrix scanning.**
 
 ## ✨ Features
 
-- **Medication Inventory**: Easily add, view, and delete medications from your personal list.
-- **Barcode Scanning**: Quickly add medications by scanning GS1 DataMatrix or CIP13 barcodes using your device's camera.
-- **Expiration Tracking**: Monitor expiry dates and see visual indicators for expired or soon-to-expire medicines.
+- **Smart Scanning**: Automatically add medications by scanning the **GS1 DataMatrix** (square dot-matrix code) on the medication box. Also supports CIP13 barcodes.
+- **Medication Inventory**: Easily view and manage your personal medication list.
+- **Expiration Tracking**: Monitor expiry dates with visual indicators for expired or soon-to-expire medicines.
 - **Stock Management**: Keep track of pill quantities and box counts.
 - **Responsive Design**: Fully optimized for both desktop and mobile devices (PWA support).
 - **Internationalization**: Available in English 🇬🇧 and French 🇫🇷.

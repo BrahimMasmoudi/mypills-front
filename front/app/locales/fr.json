@@ -90,6 +90,14 @@
       "bilingual": {
         "title": "Expérience Bilingue",
         "desc": "Interface fluide en Anglais et Français"
+      },
+      "scan": {
+        "title": "Scan Intelligent",
+        "desc": "Scannez le code GS1 DataMatrix pour ajouter les médicaments automatiquement"
+      },
+      "duplicate": {
+        "title": "Alerte Doublons",
+        "desc": "Détecte intelligemment si vous avez déjà un médicament identique"
       }
     },
     "cta": "Se connecter avec Google"

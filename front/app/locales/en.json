@@ -90,6 +90,14 @@
       "bilingual": {
         "title": "Bilingual Experience",
         "desc": "Seamless English & French interface"
+      },
+      "scan": {
+        "title": "Smart Scanning",
+        "desc": "Scan GS1 DataMatrix on boxes to add medicines automatically"
+      },
+      "duplicate": {
+        "title": "Duplicate Guard",
+        "desc": "Intelligently detects and merges medications you already own"
       }
     },
     "cta": "Connect with Google"
