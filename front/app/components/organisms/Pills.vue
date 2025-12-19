@@ -1,7 +1,7 @@
 <template>
   <v-sheet width="100%"
            height="calc(100vh - 64px)"
-           class="d-flex flex-column align-start pa-4 mb-2 overflow-hidden">
+           class="d-flex flex-column align-start mb-2 overflow-hidden pa-4">
     <!-- Fixed Search and Sort Controls -->
     <div class="w-100 flex-shrink-0">
       <MoleculesMedicationSearchSort
@@ -17,10 +17,11 @@
     </div>
 
     <!-- Tabs Content (Handles its own scrolling) -->
-    <div class="w-100 flex-grow-1 overflow-hidden">
+    <div class="w-100 flex-grow-1 overflow-hidden d-flex flex-column mt-4">
       <MoleculesMedicationTabs
           v-model="tab"
           :view-type="viewType"
+          :all-medication="allMedication"
           :valid-medication="validMedication"
           :expired-medication="expiredMedication"
           :increment-pills="incrementPills"
@@ -29,6 +30,19 @@
           :update-medication-name="updateMedicationName"
       />
     </div>
+
+    <!-- Skeleton Loader Overlay -->
+    <v-sheet v-if="medicationLoading" 
+             width="100%" 
+             height="100%" 
+             class="position-absolute top-0 left-0 d-flex align-center justify-center bg-surface opacity-80" 
+             style="z-index: 5;">
+        <v-row class="d-flex align-start justify-start pa-4 w-100 h-100">
+          <v-col v-for="i in 8" :key="i" md="3" cols="6">
+            <AtomsLoadingMed/>
+          </v-col>
+        </v-row>
+    </v-sheet>
 
     <v-fab
         v-if="$device.isMobile"
@@ -39,18 +53,7 @@
         app
         @click="openDialog"
     />
-
- <v-sheet width="100%" v-if="medicationLoading" class="position-absolute top-0 left-0 h-100 d-flex align-center justify-center bg-surface opacity-80" style="z-index: 5;">
-       <v-row class="d-flex align-start justify-start my-3 w-100">
-        <v-col v-for="i in 8"
-               :key="i"
-               md="3"
-               cols="6">
-          <AtomsLoadingMed/>
-        </v-col>
-      </v-row>
-    </v-sheet>
-    </v-sheet>
+  </v-sheet>
 </template>
 <script setup lang="ts">
 import type {Medication} from "~/types/medication";
@@ -142,8 +145,16 @@ const expiredMedication = computed(() => {
   return sortMedications(searched)
 })
 
+const allMedication = computed(() => {
+  const filtered = props.medications ?? []
+  const searched = !searchQuery.value 
+    ? filtered 
+    : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  return sortMedications(searched)
+})
+
 // Tab Logic
-const tab = ref<string>('valid')
+const tab = ref<string>('all')
 
 const openDialog = async () => {
   const user = await getCurrentUser()

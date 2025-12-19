@@ -44,6 +44,8 @@
   "medicationName": "Medication Name",
   "qty": "Qty",
   "meds": {
+    "all": "All",
+    "all_long": "All medications",
     "expired": "Expired",
     "expired_long": "Expired meds",
     "valid": "Valid",

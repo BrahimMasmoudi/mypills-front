@@ -4,18 +4,36 @@
     <v-sheet class="w-100 flex-shrink-0" min-height="60">
       <v-tabs
           :model-value="modelValue"
-          @update:model-value="$emit('update:modelValue', $event)"
+          @update:model-value="$emit('update:modelValue', $event as string)"
           align-tabs="center"
           class="mt-2 w-100"
           hide-slider
           height="48"
-          :selected-class="modelValue === 'valid' ? 'bg-primary-lighten' : 'bg-error-lighten'"
+          :selected-class="modelValue === 'valid' ? 'bg-green-lighten' : (modelValue === 'expired' ? 'bg-error' : 'bg-primary')"
       >
         <v-tab
-            value="valid"
+            value="all"
             class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-primary"
-            :class="{'bg-primary-lighten': modelValue === 'valid'}"
+            :class="{'bg-primary-lighten': modelValue === 'all'}"
             color="primary"
+            variant="text"
+        >
+          <template #prepend v-if="!$device.isMobile">
+            <v-icon icon="mdi-earth" color="primary" />
+          </template>
+          {{ $device.isMobile ? t('meds.all') : t('meds.all_long') }}
+          <v-badge
+              :content="allMedication.length"
+              color="primary"
+              inline
+          />
+        </v-tab>
+
+        <v-tab
+            value="valid"
+            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-green"
+            :class="{'bg-green-lighten': modelValue === 'valid'}"
+            color="green"
             variant="text"
         >
           <template #prepend v-if="!$device.isMobile">
@@ -24,15 +42,16 @@
           {{ $device.isMobile ? t('meds.valid') : t('meds.valid_long') }}
           <v-badge
               :content="validMedication.length"
-              color="primary"
+              color="green"
               inline
           />
         </v-tab>
 
         <v-tab
             value="expired"
-            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-error"
-            :color="modelValue === 'expired' ? 'error' : 'default'"
+            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-error"  
+            :class="{'bg-error-lighten': modelValue === 'expired'}"
+            color="error"
             variant="text"
         >
           <template #prepend v-if="!$device.isMobile">
@@ -50,58 +69,89 @@
 
     <!-- Scrollable Window Content -->
     <v-sheet class="flex-grow-1 overflow-hidden position-relative rounded-lg">
-       <v-window :model-value="modelValue" class="w-100 h-100">
-        <v-window-item value="valid" class="h-100 overflow-y-auto overflow-x-hidden">
-          <MoleculesPills
-              v-if="validMedication.length > 0 && viewType === 'grid'"
-              :is-expired="false"
-              :medications="validMedication"
-              :increment-pills="incrementPills"
-              :decrement-pills="decrementPills"
-              :delete-pills="deletePills"
-              :update-medication-name="updateMedicationName"
-          />
-          <MoleculesMedicationTable
-              v-else-if="validMedication.length > 0 && viewType === 'table' && !$device.isMobile"
-              :is-expired="false"
-              :medications="validMedication"
-              :increment-pills="incrementPills"
-              :decrement-pills="decrementPills"
-              :delete-pills="deletePills"
-              :update-medication-name="updateMedicationName"
-          />
-          <v-sheet width="100%" height="100%" v-else
-                   class="d-flex flex-column align-center justify-center font-weight-bold">
-            <v-img :src="useAsset('/assets/img/no-result.png')" max-height="200" width="200"/>
-            {{ t('meds.no-result') }}
-          </v-sheet>
+      <v-window v-model="activeTab" class="h-100">
+        <!-- All Tab -->
+        <v-window-item value="all" class="h-100">
+          <div :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
+            <template v-if="allMedication.length > 0">
+              <MoleculesPills
+                v-if="viewType === 'grid'"
+                :medications="allMedication"
+                :increment-pills="incrementPills"
+                :decrement-pills="decrementPills"
+                :delete-pills="deletePills"
+                :update-medication-name="updateMedicationName"
+              />
+              <MoleculesMedicationTable
+                v-else-if="viewType === 'table' && !$device.isMobile"
+                :medications="allMedication"
+                :increment-pills="incrementPills"
+                :decrement-pills="decrementPills"
+                :delete-pills="deletePills"
+                :update-medication-name="updateMedicationName"
+              />
+            </template>
+            <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center justify-center font-weight-bold">
+              <v-img :src="useAsset('/assets/img/no-result.png')" max-height="200" width="200"/>
+              {{ t('meds.no-result') }}
+            </v-sheet>
+          </div>
         </v-window-item>
 
-        <v-window-item value="expired" class="h-100 overflow-y-auto">
-          <MoleculesPills
-              v-if="expiredMedication.length > 0 && viewType === 'grid'"
-              :is-expired="true"
-              :medications="expiredMedication"
-              :increment-pills="incrementPills"
-              :decrement-pills="decrementPills"
-              :delete-pills="deletePills"
-              :update-medication-name="updateMedicationName"/>
-          
-          <MoleculesMedicationTable
-              v-else-if="expiredMedication.length > 0 && viewType === 'table' && !$device.isMobile"
-              :is-expired="true"
-              :medications="expiredMedication"
-              :increment-pills="incrementPills"
-              :decrement-pills="decrementPills"
-              :delete-pills="deletePills"
-              :update-medication-name="updateMedicationName"
-          />
+        <!-- Valid Tab -->
+        <v-window-item value="valid" class="h-100">
+          <div :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
+            <template v-if="validMedication.length > 0">
+              <MoleculesPills
+                v-if="viewType === 'grid'"
+                :medications="validMedication"
+                :increment-pills="incrementPills"
+                :decrement-pills="decrementPills"
+                :delete-pills="deletePills"
+                :update-medication-name="updateMedicationName"
+              />
+              <MoleculesMedicationTable
+                v-else-if="viewType === 'table' && !$device.isMobile"
+                :medications="validMedication"
+                :increment-pills="incrementPills"
+                :decrement-pills="decrementPills"
+                :delete-pills="deletePills"
+                :update-medication-name="updateMedicationName"
+              />
+            </template>
+            <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center justify-center font-weight-bold">
+              <v-img :src="useAsset('/assets/img/no-result.png')" max-height="200" width="200"/>
+              {{ t('meds.no-result') }}
+            </v-sheet>
+          </div>
+        </v-window-item>
 
-          <v-sheet width="100%" height="100%" v-else
-                   class="d-flex flex-column align-center justify-center font-weight-bold">
-            <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
-            {{ t('meds.no-result') }}
-          </v-sheet>
+        <!-- Expired Tab -->
+        <v-window-item value="expired" class="h-100">
+          <div :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
+            <template v-if="expiredMedication.length > 0">
+              <MoleculesPills
+                v-if="viewType === 'grid'"
+                :medications="expiredMedication"
+                :increment-pills="incrementPills"
+                :decrement-pills="decrementPills"
+                :delete-pills="deletePills"
+                :update-medication-name="updateMedicationName"
+              />
+              <MoleculesMedicationTable
+                v-else-if="viewType === 'table' && !$device.isMobile"
+                :medications="expiredMedication"
+                :increment-pills="incrementPills"
+                :decrement-pills="decrementPills"
+                :delete-pills="deletePills"
+                :update-medication-name="updateMedicationName"
+              />
+            </template>
+            <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center justify-center font-weight-bold">
+              <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
+              {{ t('meds.no-result') }}
+            </v-sheet>
+          </div>
         </v-window-item>
       </v-window>
     </v-sheet>
@@ -117,9 +167,10 @@ import { useAsset } from "#imports";
 const {t} = useI18n()
 const {$device} = useNuxtApp()
 
-defineProps<{
+const props = defineProps<{
   modelValue: string
   viewType: 'grid' | 'table'
+  allMedication: Medication[]
   validMedication: Medication[]
   expiredMedication: Medication[]
   incrementPills: (medication: Medication) => Promise<void>
@@ -128,9 +179,14 @@ defineProps<{
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 
-defineEmits<{
-  (e: 'update:modelValue', value: unknown): void
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void
 }>()
+
+const activeTab = computed({
+  get: () => props.modelValue,
+  set: (val) => emit('update:modelValue', val)
+})
 </script>
 
 <style scoped>
@@ -141,6 +197,10 @@ defineEmits<{
 
 .bg-primary-lighten {
   background-color: rgba(var(--v-theme-primary), 0.2) !important;
+}
+
+.bg-green-lighten {
+  background-color: rgba(76, 175, 80, 0.2) !important;
 }
 
 .bg-error-lighten {

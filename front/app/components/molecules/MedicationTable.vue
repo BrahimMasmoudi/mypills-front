@@ -2,17 +2,19 @@
   <v-data-table
     :headers="headers"
     :items="medications"
-    class="elevation-1 medication-table rounded-lg"
+    class="elevation-2 medication-table rounded-lg"
+    fixed-header
+    height="100vh"
     hide-default-footer
     :items-per-page="-1"
   >
     <!-- Medication Name Column -->
     <template #[`item.name`]="{ item }">
       <div class="d-flex align-center">
-        <v-avatar size="32" class="mr-3" :color="isExpired ? 'error-lighten-1' : 'primary-lighten-1'">
+        <v-avatar size="32" class="mr-3">
           <nuxt-icon filled :name="item.image" class="table-pill-icon" />
         </v-avatar>
-        <span class="font-weight-bold" :class="{ 'text-error': isExpired }">{{ item.name }}</span>
+        <span class="font-weight-bold">{{ item.name }}</span>
       </div>
     </template>
 
@@ -21,7 +23,7 @@
       <v-chip
         size="small"
         class="font-weight-bold"
-        :color="isExpired ? 'error' : 'primary'"
+        :color="item.expired ? 'error' : 'primary'"
         variant="flat"
       >
         {{ item.quantity }}
@@ -31,8 +33,8 @@
     <!-- Expiry Date Column -->
     <template #[`item.expiryDate`]="{ item }">
       <v-chip
-        :color="isExpired ? 'error' : 'success'"
-        :variant="isExpired ? 'flat' : 'tonal'"
+        :color="item.expired ? 'error' : 'success'"
+        :variant="item.expired ? 'flat' : 'tonal'"
         size="small"
         class="font-weight-medium"
       >
@@ -98,7 +100,7 @@
   <!-- Inline Rename Dialog/Field can be handled at Atoms level or here -->
   <v-dialog v-model="renameDialog" max-width="400">
     <v-card rounded="xl" class="pa-4">
-      <v-card-title class="text-h6 font-weight-bold">{{ t('dialogRename.title') }}</v-card-title>
+      <v-card-title class="text-h6 font-weight-bold mx-auto">{{ t('dialogRename.title') }}</v-card-title>
       <v-card-text>
         <v-text-field
           v-model="editedName"
@@ -110,15 +112,29 @@
           @keydown.enter="saveRename"
         />
       </v-card-text>
-      <v-card-actions class="justify-start">
-        <v-btn variant="text" @click="renameDialog = false">{{ t('cancel') }}</v-btn>
-        <v-btn 
-          color="primary" 
-          variant="flat" 
-          rounded="pill" 
-          @click="saveRename"
-          :loading="isRenaming"
-        >{{ t('save') }}</v-btn>
+      <v-card-actions class="w-100 justify-center pt-2 gap-4">
+        <v-btn
+            variant="outlined"
+            size="large"
+            color="grey-darken-1"
+            class="flex-grow-1 text-capitalize font-weight-bold"
+            height="48"
+            @click="renameDialog = false"
+        >
+          {{ t('cancel') }}
+        </v-btn>
+
+        <v-btn
+            color="primary"
+            variant="flat"
+            size="large"
+            class="flex-grow-1 text-capitalize font-weight-bold"
+            height="48"
+            :loading="isRenaming"
+            @click="saveRename"
+        >
+          {{ t('save') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -136,7 +152,6 @@ const { $open } = useNuxtApp()
 
 const props = defineProps<{
   medications: Medication[]
-  isExpired: boolean
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
@@ -260,5 +275,9 @@ const saveRename = async () => {
 
 .error-lighten-1 {
   background-color: rgba(var(--v-theme-error), 0.1);
+}
+
+.gap-4 {
+  gap: 16px;
 }
 </style>

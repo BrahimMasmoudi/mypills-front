@@ -8,7 +8,6 @@
           :key="medication.medicationId"
       >
         <AtomsPill
-            :is-expired="isExpired"
             :medication="medication"
             :decrement-pills="decrementPills"
             :increment-pills="incrementPills"
@@ -27,8 +26,7 @@ import type {Medication} from '~/types/medication'
 const {t} = useI18n()
 const {$device} = useNuxtApp()
 
-const {isExpired, medications, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
-  isExpired: boolean
+const {medications, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
   medications: Medication[] | undefined
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>

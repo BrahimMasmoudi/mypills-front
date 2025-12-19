@@ -1,7 +1,7 @@
 <template>
   <v-card
-      :color="isExpired ? '#FFF5F5' : 'surface'"
-      :class="['pill-card', { 'expired-card': isExpired }]"
+      :color="medication.expired ? '#FFF5F5' : 'surface'"
+      :class="['pill-card', { 'expired-card': medication.expired }]"
       elevation="2"
       rounded="lg"
       class="d-flex flex-column fill-height position-relative"
@@ -31,7 +31,7 @@
           class="pill-image-container mb-2"
           :class="$device.isMobile ? 'mobile-image' : ''"
       >
-        <nuxt-icon filled :name="medication.image" class="pill-icon" :class="isExpired ? 'text-error' : 'text-primary'" />
+        <nuxt-icon filled :name="medication.image" class="pill-icon" :class="medication.expired ? 'text-error' : 'text-primary'" />
       </div>
 
       <!-- Name (Editable) -->
@@ -97,8 +97,8 @@
 
       <!-- Expiry Date -->
       <v-chip
-          :color="isExpired ? 'error' : 'success'"
-          :variant="isExpired ? 'flat' : 'tonal'"
+          :color="medication.expired ? 'error' : 'success'"
+          :variant="medication.expired ? 'flat' : 'tonal'"
           :size="$device.isMobile ? 'x-small' : 'small'"
           class="mb-2 font-weight-medium"
       >
@@ -156,7 +156,6 @@ const { t } = useI18n()
 
 const props = defineProps<{
   medication: Medication
-  isExpired: boolean
   incrementPills: (medication: Medication) => Promise<void>
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
@@ -317,6 +316,7 @@ const handleDecrement = async () => {
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.2;
