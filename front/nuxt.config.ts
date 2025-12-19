@@ -133,7 +133,7 @@ export default defineNuxtConfig({
             description: 'Manage your medications easily and never miss a dose',
             start_url: '/',
             display: 'standalone',
-            theme_color: '#3643BA',
+            theme_color: '#ffffff',
             background_color: '#ffffff',
             icons: [
                 {
