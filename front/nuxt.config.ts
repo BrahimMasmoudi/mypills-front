@@ -16,18 +16,6 @@ export default defineNuxtConfig({
     app: {
         head: {
             title: 'MyPills',
-            meta: [
-                {
-                    name: 'theme-color',
-                    content: '#ffffff',
-                    media: '(prefers-color-scheme: light)'
-                },
-                {
-                    name: 'theme-color',
-                    content: '#121212',
-                    media: '(prefers-color-scheme: dark)'
-                },
-            ],
         },
         viewTransition: true
     },
