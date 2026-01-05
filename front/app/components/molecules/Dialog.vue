@@ -30,12 +30,11 @@
               v-model="medication.name"
               :label="t('dialogCreate.medicationLabel')"
               variant="outlined"
-              color="primary"
               prepend-inner-icon="mdi-pill"
               hide-details="auto"
               rounded="lg"
               :loading="scannerIsLoading"
-              class="font-weight-medium text-black"
+              class="font-weight-medium"
           >
             <template v-slot:loader>
               <v-progress-linear
@@ -191,7 +190,6 @@
             v-model="medication.name"
             :label="t('dialogCreate.medicationLabel')"
             variant="outlined"
-            color="primary"
             hide-details="auto"
             loading
         >

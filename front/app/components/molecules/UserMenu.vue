@@ -84,9 +84,8 @@ const toggleColorMode = () => {
   colorMode.preference = colorMode.value === 'light' ? 'dark' : 'light'
 }
 
-// CRITICAL: This syncs the Nuxt Color Mode class to the Vuetify engine
 watch(() => colorMode.value, (val) => {
-  theme.global.name.value = val
+  theme.change(val)
 }, { immediate: true })
 </script>
 
