@@ -11,15 +11,35 @@
 
 import {useMedicationsStore} from "~/store/medications";
 import type {Medication} from "~/types/medication";
+import {useCountryStore} from "~/store/country";
+import CountryDialog from "~/components/molecules/CountryDialog.vue";
 
+const { $open } = useNuxtApp();
+const countryStore = useCountryStore()
 const medicationLoading = ref(true)
 
 const medicationStore = useMedicationsStore()
 const medications = computed(() => medicationStore.medications)
 
-onMounted(() => {
-  medicationStore.initMedications()
+onMounted(async () => {
+  await medicationStore.initMedications()
+  await checkCountryStatus()
 })
+
+const checkCountryStatus = async () => {
+  if (countryStore.selectedCountry === null) {
+    const result = await $open<string | null>(CountryDialog, {
+      scrim: true,
+      isPersistent: true
+    })
+
+    if (result === 'FR') {
+      countryStore.confirmFrance()
+    } else {
+      countryStore.clearCountry()
+    }
+  }
+}
 
 const createMedication = async (medication: Medication) => {
   await medicationStore.createMedication(medication)

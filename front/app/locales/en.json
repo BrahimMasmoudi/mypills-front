@@ -102,6 +102,12 @@
     },
     "cta": "Connect with Google"
   },
+  "countryDialog" :{
+    "title": "Location Verification",
+    "subtitle": "Scanning features are optimized for France. Please confirm your location to enable the scanner.",
+    "confirmBtn": "Yes, I am in France",
+    "declineBtn": "No, I'm elsewhere"
+  },
   "sort": {
     "label": "Sort",
     "name": "Name",

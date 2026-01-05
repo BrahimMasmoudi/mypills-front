@@ -6,7 +6,7 @@
           icon
       >
         <v-avatar size="32">
-       <nuxt-icon :name="currentFlagIcon" filled class="flag-icon" />
+       <nuxt-icon :name="currentLanguage" class="flag-icon text-black" />
         </v-avatar>
       </v-btn>
     </template>
@@ -48,8 +48,8 @@ import { useI18n } from 'vue-i18n'
 
 const { locale } = useI18n()
 
-const currentFlagIcon = computed(() => {
-  return locale.value === 'fr' ? 'flag-fr' : 'flag-en'
+const currentLanguage = computed(() => {
+  return locale.value === 'fr' ? 'fr' : 'en'
 })
 
 const switchLocale = (newLocale: string) => {
