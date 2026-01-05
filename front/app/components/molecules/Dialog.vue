@@ -13,7 +13,7 @@
       <!-- Header -->
       <div class="d-flex flex-column align-center text-center mb-6">
         <v-avatar color="primary-lighten-5" size="64">
-          <v-icon icon="mdi-pill" color="primary" size="46" />
+          <v-icon icon="mdi-pill" color="primary" size="46"/>
         </v-avatar>
         <v-card-title class="text-h5 font-weight-bold pt-0 pb-1">
           {{ t('dialogCreate.title') }}
@@ -38,15 +38,15 @@
               class="font-weight-medium text-black"
           >
             <template v-slot:loader>
-                <v-progress-linear
+              <v-progress-linear
                   :active="scannerIsLoading"
                   color="primary"
                   height="2"
                   indeterminate
-                ></v-progress-linear>
+              ></v-progress-linear>
             </template>
             <template v-slot:append-inner>
-              <v-tooltip location="top" text="Scan Barcode">
+              <v-tooltip v-if="selectedCountry === 'FR'" location="top" text="Scan Barcode">
                 <template v-slot:activator="{ props }">
                   <v-btn
                       v-bind="props"
@@ -84,23 +84,23 @@
                   class="font-weight-medium cursor-pointer elegant-input"
               >
                 <template v-slot:loader>
-                    <v-progress-linear
+                  <v-progress-linear
                       :active="scannerIsLoading"
                       color="primary"
                       height="2"
                       indeterminate
-                    ></v-progress-linear>
+                  ></v-progress-linear>
                 </template>
               </v-text-field>
             </template>
-            <v-date-picker 
+            <v-date-picker
                 :view-mode="viewMode"
                 elevation="4"
                 :min="new Date()"
                 @update:model-value="dateMenuIsOpen = false"
                 hide-header
                 rounded="lg"
-               style="color: rgb(var(--v-theme-primary)) !important;"
+                style="color: rgb(var(--v-theme-primary)) !important;"
                 @update:year="updateYear"
                 @update:view-mode="updateViewMode"
                 @update:month="updateMonth"
@@ -152,7 +152,6 @@
   </v-dialog>
 
 
-
   <!-- Mobile Layout (Bottom Sheet) -->
   <v-dialog
       v-else
@@ -175,7 +174,7 @@
         />
 
         <v-avatar color="primary-lighten-5" size="56" class="mb-3">
-          <v-icon icon="mdi-pill" color="primary" size="48" />
+          <v-icon icon="mdi-pill" color="primary" size="48"/>
         </v-avatar>
 
         <h3 class="text-h6 font-weight-bold mb-1">
@@ -197,22 +196,22 @@
             loading
         >
           <template v-slot:loader>
-              <v-progress-linear
+            <v-progress-linear
                 :active="scannerIsLoading"
                 color="primary"
                 height="2"
                 indeterminate
-              ></v-progress-linear>
+            ></v-progress-linear>
           </template>
           <template v-slot:append-inner>
-             <v-btn
-                icon="mdi-barcode-scan"
-                variant="tonal"
-                color="primary"
-                size="small"
-                class="ms-1"
-                @click="isScannerOpen = true"
-             />
+            <v-btn v-if="selectedCountry === 'FR'"
+                   icon="mdi-barcode-scan"
+                   variant="tonal"
+                   color="primary"
+                   size="small"
+                   class="ms-1"
+                   @click="isScannerOpen = true"
+            />
           </template>
         </v-text-field>
 
@@ -239,16 +238,16 @@
                 class="font-weight-medium cursor-pointer"
             >
               <template v-slot:loader>
-                  <v-progress-linear
+                <v-progress-linear
                     :active="scannerIsLoading"
                     color="primary"
                     height="2"
                     indeterminate
-                  ></v-progress-linear>
+                ></v-progress-linear>
               </template>
             </v-text-field>
           </template>
-          <v-date-picker 
+          <v-date-picker
               :view-mode="viewMode"
               elevation="4"
               :min="new Date()"
@@ -306,24 +305,26 @@
   </v-dialog>
 
   <!-- Scanner Dialog -->
-  <ScannerDialog v-model="isScannerOpen" @detect="onBarcodeDetected" />
+  <ScannerDialog v-model="isScannerOpen" @detect="onBarcodeDetected"/>
 </template>
 
 <script lang="ts" setup>
 import {useI18n} from "vue-i18n"
-import {useMedicationsStore} from "../../store/medications"
-import {useBarcodeParser} from "../../composables/useBarcodeParser"
-import {openToast} from "../../composables/openToast"
-import type {Medication} from "../../types/medication"
-import { format } from 'date-fns'
-import { fr, enUS } from 'date-fns/locale'
+import {useMedicationsStore} from "~/store/medications"
+import {useBarcodeParser} from "~/composables/useBarcodeParser"
+import {openToast} from "~/composables/openToast"
+import type {Medication} from "~/types/medication"
+import {format} from 'date-fns'
+import {fr, enUS} from 'date-fns/locale'
 import ScannerDialog from "~/components/molecules/ScannerDialog.vue";
 import DuplicateConfirmDialog from "~/components/molecules/DuplicateConfirmDialog.vue";
+import {useCountryStore} from "~/store/country";
 
 const {t, locale} = useI18n()
 const {$device} = useNuxtApp()
+const {selectedCountry} = storeToRefs(useCountryStore())
 
-const locales: Record<string, any> = { en: enUS, fr: fr };
+const locales: Record<string, any> = {en: enUS, fr: fr};
 
 const isActive = ref(true)
 const loading = ref(false)
@@ -332,12 +333,12 @@ const dateMenuIsOpen = ref(false)
 const isScannerOpen = ref(false)
 
 const {close, createMedication, userUid, email, medications} = defineProps<{
-  close: (value : ToastType) => void
+  close: (value: ToastType) => void
   isPersistent: boolean
   scrim: boolean
   createMedication: (medication: Medication) => Promise<void>
-  userUid : string
-  email : string
+  userUid: string
+  email: string
   medications: Medication[]
 }>()
 const medication = ref<Medication>({
@@ -352,105 +353,105 @@ const medication = ref<Medication>({
   email
 })
 
- const viewMode = ref<"month" | "months" | "year">('year')
-  const selectedYear = ref()
-  const selectedMonth = ref()
+const viewMode = ref<"month" | "months" | "year">('year')
+const selectedYear = ref()
+const selectedMonth = ref()
 
-  const updateViewMode = (mode : 'year' | 'months') => {
-    viewMode.value = mode === 'year' ? 'year' : 'months'
-  }
+const updateViewMode = (mode: 'year' | 'months') => {
+  viewMode.value = mode === 'year' ? 'year' : 'months'
+}
 
-  const updateYear = (year : number) => {
-    selectedYear.value = year
-  }
+const updateYear = (year: number) => {
+  selectedYear.value = year
+}
 
-  const updateMonth = (month : number) => {
-    selectedMonth.value = month
-    dateMenuIsOpen.value = false
-    medication.value.expiryDate = new Date(selectedYear.value, selectedMonth.value)
-  }
+const updateMonth = (month: number) => {
+  selectedMonth.value = month
+  dateMenuIsOpen.value = false
+  medication.value.expiryDate = new Date(selectedYear.value, selectedMonth.value)
+}
 
-  const formatDate = (date: Date | string) => {
+const formatDate = (date: Date | string) => {
   if (!date) return '';
-  return format(new Date(date), 'MMMM yyyy', { locale: locales[locale.value] || enUS });
+  return format(new Date(date), 'MMMM yyyy', {locale: locales[locale.value] || enUS});
 }
 
 // Barcode Handling
 const onBarcodeDetected = async (code: string) => {
-    scannerIsLoading.value = true
-    try {
-        // 1. Parse Code
-        const { parseBarcode } = useBarcodeParser();
-        const { cip13, expiryDate } = parseBarcode(code);
-        
-        if (expiryDate) {
-            medication.value.expiryDate = expiryDate;
-            const year = expiryDate.getFullYear();
-            const month = expiryDate.getMonth();
-            
-            // Sync picker internal state if needed
-            selectedYear.value = year;
-            selectedMonth.value = month; 
-        }
+  scannerIsLoading.value = true
+  try {
+    // 1. Parse Code
+    const {parseBarcode} = useBarcodeParser();
+    const {cip13, expiryDate} = parseBarcode(code);
 
-        if (!cip13) {
-            console.warn('No valid CIP13 found in code:', code);
-            scannerIsLoading.value = false;
-            return;
-        }
+    if (expiryDate) {
+      medication.value.expiryDate = expiryDate;
+      const year = expiryDate.getFullYear();
+      const month = expiryDate.getMonth();
 
-        // 2. Call Backend via Store
-        const medicationsStore = useMedicationsStore();
-        const data = await medicationsStore.getMedicationDetails(cip13);
-
-       
-        if (!data) {
-            console.warn('Backend lookup failed: No data returned');
-            openToast('error', t('scanner.not_found_message'));
-        } else {
-            medication.value.name = data.name;
-            
-            // 3. Check for duplicate medication
-            const duplicate = medicationsStore.findDuplicateMedication(
-                medications,
-                data.name,
-                medication.value.expiryDate
-            );
-            
-            if (duplicate) {
-                // Duplicate found - show confirmation dialog
-                const { $open } = useNuxtApp();
-                const result = await $open<string>(DuplicateConfirmDialog, {
-                    scrim: true,
-                    isPersistent: true,
-                    medicationName: data.name,
-                    expiryDate: medication.value.expiryDate
-                });
-                
-                if (result === 'increment') {
-                    // User confirmed - increment quantity (analytics handled in store)
-                    await medicationsStore.incrementPillsFromDuplicate(duplicate);
-                    openToast('success', t('success'));
-                    close('success');
-                } else {
-                    // User canceled - reset form
-                    medication.value.name = '';
-                    medication.value.expiryDate = new Date();
-                }
-            } else {
-                // No duplicate - auto create with quantity 1
-                medication.value.quantity = 1;
-                await performCreation();
-            }
-        }
-
-    } catch (e: any) {
-        console.error('Barcode lookup error:', e);
-        openToast('error', t('scanner.not_found_message'));
-    } finally {
-        scannerIsLoading.value = false
-        isScannerOpen.value = false
+      // Sync picker internal state if needed
+      selectedYear.value = year;
+      selectedMonth.value = month;
     }
+
+    if (!cip13) {
+      console.warn('No valid CIP13 found in code:', code);
+      scannerIsLoading.value = false;
+      return;
+    }
+
+    // 2. Call Backend via Store
+    const medicationsStore = useMedicationsStore();
+    const data = await medicationsStore.getMedicationDetails(cip13);
+
+
+    if (!data) {
+      console.warn('Backend lookup failed: No data returned');
+      openToast('error', t('scanner.not_found_message'));
+    } else {
+      medication.value.name = data.name;
+
+      // 3. Check for duplicate medication
+      const duplicate = medicationsStore.findDuplicateMedication(
+          medications,
+          data.name,
+          medication.value.expiryDate
+      );
+
+      if (duplicate) {
+        // Duplicate found - show confirmation dialog
+        const {$open} = useNuxtApp();
+        const result = await $open<string>(DuplicateConfirmDialog, {
+          scrim: true,
+          isPersistent: true,
+          medicationName: data.name,
+          expiryDate: medication.value.expiryDate
+        });
+
+        if (result === 'increment') {
+          // User confirmed - increment quantity (analytics handled in store)
+          await medicationsStore.incrementPillsFromDuplicate(duplicate);
+          openToast('success', t('success'));
+          close('success');
+        } else {
+          // User canceled - reset form
+          medication.value.name = '';
+          medication.value.expiryDate = new Date();
+        }
+      } else {
+        // No duplicate - auto create with quantity 1
+        medication.value.quantity = 1;
+        await performCreation();
+      }
+    }
+
+  } catch (e: any) {
+    console.error('Barcode lookup error:', e);
+    openToast('error', t('scanner.not_found_message'));
+  } finally {
+    scannerIsLoading.value = false
+    isScannerOpen.value = false
+  }
 }
 
 
@@ -459,7 +460,7 @@ const performCreation = async () => {
   // Assign random pill icon from pill-1 to pill-30
   const randomIconNumber = Math.floor(Math.random() * 30) + 1
   medication.value.image = `pill-${randomIconNumber}`
-  
+
   try {
     loading.value = true
     medication.value.quantity = Number(medication.value.quantity)
@@ -484,9 +485,11 @@ const cancelAndClose = () => close('canceled')
 .gap-4 {
   gap: 16px;
 }
+
 .gap-3 {
   gap: 12px;
 }
+
 :deep(.v-field__input) {
   padding-top: 10px;
   padding-bottom: 10px;

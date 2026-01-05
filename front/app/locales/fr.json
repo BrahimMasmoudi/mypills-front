@@ -102,6 +102,12 @@
     },
     "cta": "Se connecter avec Google"
   },
+  "countryDialog" :{
+    "title": "Confirmation de région",
+    "subtitle": "Les fonctionnalités de scan sont optimisées pour la France. Veuillez confirmer votre emplacement pour activer le scanner.",
+    "confirmBtn": "Oui, je suis en France",
+    "declineBtn": "Non, je suis ailleurs"
+  },
   "sort": {
     "label": "Trier",
     "name": "Nom",

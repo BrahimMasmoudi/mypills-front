@@ -52,7 +52,7 @@
         :extended="!$device.isMobile"
         :text="!$device.isMobile ? t('add-pill') : ''"
         app
-        class="mb-4 mr-4 custom-fab"
+        class="mb-4 mr-4"
         @click="openDialog"
     />
   </v-sheet>
@@ -218,12 +218,4 @@ const openDialog = async () => {
   box-shadow: 0 6px 20px rgba(var(--v-theme-primary), 0.25) !important;
 }
 
-.custom-fab {
-  transition: all 0.3s ease !important;
-}
-
-.custom-fab:hover {
-  transform: scale(1.05) translateY(-5px) !important;
-  box-shadow: 0 12px 28px rgba(var(--v-theme-primary), 0.45) !important;
-}
 </style>
