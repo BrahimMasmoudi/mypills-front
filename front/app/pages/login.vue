@@ -1,18 +1,20 @@
 <template>
   <v-app class="landing-page bg-primary-light">
     <!-- Navbar -->
-    <v-app-bar elevation="1" class="bg-primary-light" height="64">
-      <v-sheet class="bg-primary-light d-flex align-center justify-space-between px-5" width="100%">
+    <v-app-bar elevation="1" height="64" color="surface">
+      <v-sheet class="d-flex align-center justify-space-between px-5" width="100%" color="transparent">
         <div class="d-flex align-center gap-3">
-          <v-avatar color="white" size="48" class="elevation-2">
+          <v-avatar size="48" class="elevation-2">
             <nuxt-icon filled name="application-icon" class="app-icon-nav"/>
           </v-avatar>
           <span class="text-h5 font-weight-bold text-primary-darken-1 tracking-tight">
-            MyPills
-          </span>
+        MyPills
+      </span>
         </div>
         <v-spacer/>
-        <MoleculesLanguageSwitcher />
+
+        <MoleculesThemeSwitcher/>
+        <MoleculesLanguageSwitcher/>
       </v-sheet>
     </v-app-bar>
 
@@ -26,16 +28,16 @@
         <v-container max-width="1200">
           <v-row align="center" justify="center" class="py-4">
             <!-- Text Content -->
-            <v-col cols="12" md="6" class="text-center text-md-left z-index-10">              
+            <v-col cols="12" md="6" class="text-center text-md-left z-index-10">
               <h1 class="font-weight-black mb-2 text-dark-blue line-height-tight"
-                :class="{
+                  :class="{
                   'font-size-2': $device.isMobile,
                   'text-h4': !$device.isMobile
                 }"
               >
                 {{ t('landing.welcome') }}
               </h1>
-              
+
               <p class="text-body-1 text-medium-emphasis mb-4 font-weight-regular max-width-500 mx-auto mx-md-0">
                 {{ t('landing.subtitle') }}
               </p>
@@ -53,7 +55,7 @@
                 >
                   <template #prepend>
                     <div class="bg-white rounded-circle pa-1 mr-2 d-flex">
-                        <nuxt-icon filled name="google" class="google-icon"/>
+                      <nuxt-icon filled name="google" class="google-icon"/>
                     </div>
                   </template>
                   {{ t('landing.cta') }}
@@ -64,11 +66,11 @@
             <!-- Hero Illustration -->
             <v-col cols="12" md="6" class="text-center position-relative z-index-10">
               <div class="hero-image-container">
-                 <div class="floating-pill pill-1"></div>
-                 <div class="floating-pill pill-2"></div>
-                 <div class="glass-card main-card elevation-10">
-                    <nuxt-icon filled name="application-icon" class="hero-icon"/>
-                 </div>
+                <div class="floating-pill pill-1"></div>
+                <div class="floating-pill pill-2"></div>
+                <div class="glass-card main-card elevation-10">
+                  <nuxt-icon filled name="application-icon" class="hero-icon"/>
+                </div>
               </div>
             </v-col>
           </v-row>
@@ -81,14 +83,14 @@
           <v-row justify="center" dense>
             <v-col cols="12" sm="6" lg="4" class="pa-3" v-for="(feature, i) in features" :key="i">
               <v-card
-                class="feature-card py-2 px-4 rounded-xl border-0 d-flex align-center"
-                elevation="0"
-                height="120"
-                variant="flat"
+                  class="feature-card py-2 px-4 rounded-xl border-0 d-flex align-center"
+                  elevation="1"
+                  height="120"
+                  variant="flat"
               >
                 <div class="d-flex align-center">
                   <div class="feature-icon-box mr-4" :class="feature.colorClass">
-                    <v-icon :icon="feature.icon" size="24" color="white" />
+                    <v-icon :icon="feature.icon" size="24" color="white"/>
                   </div>
                   <div>
                     <h3 class="text-subtitle-1 font-weight-bold mb-0 text-dark-blue">
@@ -121,7 +123,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from "vue-i18n";
+import {useI18n} from "vue-i18n";
 import {useUserStore} from "~/store/userStore";
 import MoleculesLanguageSwitcher from "~/components/molecules/LanguageSwitcher.vue";
 
@@ -204,148 +206,199 @@ const login = async () => {
 .bg-teal { background: linear-gradient(135deg, #2DD4BF 0%, #0D9488 100%); }
 
 .landing-page {
-    background: #ffffff;
-    font-family: 'Inter', Roboto, sans-serif;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font-family: 'Inter', Roboto, sans-serif;
 }
 
 /* Background Abstract Shapes */
 .bg-shape {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: 1;
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 1;
 }
+
 .shape-1 {
-    width: 600px;
-    height: 600px;
-    background: rgba(59, 130, 246, 0.05);
-    top: -200px;
-    right: -200px;
+  width: 600px;
+  height: 600px;
+  background: rgba(59, 130, 246, 0.05);
+  top: -200px;
+  right: -200px;
 }
+
 .shape-2 {
-    width: 500px;
-    height: 500px;
-    background: rgba(16, 185, 129, 0.05);
-    bottom: -100px;
-    left: -200px;
+  width: 500px;
+  height: 500px;
+  background: rgba(16, 185, 129, 0.05);
+  bottom: -100px;
+  left: -200px;
 }
 
 /* Typography */
-.line-height-tight { line-height: 1.1; }
-.tracking-tight { letter-spacing: -0.5px; }
+.line-height-tight {
+  line-height: 1.1;
+}
+
+.tracking-tight {
+  letter-spacing: -0.5px;
+}
 
 /* Components */
-.shadow-lg { box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3); }
+.shadow-lg {
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+}
 
 .app-icon-nav :deep(svg) {
-    width: 28px;
-    height: 28px;
-    color: #2563EB;
+  width: 28px;
+  height: 28px;
+  color: #2563EB;
 }
 
 .google-icon :deep(svg) {
-    width: 18px;
-    height: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 /* Hero Illustration */
 .hero-image-container {
-    position: relative;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .glass-card {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .main-card {
-    width: 180px;
-    height: 180px;
-    z-index: 2;
-    animation: float 6s ease-in-out infinite;
+  width: 180px;
+  height: 180px;
+  z-index: 2;
+  animation: float 6s ease-in-out infinite;
 }
 
 .hero-icon :deep(svg) {
-    width: 80px;
-    height: 80px;
-    color: #2563EB;
+  width: 80px;
+  height: 80px;
+  color: #2563EB;
 }
 
 .floating-pill {
-    position: absolute;
-    border-radius: 50px;
-    opacity: 0.8;
+  position: absolute;
+  border-radius: 50px;
+  opacity: 0.8;
 }
 
 .pill-1 {
-    width: 120px;
-    height: 40px;
-    background: #34D399;
-    top: 20%;
-    right: 15%;
-    transform: rotate(-15deg);
-    animation: float-delayed 7s ease-in-out infinite;
-    z-index: 1;
+  width: 120px;
+  height: 40px;
+  background: #34D399;
+  top: 20%;
+  right: 15%;
+  transform: rotate(-15deg);
+  animation: float-delayed 7s ease-in-out infinite;
+  z-index: 1;
 }
 
 .pill-2 {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #60A5FA;
-    bottom: 15%;
-    left: 15%;
-    animation: float 8s ease-in-out infinite reverse;
-    z-index: 1;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #60A5FA;
+  bottom: 15%;
+  left: 15%;
+  animation: float 8s ease-in-out infinite reverse;
+  z-index: 1;
 }
 
-/* Feature Cards */
-.feature-card {
-    background: #ffffff;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
 .feature-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 15px -3px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 15px -3px rgba(0, 0, 0, 0.08);
 }
 
 .feature-icon-box {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .overlay-blur {
-    backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
 
 /* Animations */
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
+
 @keyframes float-delayed {
-    0%, 100% { transform: translateY(0) rotate(-15deg); }
-    50% { transform: translateY(-15px) rotate(-15deg); }
+  0%, 100% {
+    transform: translateY(0) rotate(-15deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-15deg);
+  }
 }
 
 /* Utils */
-.z-index-10 { z-index: 10; }
-.gap-3 { gap: 12px; }
-.gap-4 { gap: 16px; }
+.z-index-10 {
+  z-index: 10;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+.text-dark-blue {
+  color: var(--text-main);
+}
+
+.feature-card {
+  background: var(--card-bg);
+}
+
+.dark-mode .glass-card {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.change-mode-btn :deep(.v-btn__overlay) {
+  background-color: transparent !important;
+}
+
+.dark-mode .feature-card {
+  background-color: #1e293b !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark-mode .text-dark-blue {
+  color: #F8FAFC !important;
+}
+
+.dark-mode .text-medium-emphasis {
+  color: #94A3B8 !important;
+}
 </style>

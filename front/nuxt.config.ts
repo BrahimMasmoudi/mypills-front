@@ -21,16 +21,27 @@ export default defineNuxtConfig({
     ssr: false,
     spaLoadingTemplate: fileURLToPath(new URL('./spa-loading-template.html', import.meta.url)),
     modules: [
-        'vuetify-nuxt-module',
-        'nuxt-lodash',
-        'nuxt-icons',
-        '@pinia/nuxt',
-        '@pinia-plugin-persistedstate/nuxt',
-        '@nuxtjs/device',
-        'nuxt-vuefire',
-        '@nuxt/ui',
-        '@vite-pwa/nuxt'
+      'vuetify-nuxt-module',
+      'nuxt-lodash',
+      'nuxt-icons',
+      '@pinia/nuxt',
+      '@pinia-plugin-persistedstate/nuxt',
+      '@nuxtjs/device',
+      'nuxt-vuefire',
+      '@nuxt/ui',
+      '@vite-pwa/nuxt',
+      '@nuxtjs/color-mode',
     ],
+    colorMode: {
+        preference: 'system', // default value of $colorMode.preference
+        fallback: 'light', // fallback value if not system preference found
+        hid: 'nuxt-color-mode-script',
+        globalName: '__NUXT_COLOR_MODE__',
+        componentName: 'ColorScheme',
+        classPrefix: '',
+        classSuffix: '-mode', // This adds .dark-mode or .light-mode to <html>
+        storageKey: 'nuxt-color-mode'
+    },
     device: {
         refreshOnResize: true
     },
