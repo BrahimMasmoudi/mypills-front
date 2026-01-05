@@ -8,12 +8,6 @@
         </div>
       </template>
       <div v-if="userStore.user" class="mr-2 d-flex align-center">
-        <MoleculesLanguageSwitcher />
-        <v-btn v-if="selectedCountry" icon @click="openCountryDialog">
-          <v-avatar size="28">
-            <nuxt-icon :name="`flag-${selectedCountry.toLowerCase()}`" filled class="flag-icon"/>
-          </v-avatar>
-        </v-btn>
         <MoleculesUserMenu />
       </div>
     </v-app-bar>
@@ -26,29 +20,11 @@
 <script lang="ts" setup>
 import {useI18n} from "vue-i18n";
 import {useUserStore} from "~/store/userStore";
-import MoleculesLanguageSwitcher from "~/components/molecules/LanguageSwitcher.vue";
 import MoleculesUserMenu from "~/components/molecules/UserMenu.vue";
-import {useCountryStore} from "~/store/country";
-import CountryDialog from "~/components/molecules/CountryDialog.vue";
 
 const userStore = useUserStore()
 const {t} = useI18n()
-const {$open} = useNuxtApp()
-const {confirmFrance,clearCountry} = useCountryStore()
-const {selectedCountry} = storeToRefs(useCountryStore())
 
-const openCountryDialog = async () => {
-  const result = await $open<string | null>(CountryDialog, {
-    scrim: true,
-    isPersistent: true
-  })
-
-  if (result === 'FR') {
-    confirmFrance()
-  } else {
-    clearCountry()
-  }
-}
 </script>
 
 <style scoped>

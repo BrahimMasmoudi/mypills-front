@@ -67,7 +67,9 @@
   },
   "user-menu": {
     "disconnect": "Déconnexion",
-    "change-theme": "Change le thème"
+    "change-theme": "Changer le thème",
+    "change-country": "Changer le pays",
+    "change-language": "Changer le langage"
   },
   "login": {
     "google": "se connecter avec google",

@@ -67,7 +67,9 @@
   },
   "user-menu": {
     "disconnect": "Disconnect",
-    "change-theme": "Change theme"
+    "change-theme": "Change theme",
+    "change-country": "Change country",
+    "change-language": "Change langauge"
   },
   "login": {
     "google": "Login with Google",
