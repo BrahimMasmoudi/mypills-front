@@ -9,9 +9,9 @@
       </template>
       <div v-if="userStore.user" class="mr-2 d-flex align-center">
         <MoleculesLanguageSwitcher />
-        <v-btn icon @click="openCountryDialog">
+        <v-btn v-if="selectedCountry" icon @click="openCountryDialog">
           <v-avatar size="28">
-            <nuxt-icon :name="`flag-${selectedCountry.toLocaleLowerCase()}`" filled class="flag-icon"/>
+            <nuxt-icon :name="`flag-${selectedCountry.toLowerCase()}`" filled class="flag-icon"/>
           </v-avatar>
         </v-btn>
         <MoleculesUserMenu />
