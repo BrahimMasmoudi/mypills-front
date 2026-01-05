@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { httpsCallable } from 'firebase/functions';
 import type { Medication } from "~/types/medication";
 import { collection, orderBy, query, where } from "firebase/firestore";
-import type { User } from "@firebase/auth";
 import { logEvent } from "@firebase/analytics";
 import type { GetMedicationDetailsResponse } from "../types/api";
 
@@ -32,6 +31,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
      * ------------------------------------------------------------------ */
     const initMedications = async () => {
         const user = await getCurrentUser()
+        console.log(user)
         if (!user?.email) return
 
         const q = query(
