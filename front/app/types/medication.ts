@@ -1,4 +1,4 @@
-import type {MedicamentResponse} from "~/types/api";
+import type {MedicationDetails} from "~/types/api";
 
 export type Medication = {
     medicationId: string
@@ -10,6 +10,6 @@ export type Medication = {
     quantity: number
     image: string
     email: string
-    details? : MedicamentResponse
+    details? : MedicationDetails
 }
 

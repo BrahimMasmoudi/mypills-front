@@ -4,13 +4,13 @@
       <v-sheet color="primary" class="pa-6 text-white position-relative overflow-hidden">
         <div class="d-flex justify-space-between align-start z-index-2 position-relative">
           <div>
-            <div class="text-overline opacity-80 mb-1">{{ data.titulaire }}</div>
+            <div class="text-overline opacity-80 mb-1">{{ data.details?.company }}</div>
             <h2 class="text-h5 font-weight-black leading-tight">
-              {{ data.elementPharmaceutique }}
+              {{ data.name }}
             </h2>
             <v-chip size="small" color="white" variant="flat" class="mt-3 text-primary font-weight-bold">
               <v-icon start icon="mdi-check-decagram"/>
-              {{ data.statusAutorisation }}
+              {{ data.details?.authStatus }}
             </v-chip>
           </div>
           <v-btn icon="mdi-close" variant="text" color="white" @click="handleClose"/>
@@ -25,10 +25,10 @@
             <v-icon icon="mdi-molecule" class="mr-2" size="20"/>
             {{ t('detailsDialog.substances') }}
           </div>
-          <div v-for="comp in data.composition" :key="comp.codeSubstance"
+          <div v-for="comp in details?.ingredients" :key="comp.substance"
                class="d-flex justify-space-between align-center">
             <div>
-              <div class="text-body-1 font-weight-bold">{{ comp.denominationSubstance }}</div>
+              <div class="text-body-1 font-weight-bold">{{ comp.substance }}</div>
               <div class="text-caption text-medium-emphasis">{{ t('detailsDialog.activeComponent') }}</div>
             </div>
             <div class="text-h6 font-weight-black text-primary">{{ comp.dosage }}</div>
@@ -42,14 +42,14 @@
                 <nuxt-icon name="mouth" size="20" class="text-grey-darken-1"/>
               </suspense>
               <div class="text-caption text-medium-emphasis">{{ t('detailsDialog.method') }}</div>
-              <div class="text-body-2 font-weight-bold capitalize">{{ data.voiesAdministration[0] }}</div>
+              <div class="text-body-2 font-weight-bold capitalize">{{ details?.administrationRoutes[0] }}</div>
             </v-card>
           </v-col>
           <v-col cols="6">
             <v-card variant="outlined" class="pa-3 rounded-lg bg-white border-light">
               <v-icon icon="mdi-form-select" color="grey-darken-1" size="20" class="mb-2"/>
               <div class="text-caption text-medium-emphasis">{{ t('detailsDialog.form') }}</div>
-              <div class="text-body-2 font-weight-bold capitalize">{{ data.formePharmaceutique }}</div>
+              <div class="text-body-2 font-weight-bold capitalize">{{ details?.form }}</div>
             </v-card>
           </v-col>
         </v-row>
@@ -64,30 +64,30 @@
                 }}
               </div>
               <div class="text-body-2 font-weight-bold">{{
-                  mainPresentation.tauxRemboursement || 'Non remboursé'
+                  mainPresentation.refundRate || 'Non remboursé'
                 }}
               </div>
             </div>
           </div>
           <div class="text-right">
-            <div class="text-h5 font-weight-black text-blue-darken-3">{{ mainPresentation.prix }} €</div>
+            <div class="text-h5 font-weight-black text-blue-darken-3">{{ mainPresentation.price }} €</div>
           </div>
         </div>
 
         <v-expansion-panels variant="accordion" class="admin-details">
-          <v-expansion-panel elevation="0" class="bg-transparent border-t">
-            <v-expansion-panel-title class="px-0 text-caption text-medium-emphasis">
+          <v-expansion-panel elevation="0" class="bg-transparent">
+            <v-expansion-panel-title class="px-0 text-caption text-medium-emphasis pl-2">
               {{ t('detailsDialog.technicalDetails') }}
             </v-expansion-panel-title>
             <v-expansion-panel-text class="px-0">
               <div class="d-flex justify-space-between text-caption mb-1">
-                <span>Code CIS</span><span class="font-weight-bold">{{ data.cis }}</span>
+                <span>Code CIS</span><span class="font-weight-bold">{{ data.bareCode }}</span>
               </div>
               <div class="d-flex justify-space-between text-caption mb-1">
-                <span>Code CIP13</span><span class="font-weight-bold">{{ mainPresentation?.cip13 }}</span>
+                <span>Code CIP13</span><span class="font-weight-bold">{{ mainPresentation?.barcode13 }}</span>
               </div>
               <div class="d-flex justify-space-between text-caption">
-                <span>{{ t('detailsDialog.ammDate') }}</span><span class="font-weight-bold">{{ data.dateAMM }}</span>
+                <span>{{ t('detailsDialog.ammDate') }}</span><span class="font-weight-bold">{{ details?.approvalDate }}</span>
               </div>
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -105,17 +105,19 @@
 
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
+import type {Medication} from "~/types/medication";
 
 const props = defineProps<{
   close: (value?: any) => void
   isPersistent: boolean
   scrim: boolean
-  data: any
+  data: Medication
 }>()
 
 const {t} = useI18n()
 const isActive = ref(true)
-const mainPresentation = computed(() => props.data.presentation?.[0])
+const details = computed(() => props.data.details)
+const mainPresentation = computed(() => details.value?.presentations?.[0])
 
 const handleClose = () => {
   isActive.value = false

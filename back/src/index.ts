@@ -1,66 +1,45 @@
-import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { initializeApp } from 'firebase-admin/app'
-import { getFirestore, FieldValue } from 'firebase-admin/firestore'
-import { Medication } from "./types/medication";
-
-interface MedicamentResponse {
-    cis: number;
-    elementPharmaceutique: string;
-    formePharmaceutique: string;
-    voiesAdministration: string[];
-    statusAutorisation: string;
-    typeProcedure: string;
-    etatComercialisation: string;
-    dateAMM: string;
-    titulaire: string;
-    surveillanceRenforce: string;
-    composition: object[];
-    generiques: object[];
-    presentation: object[];
-    conditions: string[];
-}
-
-interface GetMedicationDetailsResponse {
-    name: string;
-    cis: string | number;
-    details: MedicamentResponse;
-}
+import {onCall, HttpsError} from 'firebase-functions/v2/https';
+import {initializeApp} from 'firebase-admin/app'
+import {getFirestore, FieldValue} from 'firebase-admin/firestore'
+import {Medication} from "./types/medication";
+import {toMedicationDto} from "./utils/mapper";
+import {GetMedicationDetailsResponse} from "./types/medicationApi";
 
 initializeApp()
 const firestore = getFirestore()
 const database = firestore.collection('medications')
 
-export const createMedication = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const createMedication = onCall({region: 'europe-west3'}, async ({data}) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).set(medication, { merge: false })
+    return await database.doc(medication.medicationId).set(medication, {merge: false})
 })
 
-export const incrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const incrementPills = onCall({region: 'europe-west3'}, async ({data}) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(1) })
+    return await database.doc(medication.medicationId).update({'quantity': FieldValue.increment(1)})
 })
 
-export const decrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const decrementPills = onCall({region: 'europe-west3'}, async ({data}) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(-1) })
+    return await database.doc(medication.medicationId).update({'quantity': FieldValue.increment(-1)})
 })
 
-export const deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const deletePills = onCall({region: 'europe-west3'}, async ({data}) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).delete()
 })
 
-export const updateMedicationName = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const updateMedicationName = onCall({region: 'europe-west3'}, async ({data}) => {
     const medication = data.medication as Medication
     const newName = data.newName as string
-    return await database.doc(medication.medicationId).update({ 'name': newName })
+    return await database.doc(medication.medicationId).update({'name': newName})
 })
 
-export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const setExpiredStatus = onCall({region: 'europe-west3'}, async ({data}) => {
     const medicationIds = data.medicationIds as string[]
 
     if (!medicationIds || medicationIds.length === 0) {
-        return { updated: 0 }
+        return {updated: 0}
     }
 
     try {
@@ -74,13 +53,13 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
 
             for (const id of batchIds) {
                 const docRef = database.doc(id)
-                batch.update(docRef, { expired: true })
+                batch.update(docRef, {expired: true})
             }
 
             await batch.commit()
             totalUpdated += batchIds.length
         }
-        return { updated: totalUpdated }
+        return {updated: totalUpdated}
     } catch (error) {
         console.error('Error updating expired status:', error)
         throw error
@@ -89,7 +68,7 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
 
 // -- CIP13 to CIS Migration and Lookup --
 
-export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }): Promise<GetMedicationDetailsResponse> => {
+export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({data}): Promise<GetMedicationDetailsResponse> => {
     const cip13 = data.cip13 as string;
     if (!cip13) {
         throw new HttpsError('invalid-argument', 'CIP13 is required');
@@ -124,15 +103,17 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
             throw new HttpsError('not-found', 'Medication details not available from external API');
         }
 
-        const details = await response.json();
+        const apiDetails = await response.json();
+
+        const mappedDetails = toMedicationDto(apiDetails)
 
         // Return only the name for now as per requirements, or the whole object
-        const name = details.elementPharmaceutique || details.denomination || '';
+        const name = apiDetails.elementPharmaceutique || apiDetails.denomination || '';
 
         return {
             name,
             cis,
-            details
+            details: mappedDetails
         };
 
     } catch (e: any) {
@@ -144,8 +125,6 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
         throw new HttpsError('internal', 'Failed to retrieve medication details');
     }
 });
-
-
 
 
 // const createData = async () => {

@@ -272,7 +272,7 @@ const showMedicationDetails = async () => {
   await $open(MedicationInfoDialog, {
     scrim: true,
     isPersistent: false,
-    data: props.medication.details
+    data: props.medication
   })
 }
 </script>

@@ -1,23 +1,28 @@
-
-export interface MedicamentResponse {
-    cis: number;
-    elementPharmaceutique: string;
-    formePharmaceutique: string;
-    voiesAdministration: string[];
-    statusAutorisation: string;
-    typeProcedure: string;
-    etatComercialisation: string;
-    dateAMM: string;
-    titulaire: string;
-    surveillanceRenforce: string;
-    composition: object[];
-    generiques: object[];
-    presentation: object[];
-    conditions: string[];
+export interface MedicationDetails {
+    form: string,
+    administrationRoutes: string[];
+    authStatus: string;
+    procedureType: string;
+    marketingStatus: string;
+    approvalDate: string;
+    company: string;
+    enhancedSurveillance: boolean;
+    ingredients: {
+        substance: string;
+        dosage: string;
+        reference: string;
+    }[];
+    presentations: {
+        label: string;
+        barcode13: number;
+        refundRate: string;
+        price: number;
+    }[];
 }
+
 
 export interface GetMedicationDetailsResponse {
     name: string;
     cis: string | number;
-    details: MedicamentResponse;
+    details: MedicationDetails;
 }
