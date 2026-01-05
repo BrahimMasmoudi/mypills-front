@@ -14,7 +14,7 @@
         <v-spacer/>
 
         <MoleculesThemeSwitcher/>
-        <MoleculesLanguageSwitcher/>
+        <MoleculesLanguageMenu/>
       </v-sheet>
     </v-app-bar>
 
@@ -125,7 +125,7 @@
 <script lang="ts" setup>
 import {useI18n} from "vue-i18n";
 import {useUserStore} from "~/store/userStore";
-import MoleculesLanguageSwitcher from "~/components/molecules/LanguageSwitcher.vue";
+import MoleculesLanguageMenu from "~/components/molecules/LanguageMenu.vue";
 
 const userStore = useUserStore()
 const {$device} = useNuxtApp()
