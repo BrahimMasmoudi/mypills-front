@@ -21,6 +21,18 @@
       />
     </div>
 
+    <!-- scanned Button (Top left) -->
+    <div v-if="medication.bareCode" class="position-absolute top-0 left-0 ma-1 z-index-1">
+      <v-btn
+          icon="mdi-barcode-scan"
+          variant="text"
+          size="small"
+          color="primary"
+          density="comfortable"
+          @click.stop="showMedicationDetails"
+      />
+    </div>
+
     <!-- Card Content -->
     <div
         class="d-flex flex-column align-center flex-grow-1 px-2"
@@ -31,7 +43,8 @@
           class="pill-image-container mb-2"
           :class="$device.isMobile ? 'mobile-image' : ''"
       >
-        <nuxt-icon filled :name="medication.image" class="pill-icon" :class="medication.expired ? 'text-error' : 'text-primary'" />
+        <nuxt-icon filled :name="medication.image" class="pill-icon"
+                   :class="medication.expired ? 'text-error' : 'text-primary'"/>
       </div>
 
       <!-- Name (Editable) -->
@@ -102,57 +115,59 @@
           :size="$device.isMobile ? 'x-small' : 'small'"
           class="mb-2 font-weight-medium"
       >
-        <v-icon start icon="mdi-calendar-clock" size="x-small" />
+        <v-icon start icon="mdi-calendar-clock" size="x-small"/>
         {{ parseDate(medication.expiryDate) }}
       </v-chip>
     </div>
 
-    <v-divider />
+    <v-divider/>
 
     <!-- Actions Footer -->
-      <div class="d-flex align-center justify-space-between px-2 py-2">
-        <v-btn
-            icon="mdi-minus"
-            variant="tonal"
-            color="primary"
-            size="x-small"
-            :loading="isDecrementing"
-            :disabled="medication.quantity <= 1 || isDecrementing"
-            @click.stop="handleDecrement"
-        />
+    <div class="d-flex align-center justify-space-between px-2 py-2">
+      <v-btn
+          icon="mdi-minus"
+          variant="tonal"
+          color="primary"
+          size="x-small"
+          :loading="isDecrementing"
+          :disabled="medication.quantity <= 1 || isDecrementing"
+          @click.stop="handleDecrement"
+      />
 
-        <div class="d-flex flex-column align-center mx-2">
+      <div class="d-flex flex-column align-center mx-2">
           <span
-            class="text-caption text-medium-emphasis text-uppercase font-weight-bold"
-            :style="{ fontSize: $device.isMobile ? '0.6rem !important' : '0.8rem !important' }"
+              class="text-caption text-medium-emphasis text-uppercase font-weight-bold"
+              :style="{ fontSize: $device.isMobile ? '0.6rem !important' : '0.8rem !important' }"
           >{{ t('qty') }}</span>
-          <span
+        <span
             class="font-weight-bold primary--text line-height-1"
             :class="$device.isMobile ? 'text-subtitle-2' : 'text-subtitle-1'"
-          >{{ medication.quantity }}</span>
-        </div>
-
-        <v-btn
-            icon="mdi-plus"
-            variant="flat"
-            color="primary"
-            size="x-small"
-            :loading="isIncrementing"
-            :disabled="isIncrementing"
-            @click.stop="handleIncrement"
-        />
+        >{{ medication.quantity }}</span>
       </div>
+
+      <v-btn
+          icon="mdi-plus"
+          variant="flat"
+          color="primary"
+          size="x-small"
+          :loading="isIncrementing"
+          :disabled="isIncrementing"
+          @click.stop="handleIncrement"
+      />
+    </div>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import type { Medication } from "~/types/medication";
-import { parseDate } from "~/composables/parseDate";
+import type {Medication} from "~/types/medication";
+import {parseDate} from "~/composables/parseDate";
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue";
-import { useI18n } from "vue-i18n";
+import {useI18n} from "vue-i18n";
+import DuplicateConfirmDialog from "~/components/molecules/DuplicateConfirmDialog.vue";
+import MedicationInfoDialog from "~/components/molecules/MedicationInfoDialog.vue";
 
-const { $open, $device } = useNuxtApp()
-const { t } = useI18n()
+const {$open, $device} = useNuxtApp()
+const {t} = useI18n()
 
 const props = defineProps<{
   medication: Medication
@@ -252,6 +267,14 @@ const handleDecrement = async () => {
     isDecrementing.value = false
   }
 }
+
+const showMedicationDetails = async () => {
+  await $open(MedicationInfoDialog, {
+    scrim: true,
+    isPersistent: false,
+    data: props.medication
+  })
+}
 </script>
 
 <style scoped>
@@ -280,7 +303,7 @@ const handleDecrement = async () => {
 :deep(.pill-icon svg) {
   width: 100% !important;
   height: 100% !important;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .name-display:hover {
@@ -308,6 +331,7 @@ const handleDecrement = async () => {
 .z-index-1 {
   z-index: 1;
 }
+
 .pill-image-container.mobile-image {
   height: 48px;
   width: 48px;

@@ -4,6 +4,7 @@
   "confirm": "Valider",
   "cancel": "Annuler",
   "title": "MyPills",
+  "close": "Fermer",
   "select": "Sélectionner",
   "add-pill": "Ajouter",
   "success": "Le medicament est ajouté avec succès",
@@ -107,6 +108,19 @@
     "subtitle": "Les fonctionnalités de scan sont optimisées pour la France. Veuillez confirmer votre emplacement pour activer le scanner.",
     "confirmBtn": "Oui, je suis en France",
     "declineBtn": "Non, je suis ailleurs"
+  },
+  "detailsDialog" : {
+      "substances": "Substances Actives",
+      "activeComponent": "Composant principal",
+      "method": "Voie d'administration",
+      "form": "Forme pharmaceutique",
+      "refund": "Prise en charge",
+      "technicalDetails": "Informations techniques",
+      "ammDate": "Date d'autorisation (AMM)",
+      "notRefunded": "Non remboursé",
+    "scanner": {
+      "not_found_message": "Médicament introuvable dans la base de données."
+    }
   },
   "sort": {
     "label": "Trier",

@@ -400,9 +400,11 @@ const onBarcodeDetected = async (code: string) => {
       return;
     }
 
+    medication.value.bareCode = cip13
+
     // 2. Call Backend via Store
     const medicationsStore = useMedicationsStore();
-    const data = await medicationsStore.getMedicationDetails(cip13);
+    const data = await medicationsStore.getMedicationDetails(cip13)
 
 
     if (!data) {
@@ -410,6 +412,8 @@ const onBarcodeDetected = async (code: string) => {
       openToast('error', t('scanner.not_found_message'));
     } else {
       medication.value.name = data.name;
+      console.log(data.details)
+      medication.value.details = data.details
 
       // 3. Check for duplicate medication
       const duplicate = medicationsStore.findDuplicateMedication(
