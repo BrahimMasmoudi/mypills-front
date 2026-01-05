@@ -57,7 +57,6 @@ const openCountryDialog = async () => {
   font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  color: #1a1a1a;
 }
 
 .app-title-icon {

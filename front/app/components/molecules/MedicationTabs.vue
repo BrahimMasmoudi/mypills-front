@@ -19,7 +19,7 @@
             variant="text"
         >
           <template #prepend v-if="!$device.isMobile">
-            <v-icon icon="mdi-earth" color="primary" />
+            <v-icon icon="mdi-earth" color="primary"/>
           </template>
           {{ $device.isMobile ? t('meds.all') : t('meds.all_long') }}
           <v-badge
@@ -49,7 +49,7 @@
 
         <v-tab
             value="expired"
-            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-error"  
+            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-error"
             :class="{'bg-error-lighten': modelValue === 'expired'}"
             color="error"
             variant="text"
@@ -72,27 +72,31 @@
       <v-window v-model="activeTab" class="h-100">
         <!-- All Tab -->
         <v-window-item value="all" class="h-100">
-          <div :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
+          <div
+              :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
             <template v-if="allMedication.length > 0">
               <MoleculesPills
-                v-if="viewType === 'grid'"
-                :medications="allMedication"
-                :increment-pills="incrementPills"
-                :decrement-pills="decrementPills"
-                :delete-pills="deletePills"
-                :update-medication-name="updateMedicationName"
+                  v-if="viewType === 'grid'"
+                  :medications="allMedication"
+                  :increment-pills="incrementPills"
+                  :decrement-pills="decrementPills"
+                  :delete-pills="deletePills"
+                  :update-medication-name="updateMedicationName"
               />
               <MoleculesMedicationTable
-                v-else-if="viewType === 'table' && !$device.isMobile"
-                :medications="allMedication"
-                :increment-pills="incrementPills"
-                :decrement-pills="decrementPills"
-                :delete-pills="deletePills"
-                :update-medication-name="updateMedicationName"
+                  v-else-if="viewType === 'table' && !$device.isMobile"
+                  :medications="allMedication"
+                  :increment-pills="incrementPills"
+                  :decrement-pills="decrementPills"
+                  :delete-pills="deletePills"
+                  :update-medication-name="updateMedicationName"
               />
             </template>
-            <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center justify-center font-weight-bold">
-              <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
+            <v-sheet v-else width="100%" height="100%"
+                     class="d-flex flex-column align-center font-weight-bold">
+              <v-img
+                  :src="useAsset(colorMode.value === 'dark' ? '/assets/img/no-result-dark.png' : '/assets/img/no-result.png')"
+                  max-height="400" width="400"/>
               {{ t('meds.no-result') }}
             </v-sheet>
           </div>
@@ -100,27 +104,31 @@
 
         <!-- Valid Tab -->
         <v-window-item value="valid" class="h-100">
-          <div :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
+          <div
+              :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
             <template v-if="validMedication.length > 0">
               <MoleculesPills
-                v-if="viewType === 'grid'"
-                :medications="validMedication"
-                :increment-pills="incrementPills"
-                :decrement-pills="decrementPills"
-                :delete-pills="deletePills"
-                :update-medication-name="updateMedicationName"
+                  v-if="viewType === 'grid'"
+                  :medications="validMedication"
+                  :increment-pills="incrementPills"
+                  :decrement-pills="decrementPills"
+                  :delete-pills="deletePills"
+                  :update-medication-name="updateMedicationName"
               />
               <MoleculesMedicationTable
-                v-else-if="viewType === 'table' && !$device.isMobile"
-                :medications="validMedication"
-                :increment-pills="incrementPills"
-                :decrement-pills="decrementPills"
-                :delete-pills="deletePills"
-                :update-medication-name="updateMedicationName"
+                  v-else-if="viewType === 'table' && !$device.isMobile"
+                  :medications="validMedication"
+                  :increment-pills="incrementPills"
+                  :decrement-pills="decrementPills"
+                  :delete-pills="deletePills"
+                  :update-medication-name="updateMedicationName"
               />
             </template>
-            <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center justify-center font-weight-bold">
-              <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
+            <v-sheet v-else width="100%" height="100%"
+                     class="d-flex flex-column align-center font-weight-bold">
+              <v-img
+                  :src="useAsset(colorMode.value === 'dark' ? '/assets/img/no-result-dark.png' : '/assets/img/no-result.png')"
+                  max-height="400" width="400"/>
               {{ t('meds.no-result') }}
             </v-sheet>
           </div>
@@ -128,27 +136,31 @@
 
         <!-- Expired Tab -->
         <v-window-item value="expired" class="h-100">
-          <div :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
+          <div
+              :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
             <template v-if="expiredMedication.length > 0">
               <MoleculesPills
-                v-if="viewType === 'grid'"
-                :medications="expiredMedication"
-                :increment-pills="incrementPills"
-                :decrement-pills="decrementPills"
-                :delete-pills="deletePills"
-                :update-medication-name="updateMedicationName"
+                  v-if="viewType === 'grid'"
+                  :medications="expiredMedication"
+                  :increment-pills="incrementPills"
+                  :decrement-pills="decrementPills"
+                  :delete-pills="deletePills"
+                  :update-medication-name="updateMedicationName"
               />
               <MoleculesMedicationTable
-                v-else-if="viewType === 'table' && !$device.isMobile"
-                :medications="expiredMedication"
-                :increment-pills="incrementPills"
-                :decrement-pills="decrementPills"
-                :delete-pills="deletePills"
-                :update-medication-name="updateMedicationName"
+                  v-else-if="viewType === 'table' && !$device.isMobile"
+                  :medications="expiredMedication"
+                  :increment-pills="incrementPills"
+                  :decrement-pills="decrementPills"
+                  :delete-pills="deletePills"
+                  :update-medication-name="updateMedicationName"
               />
             </template>
-            <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center justify-center font-weight-bold">
-              <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
+            <v-sheet v-else width="100%" height="100%"
+                     class="d-flex flex-column align-center font-weight-bold">
+              <v-img
+                  :src="useAsset(colorMode.value === 'dark' ? '/assets/img/no-result-dark.png' : '/assets/img/no-result.png')"
+                  max-height="400" width="400"/>
               {{ t('meds.no-result') }}
             </v-sheet>
           </div>
@@ -162,10 +174,11 @@
 import type {Medication} from "~/types/medication";
 import {useI18n} from "vue-i18n";
 import MoleculesPills from "~/components/molecules/Pills.vue";
-import { useAsset } from "#imports";
+import {useAsset} from "#imports";
 
 const {t} = useI18n()
 const {$device} = useNuxtApp()
+const colorMode = useColorMode()
 
 const props = defineProps<{
   modelValue: string

@@ -66,7 +66,8 @@
     "expired-medications": "Expired Medications"
   },
   "user-menu": {
-    "disconnect": "Disconnect"
+    "disconnect": "Disconnect",
+    "change-theme": "Change theme"
   },
   "login": {
     "google": "Login with Google",

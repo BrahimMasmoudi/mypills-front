@@ -1,3 +1,15 @@
 .v-list-item {
   cursor: pointer;
 }
+
+:root {
+  --bg-surface: #ffffff;
+  --text-main: #1e293b;
+  --card-bg: #ffffff;
+}
+
+.dark-mode {
+  --bg-surface: #121212;
+  --text-main: #f8fafc;
+  --card-bg: #1e293b;
+}

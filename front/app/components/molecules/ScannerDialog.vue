@@ -156,4 +156,27 @@ onBeforeUnmount(() => {
   width: 36px;
   height: 36px;
 }
+
+
+/* Ensure the icon container has the right text color */
+.gs1-icon {
+  color: #1e293b; /* Light mode dots color */
+}
+
+/* The background rect inside the SVG */
+.gs1-icon :deep(.gs1-bg) {
+  fill: #ffffff; /* White background in light mode */
+  fill-opacity: 1;
+}
+
+/* DARK MODE OVERRIDES */
+.dark-mode .gs1-icon {
+  color: black; /* Emerald dots look high-tech in dark mode */
+}
+
+.dark-mode .gs1-icon :deep(.gs1-bg) {
+  /* In dark mode, we make the background dark slate */
+  fill: #0f172a;
+  fill-opacity: 1;
+}
 </style>
