@@ -196,14 +196,6 @@ const login = async () => {
 /* Color Palette & Variables */
 .text-dark-blue { color: #1e293b; }
 .text-primary-darken-1 { color: #2563EB; }
-.bg-soft-blue { background-color: #F8FAFC; }
-
-.bg-emerald { background: linear-gradient(135deg, #34D399 0%, #10B981 100%); }
-.bg-blue { background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%); }
-.bg-indigo { background: linear-gradient(135deg, #818CF8 0%, #6366F1 100%); }
-.bg-purple { background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%); }
-.bg-orange { background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%); }
-.bg-teal { background: linear-gradient(135deg, #2DD4BF 0%, #0D9488 100%); }
 
 .landing-page {
   background: var(--bg-surface);
@@ -370,10 +362,6 @@ const login = async () => {
 
 .gap-4 {
   gap: 16px;
-}
-
-.text-dark-blue {
-  color: var(--text-main);
 }
 
 .feature-card {

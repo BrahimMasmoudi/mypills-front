@@ -3,6 +3,7 @@
       :ripple="false"
       class="change-mode-btn"
       icon
+      :color="colorMode.value === 'dark' ? 'amber' : 'black'"
       variant="text"
       @click="toggleColorMode">
     <v-icon>{{ colorMode.value === 'dark' ? 'mdi-brightness-3' : 'mdi-brightness-5' }}</v-icon>

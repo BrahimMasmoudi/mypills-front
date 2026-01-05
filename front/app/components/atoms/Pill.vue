@@ -3,7 +3,7 @@
       :class="['pill-card', { 'expired-card': medication.expired }]"
       elevation="2"
       rounded="lg"
-      class="d-flex flex-column fill-height position-relative"
+      class="d-flex flex-column fill-height position-relative feature-card"
       @click="handleCardClick"
   >
     <!-- Delete Button (Top Right) -->
@@ -162,7 +162,6 @@ import type {Medication} from "~/types/medication";
 import {parseDate} from "~/composables/parseDate";
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue";
 import {useI18n} from "vue-i18n";
-import DuplicateConfirmDialog from "~/components/molecules/DuplicateConfirmDialog.vue";
 import MedicationInfoDialog from "~/components/molecules/MedicationInfoDialog.vue";
 
 const {$open, $device} = useNuxtApp()
@@ -187,7 +186,7 @@ const isDeleting = ref(false)
 
 const isUpdatingName = ref(false)
 
-const handleCardClick = () => {
+const handleCardClick = async () => {
   if ($device.isMobile) {
     showFooterMobile.value = !showFooterMobile.value
   }
@@ -347,5 +346,9 @@ const showMedicationDetails = async () => {
 
 .opacity-100 {
   opacity: 1 !important;
+}
+
+.feature-card {
+  background: var(--card-bg);
 }
 </style>
