@@ -1,6 +1,5 @@
 <template>
   <v-card
-      :color="medication.expired ? '#FFF5F5' : 'surface'"
       :class="['pill-card', { 'expired-card': medication.expired }]"
       elevation="2"
       rounded="lg"
