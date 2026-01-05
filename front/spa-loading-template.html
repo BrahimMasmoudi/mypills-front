@@ -1,0 +1,153 @@
+<div class="loading-wrapper">
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="loading-container">
+        <div class="hero-image-container">
+            <div class="floating-pill pill-1"></div>
+            <div class="floating-pill pill-2"></div>
+
+            <div class="glass-card main-card">
+                <img src="/application-icon.svg" alt="Logo" class="loading-logo">
+            </div>
+        </div>
+
+        <div class="loader"></div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #448AFF !important;
+        margin: 0;
+        overflow: hidden;
+        font-family: sans-serif;
+    }
+
+    .loading-wrapper {
+        position: relative;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    /* Background Abstract Shapes */
+    .bg-shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 1;
+    }
+    .shape-1 {
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.2);
+        top: -100px;
+        right: -100px;
+    }
+    .shape-2 {
+        width: 300px;
+        height: 300px;
+        background: rgba(16, 185, 129, 0.2);
+        bottom: -50px;
+        left: -100px;
+    }
+
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 10;
+    }
+
+    /* Hero Image / Pills Container */
+    .hero-image-container {
+        position: relative;
+        width: 250px;
+        height: 250px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .main-card {
+        width: 140px;
+        height: 140px;
+        z-index: 2;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .loading-logo {
+        width: 70px;
+        height: auto;
+    }
+
+    /* Floating Pills */
+    .floating-pill {
+        position: absolute;
+        border-radius: 50px;
+        opacity: 0.9;
+    }
+
+    .pill-1 {
+        width: 100px;
+        height: 35px;
+        background: #34D399;
+        top: 15%;
+        right: 5%;
+        transform: rotate(-15deg);
+        animation: float-delayed 7s ease-in-out infinite;
+        z-index: 1;
+    }
+
+    .pill-2 {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: #ffffff; /* Using white for contrast on blue bg */
+        bottom: 15%;
+        left: 5%;
+        animation: float 8s ease-in-out infinite reverse;
+        z-index: 1;
+        opacity: 0.4;
+    }
+
+    /* Spinner */
+    .loader {
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s linear infinite;
+    }
+
+    /* Animations */
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+    @keyframes float-delayed {
+        0%, 100% { transform: translateY(0) rotate(-15deg); }
+        50% { transform: translateY(-10px) rotate(-15deg); }
+    }
+</style>

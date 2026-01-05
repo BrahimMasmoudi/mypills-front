@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vueI18n from '@intlify/unplugin-vue-i18n/vite'
+import {fileURLToPath} from "node:url";
 
 export default defineNuxtConfig({
     experimental: {
@@ -18,6 +19,7 @@ export default defineNuxtConfig({
     },
     typescript: { strict: true },
     ssr: false,
+    spaLoadingTemplate: fileURLToPath(new URL('./spa-loading-template.html', import.meta.url)),
     modules: [
         'vuetify-nuxt-module',
         'nuxt-lodash',
