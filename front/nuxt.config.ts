@@ -14,23 +14,37 @@ export default defineNuxtConfig({
     },
     devServerHandlers: [],
     app: {
-        head: { title: 'MyPills' },
+        head: {
+            title: 'MyPills',
+            meta: [
+                {
+                    name: 'theme-color',
+                    content: '#ffffff',
+                    media: '(prefers-color-scheme: light)'
+                },
+                {
+                    name: 'theme-color',
+                    content: '#121212',
+                    media: '(prefers-color-scheme: dark)'
+                },
+            ],
+        },
         viewTransition: true
     },
-    typescript: { strict: true },
+    typescript: {strict: true},
     ssr: false,
     spaLoadingTemplate: fileURLToPath(new URL('./spa-loading-template.html', import.meta.url)),
     modules: [
-      'vuetify-nuxt-module',
-      'nuxt-lodash',
-      'nuxt-icons',
-      '@pinia/nuxt',
-      '@pinia-plugin-persistedstate/nuxt',
-      '@nuxtjs/device',
-      'nuxt-vuefire',
-      '@nuxt/ui',
-      '@vite-pwa/nuxt',
-      '@nuxtjs/color-mode',
+        'vuetify-nuxt-module',
+        'nuxt-lodash',
+        'nuxt-icons',
+        '@pinia/nuxt',
+        '@pinia-plugin-persistedstate/nuxt',
+        '@nuxtjs/device',
+        'nuxt-vuefire',
+        '@nuxt/ui',
+        '@vite-pwa/nuxt',
+        '@nuxtjs/color-mode',
     ],
     colorMode: {
         preference: 'system', // default value of $colorMode.preference
@@ -108,7 +122,7 @@ export default defineNuxtConfig({
                 propsDestructure: true,
             },
         },
-        plugins: [vueI18n({ defaultSFCLang: 'yaml' }),]
+        plugins: [vueI18n({defaultSFCLang: 'yaml'}),]
     },
     vuetify: {
         vuetifyOptions: {
