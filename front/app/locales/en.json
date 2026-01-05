@@ -4,6 +4,7 @@
   "confirm": "Confirm",
   "cancel": "Cancel",
   "select": "Select",
+  "close": "Close",
   "title": "MyPills",
   "add-pill": "Create",
   "success": "The pills are added successfully",
@@ -102,11 +103,24 @@
     },
     "cta": "Connect with Google"
   },
-  "countryDialog" :{
+  "countryDialog": {
     "title": "Location Verification",
     "subtitle": "Scanning features are optimized for France. Please confirm your location to enable the scanner.",
     "confirmBtn": "Yes, I am in France",
     "declineBtn": "No, I'm elsewhere"
+  },
+  "detailsDialog": {
+    "substances": "Active Substances",
+    "activeComponent": "Main component",
+    "method": "Administration Route",
+    "form": "Pharmaceutical Form",
+    "refund": "Coverage",
+    "technicalDetails": "Technical Information",
+    "ammDate": "Authorization Date",
+    "notRefunded": "Not reimbursed",
+    "scanner": {
+      "not_found_message": "Medication not found in the database."
+    }
   },
   "sort": {
     "label": "Sort",
