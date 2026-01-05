@@ -9,74 +9,100 @@ import type { GetMedicationDetailsResponse } from "../types/api";
 export const useMedicationsStore = defineStore('medicationsStore', () => {
     const { $functions, $firestore, $analytics } = useNuxtApp()
 
-    /**
-     * Standardizes various date formats (Date, Timestamp, JSON object) into a Date object
-     */
+    /* ------------------------------------------------------------------
+     * STATE
+     * ------------------------------------------------------------------ */
+    const medications = ref<Medication[] | undefined>(undefined)
+
+    /* ------------------------------------------------------------------
+     * HELPERS
+     * ------------------------------------------------------------------ */
     const ensureDate = (dateValue: any): Date => {
-        if (!dateValue) return new Date(0) // Return epoch if no date
-        // Firestore Timestamp
+        if (!dateValue) return new Date(0)
         if (typeof dateValue.toDate === 'function') return dateValue.toDate()
-        // Date object
         if (dateValue instanceof Date) return dateValue
-        // Object with seconds (Firestore JSON or similar)
         if (dateValue.seconds !== undefined) return new Date(dateValue.seconds * 1000)
-        // String or number
+
         const date = new Date(dateValue)
         return isNaN(date.getTime()) ? new Date(0) : date
     }
 
-    const getMedications = (user: User) => {
-        const q = query(collection($firestore, 'medications'), orderBy('expiryDate', 'desc'), where('email', '==', user?.email))
-        return useCollection(q)
+    /* ------------------------------------------------------------------
+     * FIRESTORE INIT (SYNC COMPOSABLE, ASYNC ACTION)
+     * ------------------------------------------------------------------ */
+    const initMedications = async () => {
+        const user = await getCurrentUser()
+        if (!user?.email) return
+
+        const q = query(
+            collection($firestore, 'medications'),
+            where('email', '==', user.email),
+            orderBy('expiryDate', 'desc')
+        )
+
+        const collectionRef = useCollection(q)
+
+        watch(
+            collectionRef,
+            (value) => {
+                medications.value = value as Medication[]
+            },
+            { immediate: true }
+        )
     }
 
+    /* ------------------------------------------------------------------
+     * CLOUD FUNCTIONS
+     * ------------------------------------------------------------------ */
     const createMedication = async (medication: Medication) => {
         const create = httpsCallable($functions, 'createMedication')
         const result = await create({ medication })
 
+        $analytics &&
+        logEvent($analytics, 'create_medication', {
+            medication_name: medication.name,
+            expiry_date: medication.expiryDate
+        })
 
-        if ($analytics) {
-            logEvent($analytics, 'create_medication', {
-                medication_name: medication.name,
-                expiry_date: medication.expiryDate
-            })
-        }
         return result
     }
 
     const incrementPills = async (medication: Medication) => {
         const increase = httpsCallable($functions, 'incrementPills')
         const result = await increase({ medication })
-        if ($analytics) {
-            logEvent($analytics, 'increment_pills', {
-                medication_name: medication.name,
-                medication_id: medication.medicationId
-            })
-        }
+
+        $analytics &&
+        logEvent($analytics, 'increment_pills', {
+            medication_name: medication.name,
+            medication_id: medication.medicationId
+        })
+
         return result
     }
+
     const decrementPills = async (medication: Medication) => {
-        const increase = httpsCallable($functions, 'decrementPills')
-        const result = await increase({ medication })
+        const decrease = httpsCallable($functions, 'decrementPills')
+        const result = await decrease({ medication })
 
-        if ($analytics) {
-            logEvent($analytics, 'decrement_pills', {
-                medication_name: medication.name,
-                medication_id: medication.medicationId
-            })
-        }
+        $analytics &&
+        logEvent($analytics, 'decrement_pills', {
+            medication_name: medication.name,
+            medication_id: medication.medicationId
+        })
+
         return result
     }
-    const deletePills = async (medication: Medication) => {
-        const increase = httpsCallable($functions, 'deletePills')
-        const result = await increase({ medication })
 
-        if ($analytics) {
-            logEvent($analytics, 'delete_medication', {
-                medication_name: medication.name,
-                medication_id: medication.medicationId
-            })
-        }
+    const deletePills = async (medication: Medication) => {
+        const remove = httpsCallable($functions, 'deletePills')
+        const result = await remove({ medication })
+
+        $analytics &&
+        logEvent($analytics, 'delete_medication', {
+            medication_name: medication.name,
+            medication_id: medication.medicationId
+        })
+
         return result
     }
 
@@ -84,29 +110,28 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         const update = httpsCallable($functions, 'updateMedicationName')
         const result = await update({ medication, newName })
 
-        if ($analytics) {
-            logEvent($analytics, 'update_medication_name', {
-                old_name: medication.name,
-                new_name: newName,
-                medication_id: medication.medicationId
-            })
-        }
+        $analytics &&
+        logEvent($analytics, 'update_medication_name', {
+            old_name: medication.name,
+            new_name: newName,
+            medication_id: medication.medicationId
+        })
+
         return result
     }
 
-    const checkAndUpdateExpiredMedications = async (medications: Medication[]) => {
+    /* ------------------------------------------------------------------
+     * BUSINESS LOGIC
+     * ------------------------------------------------------------------ */
+    const checkAndUpdateExpiredMedications = async (list: Medication[]) => {
         const now = new Date()
         const expiredIds: string[] = []
 
-        for (const med of medications) {
-            // Skip if already marked as expired
+        for (const med of list) {
             if (med.expired) continue
 
             const expiryDate = ensureDate(med.expiryDate)
-
-            if (expiryDate < now) {
-                expiredIds.push(med.medicationId)
-            }
+            if (expiryDate < now) expiredIds.push(med.medicationId)
         }
 
         if (expiredIds.length > 0) {
@@ -115,30 +140,24 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         }
     }
 
-    const getMedicationDetails = async (cip13: string): Promise<GetMedicationDetailsResponse | undefined> => {
+    const getMedicationDetails = async (
+        cip13: string
+    ): Promise<GetMedicationDetailsResponse | undefined> => {
         const getDetails = httpsCallable($functions, 'getMedicationDetails')
         const result = await getDetails({ cip13 })
         return (result.data as GetMedicationDetailsResponse) || undefined
     }
 
-    /**
-     * Find a duplicate medication by name and expiry date (month/year match)
-     * @param medications - Array of user's medications
-     * @param name - Medication name to search for
-     * @param expiryDate - Expiry date to compare (month and year)
-     * @returns Matching medication or null
-     */
     const findDuplicateMedication = (
-        medications: Medication[],
+        list: Medication[],
         name: string,
         expiryDate: Date
     ): Medication | null => {
         const targetMonth = expiryDate.getMonth()
         const targetYear = expiryDate.getFullYear()
 
-        const duplicate = medications.find(med => {
+        const duplicate = list.find(med => {
             const medDate = ensureDate(med.expiryDate)
-
             return (
                 med.name.toLowerCase() === name.toLowerCase() &&
                 medDate.getMonth() === targetMonth &&
@@ -146,35 +165,35 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
             )
         })
 
-        // Log when duplicate is detected
-        if (duplicate && $analytics) {
-            logEvent($analytics, 'duplicate_medication_detected', {
-                medication_name: name,
-                existing_quantity: duplicate.quantity,
-                expiry_date: expiryDate
-            })
-        }
+        duplicate &&
+        $analytics &&
+        logEvent($analytics, 'duplicate_medication_detected', {
+            medication_name: name,
+            existing_quantity: duplicate.quantity,
+            expiry_date: expiryDate
+        })
 
         return duplicate || null
     }
 
-    /**
-     * Increment pills for a duplicate medication (from scanner)
-     * Includes analytics logging for duplicate increment
-     */
     const incrementPillsFromDuplicate = async (medication: Medication) => {
-        if ($analytics) {
-            logEvent($analytics, 'duplicate_medication_increment', {
-                medication_name: medication.name,
-                medication_id: medication.medicationId,
-                new_quantity: medication.quantity + 1
-            })
-        }
-        return await incrementPills(medication)
+        $analytics &&
+        logEvent($analytics, 'duplicate_medication_increment', {
+            medication_name: medication.name,
+            medication_id: medication.medicationId,
+            new_quantity: medication.quantity + 1
+        })
+
+        return incrementPills(medication)
     }
 
+    /* ------------------------------------------------------------------
+     * EXPORT
+     * ------------------------------------------------------------------ */
     return {
-        getMedications,
+        medications,
+        initMedications,
+
         createMedication,
         incrementPills,
         decrementPills,
@@ -183,6 +202,6 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         checkAndUpdateExpiredMedications,
         getMedicationDetails,
         findDuplicateMedication,
-        incrementPillsFromDuplicate,
+        incrementPillsFromDuplicate
     }
 })

@@ -92,7 +92,7 @@
               />
             </template>
             <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center justify-center font-weight-bold">
-              <v-img :src="useAsset('/assets/img/no-result.png')" max-height="200" width="200"/>
+              <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
               {{ t('meds.no-result') }}
             </v-sheet>
           </div>
@@ -120,7 +120,7 @@
               />
             </template>
             <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center justify-center font-weight-bold">
-              <v-img :src="useAsset('/assets/img/no-result.png')" max-height="200" width="200"/>
+              <v-img :src="useAsset('/assets/img/no-result-new.png')" max-height="400" width="400"/>
               {{ t('meds.no-result') }}
             </v-sheet>
           </div>
