@@ -29,8 +29,6 @@
           size="small"
           color="primary"
           density="comfortable"
-          :loading="isDeleting"
-          :disabled="isDeleting"
           @click.stop="showMedicationDetails"
       />
     </div>
