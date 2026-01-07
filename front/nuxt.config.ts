@@ -91,6 +91,9 @@ export default defineNuxtConfig({
                 },
                 analytics: {
                     enable: ['production', 'staging'].includes(process.env.ENVIRONMENT!),
+                },
+                cloudMessaging: {
+                    vapidKey: process.env.FIREBASE_VAPID_KEY
                 }
             },
         }
