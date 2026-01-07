@@ -6,7 +6,7 @@
   "select": "Select",
   "close": "Close",
   "title": "MyPills",
-  "add-pill": "Create",
+  "add-pill": "Create a medication",
   "success": "The pills are added successfully",
   "error": "An error happened",
   "dialogDelete": {
@@ -124,6 +124,25 @@
     "scanner": {
       "not_found_message": "Medication not found in the database."
     }
+  },
+  "reminderDialog": {
+    "createTitle": "Schedule Reminders",
+    "createSubtitle": "Set up a treatment plan to receive notifications for each dose.",
+    "frequency": "Daily Frequency",
+    "addDose": "Add Another Dose",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "timeLabel": "Dose Time",
+    "quantity" : "Qty",
+    "toast": {
+      "success" : "The reminder is created successfully",
+      "error" : "An error happened while creating the reminder"
+    }
+  },
+  "actions": {
+    "main": "Add New",
+    "addMedication": "Add a medication",
+    "createReminder": "Create a reminder"
   },
   "sort": {
     "label": "Sort",

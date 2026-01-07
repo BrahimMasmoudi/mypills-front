@@ -6,6 +6,7 @@
                   :delete-pills="deletePills"
                   :medication-loading="medicationLoading"
                   :update-medication-name="updateMedicationName"
+                  :create-reminder="createReminder"
   />
 </template>
 <script setup lang="ts">
@@ -18,6 +19,7 @@ defineProps<{
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
+  createReminder: (createReminderRequest: any) => Promise<void>
   medicationLoading: boolean
 }>()
 </script>

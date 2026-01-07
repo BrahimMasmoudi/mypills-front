@@ -5,7 +5,8 @@
                   :delete-pills="deletePills"
                   :create-medication="createMedication"
                   :medication-loading="medicationLoading"
-                  :update-medication-name="updateMedicationName"/>
+                  :update-medication-name="updateMedicationName"
+                  :create-reminder="createReminder"/>
 </template>
 <script setup lang="ts">
 
@@ -14,7 +15,7 @@ import type {Medication} from "~/types/medication";
 import {useCountryStore} from "~/store/country";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
 
-const { $open } = useNuxtApp();
+const {$open} = useNuxtApp();
 const countryStore = useCountryStore()
 const medicationLoading = ref(true)
 
@@ -57,6 +58,10 @@ const deletePills = async (medication: Medication) => {
 
 const updateMedicationName = async (medication: Medication, newName: string) => {
   await medicationStore.updateMedicationName(medication, newName)
+}
+
+const createReminder = async (reminderRequest: any) => {
+  console.log('createReminder')
 }
 
 watch(medications,

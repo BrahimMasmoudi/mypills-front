@@ -97,7 +97,7 @@
     <template #bottom></template>
   </v-data-table>
 
-  <!-- Inline Rename Dialog/Field can be handled at Atoms level or here -->
+  <!-- Inline Rename CreateMedicationDialog/Field can be handled at Atoms level or here -->
   <v-dialog v-model="renameDialog" max-width="400">
     <v-card rounded="xl" class="pa-4">
       <v-card-title class="text-h6 font-weight-bold mx-auto">{{ t('dialogRename.title') }}</v-card-title>

@@ -12,7 +12,6 @@
           :sort-options="sortOptions"
           :is-mobile="$device.isMobile"
           @toggle-sort-order="toggleSortOrder"
-          @create="openDialog"
       />
     </div>
 
@@ -32,37 +31,71 @@
     </div>
 
     <!-- Skeleton Loader Overlay -->
-    <v-sheet v-if="medicationLoading" 
-             width="100%" 
-             height="100%" 
-             class="position-absolute top-0 left-0 d-flex align-center justify-center bg-surface opacity-80" 
+    <v-sheet v-if="medicationLoading"
+             width="100%"
+             height="100%"
+             class="position-absolute top-0 left-0 d-flex align-center justify-center bg-surface opacity-80"
              style="z-index: 5;">
-        <v-row class="d-flex align-start justify-start pa-4 w-100 h-100">
-          <v-col v-for="i in 8" :key="i" md="3" cols="6">
-            <AtomsLoadingMed/>
-          </v-col>
-        </v-row>
+      <v-row class="d-flex align-start justify-start pa-4 w-100 h-100">
+        <v-col v-for="i in 8" :key="i" md="3" cols="6">
+          <AtomsLoadingMed/>
+        </v-col>
+      </v-row>
     </v-sheet>
 
-    <v-fab
-        color="primary"
-        icon="mdi-plus"
-        size="x-large"
+    <v-speed-dial
+        v-model="isDialOpen"
         location="bottom end"
-        :extended="!$device.isMobile"
-        :text="!$device.isMobile ? t('add-pill') : ''"
-        app
+        transition="slide-y-reverse-transition"
         class="mb-4 mr-4"
-        @click="openDialog"
-    />
+    >
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-fab
+            v-bind="activatorProps"
+            color="primary"
+            size="x-large"
+            app
+            :icon="isDialOpen ?  'mdi-close' : 'mdi-plus'"
+            location="bottom end"
+            :extended="!$device.isMobile"
+            :text="!$device.isMobile ? t('add-pill') : ''"
+            class="mb-4 mr-4"
+        />
+      </template>
+
+      <v-btn
+          key="1"
+          color="secondary"
+          prepend-icon="mdi-pill"
+          class="text-capitalize font-weight-bold"
+          rounded="lg"
+          size="large"
+          @click="openAddMedicationDialog"
+      >
+        {{ t('actions.addMedication') }}
+      </v-btn>
+
+      <v-btn
+          key="2"
+          color="primary"
+          prepend-icon="mdi-alarm-plus"
+          class="text-capitalize font-weight-bold"
+          rounded="lg"
+          size="large"
+          @click="openReminderDialog"
+      >
+        {{ t('actions.createReminder') }}
+      </v-btn>
+    </v-speed-dial>
   </v-sheet>
 </template>
 <script setup lang="ts">
 import type {Medication} from "~/types/medication";
 import {useI18n} from "vue-i18n";
-import Dialog from "~/components/molecules/Dialog.vue";
+import CreateMedicationDialog from "~/components/molecules/createMedicationDialog.vue";
 import {openToast, type ToastType} from "~/composables/openToast";
 import {getCurrentUser} from "vuefire";
+import ReminderCreationDialog from "~/components/molecules/ReminderCreationDialog.vue";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
@@ -71,11 +104,11 @@ const viewType = ref<'grid' | 'table'>('grid')
 const sortBy = ref<'name' | 'expiryDate' | 'quantity' | null>(null)
 const sortOrder = ref<'asc' | 'desc'>('asc')
 const sortOptions = [
-  { value: 'name' as const, label: 'sort.name', icon: 'mdi-alphabetical' },
-  { value: 'expiryDate' as const, label: 'sort.expiryDate', icon: 'mdi-calendar-clock' },
-  { value: 'quantity' as const, label: 'sort.quantity', icon: 'mdi-counter' }
+  {value: 'name' as const, label: 'sort.name', icon: 'mdi-alphabetical'},
+  {value: 'expiryDate' as const, label: 'sort.expiryDate', icon: 'mdi-calendar-clock'},
+  {value: 'quantity' as const, label: 'sort.quantity', icon: 'mdi-counter'}
 ]
-
+const isDialOpen = ref(false);
 const toggleSortOrder = () => {
   sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
 }
@@ -129,39 +162,41 @@ const props = defineProps<{
   deletePills: (medication: Medication) => Promise<void>
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
   medicationLoading: boolean
+  createReminder: (createReminderRequest: any) => Promise<void>
 }>()
 
 const validMedication = computed(() => {
   const filtered = props.medications?.filter((med: Medication) => !med.expired) ?? []
-  const searched = !searchQuery.value 
-    ? filtered 
-    : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  const searched = !searchQuery.value
+      ? filtered
+      : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
   return sortMedications(searched)
 })
 
 const expiredMedication = computed(() => {
   const filtered = props.medications?.filter((med: Medication) => med.expired) ?? []
-  const searched = !searchQuery.value 
-    ? filtered 
-    : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  const searched = !searchQuery.value
+      ? filtered
+      : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
   return sortMedications(searched)
 })
 
 const allMedication = computed(() => {
   const filtered = props.medications ?? []
-  const searched = !searchQuery.value 
-    ? filtered 
-    : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+  const searched = !searchQuery.value
+      ? filtered
+      : filtered.filter(med => med.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
   return sortMedications(searched)
 })
 
 // Tab Logic
 const tab = ref<string>('all')
 
-const openDialog = async () => {
+
+const openAddMedicationDialog = async () => {
   const user = await getCurrentUser()
 
-  const toastType = await $open<ToastType>(Dialog, {
+  const toastType = await $open<ToastType>(CreateMedicationDialog, {
     scrim: true,
     isPersistent: true,
     createMedication: props.createMedication,
@@ -169,7 +204,17 @@ const openDialog = async () => {
     email: user?.email,
     medications: props.medications
   })
-  if(toastType !== 'canceled') openToast(toastType, t(toastType))
+  if (toastType !== 'canceled') openToast(toastType, t(toastType))
+}
+
+const openReminderDialog = async () => {
+  const toastType = await $open<ToastType>(ReminderCreationDialog, {
+    scrim: true,
+    isPersistent: true,
+    createReminder: props.createReminder,
+    validMedications: validMedication.value
+  })
+  if (toastType !== 'canceled') openToast(toastType, t(`reminderDialog.toast.${toastType}`))
 }
 </script>
 <style scoped>

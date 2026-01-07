@@ -112,7 +112,6 @@ const emit = defineEmits<{
   'update:sortBy': [value: string | null]
   'update:viewType': [value: 'grid' | 'table']
   'toggleSortOrder': []
-  'create': []
 }>()
 
 const sortSheetOpen = ref(false)

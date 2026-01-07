@@ -339,6 +339,7 @@ const {close, createMedication, userUid, email, medications} = defineProps<{
   email: string
   medications: Medication[]
 }>()
+
 const medication = ref<Medication>({
   expiryDate: new Date(),
   uid: userUid,
