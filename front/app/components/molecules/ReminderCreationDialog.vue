@@ -3,9 +3,17 @@
       v-model="isActive"
       width="550"
       content-class="elevation-0"
+      :class="$device.isMobile ? 'align-end ma-0' : ''"
       @keydown.esc="cancelAndClose"
   >
     <v-card class="rounded-xl pa-6" elevation="24">
+      <v-sheet
+          v-if="$device.isMobile"
+          color="grey-lighten-2 mx-auto"
+          height="4"
+          width="40"
+          class="rounded-pill mb-6"
+      />
       <div class="d-flex flex-column align-center text-center mb-6">
         <v-avatar color="primary-lighten-5" size="64">
           <v-icon icon="mdi-alarm-plus" color="primary" size="46"/>
@@ -21,13 +29,14 @@
       <v-card-text class="pa-0">
         <div class="d-flex flex-column gap-4">
           <v-select
-              v-model="form.name"
+              v-model="form.medication"
               :items="validMedications"
               :label="t('dialogCreate.medicationLabel')"
               variant="outlined"
               rounded="lg"
               item-title="name"
               item-value="id"
+              return-object
               prepend-inner-icon="mdi-pill"
               class="font-weight-medium"
           />
@@ -63,7 +72,8 @@
                     class="font-weight-medium cursor-pointer"
                 />
               </template>
-              <v-date-picker v-model="form.endDate" :min="form.startDate" @update:model-value="endMenu = false" hide-header
+              <v-date-picker v-model="form.endDate" :min="form.startDate" @update:model-value="endMenu = false"
+                             hide-header
                              rounded="lg" color="primary"/>
             </v-menu>
           </div>
@@ -84,6 +94,7 @@
                 rounded="lg"
                 density="comfortable"
                 hide-details
+                :min="index > 0 ? form?.doses[index - 1]?.time : undefined"
                 class="font-weight-medium flex-grow-1 mr-4"
             />
 
@@ -128,8 +139,14 @@
                class="flex-grow-1 text-capitalize font-weight-bold" height="48" @click="cancelAndClose">
           {{ t('cancel') }}
         </v-btn>
-        <v-btn color="primary" variant="flat" size="large" class="flex-grow-1 text-capitalize font-weight-bold"
-               height="48" :loading="loading" @click="handleSave">
+        <v-btn :disabled="isFormInvalid"
+               color="primary"
+               variant="flat"
+               size="large"
+               class="flex-grow-1 text-capitalize font-weight-bold"
+               height="48"
+               :loading="loading"
+               @click="handleSave">
           {{ t('confirm') }}
         </v-btn>
       </v-card-actions>
@@ -139,8 +156,9 @@
 
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {format, addDays} from "date-fns";
+import {format, addDays, isSameDay, isAfter} from "date-fns";
 import type {Medication} from "~/types/medication";
+import type {CreateReminderRequest} from "~/types/reminder";
 
 const {t} = useI18n();
 const {$device} = useNuxtApp();
@@ -156,12 +174,13 @@ const {close, createReminder, validMedications} = defineProps<{
   close: (value: ToastType) => void
   isPersistent: boolean
   scrim: boolean
-  createReminder: (createReminderRequest : any) => Promise<void>
+  createReminder: (createReminderRequest: CreateReminderRequest) => Promise<void>
   validMedications: Medication[]
 }>()
 
+
 const form = ref({
-  medication : undefined,
+  medication: null as unknown as Medication,
   startDate: new Date(),
   endDate: addDays(new Date(), 7),
   doses: [
@@ -169,14 +188,36 @@ const form = ref({
   ]
 })
 
-const addDose = () => form.value.doses.push({time: '12:00', quantity: 1});
+const isFormInvalid = computed(() => {
+  const hasMed = !!form.value.medication;
+  const validDate =
+      isAfter(form.value.endDate, form.value.startDate) ||
+      isSameDay(form.value.endDate, form.value.startDate);
+  const validDoses =
+      form.value.doses.length > 0 &&
+      form.value.doses.every(d => d.time && d.quantity > 0);
+
+  return !hasMed || !validDate || !validDoses;
+});
+
+const addDose = () => {
+  const lastDose = form.value.doses[form.value.doses.length - 1]!
+  const [hours, minutes] = lastDose.time.split(':').map(Number)
+
+  let newHours = hours! + 4
+  if (newHours >= 24) newHours = 23
+
+  const newTime = `${String(newHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
+
+  form.value.doses.push({time: newTime, quantity: 1})
+}
+
 const removeDose = (index: number) => form.value.doses.splice(index, 1);
 
 const handleSave = async () => {
   loading.value = true
   try {
-    console.log(form.value)
-    await createReminder({})
+    await createReminder(form.value as CreateReminderRequest)
     close('success')
   } catch (e) {
     console.error(e)
@@ -184,7 +225,29 @@ const handleSave = async () => {
   } finally {
     loading.value = false
   }
-};
+}
+
+watch(() => form.value.doses, (newDoses) => {
+  newDoses.forEach((dose, index) => {
+    if (index === 0) return
+
+    const prevTime = newDoses[index - 1]?.time
+
+    if (prevTime && dose.time <= prevTime) {
+      const [hours, mins] = prevTime.split(':').map(Number)
+
+      let nextH = hours
+      let nextM = mins + 1
+
+      if (nextM >= 60) {
+        nextM = 0
+        nextH = Math.min(nextH + 1, 23)
+      }
+
+      dose.time = `${String(nextH).padStart(2, '0')}:${String(nextM).padStart(2, '0')}`
+    }
+  });
+}, {deep: true});
 
 const cancelAndClose = () => close('canceled')
 </script>
