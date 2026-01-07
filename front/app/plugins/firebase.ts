@@ -1,13 +1,14 @@
-
-import type { Firestore } from '@firebase/firestore/lite'
-import type { Functions } from '@firebase/functions'
+import type {Firestore} from '@firebase/firestore/lite'
+import type {Functions} from '@firebase/functions'
 import {
     getAnalytics,
     type Analytics,
-    setUserId, setUserProperties
+    setUserId,
+    setUserProperties
 } from '@firebase/analytics'
-import { connectFunctionsEmulator, getFunctions } from "@firebase/functions";
-import { useFirebaseApp, useFirestore, getCurrentUser } from 'vuefire'
+import {connectFunctionsEmulator, getFunctions} from "@firebase/functions";
+import {useFirebaseApp, useFirestore, getCurrentUser} from 'vuefire'
+import {getMessaging} from "firebase/messaging";
 
 type RemoteConfig = {}
 
@@ -38,8 +39,13 @@ declare module '@vue/runtime-core' {
     }
 }
 
-export default defineNuxtPlugin(async ({ provide, $config }) => {
-    const { functions: functionsConfig, firestore: firestoreConfig, analytics: analyticsConfig } = $config.public.firebase
+export default defineNuxtPlugin(async ({provide, $config}) => {
+    const {
+        functions: functionsConfig,
+        firestore: firestoreConfig,
+        analytics: analyticsConfig,
+        cloudMessaging: fcmConfig
+    } = $config.public.firebase
 
     const firebaseApp = useFirebaseApp()
     if (firestoreConfig.enable) {
@@ -66,12 +72,14 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
         provide('functions', functionsInstance)
     }
 
+    const user = await getCurrentUser()
+
+
     // Initialize Analytics if enabled
     if (analyticsConfig?.enable) {
         const analyticsInstance = getAnalytics(firebaseApp)
 
         // Set user ID and properties for analytics tracking
-        const user = await getCurrentUser()
         if (user?.uid) {
             setUserId(analyticsInstance, user.uid)
             setUserProperties(analyticsInstance, {
@@ -82,4 +90,8 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
 
         provide('analytics', analyticsInstance)
     }
+
+    const messaging = getMessaging(firebaseApp)
+    provide('messaging', messaging)
+
 })

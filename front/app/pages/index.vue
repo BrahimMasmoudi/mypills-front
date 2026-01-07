@@ -17,6 +17,9 @@ import CountryDialog from "~/components/molecules/CountryDialog.vue";
 
 const {$open} = useNuxtApp();
 const countryStore = useCountryStore()
+
+const notifications = useNotifications()
+
 const medicationLoading = ref(true)
 
 const medicationStore = useMedicationsStore()
@@ -25,6 +28,7 @@ const medications = computed(() => medicationStore.medications)
 onMounted(async () => {
   await medicationStore.initMedications()
   await checkCountryStatus()
+  await notifications.registerNotificationToken()
 })
 
 const checkCountryStatus = async () => {
@@ -75,6 +79,7 @@ watch(medications,
       }
     }
 )
+
 const handleExpiredMedications = async (meds: Medication[]) => {
   await medicationStore.checkAndUpdateExpiredMedications(meds)
 }
