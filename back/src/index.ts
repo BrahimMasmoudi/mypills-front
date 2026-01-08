@@ -5,10 +5,10 @@ import {Medication} from "./types/medication"
 import {toMedicationDto} from "./utils/mapper"
 import {GetMedicationDetailsResponse} from "./types/medicationApi"
 import {getMessaging} from "firebase-admin/messaging"
-import {addDays, isBefore, isSameDay, parse,format} from "date-fns"
+import {addDays, isBefore, isSameDay, parse, format} from "date-fns"
 import {onDocumentCreated} from "firebase-functions/v2/firestore"
 import {CloudTasksClient} from "@google-cloud/tasks"
-import { fromZonedTime } from "date-fns-tz"
+import {fromZonedTime} from "date-fns-tz"
 
 initializeApp()
 const firestore = getFirestore()
@@ -160,52 +160,53 @@ export const scheduleReminderTask = onDocumentCreated({
                 quantity: data.quantity || "1"
             })).toString("base64"),
 
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
 
             oidcToken: {
                 serviceAccountEmail: serviceAccountEmail,
             }
         },
-        scheduleTime: { seconds: data.scheduledTime.seconds },
+        scheduleTime: {seconds: data.scheduledTime.seconds},
     }
 
-    await client.createTask({ parent: queuePath, task });
+    await client.createTask({parent: queuePath, task});
 })
 
-export const createSchedule = onCall({ region: 'europe-west3' }, async (request) => {
-    const { medication, startDate, endDate, doses, timezone } = request.data;
+export const createSchedule = onCall({region: 'europe-west3'}, async (request) => {
+    const {medication, startDate, endDate, doses, timezone} = request.data
 
-    const batch = firestore.batch();
-    let currentDate = parse(startDate, 'yyyy-MM-dd', new Date());
-    const end = parse(endDate, 'yyyy-MM-dd', new Date());
+    const batch = firestore.batch()
+    let currentDate = parse(startDate, 'yyyy-MM-dd', new Date())
+    const end = parse(endDate, 'yyyy-MM-dd', new Date())
 
     while (isBefore(currentDate, end) || isSameDay(currentDate, end)) {
         doses.forEach((dose: any) => {
-            if (!dose.time) return;
+            if (!dose.time) return
 
-            const datePart = format(currentDate, 'yyyy-MM-dd');
-            const timePart = dose.time;
+            const datePart = format(currentDate, 'yyyy-MM-dd')
+            const timePart = dose.time
 
-            const dateTimeString = `${datePart} ${timePart}`;
-            const scheduledTime = fromZonedTime(dateTimeString, timezone);
+            const dateTimeString = `${datePart} ${timePart}`
+            const scheduledTime = fromZonedTime(dateTimeString, timezone)
 
             const reminderRef = firestore.collection("reminders").doc();
             batch.set(reminderRef, {
                 userId: request.auth?.uid,
                 medName: medication.name,
+                quantity: dose.quantity,
                 scheduledTime: Timestamp.fromDate(scheduledTime),
                 status: "pending"
-            });
-        });
-        currentDate = addDays(currentDate, 1);
+            })
+        })
+        currentDate = addDays(currentDate, 1)
     }
 
-    await batch.commit();
-    return { success: true };
+    await batch.commit()
+    return {success: true}
 });
 
 
-export const sendFCMNotification = onRequest({region : 'europe-west3'},async (req, res) => {
+export const sendFCMNotification = onRequest({region: 'europe-west3'}, async (req, res) => {
     const {userId, medName, quantity} = req.body
 
     try {
@@ -219,19 +220,14 @@ export const sendFCMNotification = onRequest({region : 'europe-west3'},async (re
         }
 
         const message = {
-            notification: {
-                title: "Medication Time 💊",
-                body: `Take ${quantity}x ${medName}`
-            },
             token: userData.fcmToken,
             data: {
                 medName: medName,
                 quantity: String(quantity),
-                forceClick: "true"
             },
         }
 
-       await getMessaging().send(message)
+        await getMessaging().send(message)
         res.status(200).send("Notification sent")
     } catch (error) {
         res.status(500).send(error)

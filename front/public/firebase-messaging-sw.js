@@ -1,7 +1,6 @@
 importScripts('https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging-compat.js');
 
-
 firebase.initializeApp({
     apiKey: "AIzaSyD8L9ygNvkH0FO46dceDGmneRwQ7WuaFBk",
     authDomain: "my-pills-staging-460b5.firebaseapp.com",
@@ -11,19 +10,37 @@ firebase.initializeApp({
     appId: "1:824429090964:web:7e0cb8ae45c2424b8afc81",
 });
 
-// 3. Setup Messaging
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-    console.log('[SW] Background message:', payload);
+const dictionary = {
+    en: {
+        title: "Medication Time 💊",
+        body: (q, name) => `Take ${q}x ${name}`
+    },
+    fr: {
+        title: "L'heure de prendre vos médicaments 💊",
+        body: (q, name) => `Prenez ${q}x ${name}`
+    }
+};
 
-    // Fallback logic for title/body if data payload is used
-    const title = payload.notification?.title || payload.data?.title || 'New Reminder';
-    const body = payload.notification?.body || payload.data?.body || 'Check your medication';
+messaging.onBackgroundMessage((payload) => {
+    const medName = payload.data?.medName || 'Medication';
+    const quantity = payload.data?.quantity || '1';
+
+    const browserLang = (navigator.language || 'en').split('-')[0];
+    const lang = dictionary[browserLang] ? browserLang : 'en';
+
+    const title = dictionary[lang].title;
+    const body = dictionary[lang].body(quantity, medName);
 
     self.registration.showNotification(title, {
         body: body,
-        icon: '/icon_x192.png', // Ensure this file exists in public/
+        icon: '/icon_x192.png', // Ensure this exists
         data: payload.data
     });
-})
+});
+
+self.addEventListener('notificationclick', function (event) {
+    console.log('[SW] Notification click received.');
+    event.notification.close();
+});

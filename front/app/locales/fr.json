@@ -145,6 +145,10 @@
     "addMedication": "Ajouter un médicament",
     "createReminder": "Créer un rappel"
   },
+  "notification" : {
+    "title" : "L'heure de prendre vos medicaments !",
+    "body": "Prenez {quantity}x {medName}"
+  },
   "sort": {
     "label": "Trier",
     "name": "Nom",

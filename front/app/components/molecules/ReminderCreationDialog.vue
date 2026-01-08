@@ -68,7 +68,6 @@
           <v-divider/>
 
           <div class="text-subtitle-2 font-weight-bold my-3">{{ t('reminderDialog.frequency') }}</div>
-
           <div
               v-for="(item, index) in form.doses"
               :key="index"

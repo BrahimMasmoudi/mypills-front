@@ -145,6 +145,10 @@
     "addMedication": "Add a medication",
     "createReminder": "Create a reminder"
   },
+  "notification" : {
+    "title" : "It's time to take your pills !",
+    "body": "Take {quantity}x {medName}"
+  },
   "sort": {
     "label": "Sort",
     "name": "Name",
