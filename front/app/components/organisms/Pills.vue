@@ -96,6 +96,7 @@ import CreateMedicationDialog from "~/components/molecules/createMedicationDialo
 import {openToast, type ToastType} from "~/composables/openToast";
 import {getCurrentUser} from "vuefire";
 import ReminderCreationDialog from "~/components/molecules/ReminderCreationDialog.vue";
+import type {CreateReminderRequest} from "~/types/reminder";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
@@ -162,7 +163,7 @@ const props = defineProps<{
   deletePills: (medication: Medication) => Promise<void>
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
   medicationLoading: boolean
-  createReminder: (createReminderRequest: any) => Promise<void>
+  createReminder: (createReminderRequest: CreateReminderRequest) => Promise<void>
 }>()
 
 const validMedication = computed(() => {

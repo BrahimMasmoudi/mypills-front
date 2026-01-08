@@ -11,6 +11,7 @@
 </template>
 <script setup lang="ts">
 import type {Medication} from "~/types/medication";
+import type {CreateReminderRequest} from "~/types/reminder";
 
 defineProps<{
   medications: Medication[] | undefined
@@ -19,7 +20,7 @@ defineProps<{
   decrementPills: (medication: Medication) => Promise<void>
   deletePills: (medication: Medication) => Promise<void>
   updateMedicationName: (medication: Medication, newName: string) => Promise<void>
-  createReminder: (createReminderRequest: any) => Promise<void>
+  createReminder: (createReminderRequest: CreateReminderRequest) => Promise<void>
   medicationLoading: boolean
 }>()
 </script>

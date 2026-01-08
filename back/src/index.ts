@@ -1,15 +1,13 @@
 import {onCall, HttpsError, onRequest} from 'firebase-functions/v2/https'
 import {initializeApp} from 'firebase-admin/app'
-import {getFirestore, FieldValue} from 'firebase-admin/firestore'
+import {getFirestore, FieldValue, Timestamp} from 'firebase-admin/firestore'
 import {Medication} from "./types/medication"
 import {toMedicationDto} from "./utils/mapper"
 import {GetMedicationDetailsResponse} from "./types/medicationApi"
 import {getMessaging} from "firebase-admin/messaging"
-import {addDays, parseISO, isBefore, isSameDay} from "date-fns"
+import {addDays, isBefore, isSameDay, parse} from "date-fns"
 import {onDocumentCreated} from "firebase-functions/v2/firestore"
 import {CloudTasksClient} from "@google-cloud/tasks"
-import {firestore as fs} from "firebase-admin"
-import Timestamp = fs.Timestamp
 
 initializeApp()
 const firestore = getFirestore()
@@ -158,39 +156,58 @@ export const scheduleReminderTask = onDocumentCreated({document : "reminders/{id
     await client.createTask({parent: queuePath, task})
 })
 
-export const createSchedule = onCall({region: 'europe-west3'},async (request) => {
-    if (!request.auth) throw new HttpsError("unauthenticated", "Login required.")
+export const createSchedule = onCall({ region: 'europe-west3' }, async (request) => {
+    if (!request.auth) throw new HttpsError("unauthenticated", "Login required.");
 
-    const {medName, start, end, times} = request.data
-    const batch = firestore.batch()
+    const { medication, startDate, endDate, doses } = request.data;
 
-    let currentDate = parseISO(start)
-    const endDate = parseISO(end)
-
-    // Intelligent Loop: Generate every dose document
-    while (isBefore(currentDate, endDate) || isSameDay(currentDate, endDate)) {
-        times.forEach((timeStr: string) => {
-            const [hours, minutes] = timeStr.split(':').map(Number)
-
-            const scheduledTime = new Date(currentDate)
-            scheduledTime.setHours(hours, minutes, 0, 0)
-
-            const reminderRef = firestore.collection("reminders").doc()
-            batch.set(reminderRef, {
-                userId: request.auth?.uid,
-                medName,
-                scheduledTime: Timestamp.fromDate(scheduledTime),
-                status: "pending",
-                createdAt: Timestamp.now()
-            })
-        })
-
-        currentDate = addDays(currentDate, 1)
+    if (!medication || !startDate || !endDate || !doses) {
+        throw new HttpsError("invalid-argument", "Missing required fields.");
     }
 
-    await batch.commit()
-    return {success: true}
-})
+    const batch = firestore.batch();
+
+    // 1. Parse the strings "2026-01-08" into Date objects
+    // We use a reference date (midnight) to ensure consistency
+    let currentDate = parse(startDate, 'yyyy-MM-dd', new Date());
+    const end = parse(endDate, 'yyyy-MM-dd', new Date());
+
+    console.log('Target Start Date:', startDate); // "2026-01-08"
+    console.log('Parsed CurrentDate:', currentDate.toString());
+
+    // 2. Intelligent Loop
+    while (isBefore(currentDate, end) || isSameDay(currentDate, end)) {
+
+        doses.forEach((dose: any) => {
+            if (!dose.time) return;
+
+            const [hours, minutes] = dose.time.split(':').map(Number);
+
+            // 3. Create a fresh date object for this specific dose
+            const scheduledTime = new Date(currentDate);
+            scheduledTime.setHours(hours, minutes, 0, 0);
+
+            const reminderRef = firestore.collection("reminders").doc();
+            batch.set(reminderRef, {
+                userId: request.auth?.uid,
+                medName: medication.name,
+                medicationId: medication.medicationId || null,
+                doseQuantity: dose.quantity,
+                // Firestore Timestamp conversion
+                scheduledTime: Timestamp.fromDate(scheduledTime),
+                status: "pending",
+                createdAt: Timestamp.now(),
+                image: medication.image || null
+            });
+        });
+
+        // Advance to next day
+        currentDate = addDays(currentDate, 1);
+    }
+
+    await batch.commit();
+    return { success: true };
+});
 
 
 export const sendFCMNotification = onRequest({region : 'europe-west3'},async (req, res) => {

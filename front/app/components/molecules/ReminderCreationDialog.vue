@@ -46,7 +46,7 @@
               <template v-slot:activator="{ props }">
                 <v-text-field
                     v-bind="props"
-                    :model-value="formatDisplayDate(form.startDate)"
+                    :model-value="formatDate(form.startDate)"
                     :label="t('reminderDialog.startDate')"
                     variant="outlined"
                     readonly
@@ -63,7 +63,7 @@
               <template v-slot:activator="{ props }">
                 <v-text-field
                     v-bind="props"
-                    :model-value="formatDisplayDate(form.endDate)"
+                    :model-value="formatDate(form.endDate)"
                     :label="t('reminderDialog.endDate')"
                     variant="outlined"
                     readonly
@@ -156,19 +156,20 @@
 
 <script setup lang="ts">
 import {useI18n} from "vue-i18n";
-import {format, addDays, isSameDay, isAfter} from "date-fns";
+import {isSameDay, isAfter, format} from "date-fns";
 import type {Medication} from "~/types/medication";
 import type {CreateReminderRequest} from "~/types/reminder";
+import {enUS, fr} from "date-fns/locale";
 
-const {t} = useI18n();
 const {$device} = useNuxtApp();
+const {t, locale} = useI18n()
+
+const locales: Record<string, any> = {en: enUS, fr: fr};
 
 const isActive = ref(true);
 const loading = ref(false);
 const startMenu = ref(false);
 const endMenu = ref(false);
-
-const formatDisplayDate = (date: Date) => format(date, 'PPP');
 
 const {close, createReminder, validMedications} = defineProps<{
   close: (value: ToastType) => void
@@ -178,11 +179,15 @@ const {close, createReminder, validMedications} = defineProps<{
   validMedications: Medication[]
 }>()
 
+const formatDate = (date: Date | string) => {
+  if (!date) return '';
+  return format(new Date(date), 'dd MMMM yyyy', {locale: locales[locale.value] || enUS});
+}
 
 const form = ref({
   medication: null as unknown as Medication,
   startDate: new Date(),
-  endDate: addDays(new Date(), 7),
+  endDate: new Date(),
   doses: [
     {time: '08:00', quantity: 1}
   ]
@@ -217,7 +222,13 @@ const removeDose = (index: number) => form.value.doses.splice(index, 1);
 const handleSave = async () => {
   loading.value = true
   try {
-    await createReminder(form.value as CreateReminderRequest)
+    const payload = {
+      ...form.value,
+      startDate: form.value.startDate.toLocaleDateString('en-CA'),
+      endDate: form.value.endDate.toLocaleDateString('en-CA'),
+    };
+
+    await createReminder(payload as unknown as CreateReminderRequest)
     close('success')
   } catch (e) {
     console.error(e)

@@ -14,6 +14,8 @@ import {useMedicationsStore} from "~/store/medications";
 import type {Medication} from "~/types/medication";
 import {useCountryStore} from "~/store/country";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
+import type {CreateReminderRequest} from "~/types/reminder";
+import {useReminderStore} from "~/store/reminder";
 
 const {$open} = useNuxtApp();
 const countryStore = useCountryStore()
@@ -24,6 +26,8 @@ const medicationLoading = ref(true)
 
 const medicationStore = useMedicationsStore()
 const medications = computed(() => medicationStore.medications)
+
+const reminderStore = useReminderStore()
 
 onMounted(async () => {
   await medicationStore.initMedications()
@@ -65,8 +69,9 @@ const updateMedicationName = async (medication: Medication, newName: string) => 
   await medicationStore.updateMedicationName(medication, newName)
 }
 
-const createReminder = async (reminderRequest: any) => {
-  console.log('createReminder')
+const createReminder = async (reminderRequest: CreateReminderRequest) => {
+  console.log(reminderRequest)
+  await reminderStore.createSchedule(reminderRequest)
 }
 
 watch(medications,
