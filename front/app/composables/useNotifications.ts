@@ -31,7 +31,6 @@ export const useNotifications = () => {
 
     const listenForMessages = () => {
         onMessage($messaging, (payload) => {
-            alert(payload)
             const {medName, quantity} = payload.data || {}
 
             const title = $i18n.t('notification.title')
