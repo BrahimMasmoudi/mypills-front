@@ -14,6 +14,7 @@
           width="40"
           class="rounded-pill mb-6"
       />
+
       <div class="d-flex flex-column align-center text-center mb-6">
         <v-avatar color="primary-lighten-5" size="64">
           <v-icon icon="mdi-alarm-plus" color="primary" size="46"/>
@@ -41,42 +42,28 @@
               class="font-weight-medium"
           />
 
-          <div class="d-flex gap-2" :class="$device.isMobile ? 'flex-column' : ''">
-            <v-menu v-model="startMenu" :close-on-content-click="false" location="center">
-              <template v-slot:activator="{ props }">
-                <v-text-field
-                    v-bind="props"
-                    :model-value="formatDate(form.startDate)"
-                    :label="t('reminderDialog.startDate')"
-                    variant="outlined"
-                    readonly
-                    rounded="lg"
-                    prepend-inner-icon="mdi-calendar-start"
-                    class="font-weight-medium cursor-pointer"
-                />
-              </template>
-              <v-date-picker v-model="form.startDate" @update:model-value="startMenu = false" hide-header rounded="lg"
-                             color="primary"/>
-            </v-menu>
-
-            <v-menu v-model="endMenu" :close-on-content-click="false" location="center">
-              <template v-slot:activator="{ props }">
-                <v-text-field
-                    v-bind="props"
-                    :model-value="formatDate(form.endDate)"
-                    :label="t('reminderDialog.endDate')"
-                    variant="outlined"
-                    readonly
-                    rounded="lg"
-                    prepend-inner-icon="mdi-calendar-check"
-                    class="font-weight-medium cursor-pointer"
-                />
-              </template>
-              <v-date-picker v-model="form.endDate" :min="form.startDate" @update:model-value="endMenu = false"
-                             hide-header
-                             rounded="lg" color="primary"/>
-            </v-menu>
-          </div>
+          <v-menu v-model="dateMenu" :close-on-content-click="false" location="center">
+            <template v-slot:activator="{ props }">
+              <v-text-field
+                  v-bind="props"
+                  :model-value="dateRangeText"
+                  :label="t('reminderDialog.dateRange')"
+                  variant="outlined"
+                  readonly
+                  rounded="lg"
+                  prepend-inner-icon="mdi-calendar-range"
+                  class="font-weight-medium cursor-pointer"
+              />
+            </template>
+            <v-date-picker
+                v-model="rangeValue"
+                multiple="range"
+                hide-header
+                rounded="lg"
+                color="primary"
+                @update:model-value="handleDateChange"
+            />
+          </v-menu>
 
           <v-divider/>
 
@@ -94,7 +81,6 @@
                 rounded="lg"
                 density="comfortable"
                 hide-details
-                :min="index > 0 ? form?.doses[index - 1]?.time : undefined"
                 class="font-weight-medium flex-grow-1 mr-4"
             />
 
@@ -108,7 +94,7 @@
                 hide-details
                 min="0.5"
                 step="0.5"
-                style="width: 100px;"
+                style="width: 100px"
                 class="font-weight-medium flex-grow-0 flex-shrink-0"
             />
 
@@ -155,35 +141,32 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from "vue-i18n";
-import {isSameDay, isAfter, format} from "date-fns";
-import type {Medication} from "~/types/medication";
-import type {CreateReminderRequest} from "~/types/reminder";
-import {enUS, fr} from "date-fns/locale";
+import {useI18n} from "vue-i18n"
+import {isSameDay, isAfter, format} from "date-fns"
+import type {Medication} from "~/types/medication"
+import type {CreateReminderRequest} from "~/types/reminder"
+import {enUS, fr} from "date-fns/locale"
 
-const {$device} = useNuxtApp();
+const {$device} = useNuxtApp()
 const {t, locale} = useI18n()
 
-const locales: Record<string, any> = {en: enUS, fr: fr};
+const locales: Record<string, any> = {en: enUS, fr: fr}
 
-const isActive = ref(true);
-const loading = ref(false);
-const startMenu = ref(false);
-const endMenu = ref(false);
-
+// Props
 const {close, createReminder, validMedications} = defineProps<{
-  close: (value: ToastType) => void
+  close: (value: string) => void
   isPersistent: boolean
   scrim: boolean
   createReminder: (createReminderRequest: CreateReminderRequest) => Promise<void>
   validMedications: Medication[]
 }>()
 
-const formatDate = (date: Date | string) => {
-  if (!date) return '';
-  return format(new Date(date), 'dd MMMM yyyy', {locale: locales[locale.value] || enUS});
-}
+// UI State
+const isActive = ref(true)
+const loading = ref(false)
+const dateMenu = ref(false)
 
+// Form Data
 const form = ref({
   medication: null as unknown as Medication,
   startDate: new Date(),
@@ -193,18 +176,65 @@ const form = ref({
   ]
 })
 
+// Range Picker State
+const rangeValue = ref<Date[]>([form.value.startDate, form.value.endDate])
+
+// Formatting Logic
+const formatDate = (date: Date | string) => {
+  if (!date) return ''
+  return format(new Date(date), 'dd MMM yyyy', {locale: locales[locale.value] || enUS})
+}
+
+const dateRangeText = computed(() => {
+  if (!rangeValue.value || rangeValue.value.length === 0) return ''
+
+  const start = form.value.startDate
+  const end = form.value.endDate
+
+  // If it's the same day, just show one date (e.g., "08 Jan 2026")
+  if (isSameDay(start, end)) {
+    return formatDate(start)
+  }
+
+  // Otherwise show the range
+  return `${formatDate(start)} - ${formatDate(end)}`
+})
+
+// Handle Range Selection
+const handleDateChange = (val: Date[]) => {
+  if (!val || val.length === 0) return
+
+  // 1. If user clicks one date, set it as both start and end
+  if (val.length === 1) {
+    form.value.startDate = val[0]
+    form.value.endDate = val[0]
+    // We don't close the menu yet, in case they want to pick a second date
+  }
+
+  // 2. If user selects a range (two clicks)
+  else if (val.length >= 2) {
+    const sorted = [...val].sort((a, b) => a.getTime() - b.getTime())
+    form.value.startDate = sorted[0]
+    form.value.endDate = sorted[sorted.length - 1]
+
+    // Range is complete, close the menu
+    dateMenu.value = false
+  }
+}
+
 const isFormInvalid = computed(() => {
-  const hasMed = !!form.value.medication;
+  const hasMed = !!form.value.medication
   const validDate =
       isAfter(form.value.endDate, form.value.startDate) ||
-      isSameDay(form.value.endDate, form.value.startDate);
+      isSameDay(form.value.endDate, form.value.startDate)
   const validDoses =
       form.value.doses.length > 0 &&
-      form.value.doses.every(d => d.time && d.quantity > 0);
+      form.value.doses.every(d => d.time && d.quantity > 0)
 
-  return !hasMed || !validDate || !validDoses;
-});
+  return !hasMed || !validDate || !validDoses
+})
 
+// Dose Management
 const addDose = () => {
   const lastDose = form.value.doses[form.value.doses.length - 1]!
   const [hours, minutes] = lastDose.time.split(':').map(Number)
@@ -213,20 +243,23 @@ const addDose = () => {
   if (newHours >= 24) newHours = 23
 
   const newTime = `${String(newHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-
   form.value.doses.push({time: newTime, quantity: 1})
 }
 
-const removeDose = (index: number) => form.value.doses.splice(index, 1);
+const removeDose = (index: number) => form.value.doses.splice(index, 1)
 
+// Save Logic
 const handleSave = async () => {
   loading.value = true
   try {
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
     const payload = {
       ...form.value,
       startDate: form.value.startDate.toLocaleDateString('en-CA'),
       endDate: form.value.endDate.toLocaleDateString('en-CA'),
-    };
+      timezone: userTimezone
+    }
 
     await createReminder(payload as unknown as CreateReminderRequest)
     close('success')
@@ -238,15 +271,14 @@ const handleSave = async () => {
   }
 }
 
+// Dose chronological order watcher
 watch(() => form.value.doses, (newDoses) => {
   newDoses.forEach((dose, index) => {
     if (index === 0) return
-
     const prevTime = newDoses[index - 1]?.time
 
     if (prevTime && dose.time <= prevTime) {
       const [hours, mins] = prevTime.split(':').map(Number)
-
       let nextH = hours
       let nextM = mins + 1
 
@@ -254,11 +286,28 @@ watch(() => form.value.doses, (newDoses) => {
         nextM = 0
         nextH = Math.min(nextH + 1, 23)
       }
-
       dose.time = `${String(nextH).padStart(2, '0')}:${String(nextM).padStart(2, '0')}`
     }
-  });
-}, {deep: true});
+  })
+}, {deep: true})
 
 const cancelAndClose = () => close('canceled')
 </script>
+
+<style scoped>
+.gap-2 {
+  gap: 8px
+}
+
+.gap-3 {
+  gap: 12px
+}
+
+.gap-4 {
+  gap: 16px
+}
+
+.cursor-pointer {
+  cursor: pointer
+}
+</style>

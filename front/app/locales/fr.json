@@ -137,7 +137,8 @@
     "toast": {
       "success" : "Le rappel est crée avec succés",
       "error" : "Échec lors de la creation d'un rappel"
-    }
+    },
+    "dateRange" : "Durée"
   },
   "actions": {
     "main": "Ajouter",

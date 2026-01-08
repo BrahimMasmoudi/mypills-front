@@ -5,9 +5,10 @@ import {Medication} from "./types/medication"
 import {toMedicationDto} from "./utils/mapper"
 import {GetMedicationDetailsResponse} from "./types/medicationApi"
 import {getMessaging} from "firebase-admin/messaging"
-import {addDays, isBefore, isSameDay, parse} from "date-fns"
+import {addDays, isBefore, isSameDay, parse,format} from "date-fns"
 import {onDocumentCreated} from "firebase-functions/v2/firestore"
 import {CloudTasksClient} from "@google-cloud/tasks"
+import { fromZonedTime } from "date-fns-tz"
 
 initializeApp()
 const firestore = getFirestore()
@@ -133,75 +134,69 @@ export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({dat
 })
 
 
-export const scheduleReminderTask = onDocumentCreated({document : "reminders/{id}" , region : 'europe-west3'}, async (event) => {
-    const data = event.data?.data()
-    if (!data) return
+export const scheduleReminderTask = onDocumentCreated({
+    document: "reminders/{id}",
+    region: 'europe-west3'
+}, async (event) => {
+    const data = event.data?.data();
+    if (!data) return;
 
-    const project = process.env.GCLOUD_PROJECT!
-    const queuePath = client.queuePath(project, "europe-west3", "med-reminders")
+    const project = process.env.GCLOUD_PROJECT!;
+    const location = "europe-west3";
+    const queue = "reminder";
+
+    const serviceAccountEmail = `${project}@appspot.gserviceaccount.com`;
+
+    const queuePath = client.queuePath(project, location, queue);
 
     const task = {
         httpRequest: {
             httpMethod: "POST" as const,
-            url: `https://europe-west3-${project}.cloudfunctions.net/sendFCMNotification`,
+            url: `https://${location}-${project}.cloudfunctions.net/sendFCMNotification`,
+
             body: Buffer.from(JSON.stringify({
                 userId: data.userId,
-                text: `Time to take ${data.medName}`
+                medName: data.medName,
+                quantity: data.quantity || "1"
             })).toString("base64"),
-            headers: {"Content-Type": "application/json"},
+
+            headers: { "Content-Type": "application/json" },
+
+            oidcToken: {
+                serviceAccountEmail: serviceAccountEmail,
+            }
         },
-        scheduleTime: {seconds: data.scheduledTime.seconds},
+        scheduleTime: { seconds: data.scheduledTime.seconds },
     }
 
-    await client.createTask({parent: queuePath, task})
+    await client.createTask({ parent: queuePath, task });
 })
 
 export const createSchedule = onCall({ region: 'europe-west3' }, async (request) => {
-    if (!request.auth) throw new HttpsError("unauthenticated", "Login required.");
-
-    const { medication, startDate, endDate, doses } = request.data;
-
-    if (!medication || !startDate || !endDate || !doses) {
-        throw new HttpsError("invalid-argument", "Missing required fields.");
-    }
+    const { medication, startDate, endDate, doses, timezone } = request.data;
 
     const batch = firestore.batch();
-
-    // 1. Parse the strings "2026-01-08" into Date objects
-    // We use a reference date (midnight) to ensure consistency
     let currentDate = parse(startDate, 'yyyy-MM-dd', new Date());
     const end = parse(endDate, 'yyyy-MM-dd', new Date());
 
-    console.log('Target Start Date:', startDate); // "2026-01-08"
-    console.log('Parsed CurrentDate:', currentDate.toString());
-
-    // 2. Intelligent Loop
     while (isBefore(currentDate, end) || isSameDay(currentDate, end)) {
-
         doses.forEach((dose: any) => {
             if (!dose.time) return;
 
-            const [hours, minutes] = dose.time.split(':').map(Number);
+            const datePart = format(currentDate, 'yyyy-MM-dd');
+            const timePart = dose.time;
 
-            // 3. Create a fresh date object for this specific dose
-            const scheduledTime = new Date(currentDate);
-            scheduledTime.setHours(hours, minutes, 0, 0);
+            const dateTimeString = `${datePart} ${timePart}`;
+            const scheduledTime = fromZonedTime(dateTimeString, timezone);
 
             const reminderRef = firestore.collection("reminders").doc();
             batch.set(reminderRef, {
                 userId: request.auth?.uid,
                 medName: medication.name,
-                medicationId: medication.medicationId || null,
-                doseQuantity: dose.quantity,
-                // Firestore Timestamp conversion
                 scheduledTime: Timestamp.fromDate(scheduledTime),
-                status: "pending",
-                createdAt: Timestamp.now(),
-                image: medication.image || null
+                status: "pending"
             });
         });
-
-        // Advance to next day
         currentDate = addDays(currentDate, 1);
     }
 
@@ -214,7 +209,6 @@ export const sendFCMNotification = onRequest({region : 'europe-west3'},async (re
     const {userId, medName, quantity} = req.body
 
     try {
-        // Fetch the token we just saved
         const userDoc = await firestore.collection("users").doc(userId).get()
         const userData = userDoc.data()
 
@@ -237,8 +231,7 @@ export const sendFCMNotification = onRequest({region : 'europe-west3'},async (re
             },
         }
 
-       const msgSentResponse = await getMessaging().send(message)
-        console.log(msgSentResponse)
+       await getMessaging().send(message)
         res.status(200).send("Notification sent")
     } catch (error) {
         res.status(500).send(error)

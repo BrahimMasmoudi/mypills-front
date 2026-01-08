@@ -137,7 +137,8 @@
     "toast": {
       "success" : "The reminder is created successfully",
       "error" : "An error happened while creating the reminder"
-    }
+    },
+    "dateRange" : "Duration"
   },
   "actions": {
     "main": "Add New",

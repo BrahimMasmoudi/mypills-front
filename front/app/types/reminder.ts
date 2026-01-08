@@ -10,4 +10,5 @@ export interface CreateReminderRequest {
     startDate: Date
     endDate: Date
     doses: Dose[]
+    timezone: string
 }
