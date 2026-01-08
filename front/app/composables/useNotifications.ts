@@ -26,8 +26,6 @@ export const useNotifications = () => {
         } catch (error) {
             console.error('Error saving notification token:', error)
         }
-
-
     }
 
     const listenForMessages = () => {
@@ -37,28 +35,6 @@ export const useNotifications = () => {
             snackbarStore.notify(payload)
         })
     }
-
-
-    // const sendNotificationManually = async () => {
-    //     const user = await getCurrentUser()
-    //     const LOCAL_URL = "http://localhost:5001/my-pills-staging-460b5/europe-west3/sendFCMNotification";
-    //
-    //     const response = await fetch(LOCAL_URL, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({
-    //             userId: user?.uid, // Make sure this exists in your Firestore 'users' collection
-    //             medName: 'doliprane',
-    //             quantity: 1
-    //         })
-    //     });
-    //
-    //     const result = await response.text();
-    //     console.log("Result:", result);
-    //     return result
-    // }
 
     return {registerNotificationToken, listenForMessages}
 }
