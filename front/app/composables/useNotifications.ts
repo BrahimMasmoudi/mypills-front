@@ -1,13 +1,11 @@
 import {getToken, onMessage} from "firebase/messaging";
 import {httpsCallable} from "firebase/functions";
-import {useI18n} from "vue-i18n";
 import {useQueueToast} from "~/composables/useQueueToast";
 
 export const useNotifications = () => {
-    const {$functions, $config, $messaging} = useNuxtApp()
-    const { addToast } = useQueueToast()
+    const {$functions, $config, $messaging, $i18n} = useNuxtApp()
+    const {addToast} = useQueueToast()
     const app = useFirebaseApp()
-    const {t} = useI18n()
     const registerNotificationToken = async () => {
         try {
 
@@ -35,8 +33,8 @@ export const useNotifications = () => {
         onMessage($messaging, (payload) => {
             const {medName, quantity} = payload.data || {}
 
-            const title = t('notification.title')
-            const body = t('notification.body', {quantity, medName})
+            const title = $i18n.t('notification.title')
+            const body = $i18n.t('notification.body', {quantity, medName})
 
             addToast('success', `${title} ${body}`)
         })
