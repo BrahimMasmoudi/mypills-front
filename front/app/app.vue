@@ -3,7 +3,7 @@
     <NuxtLoadingIndicator color="primary"/>
     <NuxtPwaManifest />
     <NuxtPage/>
-    <MoleculesQueueToastContainer />
+    <MoleculesQueuedToastQueueToastContainer />
   </NuxtLayout>
 </template>
 <script setup lang="ts">
