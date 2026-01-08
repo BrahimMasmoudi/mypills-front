@@ -270,26 +270,6 @@ const handleSave = async () => {
   }
 }
 
-// Dose chronological order watcher
-watch(() => form.value.doses, (newDoses) => {
-  newDoses.forEach((dose, index) => {
-    if (index === 0) return
-    const prevTime = newDoses[index - 1]?.time
-
-    if (prevTime && dose.time <= prevTime) {
-      const [hours, mins] = prevTime.split(':').map(Number)
-      let nextH = hours
-      let nextM = mins + 1
-
-      if (nextM >= 60) {
-        nextM = 0
-        nextH = Math.min(nextH + 1, 23)
-      }
-      dose.time = `${String(nextH).padStart(2, '0')}:${String(nextM).padStart(2, '0')}`
-    }
-  })
-}, {deep: true})
-
 const cancelAndClose = () => close('canceled')
 </script>
 
