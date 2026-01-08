@@ -4,7 +4,7 @@
       class="d-flex align-center pa-4"
       :color="color"
       min-width="300"
-      max-width="400"
+      max-width="350"
       variant="flat"
   >
     <v-icon :icon="icon" color="white" class="mr-3"></v-icon>
