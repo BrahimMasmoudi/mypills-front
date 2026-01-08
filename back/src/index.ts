@@ -11,7 +11,6 @@ import {CloudTasksClient} from "@google-cloud/tasks"
 import {firestore as fs} from "firebase-admin"
 import Timestamp = fs.Timestamp
 
-
 initializeApp()
 const firestore = getFirestore()
 const client = new CloudTasksClient()
@@ -136,7 +135,7 @@ export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({dat
 })
 
 
-export const scheduleReminderTask = onDocumentCreated("reminders/{id}", async (event) => {
+export const scheduleReminderTask = onDocumentCreated({document : "reminders/{id}" , region : 'europe-west3'}, async (event) => {
     const data = event.data?.data()
     if (!data) return
 
@@ -163,8 +162,7 @@ export const createSchedule = onCall({region: 'europe-west3'},async (request) =>
     if (!request.auth) throw new HttpsError("unauthenticated", "Login required.")
 
     const {medName, start, end, times} = request.data
-    const db = getFirestore()
-    const batch = db.batch()
+    const batch = firestore.batch()
 
     let currentDate = parseISO(start)
     const endDate = parseISO(end)
@@ -177,7 +175,7 @@ export const createSchedule = onCall({region: 'europe-west3'},async (request) =>
             const scheduledTime = new Date(currentDate)
             scheduledTime.setHours(hours, minutes, 0, 0)
 
-            const reminderRef = db.collection("reminders").doc()
+            const reminderRef = firestore.collection("reminders").doc()
             batch.set(reminderRef, {
                 userId: request.auth?.uid,
                 medName,
@@ -197,11 +195,10 @@ export const createSchedule = onCall({region: 'europe-west3'},async (request) =>
 
 export const sendFCMNotification = onRequest({region : 'europe-west3'},async (req, res) => {
     const {userId, medName, quantity} = req.body
-    const db = getFirestore()
 
     try {
         // Fetch the token we just saved
-        const userDoc = await db.collection("users").doc(userId).get()
+        const userDoc = await firestore.collection("users").doc(userId).get()
         const userData = userDoc.data()
 
         if (!userData?.fcmToken) {
@@ -216,9 +213,15 @@ export const sendFCMNotification = onRequest({region : 'europe-west3'},async (re
                 body: `Take ${quantity}x ${medName}`
             },
             token: userData.fcmToken,
+            data: {
+                medName: medName,
+                quantity: String(quantity),
+                forceClick: "true"
+            },
         }
 
-        await getMessaging().send(message)
+       const msgSentResponse = await getMessaging().send(message)
+        console.log(msgSentResponse)
         res.status(200).send("Notification sent")
     } catch (error) {
         res.status(500).send(error)
@@ -232,12 +235,11 @@ export const saveUserToken = onCall({region: 'europe-west3'}, async (request) =>
 
     const fcmToken = request.data.fcmToken
     const uid = request.auth.uid
-    const db = getFirestore()
 
     try {
         // We use set with { merge: true } so we don't overwrite
         // other user data (like their name or email)
-        await db.collection("users").doc(uid).set({
+        await firestore.collection("users").doc(uid).set({
             fcmToken: fcmToken,
             lastUpdated: new Date().toISOString(),
             userId: uid // Good for querying later

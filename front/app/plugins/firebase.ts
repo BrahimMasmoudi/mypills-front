@@ -44,7 +44,6 @@ export default defineNuxtPlugin(async ({provide, $config}) => {
         functions: functionsConfig,
         firestore: firestoreConfig,
         analytics: analyticsConfig,
-        cloudMessaging: fcmConfig
     } = $config.public.firebase
 
     const firebaseApp = useFirebaseApp()
@@ -91,7 +90,13 @@ export default defineNuxtPlugin(async ({provide, $config}) => {
         provide('analytics', analyticsInstance)
     }
 
-    const messaging = getMessaging(firebaseApp)
-    provide('messaging', messaging)
-
+    if (import.meta.client) {
+        try {
+            const messaging = getMessaging(firebaseApp)
+            console.log("✅ Firebase Messaging initialized")
+            provide('messaging', messaging)
+        } catch (e) {
+            console.error("Messaging init failed:", e)
+        }
+    }
 })

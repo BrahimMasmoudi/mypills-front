@@ -29,6 +29,7 @@ onMounted(async () => {
   await medicationStore.initMedications()
   await checkCountryStatus()
   await notifications.registerNotificationToken()
+  notifications.listenForMessages()
 })
 
 const checkCountryStatus = async () => {
