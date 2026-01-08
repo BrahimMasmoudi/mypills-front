@@ -6,6 +6,8 @@ import {useI18n} from "vue-i18n";
 export const useNotifications = () => {
     const {$functions, $config, $messaging} = useNuxtApp()
     const snackbarStore = useSnackbarStore()
+
+    const app = useFirebaseApp()
     const {t} = useI18n()
     const registerNotificationToken = async () => {
         try {
@@ -13,8 +15,8 @@ export const useNotifications = () => {
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') return
 
-            const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js')
-            console.log(registration)
+            const registration = await navigator.serviceWorker.register(`/firebase-messaging-sw.js?config=${encodeURIComponent(JSON.stringify(app.options))}`)
+
             const currentToken = await getToken($messaging, {
                 vapidKey: $config.public.firebase.cloudMessaging.vapidKey,
                 serviceWorkerRegistration: registration,

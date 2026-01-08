@@ -1,14 +1,26 @@
 importScripts('https://www.gstatic.com/firebasejs/12.0.0/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging-compat.js');
 
-firebase.initializeApp({
-    apiKey: "AIzaSyD8L9ygNvkH0FO46dceDGmneRwQ7WuaFBk",
-    authDomain: "my-pills-staging-460b5.firebaseapp.com",
-    projectId: "my-pills-staging-460b5",
-    storageBucket: "my-pills-staging-460b5.firebasestorage.app",
-    messagingSenderId: "824429090964",
-    appId: "1:824429090964:web:7e0cb8ae45c2424b8afc81",
-});
+// 1. Extract Config from Query Params
+// This runs synchronously, so it's safe and fast
+const getFirebaseConfig = () => {
+    try {
+        const urlParams = new URLSearchParams(self.location.search);
+        const configString = urlParams.get('config');
+        if (configString) {
+            return JSON.parse(decodeURIComponent(configString));
+        }
+    } catch (e) {
+        console.error('Failed to parse Firebase config from URL', e);
+    }
+};
+
+const firebaseConfig = getFirebaseConfig();
+
+// 2. Initialize with Dynamic Config
+if (firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+}
 
 const messaging = firebase.messaging();
 
