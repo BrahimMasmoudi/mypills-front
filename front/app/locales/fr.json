@@ -109,8 +109,9 @@
   "countryDialog" :{
     "title": "Confirmation de région",
     "subtitle": "Les fonctionnalités de scan sont optimisées pour la France. Veuillez confirmer votre emplacement pour activer le scanner.",
-    "confirmBtn": "Oui, je suis en France",
-    "declineBtn": "Non, je suis ailleurs"
+    "confirmFr": "Je suis en France",
+    "confirmTn": "Je suis en Tunisie",
+    "confirmElseWhere": "Je suis ailleurs"
   },
   "detailsDialog" : {
       "substances": "Substances Actives",

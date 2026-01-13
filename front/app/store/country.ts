@@ -1,7 +1,8 @@
 import {defineStore} from 'pinia'
+import type {Country} from "~/types/country";
 
 export const useCountryStore = defineStore('country', () => {
-    const selectedCountry = useCookie<string | null>('user-country', {
+    const selectedCountry = useCookie<Country | null>('user-country', {
         maxAge: 60 * 60 * 24 * 30,
         watch: true,
         path: '/',
@@ -12,9 +13,11 @@ export const useCountryStore = defineStore('country', () => {
     const isFrance = computed(() => selectedCountry.value === 'FR')
     const isScanningReady = computed(() => isFrance.value)
 
-    const confirmFrance = () => {
-        selectedCountry.value = 'FR'
-    }
+    const confirmFrance = () => selectedCountry.value = 'FR'
+
+
+    const confirmTunisia = () => selectedCountry.value = 'TN'
+
 
     const clearCountry = () => {
         selectedCountry.value = 'OTHER'
@@ -25,6 +28,7 @@ export const useCountryStore = defineStore('country', () => {
         isFrance,
         isScanningReady,
         confirmFrance,
-        clearCountry
+        clearCountry,
+        confirmTunisia
     }
 })

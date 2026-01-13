@@ -26,41 +26,93 @@
       <v-card-text class="pa-0">
         <div class="d-flex flex-column gap-4">
           <!-- Medication Name with Scan -->
-          <v-text-field
-              v-model="medication.name"
-              :label="t('dialogCreate.medicationLabel')"
-              variant="outlined"
-              prepend-inner-icon="mdi-pill"
-              hide-details="auto"
-              rounded="lg"
-              :loading="scannerIsLoading"
-              class="font-weight-medium"
-          >
-            <template v-slot:loader>
-              <v-progress-linear
-                  :active="scannerIsLoading"
-                  color="primary"
-                  height="2"
-                  indeterminate
-              ></v-progress-linear>
-            </template>
-            <template v-slot:append-inner>
-              <v-tooltip v-if="selectedCountry === 'FR'" location="top" text="Scan Barcode">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                      v-bind="props"
-                      icon="mdi-barcode-scan"
-                      variant="tonal"
-                      color="primary"
-                      size="small"
-                      class="ms-1"
-                      @click="isScannerOpen = true"
-                  />
-                </template>
-              </v-tooltip>
-            </template>
-          </v-text-field>
+          <template v-if="selectedCountry === 'TN'">
+            <v-combobox
+                v-model="medication.name"
+                :items="tunisianMeds"
+                :loading="searchLoading"
+                v-model:search="searchQuery"
+                @update:search="onSearchChange"
+                @update:model-value="onMedicationSelect"
+                item-title="name"
+                item-value="id"
+                :label="t('dialogCreate.medicationLabel')"
+                variant="outlined"
+                prepend-inner-icon="mdi-pill"
+                hide-details="auto"
+                rounded="lg"
+                class="font-weight-medium"
+                no-filter
+                return-object
+            >
+              <template v-slot:no-data>
+                <v-list-item @click="handleCustomName">
+                  <v-list-item-title>
+                    {{ t('dialogCreate.noResults') }} "<strong>{{ searchQuery }}</strong>"
+                  </v-list-item-title>
+                  <template v-slot:append>
+                    <v-icon icon="mdi-plus" color="primary" />
+                  </template>
+                </v-list-item>
+              </template>
 
+              <template v-slot:selection="{ item }">
+                <v-chip
+                    v-if="item"
+                    color="primary"
+                    size="small"
+                    class="font-weight-bold"
+                    closable
+                    @click:close="medication.name = null"
+                >
+                  <v-icon icon="mdi-pill" class="mr-2" size="14"></v-icon>
+                  {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
+                </v-chip>
+              </template>
+
+              <template v-slot:item="{ props, item }">
+                <v-list-item v-bind="props" :subtitle="item.raw.details?.form">
+                </v-list-item>
+              </template>
+            </v-combobox>
+          </template>
+
+          <template v-else>
+            <v-text-field
+                v-model="medication.name"
+                :label="t('dialogCreate.medicationLabel')"
+                variant="outlined"
+                prepend-inner-icon="mdi-pill"
+                hide-details="auto"
+                rounded="lg"
+                :loading="scannerIsLoading"
+                class="font-weight-medium"
+            >
+              <template v-slot:loader>
+                <v-progress-linear
+                    :active="scannerIsLoading"
+                    color="primary"
+                    height="2"
+                    indeterminate
+                ></v-progress-linear>
+              </template>
+              <template v-slot:append-inner>
+                <v-tooltip v-if="selectedCountry === 'FR'" location="top" text="Scan Barcode">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                        v-bind="props"
+                        icon="mdi-barcode-scan"
+                        variant="tonal"
+                        color="primary"
+                        size="small"
+                        class="ms-1"
+                        @click="isScannerOpen = true"
+                    />
+                  </template>
+                </v-tooltip>
+              </template>
+            </v-text-field>
+          </template>
           <v-menu
               v-model="dateMenuIsOpen"
               :close-on-content-click="false"
@@ -142,6 +194,7 @@
             class="flex-grow-1 text-capitalize font-weight-bold"
             height="48"
             :loading="loading"
+            :disabled="!medication.name"
             @click="onConfirmClick"
         >
           {{ t('confirm') }}
@@ -316,11 +369,12 @@ import {format} from 'date-fns'
 import {fr, enUS} from 'date-fns/locale'
 import ScannerDialog from "~/components/molecules/ScannerDialog.vue";
 import DuplicateConfirmDialog from "~/components/molecules/DuplicateConfirmDialog.vue";
-import {useCountryStore} from "~/store/country";
+import type {Country} from "~/types/country";
+import {useTunisianMedicationsStore} from "~/store/tunisian_medications";
+import type {GetMedicationDetailsResponse} from "~/types/api";
 
 const {t, locale} = useI18n()
 const {$device} = useNuxtApp()
-const {selectedCountry} = storeToRefs(useCountryStore())
 
 const locales: Record<string, any> = {en: enUS, fr: fr};
 
@@ -330,14 +384,22 @@ const scannerIsLoading = ref(false)
 const dateMenuIsOpen = ref(false)
 const isScannerOpen = ref(false)
 
-const {close, createMedication, userUid, email, medications} = defineProps<{
+const searchLoading = ref(false)
+const searchQuery = ref('')
+
+const tunisianMedicationStore = useTunisianMedicationsStore()
+
+const tunisianMeds = ref<GetMedicationDetailsResponse[]>([])
+
+const {close, createMedication, userUid, email, medications, selectedCountry} = defineProps<{
   close: (value: ToastType) => void
   isPersistent: boolean
   scrim: boolean
   createMedication: (medication: Medication) => Promise<void>
   userUid: string
   email: string
-  medications: Medication[]
+  medications: Medication[],
+  selectedCountry: Country,
 }>()
 
 const medication = ref<Medication>({
@@ -345,7 +407,7 @@ const medication = ref<Medication>({
   uid: userUid,
   expired: false,
   quantity: 1,
-  name: '',
+  name: null as any,
   bareCode: '',
   medicationId: crypto.randomUUID(),
   image: "pill-1",
@@ -457,7 +519,6 @@ const onBarcodeDetected = async (code: string) => {
   }
 }
 
-
 const performCreation = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
   // Assign random pill icon from pill-1 to pill-30
@@ -482,6 +543,41 @@ const onConfirmClick = async () => {
 
 const cancelAndClose = () => close('canceled')
 
+const debouncer = useDebounceFn(async (query : string) => {
+  console.log('DEBOUNCE', query)
+  if (!query || query.length < 2) {
+    tunisianMeds.value = []
+    return
+  }
+  tunisianMeds.value = await tunisianMedicationStore.searchTunisianMedications(query)
+}, 500)
+
+const onSearchChange = (query: string) => {
+  if (query) {
+    debouncer(query)
+  }
+}
+
+const handleCustomName = () => {
+  if (!searchQuery.value) return
+  medication.value.name = searchQuery.value
+  medication.value.details = ''
+  medication.value.bareCode = ''
+  tunisianMeds.value = []
+}
+
+const onMedicationSelect = (val: any) => {
+  if (!val) return
+
+  if (typeof val === 'object' && val.name) {
+    // Case 1: Selected from API list
+    medication.value.name = val.name
+    medication.value.details = val.details
+  } else if (typeof val === 'string') {
+    medication.value.name = val
+    medication.value.details = ''
+  }
+}
 </script>
 
 <style scoped>

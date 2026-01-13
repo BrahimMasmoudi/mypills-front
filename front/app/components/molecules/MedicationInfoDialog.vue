@@ -65,7 +65,7 @@
                 {{ t('detailsDialog.refund') }}
               </div>
               <div class="text-body-1 font-weight-bold">
-                {{ mainPresentation.refundRate || 'Non remboursé' }}
+                {{ mainPresentation.refundRate }}
               </div>
             </div>
           </div>

@@ -32,6 +32,18 @@
       />
     </div>
 
+    <!-- searched Button (Top left) -->
+    <div v-if="!medication.bareCode && medication.details" class="position-absolute top-0 left-0 ma-1 z-index-1">
+      <v-btn
+          icon="mdi-information-outline"
+          variant="text"
+          size="small"
+          color="primary"
+          density="comfortable"
+          @click.stop="showMedicationDetails"
+      />
+    </div>
+
     <!-- Card Content -->
     <div
         class="d-flex flex-column align-center flex-grow-1 px-2"

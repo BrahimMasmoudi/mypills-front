@@ -129,7 +129,7 @@ const {t,locale} = useI18n()
 const theme = useTheme()
 const colorMode = useColorMode()
 const {$open} = useNuxtApp()
-const {confirmFrance, clearCountry} = useCountryStore()
+const {confirmFrance, clearCountry, confirmTunisia} = useCountryStore()
 
 const handleSignOut = async () => {
   await userStore.logOut()
@@ -161,7 +161,11 @@ const openCountryDialog = async () => {
 
   if (result === 'FR') {
     confirmFrance()
-  } else {
+  } else
+    if (result === 'TN') {
+      confirmTunisia()
+    }
+      else {
     clearCountry()
   }
 }

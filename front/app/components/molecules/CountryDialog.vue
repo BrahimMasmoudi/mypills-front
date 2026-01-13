@@ -30,17 +30,31 @@
             class="text-none font-weight-bold rounded-lg"
             @click="confirm('FR')"
         >
-          {{ t('countryDialog.confirmBtn') }}
+          {{ t('countryDialog.confirmFr') }}
         </v-btn>
 
         <v-btn
             block
-            variant="text"
-            color="grey-darken-1"
+            color="red"
+            variant="flat"
+            size="large"
+            height="52"
+            class="text-none font-weight-bold rounded-lg"
+            @click="confirm('TN')"
+        >
+          {{ t('countryDialog.confirmTn') }}
+        </v-btn>
+
+
+        <v-btn
+            block
+            variant="outlined"
+            color="primary"
+            height="52"
             class="text-none font-weight-bold"
             @click="confirm(null)"
         >
-          {{ t('countryDialog.declineBtn') }}
+          {{ t('countryDialog.confirmElseWhere') }}
         </v-btn>
       </v-card-actions>
     </v-card>
