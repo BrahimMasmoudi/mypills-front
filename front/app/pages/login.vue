@@ -109,15 +109,15 @@
     </v-main>
 
     <v-overlay
-        :model-value="isLoading"
-        class="align-center justify-center overlay-blur"
-        persistent
-        z-index="2000"
+    :model-value="isLoading"
+    class="align-center justify-center overlay-blur"
+    persistent
+    z-index="2000"
     >
-      <div class="d-flex flex-column align-center bg-white pa-8 rounded-xl elevation-24">
-        <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
-        <div class="mt-4 font-weight-bold text-dark-blue text-h6">{{ t('login.completing') }}</div>
-      </div>
+    <v-card class="d-flex flex-column align-center pa-8 rounded-xl elevation-24">
+      <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+      <div class="mt-4 font-weight-bold text-h6">{{ t('login.completing') }}</div>
+    </v-card>
     </v-overlay>
   </v-app>
 </template>

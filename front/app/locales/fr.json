@@ -6,7 +6,7 @@
   "title": "MyPills",
   "close": "Fermer",
   "select": "Sélectionner",
-  "add-pill": "Ajouter",
+  "add-pill": "Ajouter un médicament",
   "success": "Le medicament est ajouté avec succès",
   "error": "Une erreur est survenue",
   "dialogDelete": {
@@ -124,6 +124,30 @@
     "scanner": {
       "not_found_message": "Médicament introuvable dans la base de données."
     }
+  },
+  "reminderDialog": {
+    "createTitle": "Planifier les Rappels",
+    "createSubtitle": "Configurez un plan de traitement pour recevoir des notifications",
+    "frequency": "Fréquence journalière",
+    "addDose": "Ajouter une dose",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "timeLabel": "Heure de la dose",
+    "quantity" : "Qté",
+    "toast": {
+      "success" : "Le rappel est crée avec succés",
+      "error" : "Échec lors de la creation d'un rappel"
+    },
+    "dateRange" : "Durée"
+  },
+  "actions": {
+    "main": "Ajouter",
+    "addMedication": "Ajouter un médicament",
+    "createReminder": "Créer un rappel"
+  },
+  "notification" : {
+    "title" : "L'heure de prendre vos medicaments !",
+    "body": "Prenez {quantity}x {medName}"
   },
   "sort": {
     "label": "Trier",

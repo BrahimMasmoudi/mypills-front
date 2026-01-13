@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 import {fileURLToPath} from "node:url";
+import path from "node:path";
 
 export default defineNuxtConfig({
     experimental: {
@@ -91,6 +92,9 @@ export default defineNuxtConfig({
                 },
                 analytics: {
                     enable: ['production', 'staging'].includes(process.env.ENVIRONMENT!),
+                },
+                cloudMessaging: {
+                    vapidKey: process.env.FIREBASE_VAPID_KEY || 'BL1Qie0a3DP7WoWK4V_M7guQ0dE6JtQHIHwOqS5r7YO6NWd9SYgL8DHvmr8jP3i6GsD3A1TGZJCjHRAKW0nyP80'
                 }
             },
         }
@@ -141,6 +145,9 @@ export default defineNuxtConfig({
         fonts: false
     },
     pwa: {
+        strategies: 'injectManifest',
+        srcDir: path.resolve(__dirname, 'server-worker'),
+        filename: 'sw.js',
         registerType: 'autoUpdate',
         manifest: {
             name: 'MyPills - Medication Manager',
@@ -205,7 +212,8 @@ export default defineNuxtConfig({
             installPrompt: true,
         },
         devOptions: {
-            enabled: false
+            enabled: true,
+            type: 'module'
         }
     }
 })

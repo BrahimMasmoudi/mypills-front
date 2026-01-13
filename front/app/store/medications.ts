@@ -31,7 +31,6 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
      * ------------------------------------------------------------------ */
     const initMedications = async () => {
         const user = await getCurrentUser()
-        console.log(user)
         if (!user?.email) return
 
         const q = query(

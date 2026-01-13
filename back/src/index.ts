@@ -1,12 +1,19 @@
-import {onCall, HttpsError} from 'firebase-functions/v2/https';
+import {onCall, HttpsError, onRequest} from 'firebase-functions/v2/https'
 import {initializeApp} from 'firebase-admin/app'
-import {getFirestore, FieldValue} from 'firebase-admin/firestore'
-import {Medication} from "./types/medication";
-import {toMedicationDto} from "./utils/mapper";
-import {GetMedicationDetailsResponse} from "./types/medicationApi";
+import {getFirestore, FieldValue, Timestamp} from 'firebase-admin/firestore'
+import {Medication} from "./types/medication"
+import {toMedicationDto} from "./utils/mapper"
+import {GetMedicationDetailsResponse} from "./types/medicationApi"
+import {getMessaging} from "firebase-admin/messaging"
+import {addDays, isBefore, isSameDay, parse, format} from "date-fns"
+import {onDocumentCreated} from "firebase-functions/v2/firestore"
+import {CloudTasksClient} from "@google-cloud/tasks"
+import {fromZonedTime} from "date-fns-tz"
 
 initializeApp()
 const firestore = getFirestore()
+const client = new CloudTasksClient()
+
 const database = firestore.collection('medications')
 
 export const createMedication = onCall({region: 'europe-west3'}, async ({data}) => {
@@ -69,63 +76,186 @@ export const setExpiredStatus = onCall({region: 'europe-west3'}, async ({data}) 
 // -- CIP13 to CIS Migration and Lookup --
 
 export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({data}): Promise<GetMedicationDetailsResponse> => {
-    const cip13 = data.cip13 as string;
+    const cip13 = data.cip13 as string
     if (!cip13) {
-        throw new HttpsError('invalid-argument', 'CIP13 is required');
+        throw new HttpsError('invalid-argument', 'CIP13 is required')
     }
 
     // Bypass SSL validation in emulator
     if (process.env.FUNCTIONS_EMULATOR === 'true') {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     }
 
     try {
         // 1. Lookup CIS from Firestore
-        const docSnap = await firestore.collection('cip_to_cis').doc(cip13).get();
+        const docSnap = await firestore.collection('cip_to_cis').doc(cip13).get()
 
         if (!docSnap.exists) {
-            console.warn(`CIP13 ${cip13} not found in DB`);
-            throw new HttpsError('not-found', 'Medication not found in database');
+            console.warn(`CIP13 ${cip13} not found in DB`)
+            throw new HttpsError('not-found', 'Medication not found in database')
         }
 
-        const cis = docSnap.data()?.cis;
+        const cis = docSnap.data()?.cis
         if (!cis) {
-            throw new HttpsError('not-found', 'CIS code not found for this medication');
+            throw new HttpsError('not-found', 'CIS code not found for this medication')
         }
 
         // 2. Fetch details from Giygas API
         // Note: fetch is available globally in Node 18+ (Firebase Functions Node 20 environment)
         // If not, we might need axios or node-fetch, but let's try native fetch first.
-        const response = await fetch(`https://medicaments-api.giygas.dev/medicament/id/${cis}`);
+        const response = await fetch(`https://medicaments-api.giygas.dev/medicament/id/${cis}`)
 
         if (!response.ok) {
-            console.warn(`Giygas API failed for CIS ${cis}: ${response.statusText}`);
-            throw new HttpsError('not-found', 'Medication details not available from external API');
+            console.warn(`Giygas API failed for CIS ${cis}: ${response.statusText}`)
+            throw new HttpsError('not-found', 'Medication details not available from external API')
         }
 
-        const apiDetails = await response.json();
+        const apiDetails = await response.json()
 
         const mappedDetails = toMedicationDto(apiDetails)
 
         // Return only the name for now as per requirements, or the whole object
-        const name = apiDetails.elementPharmaceutique || apiDetails.denomination || '';
+        const name = apiDetails.elementPharmaceutique || apiDetails.denomination || ''
 
         return {
             name,
             cis,
             details: mappedDetails
-        };
+        }
 
     } catch (e: any) {
         // Re-throw HttpsError as-is
         if (e instanceof HttpsError) {
-            throw e;
+            throw e
         }
-        console.error('getMedicationDetails error:', e);
-        throw new HttpsError('internal', 'Failed to retrieve medication details');
+        console.error('getMedicationDetails error:', e)
+        throw new HttpsError('internal', 'Failed to retrieve medication details')
     }
+})
+
+
+export const scheduleReminderTask = onDocumentCreated({
+    document: "reminders/{id}",
+    region: 'europe-west3'
+}, async (event) => {
+    const data = event.data?.data();
+    if (!data) return;
+
+    const project = process.env.GCLOUD_PROJECT!;
+    const location = "europe-west3";
+    const queue = "reminder";
+
+    const serviceAccountEmail = `${project}@appspot.gserviceaccount.com`;
+
+    const queuePath = client.queuePath(project, location, queue);
+
+    const task = {
+        httpRequest: {
+            httpMethod: "POST" as const,
+            url: `https://${location}-${project}.cloudfunctions.net/sendFCMNotification`,
+
+            body: Buffer.from(JSON.stringify({
+                userId: data.userId,
+                medName: data.medName,
+                quantity: data.quantity || "1"
+            })).toString("base64"),
+
+            headers: {"Content-Type": "application/json"},
+
+            oidcToken: {
+                serviceAccountEmail: serviceAccountEmail,
+            }
+        },
+        scheduleTime: {seconds: data.scheduledTime.seconds},
+    }
+
+    await client.createTask({parent: queuePath, task});
+})
+
+export const createSchedule = onCall({region: 'europe-west3'}, async (request) => {
+    const {medication, startDate, endDate, doses, timezone} = request.data
+
+    const batch = firestore.batch()
+    let currentDate = parse(startDate, 'yyyy-MM-dd', new Date())
+    const end = parse(endDate, 'yyyy-MM-dd', new Date())
+
+    while (isBefore(currentDate, end) || isSameDay(currentDate, end)) {
+        doses.forEach((dose: any) => {
+            if (!dose.time) return
+
+            const datePart = format(currentDate, 'yyyy-MM-dd')
+            const timePart = dose.time
+
+            const dateTimeString = `${datePart} ${timePart}`
+            const scheduledTime = fromZonedTime(dateTimeString, timezone)
+
+            const reminderRef = firestore.collection("reminders").doc();
+            batch.set(reminderRef, {
+                userId: request.auth?.uid,
+                medName: medication.name,
+                quantity: dose.quantity,
+                scheduledTime: Timestamp.fromDate(scheduledTime),
+                status: "pending"
+            })
+        })
+        currentDate = addDays(currentDate, 1)
+    }
+
+    await batch.commit()
+    return {success: true}
 });
 
+
+export const sendFCMNotification = onRequest({region: 'europe-west3'}, async (req, res) => {
+    const {userId, medName, quantity} = req.body
+
+    try {
+        const userDoc = await firestore.collection("users").doc(userId).get()
+        const userData = userDoc.data()
+
+        if (!userData?.fcmToken) {
+            console.error(`No FCM token found for user: ${userId}`)
+            res.status(200).send("No token available")
+            return
+        }
+
+        const message = {
+            token: userData.fcmToken,
+            data: {
+                medName: medName,
+                quantity: String(quantity),
+            },
+        }
+
+        await getMessaging().send(message)
+        res.status(200).send("Notification sent")
+    } catch (error) {
+        res.status(500).send(error)
+    }
+})
+
+export const saveUserToken = onCall({region: 'europe-west3'}, async (request) => {
+    if (!request.auth) {
+        throw new HttpsError("unauthenticated", "User must be logged in.")
+    }
+
+    const fcmToken = request.data.fcmToken
+    const uid = request.auth.uid
+
+    try {
+        // We use set with { merge: true } so we don't overwrite
+        // other user data (like their name or email)
+        await firestore.collection("users").doc(uid).set({
+            fcmToken: fcmToken,
+            lastUpdated: new Date().toISOString(),
+            userId: uid // Good for querying later
+        }, {merge: true})
+
+        return {success: true}
+    } catch (error) {
+        throw new HttpsError("internal", "Failed to save token")
+    }
+})
 
 // const createData = async () => {
 //     const backup = {
@@ -860,14 +990,14 @@ export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({dat
 //             expiryDate: new Date(
 //                 docData.expiryDate.value._seconds * 1000
 //             ),
-//         };
+//         }
 //
 //         try {
 //             // Add each document to the collection
-//             await database.doc(docId).set(firestoreData);
-//             console.log(`Document with ID ${docId} successfully written!`);
+//             await database.doc(docId).set(firestoreData)
+//             console.log(`Document with ID ${docId} successfully written!`)
 //         } catch (error) {
-//             console.error(`Error writing document with ID ${docId}: `, error);
+//             console.error(`Error writing document with ID ${docId}: `, error)
 //         }
 //     }
 // End of file

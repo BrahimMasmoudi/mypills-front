@@ -1,7 +1,7 @@
-import {formatDistance} from "date-fns";
+import {format, formatDistance} from "date-fns";
 import DateFnsAdapter from "@date-io/date-fns";
 import {useI18n} from "vue-i18n";
-import {enGB, fr} from 'date-fns/locale'
+import {enGB, enUS, fr} from 'date-fns/locale'
 
 export const parseDate = (date: { seconds: string, nanoseconds: string } | Date) => {
     const {locale} = useI18n()

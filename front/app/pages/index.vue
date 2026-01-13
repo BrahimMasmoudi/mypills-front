@@ -5,7 +5,8 @@
                   :delete-pills="deletePills"
                   :create-medication="createMedication"
                   :medication-loading="medicationLoading"
-                  :update-medication-name="updateMedicationName"/>
+                  :update-medication-name="updateMedicationName"
+                  :create-reminder="createReminder"/>
 </template>
 <script setup lang="ts">
 
@@ -13,17 +14,26 @@ import {useMedicationsStore} from "~/store/medications";
 import type {Medication} from "~/types/medication";
 import {useCountryStore} from "~/store/country";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
+import type {CreateReminderRequest} from "~/types/reminder";
+import {useReminderStore} from "~/store/reminder";
 
-const { $open } = useNuxtApp();
+const {$open} = useNuxtApp();
 const countryStore = useCountryStore()
+
+const notifications = useNotifications()
+
 const medicationLoading = ref(true)
 
 const medicationStore = useMedicationsStore()
 const medications = computed(() => medicationStore.medications)
 
+const reminderStore = useReminderStore()
+
 onMounted(async () => {
   await medicationStore.initMedications()
   await checkCountryStatus()
+  await notifications.registerNotificationToken()
+  notifications.listenForMessages()
 })
 
 const checkCountryStatus = async () => {
@@ -59,6 +69,11 @@ const updateMedicationName = async (medication: Medication, newName: string) => 
   await medicationStore.updateMedicationName(medication, newName)
 }
 
+const createReminder = async (reminderRequest: CreateReminderRequest) => {
+  console.log(reminderRequest)
+  await reminderStore.createSchedule(reminderRequest)
+}
+
 watch(medications,
     (newMeds: Medication[] | undefined) => {
       if (!newMeds) return
@@ -70,6 +85,7 @@ watch(medications,
       }
     }
 )
+
 const handleExpiredMedications = async (meds: Medication[]) => {
   await medicationStore.checkAndUpdateExpiredMedications(meds)
 }
