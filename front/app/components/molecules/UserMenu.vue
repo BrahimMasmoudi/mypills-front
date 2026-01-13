@@ -125,11 +125,11 @@ import {useCountryStore} from "~/store/country";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
 
 const userStore = useUserStore()
-const {t,locale} = useI18n()
+const {t, locale} = useI18n()
 const theme = useTheme()
 const colorMode = useColorMode()
 const {$open} = useNuxtApp()
-const {confirmFrance, clearCountry, confirmTunisia} = useCountryStore()
+const {confirmFrance, clearCountry} = useCountryStore()
 
 const handleSignOut = async () => {
   await userStore.logOut()
@@ -142,8 +142,8 @@ const toggleColorMode = () => {
 
 
 const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'fr', name: 'Français' }
+  {code: 'en', name: 'English'},
+  {code: 'fr', name: 'Français'}
 ]
 
 const switchLocale = (newLocale: string) => {
@@ -161,11 +161,7 @@ const openCountryDialog = async () => {
 
   if (result === 'FR') {
     confirmFrance()
-  } else
-    if (result === 'TN') {
-      confirmTunisia()
-    }
-      else {
+  } else {
     clearCountry()
   }
 }

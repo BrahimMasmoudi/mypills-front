@@ -16,9 +16,6 @@ export const useCountryStore = defineStore('country', () => {
     const confirmFrance = () => selectedCountry.value = 'FR'
 
 
-    const confirmTunisia = () => selectedCountry.value = 'TN'
-
-
     const clearCountry = () => {
         selectedCountry.value = 'OTHER'
     }
@@ -28,7 +25,6 @@ export const useCountryStore = defineStore('country', () => {
         isFrance,
         isScanningReady,
         confirmFrance,
-        clearCountry,
-        confirmTunisia
+        clearCountry
     }
 })

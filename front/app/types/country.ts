@@ -1,1 +1,1 @@
-export type Country = 'FR' | 'TN' | 'OTHER'
+export type Country = 'FR' | 'OTHER'

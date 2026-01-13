@@ -110,7 +110,6 @@
     "title": "Confirmation de région",
     "subtitle": "Les fonctionnalités de scan sont optimisées pour la France. Veuillez confirmer votre emplacement pour activer le scanner.",
     "confirmFr": "Je suis en France",
-    "confirmTn": "Je suis en Tunisie",
     "confirmElseWhere": "Je suis ailleurs"
   },
   "detailsDialog" : {

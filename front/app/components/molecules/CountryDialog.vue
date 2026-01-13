@@ -35,19 +35,6 @@
 
         <v-btn
             block
-            color="red"
-            variant="flat"
-            size="large"
-            height="52"
-            class="text-none font-weight-bold rounded-lg"
-            @click="confirm('TN')"
-        >
-          {{ t('countryDialog.confirmTn') }}
-        </v-btn>
-
-
-        <v-btn
-            block
             variant="outlined"
             color="primary"
             height="52"

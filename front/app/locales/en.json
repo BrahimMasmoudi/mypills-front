@@ -110,7 +110,6 @@
     "title": "Location Verification",
     "subtitle": "Scanning features are optimized for France. Please confirm your location to enable the scanner.",
     "confirmFr": "I'm in France",
-    "confirmTn": "I'm in Tunisia",
     "confirmElseWhere": "I'm elsewhere"
   },
   "detailsDialog": {
