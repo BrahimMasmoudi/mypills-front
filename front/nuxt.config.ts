@@ -34,6 +34,7 @@ export default defineNuxtConfig({
         '@nuxt/ui',
         '@vite-pwa/nuxt',
         '@nuxtjs/color-mode',
+        '@vueuse/nuxt',
     ],
     colorMode: {
         preference: 'system', // default value of $colorMode.preference
@@ -212,7 +213,7 @@ export default defineNuxtConfig({
             installPrompt: true,
         },
         devOptions: {
-            enabled: true,
+            enabled: false,
             type: 'module'
         }
     }

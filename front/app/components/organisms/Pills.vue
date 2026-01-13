@@ -97,9 +97,11 @@ import {openToast, type ToastType} from "~/composables/openToast";
 import {getCurrentUser} from "vuefire";
 import ReminderCreationDialog from "~/components/molecules/ReminderCreationDialog.vue";
 import type {CreateReminderRequest} from "~/types/reminder";
+import {useCountryStore} from "~/store/country";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
+const {selectedCountry} = storeToRefs(useCountryStore())
 const searchQuery = ref('')
 const viewType = ref<'grid' | 'table'>('grid')
 const sortBy = ref<'name' | 'expiryDate' | 'quantity' | null>(null)
@@ -193,17 +195,16 @@ const allMedication = computed(() => {
 // Tab Logic
 const tab = ref<string>('all')
 
-
 const openAddMedicationDialog = async () => {
   const user = await getCurrentUser()
-
   const toastType = await $open<ToastType>(CreateMedicationDialog, {
     scrim: true,
     isPersistent: true,
     createMedication: props.createMedication,
     userUid: user?.uid,
     email: user?.email,
-    medications: props.medications
+    medications: props.medications,
+    selectedCountry: selectedCountry.value,
   })
   if (toastType !== 'canceled') openToast(toastType, t(toastType))
 }

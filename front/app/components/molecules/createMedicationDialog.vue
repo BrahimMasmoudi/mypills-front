@@ -26,24 +26,53 @@
       <v-card-text class="pa-0">
         <div class="d-flex flex-column gap-4">
           <!-- Medication Name with Scan -->
-          <v-text-field
+          <v-combobox
               v-model="medication.name"
+              :items="tunisianMeds"
+              :loading="searchLoading"
+              v-model:search="searchQuery"
+              @update:search="onSearchChange"
+              @update:model-value="onMedicationSelect"
+              item-title="name"
+              item-value="id"
               :label="t('dialogCreate.medicationLabel')"
               variant="outlined"
-              prepend-inner-icon="mdi-pill"
               hide-details="auto"
               rounded="lg"
-              :loading="scannerIsLoading"
               class="font-weight-medium"
+              no-filter
+              return-object
           >
-            <template v-slot:loader>
-              <v-progress-linear
-                  :active="scannerIsLoading"
-                  color="primary"
-                  height="2"
-                  indeterminate
-              ></v-progress-linear>
+            <template v-slot:no-data>
+              <v-list-item @click="handleCustomName">
+                <v-list-item-title>
+                  {{ t('dialogCreate.noResults') }} "<strong>{{ searchQuery }}</strong>"
+                </v-list-item-title>
+                <template v-slot:append>
+                  <v-icon icon="mdi-plus" color="primary"/>
+                </template>
+              </v-list-item>
             </template>
+
+            <template v-slot:selection="{ item }">
+              <v-chip
+                  v-if="item"
+                  color="primary"
+                  size="small"
+                  class="font-weight-bold"
+                  closable
+                  @click:close="medication.name = null"
+              >
+                <v-icon icon="mdi-pill" class="mr-2" size="14"></v-icon>
+                {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
+              </v-chip>
+            </template>
+
+            <template v-slot:item="{ props, item }">
+              <v-list-item v-bind="props" :subtitle="item.raw.details?.form">
+              </v-list-item>
+            </template>
+
             <template v-slot:append-inner>
               <v-tooltip v-if="selectedCountry === 'FR'" location="top" text="Scan Barcode">
                 <template v-slot:activator="{ props }">
@@ -59,7 +88,7 @@
                 </template>
               </v-tooltip>
             </template>
-          </v-text-field>
+          </v-combobox>
 
           <v-menu
               v-model="dateMenuIsOpen"
@@ -99,7 +128,7 @@
                 @update:model-value="dateMenuIsOpen = false"
                 hide-header
                 rounded="lg"
-                style="color: rgb(var(--v-theme-primary)) !important;"
+                style="color: rgb(var(--v-theme-primary)) !important"
                 @update:year="updateYear"
                 @update:view-mode="updateViewMode"
                 @update:month="updateMonth"
@@ -142,6 +171,7 @@
             class="flex-grow-1 text-capitalize font-weight-bold"
             height="48"
             :loading="loading"
+            :disabled="!medication.name"
             @click="onConfirmClick"
         >
           {{ t('confirm') }}
@@ -186,32 +216,69 @@
 
       <div class="d-flex flex-column gap-4 mb-6">
         <!-- Medication Name -->
-        <v-text-field
+        <v-combobox
             v-model="medication.name"
+            :items="tunisianMeds"
+            :loading="searchLoading"
+            v-model:search="searchQuery"
+            @update:search="onSearchChange"
+            @update:model-value="onMedicationSelect"
+            item-title="name"
+            item-value="id"
             :label="t('dialogCreate.medicationLabel')"
             variant="outlined"
             hide-details="auto"
-            loading
+            rounded="lg"
+            class="font-weight-medium"
+            no-filter
+            return-object
         >
-          <template v-slot:loader>
-            <v-progress-linear
-                :active="scannerIsLoading"
+          <template v-slot:no-data>
+            <v-list-item @click="handleCustomName">
+              <v-list-item-title>
+                {{ t('dialogCreate.noResults') }} "<strong>{{ searchQuery }}</strong>"
+              </v-list-item-title>
+              <template v-slot:append>
+                <v-icon icon="mdi-plus" color="primary"/>
+              </template>
+            </v-list-item>
+          </template>
+
+          <template v-slot:selection="{ item }">
+            <v-chip
+                v-if="item"
                 color="primary"
-                height="2"
-                indeterminate
-            ></v-progress-linear>
+                size="small"
+                class="font-weight-bold"
+                closable
+                @click:close="medication.name = null"
+            >
+              <v-icon icon="mdi-pill" class="mr-2" size="14"></v-icon>
+              {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
+            </v-chip>
           </template>
+
+          <template v-slot:item="{ props, item }">
+            <v-list-item v-bind="props" :subtitle="item.raw.details?.form">
+            </v-list-item>
+          </template>
+
           <template v-slot:append-inner>
-            <v-btn v-if="selectedCountry === 'FR'"
-                   icon="mdi-barcode-scan"
-                   variant="tonal"
-                   color="primary"
-                   size="small"
-                   class="ms-1"
-                   @click="isScannerOpen = true"
-            />
+            <v-tooltip v-if="selectedCountry === 'FR'" location="top" text="Scan Barcode">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                    v-bind="props"
+                    icon="mdi-barcode-scan"
+                    variant="tonal"
+                    color="primary"
+                    size="small"
+                    class="ms-1"
+                    @click="isScannerOpen = true"
+                />
+              </template>
+            </v-tooltip>
           </template>
-        </v-text-field>
+        </v-combobox>
 
         <!-- Expiry Date -->
         <v-menu
@@ -252,7 +319,7 @@
               @update:model-value="dateMenuIsOpen = false"
               hide-header
               rounded="lg"
-              style="color: rgb(var(--v-theme-primary)) !important;"
+              style="color: rgb(var(--v-theme-primary)) !important"
               @update:year="updateYear"
               @update:view-mode="updateViewMode"
               @update:month="updateMonth"
@@ -314,15 +381,16 @@ import {openToast} from "~/composables/openToast"
 import type {Medication} from "~/types/medication"
 import {format} from 'date-fns'
 import {fr, enUS} from 'date-fns/locale'
-import ScannerDialog from "~/components/molecules/ScannerDialog.vue";
-import DuplicateConfirmDialog from "~/components/molecules/DuplicateConfirmDialog.vue";
-import {useCountryStore} from "~/store/country";
+import ScannerDialog from "~/components/molecules/ScannerDialog.vue"
+import DuplicateConfirmDialog from "~/components/molecules/DuplicateConfirmDialog.vue"
+import type {Country} from "~/types/country"
+import {useTunisianMedicationsStore} from "~/store/tunisian_medications"
+import type {GetMedicationDetailsResponse} from "~/types/api"
 
 const {t, locale} = useI18n()
-const {$device} = useNuxtApp()
-const {selectedCountry} = storeToRefs(useCountryStore())
+const {$device, $open} = useNuxtApp()
 
-const locales: Record<string, any> = {en: enUS, fr: fr};
+const locales: Record<string, any> = {en: enUS, fr: fr}
 
 const isActive = ref(true)
 const loading = ref(false)
@@ -330,14 +398,22 @@ const scannerIsLoading = ref(false)
 const dateMenuIsOpen = ref(false)
 const isScannerOpen = ref(false)
 
-const {close, createMedication, userUid, email, medications} = defineProps<{
+const searchLoading = ref(false)
+const searchQuery = ref('')
+
+const tunisianMedicationStore = useTunisianMedicationsStore()
+
+const tunisianMeds = ref<GetMedicationDetailsResponse[]>([])
+
+const {close, createMedication, userUid, email, medications, selectedCountry} = defineProps<{
   close: (value: ToastType) => void
   isPersistent: boolean
   scrim: boolean
   createMedication: (medication: Medication) => Promise<void>
   userUid: string
   email: string
-  medications: Medication[]
+  medications: Medication[],
+  selectedCountry: Country,
 }>()
 
 const medication = ref<Medication>({
@@ -345,7 +421,7 @@ const medication = ref<Medication>({
   uid: userUid,
   expired: false,
   quantity: 1,
-  name: '',
+  name: null as any,
   bareCode: '',
   medicationId: crypto.randomUUID(),
   image: "pill-1",
@@ -371,8 +447,8 @@ const updateMonth = (month: number) => {
 }
 
 const formatDate = (date: Date | string) => {
-  if (!date) return '';
-  return format(new Date(date), 'MMMM yyyy', {locale: locales[locale.value] || enUS});
+  if (!date) return ''
+  return format(new Date(date), 'MMMM yyyy', {locale: locales[locale.value] || enUS})
 }
 
 // Barcode Handling
@@ -380,38 +456,37 @@ const onBarcodeDetected = async (code: string) => {
   scannerIsLoading.value = true
   try {
     // 1. Parse Code
-    const {parseBarcode} = useBarcodeParser();
-    const {cip13, expiryDate} = parseBarcode(code);
+    const {parseBarcode} = useBarcodeParser()
+    const {cip13, expiryDate} = parseBarcode(code)
 
     if (expiryDate) {
-      medication.value.expiryDate = expiryDate;
-      const year = expiryDate.getFullYear();
-      const month = expiryDate.getMonth();
+      medication.value.expiryDate = expiryDate
+      const year = expiryDate.getFullYear()
+      const month = expiryDate.getMonth()
 
       // Sync picker internal state if needed
-      selectedYear.value = year;
-      selectedMonth.value = month;
+      selectedYear.value = year
+      selectedMonth.value = month
     }
 
     if (!cip13) {
-      console.warn('No valid CIP13 found in code:', code);
-      scannerIsLoading.value = false;
-      return;
+      console.warn('No valid CIP13 found in code:', code)
+      scannerIsLoading.value = false
+      return
     }
 
     medication.value.bareCode = cip13
 
     // 2. Call Backend via Store
-    const medicationsStore = useMedicationsStore();
+    const medicationsStore = useMedicationsStore()
     const data = await medicationsStore.getMedicationDetails(cip13)
 
 
     if (!data) {
-      console.warn('Backend lookup failed: No data returned');
-      openToast('error', t('scanner.not_found_message'));
+      console.warn('Backend lookup failed: No data returned')
+      openToast('error', t('scanner.not_found_message'))
     } else {
-      medication.value.name = data.name;
-      console.log(data.details)
+      medication.value.name = data.name
       medication.value.details = data.details
 
       // 3. Check for duplicate medication
@@ -419,48 +494,41 @@ const onBarcodeDetected = async (code: string) => {
           medications,
           data.name,
           medication.value.expiryDate
-      );
+      )
 
       if (duplicate) {
         // Duplicate found - show confirmation dialog
-        const {$open} = useNuxtApp();
         const result = await $open<string>(DuplicateConfirmDialog, {
           scrim: true,
           isPersistent: true,
           medicationName: data.name,
           expiryDate: medication.value.expiryDate
-        });
+        })
 
         if (result === 'increment') {
-          // User confirmed - increment quantity (analytics handled in store)
-          await medicationsStore.incrementPillsFromDuplicate(duplicate);
-          openToast('success', t('success'));
-          close('success');
+          await medicationsStore.incrementPillsFromDuplicate(duplicate)
+          openToast('success', t('success'))
+          close('success')
         } else {
-          // User canceled - reset form
-          medication.value.name = '';
-          medication.value.expiryDate = new Date();
+          medication.value.name = ''
+          medication.value.expiryDate = new Date()
         }
       } else {
-        // No duplicate - auto create with quantity 1
-        medication.value.quantity = 1;
-        await performCreation();
+        medication.value.quantity = 1
+        await performCreation()
       }
     }
-
   } catch (e: any) {
-    console.error('Barcode lookup error:', e);
-    openToast('error', t('scanner.not_found_message'));
+    console.error('Barcode lookup error:', e)
+    openToast('error', t('scanner.not_found_message'))
   } finally {
     scannerIsLoading.value = false
     isScannerOpen.value = false
   }
 }
 
-
 const performCreation = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
-  // Assign random pill icon from pill-1 to pill-30
   const randomIconNumber = Math.floor(Math.random() * 30) + 1
   medication.value.image = `pill-${randomIconNumber}`
 
@@ -482,6 +550,39 @@ const onConfirmClick = async () => {
 
 const cancelAndClose = () => close('canceled')
 
+const debouncer = useDebounceFn(async (query: string) => {
+  if (!query || query.length < 2) {
+    tunisianMeds.value = []
+    return
+  }
+  tunisianMeds.value = await tunisianMedicationStore.searchTunisianMedications(query)
+}, 500)
+
+const onSearchChange = (query: string) => {
+  if (query) {
+    debouncer(query)
+  }
+}
+
+const handleCustomName = () => {
+  if (!searchQuery.value) return
+  medication.value.name = searchQuery.value
+  medication.value.details = undefined
+  medication.value.bareCode = ''
+  tunisianMeds.value = []
+}
+
+const onMedicationSelect = (val: any) => {
+  if (!val) return
+
+  if (typeof val === 'object' && val.name) {
+    medication.value.name = val.name
+    medication.value.details = val.details
+  } else if (typeof val === 'string') {
+    medication.value.name = val
+    medication.value.details = undefined
+  }
+}
 </script>
 
 <style scoped>
@@ -497,5 +598,9 @@ const cancelAndClose = () => close('canceled')
   padding-top: 10px;
   padding-bottom: 10px;
   min-height: 56px;
+}
+
+:deep(.v-combobox__menu-icon) {
+  display: none !important;
 }
 </style>

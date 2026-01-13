@@ -15,6 +15,7 @@ const firestore = getFirestore()
 const client = new CloudTasksClient()
 
 const database = firestore.collection('medications')
+const tunisianMedications = firestore.collection('tunisian_meds')
 
 export const createMedication = onCall({region: 'europe-west3'}, async ({data}) => {
     const medication = data.medication as Medication
@@ -256,6 +257,34 @@ export const saveUserToken = onCall({region: 'europe-west3'}, async (request) =>
         throw new HttpsError("internal", "Failed to save token")
     }
 })
+
+
+export const searchTunisianMeds = onCall({region: 'europe-west3'}, async (request) => {
+    const searchText = request.data.query || ""
+
+    if (!searchText || searchText.length < 2) {
+        return []
+    }
+
+    const searchTerm = searchText.toUpperCase()
+
+    try {
+        const snapshot = await tunisianMedications
+            .where("name", ">=", searchTerm)
+            .where("name", "<=", searchTerm + "\uf8ff")
+            .limit(10)
+            .get()
+
+        return snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }))
+    } catch (error) {
+        console.error("Search error:", error)
+        throw new HttpsError("internal", "Search failed")
+    }
+})
+
 
 // const createData = async () => {
 //     const backup = {
