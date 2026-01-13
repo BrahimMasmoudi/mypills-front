@@ -352,7 +352,7 @@ import {useTunisianMedicationsStore} from "~/store/tunisian_medications"
 import type {GetMedicationDetailsResponse} from "~/types/api"
 
 const {t, locale} = useI18n()
-const {$device} = useNuxtApp()
+const {$device, $open} = useNuxtApp()
 
 const locales: Record<string, any> = {en: enUS, fr: fr}
 
@@ -462,7 +462,6 @@ const onBarcodeDetected = async (code: string) => {
 
       if (duplicate) {
         // Duplicate found - show confirmation dialog
-        const {$open} = useNuxtApp()
         const result = await $open<string>(DuplicateConfirmDialog, {
           scrim: true,
           isPersistent: true,
@@ -516,7 +515,6 @@ const onConfirmClick = async () => {
 const cancelAndClose = () => close('canceled')
 
 const debouncer = useDebounceFn(async (query: string) => {
-  console.log('DEBOUNCE', query)
   if (!query || query.length < 2) {
     tunisianMeds.value = []
     return
@@ -542,7 +540,6 @@ const onMedicationSelect = (val: any) => {
   if (!val) return
 
   if (typeof val === 'object' && val.name) {
-    // Case 1: Selected from API list
     medication.value.name = val.name
     medication.value.details = val.details
   } else if (typeof val === 'string') {
@@ -554,16 +551,16 @@ const onMedicationSelect = (val: any) => {
 
 <style scoped>
 .gap-4 {
-  gap: 16px
+  gap: 16px;
 }
 
 .gap-3 {
-  gap: 12px
+  gap: 12px;
 }
 
 :deep(.v-field__input) {
-  padding-top: 10px
-  padding-bottom: 10px
-  min-height: 56px
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-height: 56px;
 }
 </style>
