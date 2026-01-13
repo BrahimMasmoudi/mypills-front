@@ -12,8 +12,7 @@ export const useNotifications = () => {
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') return
 
-            const registration = await navigator.serviceWorker.register(`/firebase-messaging-sw.js?config=${encodeURIComponent(JSON.stringify(app.options))}`)
-
+            const registration = await navigator.serviceWorker.ready
             const currentToken = await getToken($messaging, {
                 vapidKey: $config.public.firebase.cloudMessaging.vapidKey,
                 serviceWorkerRegistration: registration,
