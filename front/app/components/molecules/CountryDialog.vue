@@ -76,7 +76,7 @@
             class="text-none font-weight-bold rounded-lg mb-3"
             @click="confirm('FR')"
         >
-          {{ t('countryDialog.confirmBtn') }}
+          {{ t('countryDialog.confirmFr') }}
         </v-btn>
 
         <v-btn
@@ -86,7 +86,7 @@
             class="text-none font-weight-bold"
             @click="confirm(null)"
         >
-          {{ t('countryDialog.declineBtn') }}
+          {{ t('countryDialog.confirmElseWhere') }}
         </v-btn>
       </div>
     </v-card>

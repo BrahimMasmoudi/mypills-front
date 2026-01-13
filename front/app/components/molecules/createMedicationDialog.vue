@@ -37,7 +37,6 @@
               item-value="id"
               :label="t('dialogCreate.medicationLabel')"
               variant="outlined"
-              prepend-inner-icon="mdi-pill"
               hide-details="auto"
               rounded="lg"
               class="font-weight-medium"
@@ -217,32 +216,69 @@
 
       <div class="d-flex flex-column gap-4 mb-6">
         <!-- Medication Name -->
-        <v-text-field
+        <v-combobox
             v-model="medication.name"
+            :items="tunisianMeds"
+            :loading="searchLoading"
+            v-model:search="searchQuery"
+            @update:search="onSearchChange"
+            @update:model-value="onMedicationSelect"
+            item-title="name"
+            item-value="id"
             :label="t('dialogCreate.medicationLabel')"
             variant="outlined"
             hide-details="auto"
-            loading
+            rounded="lg"
+            class="font-weight-medium"
+            no-filter
+            return-object
         >
-          <template v-slot:loader>
-            <v-progress-linear
-                :active="scannerIsLoading"
+          <template v-slot:no-data>
+            <v-list-item @click="handleCustomName">
+              <v-list-item-title>
+                {{ t('dialogCreate.noResults') }} "<strong>{{ searchQuery }}</strong>"
+              </v-list-item-title>
+              <template v-slot:append>
+                <v-icon icon="mdi-plus" color="primary"/>
+              </template>
+            </v-list-item>
+          </template>
+
+          <template v-slot:selection="{ item }">
+            <v-chip
+                v-if="item"
                 color="primary"
-                height="2"
-                indeterminate
-            ></v-progress-linear>
+                size="small"
+                class="font-weight-bold"
+                closable
+                @click:close="medication.name = null"
+            >
+              <v-icon icon="mdi-pill" class="mr-2" size="14"></v-icon>
+              {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
+            </v-chip>
           </template>
+
+          <template v-slot:item="{ props, item }">
+            <v-list-item v-bind="props" :subtitle="item.raw.details?.form">
+            </v-list-item>
+          </template>
+
           <template v-slot:append-inner>
-            <v-btn v-if="selectedCountry === 'FR'"
-                   icon="mdi-barcode-scan"
-                   variant="tonal"
-                   color="primary"
-                   size="small"
-                   class="ms-1"
-                   @click="isScannerOpen = true"
-            />
+            <v-tooltip v-if="selectedCountry === 'FR'" location="top" text="Scan Barcode">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                    v-bind="props"
+                    icon="mdi-barcode-scan"
+                    variant="tonal"
+                    color="primary"
+                    size="small"
+                    class="ms-1"
+                    @click="isScannerOpen = true"
+                />
+              </template>
+            </v-tooltip>
           </template>
-        </v-text-field>
+        </v-combobox>
 
         <!-- Expiry Date -->
         <v-menu
@@ -562,5 +598,9 @@ const onMedicationSelect = (val: any) => {
   padding-top: 10px;
   padding-bottom: 10px;
   min-height: 56px;
+}
+
+:deep(.v-combobox__menu-icon) {
+  display: none !important;
 }
 </style>
