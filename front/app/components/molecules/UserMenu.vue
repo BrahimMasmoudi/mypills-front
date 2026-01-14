@@ -2,9 +2,9 @@
   <v-menu location="bottom end" transition="slide-y-transition" :offset="8">
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props" icon :ripple="false" height="48">
-        <v-avatar size="32" color="primary">
+        <v-avatar size="48" color="primary">
           <v-img v-if="userStore.user?.photoURL" :src="userStore.user.photoURL" cover/>
-          <v-icon v-else icon="mdi-account" color="white"/>
+          <v-icon v-else icon="mdi-account" size="32" color="white"/>
         </v-avatar>
       </v-btn>
     </template>

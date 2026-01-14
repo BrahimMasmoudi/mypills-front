@@ -6,7 +6,7 @@
       :color="colorMode.value === 'dark' ? 'amber' : 'black'"
       variant="text"
       @click="toggleColorMode">
-    <v-icon>{{ colorMode.value === 'dark' ? 'mdi-brightness-3' : 'mdi-brightness-5' }}</v-icon>
+    <v-icon>{{ colorMode.value === 'dark' ? 'mdi-weather-night' : 'mdi-white-balance-sunny'}}</v-icon>
   </v-btn>
 </template>
 
