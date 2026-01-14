@@ -18,10 +18,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { ToastType } from "~/composables/useQueueToast";
+import type { QueueToastType } from "~/composables/useQueueToast";
 
 const props = defineProps<{
-  type: ToastType,
+  type: QueueToastType,
   message: string
 }>()
 

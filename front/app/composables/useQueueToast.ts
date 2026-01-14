@@ -1,16 +1,16 @@
-export type ToastType = 'success' | 'error' | 'canceled'
+export type QueueToastType = 'success' | 'error' | 'canceled'
 
 export interface ToastItem {
     id: number
     message: string
-    type: ToastType
+    type: QueueToastType
 }
 
 const toasts = ref<ToastItem[]>([])
 let nextId = 0
 
 export const useQueueToast = () => {
-    const addToast = (type: ToastType, message: string) => {
+    const addToast = (type: QueueToastType, message: string) => {
         const id = nextId++
         toasts.value.unshift({ id, message, type })
     }

@@ -406,7 +406,7 @@ const tunisianMedicationStore = useTunisianMedicationsStore()
 const tunisianMeds = ref<GetMedicationDetailsResponse[]>([])
 
 const {close, createMedication, userUid, email, medications, selectedCountry} = defineProps<{
-  close: (value: ToastType) => void
+  close: (value: QueueToastType) => void
   isPersistent: boolean
   scrim: boolean
   createMedication: (medication: Medication) => Promise<void>

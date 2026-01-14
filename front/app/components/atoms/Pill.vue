@@ -238,7 +238,7 @@ const toggleEdit = async () => {
 }
 
 const confirmDelete = async () => {
-  const toastType = await $open<ToastType>(ValidationWithWarningDialog, {
+  const toastType = await $open<QueueToastType>(ValidationWithWarningDialog, {
     scrim: true,
     isPersistent: true,
     title: t('dialogDelete.title'),
