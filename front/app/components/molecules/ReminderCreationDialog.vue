@@ -71,30 +71,22 @@
           <div
               v-for="(item, index) in form.doses"
               :key="index"
-              class="d-flex align-center mb-3"
+              class="d-flex align-center justify-space-between mb-3"
           >
-            <v-text-field
+            <MoleculesTimePicker
                 v-model="item.time"
-                type="time"
-                variant="outlined"
-                rounded="lg"
-                density="comfortable"
-                hide-details
-                class="font-weight-medium flex-grow-1 mr-4"
+                class="mr-4 w-100"
             />
 
             <v-text-field
                 v-model.number="item.quantity"
                 type="number"
-                :label="t('reminderDialog.quantity')"
                 variant="outlined"
                 rounded="lg"
                 density="comfortable"
+                width="80"
+                class="flex-grow-0 flex-shrink-1"
                 hide-details
-                min="0.5"
-                step="0.5"
-                style="width: 100px"
-                class="font-weight-medium flex-grow-0 flex-shrink-0"
             />
 
             <v-btn
@@ -102,7 +94,6 @@
                 icon="mdi-close-circle-outline"
                 variant="text"
                 color="error"
-                class="flex-grow-0 flex-shrink-0"
                 @click="removeDose(index)"
             />
           </div>
@@ -145,6 +136,7 @@ import {isSameDay, isAfter, format} from "date-fns"
 import type {Medication} from "~/types/medication"
 import type {CreateReminderRequest} from "~/types/reminder"
 import {enUS, fr} from "date-fns/locale"
+import TimePicker from "~/components/molecules/TimePicker.vue";
 
 const {$device} = useNuxtApp()
 const {t, locale} = useI18n()
@@ -164,7 +156,7 @@ const {close, createReminder, validMedications} = defineProps<{
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenu = ref(false)
-
+const menuIsOpen = ref(false)
 // Form Data
 const form = ref({
   medication: null as unknown as Medication,

@@ -37,7 +37,7 @@
         >
           <template #prepend>
             <v-icon :color="colorMode.value === 'dark' ? 'amber' : 'black'">
-              {{ colorMode.value === 'dark' ? 'mdi-brightness-3' : 'mdi-brightness-5' }}
+              {{ colorMode.value === 'dark' ? 'mdi-weather-night' : 'mdi-white-balance-sunny' }}
             </v-icon>
           </template>
           <v-list-item-title class="font-weight-medium">
@@ -74,7 +74,7 @@
                 class="mb-1 mx-2"
             >
               <template #prepend>
-                <nuxt-icon :name="`flag-${lang.code}`" filled class="flag-icon-small mr-3"/>
+                <nuxt-icon :name="`flag-${lang.code}`" filled class="flag-icon mr-3"/>
               </template>
               <v-list-item-title class="font-weight-medium">
                 {{ lang.name }}
@@ -94,8 +94,9 @@
           <template #prepend>
             <v-icon icon="mdi-earth"/>
           </template>
-          <v-list-item-title class="font-weight-medium">
+          <v-list-item-title class="font-weight-medium d-flex align-center justify-space-between">
             {{ t('user-menu.change-country') }}
+            <nuxt-icon v-if="selectedCountry === 'FR'" :name="`flag-${selectedCountry?.toLowerCase()}`" filled class="flag-icon-medium mr-3"/>
           </v-list-item-title>
         </v-list-item>
 
@@ -130,6 +131,8 @@ const theme = useTheme()
 const colorMode = useColorMode()
 const {$open} = useNuxtApp()
 const {confirmFrance, clearCountry} = useCountryStore()
+
+const {selectedCountry} = storeToRefs(useCountryStore())
 
 const handleSignOut = async () => {
   await userStore.logOut()
@@ -173,8 +176,15 @@ const openCountryDialog = async () => {
 }
 
 .flag-icon :deep(svg) {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
+  margin-top: 2px;
+  color: currentColor;
+}
+
+.flag-icon-medium :deep(svg) {
+  width: 24px;
+  height: 24px;
   margin-top: 2px;
   color: currentColor;
 }
