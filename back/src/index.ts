@@ -1,6 +1,6 @@
 import { onCall, HttpsError, onRequest } from 'firebase-functions/v2/https'
 import { initializeApp } from 'firebase-admin/app'
-import { getFirestore, FieldValue, Timestamp } from 'firebase-admin/firestore'
+import { getFirestore, Timestamp } from 'firebase-admin/firestore'
 import { Medication } from './types/medication'
 import { toMedicationDto } from './utils/mapper'
 import { GetMedicationDetailsResponse } from './types/medicationApi'
@@ -18,16 +18,6 @@ const client = new CloudTasksClient()
 
 const database = firestore.collection('medications')
 const tunisianMedications = firestore.collection('tunisian_meds')
-
-// export const incrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
-//     const medication = data.medication as Medication
-//     return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(1) })
-// })
-
-export const decrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(-1) })
-})
 
 export const deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication

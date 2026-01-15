@@ -10,15 +10,21 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         this.collection = this.connector.collection('medications')
     }
 
+    async create(medication: Medication): Promise<void> {
+        await this.collection.doc(medication.medicationId).set(medication, {
+            merge: false
+        })
+    }
+
     async increment(medication: Medication): Promise<void> {
         await this.collection.doc(medication.medicationId).update({
             quantity: FieldValue.increment(1)
         })
     }
 
-    async create(medication: Medication): Promise<void> {
-        await this.collection.doc(medication.medicationId).set(medication, {
-            merge: false
+    async decrement(medication: Medication): Promise<void> {
+        await this.collection.doc(medication.medicationId).update({
+            quantity: FieldValue.increment(-1)
         })
     }
 }

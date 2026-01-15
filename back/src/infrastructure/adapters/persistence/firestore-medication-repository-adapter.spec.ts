@@ -129,4 +129,27 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
             expect(mockUpdate).toHaveBeenCalledTimes(1)
         })
     })
+
+    describe('decrement', () => {
+        it('should call update with FieldValue.increment(-1) when decrementing quantity', async () => {
+            // Arrange
+            const medication = createFakeMedication()
+
+            // Act
+            await adapter.decrement(medication)
+
+            // Assert
+            // 1. Verify we target the specific medication document
+            expect(mockDoc).toHaveBeenCalledWith(medication.medicationId)
+
+            // 2. Verify we call update with the correct negative increment
+            expect(mockUpdate).toHaveBeenCalledWith({
+                quantity: FieldValue.increment(-1)
+            })
+
+            // 3. Verify the static increment helper was used correctly with -1
+            expect(FieldValue.increment).toHaveBeenCalledWith(-1)
+            expect(mockUpdate).toHaveBeenCalledTimes(1)
+        })
+    })
 })

@@ -3,12 +3,13 @@ import {MedicationRepository} from '../../../domain/repositories/medication-repo
 import {Medication} from '../../../domain/entities/medication'
 
 describe('IncrementMedication Use Case', () => {
-    it('should execute the repository save method with the provided medication', async () => {
+    it('should execute the repository create method with the provided medication', async () => {
         // 1. Arrange: Create a "Mock" Repository
         // We don't need Firestore here, just a fake object that follows the interface
         const mockRepo: jest.Mocked<MedicationRepository> = {
             create: jest.fn().mockResolvedValue(undefined),
             increment: jest.fn().mockResolvedValue(undefined),
+            decrement: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new CreateMedication(mockRepo)
