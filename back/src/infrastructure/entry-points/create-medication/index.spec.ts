@@ -1,5 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
+import {CreateMedication} from "../../../application/usecases/create-medication/create-medication";
+import * as functions from '../https-functions'
 
 const testEnv = firebaseFunctionsTest()
 
@@ -7,10 +9,7 @@ if (admin.apps.length === 0) {
     admin.initializeApp()
 }
 
-import * as functions from './https-functions'
-import {CreateMedication} from '../../application/usecases/CreateMedication'
-
-jest.mock('../../application/usecases/CreateMedication')
+jest.mock('../../../application/usecases/create-medication/create-medication')
 
 describe('HTTPS Functions Entry Point', () => {
     afterAll(() => {
