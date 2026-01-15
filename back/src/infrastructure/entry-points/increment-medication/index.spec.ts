@@ -26,7 +26,7 @@ describe('incrementPills HTTPS Function', () => {
         useCaseSpy.mockResolvedValue(undefined)
 
         // Wrap the onCall function
-        const wrapped = testEnv.wrap(functions.incrementPills)
+        const wrapped = testEnv.wrap(functions.incrementMedication)
 
         // 2. Act
         const result = await wrapped({
@@ -43,7 +43,7 @@ describe('incrementPills HTTPS Function', () => {
         const useCaseSpy = IncrementMedication.prototype.execute as jest.Mock
         useCaseSpy.mockRejectedValue(new Error('Database Failure'))
 
-        const wrapped = testEnv.wrap(functions.incrementPills)
+        const wrapped = testEnv.wrap(functions.incrementMedication)
 
         // 2. Act & Assert
         // The catch block in your function maps any error to 'Could not increment medication'

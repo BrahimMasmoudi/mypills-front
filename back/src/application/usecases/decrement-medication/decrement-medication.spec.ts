@@ -11,6 +11,7 @@ describe('DecrementMedication Use Case', () => {
             increment: jest.fn().mockResolvedValue(undefined),
             decrement: jest.fn().mockResolvedValue(undefined),
             delete: jest.fn().mockResolvedValue(undefined),
+            update: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new DecrementMedication(mockRepo)

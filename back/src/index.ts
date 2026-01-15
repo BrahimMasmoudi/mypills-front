@@ -1,14 +1,13 @@
-import { onCall, HttpsError, onRequest } from 'firebase-functions/v2/https'
-import { initializeApp } from 'firebase-admin/app'
-import { getFirestore, Timestamp } from 'firebase-admin/firestore'
-import { Medication } from './types/medication'
-import { toMedicationDto } from './utils/mapper'
-import { GetMedicationDetailsResponse } from './types/medicationApi'
-import { getMessaging } from 'firebase-admin/messaging'
-import { addDays, isBefore, isSameDay, parse, format } from 'date-fns'
-import { onDocumentCreated } from 'firebase-functions/v2/firestore'
-import { CloudTasksClient } from '@google-cloud/tasks'
-import { fromZonedTime } from 'date-fns-tz'
+import {onCall, HttpsError, onRequest} from 'firebase-functions/v2/https'
+import {initializeApp} from 'firebase-admin/app'
+import {getFirestore, Timestamp} from 'firebase-admin/firestore'
+import {toMedicationDto} from './utils/mapper'
+import {GetMedicationDetailsResponse} from './types/medicationApi'
+import {getMessaging} from 'firebase-admin/messaging'
+import {addDays, isBefore, isSameDay, parse, format} from 'date-fns'
+import {onDocumentCreated} from 'firebase-functions/v2/firestore'
+import {CloudTasksClient} from '@google-cloud/tasks'
+import {fromZonedTime} from 'date-fns-tz'
 
 initializeApp()
 export * from './infrastructure/entry-points/https-functions'
@@ -19,17 +18,11 @@ const client = new CloudTasksClient()
 const database = firestore.collection('medications')
 const tunisianMedications = firestore.collection('tunisian_meds')
 
-export const updateMedicationName = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    const medication = data.medication as Medication
-    const newName = data.newName as string
-    return await database.doc(medication.medicationId).update({ 'name': newName })
-})
-
-export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const setExpiredStatus = onCall({region: 'europe-west3'}, async ({data}) => {
     const medicationIds = data.medicationIds as string[]
 
     if (!medicationIds || medicationIds.length === 0) {
-        return { updated: 0 }
+        return {updated: 0}
     }
 
     try {
@@ -43,13 +36,13 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
 
             for (const id of batchIds) {
                 const docRef = database.doc(id)
-                batch.update(docRef, { expired: true })
+                batch.update(docRef, {expired: true})
             }
 
             await batch.commit()
             totalUpdated += batchIds.length
         }
-        return { updated: totalUpdated }
+        return {updated: totalUpdated}
     } catch (error) {
         console.error('Error updating expired status:', error)
         throw error
@@ -58,7 +51,7 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
 
 // -- CIP13 to CIS Migration and Lookup --
 
-export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }): Promise<GetMedicationDetailsResponse> => {
+export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({data}): Promise<GetMedicationDetailsResponse> => {
     const cip13 = data.cip13 as string
     if (!cip13) {
         throw new HttpsError('invalid-argument', 'CIP13 is required')
@@ -141,20 +134,20 @@ export const scheduleReminderTask = onDocumentCreated({
                 quantity: data.quantity || '1',
             })).toString('base64'),
 
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
 
             oidcToken: {
                 serviceAccountEmail: serviceAccountEmail,
             },
         },
-        scheduleTime: { seconds: data.scheduledTime.seconds },
+        scheduleTime: {seconds: data.scheduledTime.seconds},
     }
 
-    await client.createTask({ parent: queuePath, task })
+    await client.createTask({parent: queuePath, task})
 })
 
-export const createSchedule = onCall({ region: 'europe-west3' }, async (request) => {
-    const { medication, startDate, endDate, doses, timezone } = request.data
+export const createSchedule = onCall({region: 'europe-west3'}, async (request) => {
+    const {medication, startDate, endDate, doses, timezone} = request.data
 
     const batch = firestore.batch()
     let currentDate = parse(startDate, 'yyyy-MM-dd', new Date())
@@ -183,11 +176,11 @@ export const createSchedule = onCall({ region: 'europe-west3' }, async (request)
     }
 
     await batch.commit()
-    return { success: true }
+    return {success: true}
 })
 
-export const sendFCMNotification = onRequest({ region: 'europe-west3' }, async (req, res) => {
-    const { userId, medName, quantity } = req.body
+export const sendFCMNotification = onRequest({region: 'europe-west3'}, async (req, res) => {
+    const {userId, medName, quantity} = req.body
 
     try {
         const userDoc = await firestore.collection('users').doc(userId).get()
@@ -214,7 +207,7 @@ export const sendFCMNotification = onRequest({ region: 'europe-west3' }, async (
     }
 })
 
-export const saveUserToken = onCall({ region: 'europe-west3' }, async (request) => {
+export const saveUserToken = onCall({region: 'europe-west3'}, async (request) => {
     if (!request.auth) {
         throw new HttpsError('unauthenticated', 'User must be logged in.')
     }
@@ -229,15 +222,15 @@ export const saveUserToken = onCall({ region: 'europe-west3' }, async (request) 
             fcmToken: fcmToken,
             lastUpdated: new Date().toISOString(),
             userId: uid, // Good for querying later
-        }, { merge: true })
+        }, {merge: true})
 
-        return { success: true }
+        return {success: true}
     } catch (error) {
         throw new HttpsError('internal', 'Failed to save token')
     }
 })
 
-export const searchTunisianMeds = onCall({ region: 'europe-west3' }, async (request) => {
+export const searchTunisianMeds = onCall({region: 'europe-west3'}, async (request) => {
     const searchText = request.data.query || ''
 
     if (!searchText || searchText.length < 2) {

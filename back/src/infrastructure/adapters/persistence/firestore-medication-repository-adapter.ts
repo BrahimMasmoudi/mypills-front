@@ -31,4 +31,14 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
     async delete(medication: Medication): Promise<void> {
         await this.collection.doc(medication.medicationId).delete()
     }
+
+    async update<K extends keyof Medication>(
+        medication: Medication,
+        key: K,
+        value: Medication[K]
+    ): Promise<void> {
+        await this.collection.doc(medication.medicationId).update({
+            [key]: value
+        })
+    }
 }
