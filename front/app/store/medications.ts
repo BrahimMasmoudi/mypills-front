@@ -67,7 +67,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     }
 
     const incrementPills = async (medication: Medication) => {
-        const increase = httpsCallable($functions, 'incrementPills')
+        const increase = httpsCallable($functions, 'incrementMedication')
         const result = await increase({ medication })
 
         $analytics &&
@@ -80,7 +80,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     }
 
     const decrementPills = async (medication: Medication) => {
-        const decrease = httpsCallable($functions, 'decrementPills')
+        const decrease = httpsCallable($functions, 'decrementMedication')
         const result = await decrease({ medication })
 
         $analytics &&
@@ -93,7 +93,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     }
 
     const deletePills = async (medication: Medication) => {
-        const remove = httpsCallable($functions, 'deletePills')
+        const remove = httpsCallable($functions, 'deleteMedication')
         const result = await remove({ medication })
 
         $analytics &&

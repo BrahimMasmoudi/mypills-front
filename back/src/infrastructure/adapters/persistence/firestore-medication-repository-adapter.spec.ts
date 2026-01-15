@@ -21,6 +21,7 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
     let mockDoc: jest.Mock
     let mockSet: jest.Mock
     let mockUpdate: jest.Mock
+    let mockDelete: jest.Mock
     let adapter: FirestoreMedicationRepositoryAdapter
 
     beforeEach(() => {
@@ -29,12 +30,14 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
 
         mockSet = jest.fn().mockResolvedValue(undefined)
         mockUpdate = jest.fn().mockResolvedValue(undefined)
+        mockDelete = jest.fn().mockResolvedValue(undefined)
 
         // The doc method returns an object with set and update methods
         // We define this as a return value for mockDoc
         mockDoc = jest.fn().mockReturnValue({
             set: mockSet,
-            update: mockUpdate
+            update: mockUpdate,
+            delete: mockDelete
         })
 
         // Mock the collection to return our mockDoc
@@ -150,6 +153,26 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
             // 3. Verify the static increment helper was used correctly with -1
             expect(FieldValue.increment).toHaveBeenCalledWith(-1)
             expect(mockUpdate).toHaveBeenCalledTimes(1)
+        })
+    })
+
+    describe('delete', () => {
+        it('should call firestore delete on the correct document', async () => {
+            // Arrange
+            const medication = createFakeMedication()
+
+            // Act
+            await adapter.delete(medication)
+
+            // Assert
+            // 1. Verify we requested the medications collection
+            expect(mockConnector.collection).toHaveBeenCalledWith('medications')
+
+            // 2. Verify we targeted the specific doc ID
+            expect(mockDoc).toHaveBeenCalledWith(medication.medicationId)
+
+            // 3. Verify the delete method was triggered
+            expect(mockDelete).toHaveBeenCalledTimes(1)
         })
     })
 })

@@ -27,4 +27,8 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
             quantity: FieldValue.increment(-1)
         })
     }
+
+    async delete(medication: Medication): Promise<void> {
+        await this.collection.doc(medication.medicationId).delete()
+    }
 }

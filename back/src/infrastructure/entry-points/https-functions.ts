@@ -1,3 +1,4 @@
 export * from './create-medication'
 export * from './increment-medication'
 export * from './decrement-medication'
+export * from './delete-medication'

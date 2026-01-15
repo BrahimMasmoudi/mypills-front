@@ -19,11 +19,6 @@ const client = new CloudTasksClient()
 const database = firestore.collection('medications')
 const tunisianMedications = firestore.collection('tunisian_meds')
 
-export const deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).delete()
-})
-
 export const updateMedicationName = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     const newName = data.newName as string

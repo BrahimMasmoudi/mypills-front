@@ -70,7 +70,6 @@ const updateMedicationName = async (medication: Medication, newName: string) => 
 }
 
 const createReminder = async (reminderRequest: CreateReminderRequest) => {
-  console.log(reminderRequest)
   await reminderStore.createSchedule(reminderRequest)
 }
 

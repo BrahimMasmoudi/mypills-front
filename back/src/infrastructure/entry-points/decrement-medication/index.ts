@@ -4,7 +4,7 @@ import {FirestoreMedicationRepositoryAdapter} from "../../adapters/persistence/f
 import {$firebaseConnector} from "../../config/firebase";
 import {DecrementMedication} from "../../../application/usecases/decrement-medication/decrement-medication";
 
-export const decrementPills = onCall({region: 'europe-west3'}, async ({data}) => {
+export const decrementMedication = onCall({region: 'europe-west3'}, async ({data}) => {
     const medicationRepo = new FirestoreMedicationRepositoryAdapter($firebaseConnector)
     const decrementMedicationUseCase = new DecrementMedication(medicationRepo)
 
