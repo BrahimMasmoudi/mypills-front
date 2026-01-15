@@ -27,6 +27,12 @@ jobs:
       - name: Install Firebase Functions dependencies
         run: cd back && yarn install --frozen-lockfile
 
+      # 🧪 RUN TESTS BEFORE BUILD
+      - name: Run Backend Tests
+        run: cd back && yarn test
+        env:
+          TZ: UTC
+
       # Build frontend
       - name: Build frontend
         run: cd front && yarn generate

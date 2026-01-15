@@ -1,53 +1,55 @@
-import {onCall, HttpsError, onRequest} from 'firebase-functions/v2/https'
-import {initializeApp} from 'firebase-admin/app'
-import {getFirestore, FieldValue, Timestamp} from 'firebase-admin/firestore'
-import {Medication} from "./types/medication"
-import {toMedicationDto} from "./utils/mapper"
-import {GetMedicationDetailsResponse} from "./types/medicationApi"
-import {getMessaging} from "firebase-admin/messaging"
-import {addDays, isBefore, isSameDay, parse, format} from "date-fns"
-import {onDocumentCreated} from "firebase-functions/v2/firestore"
-import {CloudTasksClient} from "@google-cloud/tasks"
-import {fromZonedTime} from "date-fns-tz"
+import { onCall, HttpsError, onRequest } from 'firebase-functions/v2/https'
+import { initializeApp } from 'firebase-admin/app'
+import { getFirestore, FieldValue, Timestamp } from 'firebase-admin/firestore'
+import { Medication } from './types/medication'
+import { toMedicationDto } from './utils/mapper'
+import { GetMedicationDetailsResponse } from './types/medicationApi'
+import { getMessaging } from 'firebase-admin/messaging'
+import { addDays, isBefore, isSameDay, parse, format } from 'date-fns'
+import { onDocumentCreated } from 'firebase-functions/v2/firestore'
+import { CloudTasksClient } from '@google-cloud/tasks'
+import { fromZonedTime } from 'date-fns-tz'
 
 initializeApp()
+export * from './infrastructure/entry-points/https-functions'
+export * from './infrastructure/config/firebase'
 const firestore = getFirestore()
 const client = new CloudTasksClient()
 
 const database = firestore.collection('medications')
 const tunisianMedications = firestore.collection('tunisian_meds')
 
-export const createMedication = onCall({region: 'europe-west3'}, async ({data}) => {
+// export const createMedication = onCall({ region: 'europe-west3' }, async ({ data }) => {
+//     const medication = data.medication as Medication
+//     return await database.doc(medication.medicationId).set(medication, { merge: false })
+// })
+
+export const incrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).set(medication, {merge: false})
+    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(1) })
 })
 
-export const incrementPills = onCall({region: 'europe-west3'}, async ({data}) => {
+export const decrementPills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({'quantity': FieldValue.increment(1)})
+    return await database.doc(medication.medicationId).update({ 'quantity': FieldValue.increment(-1) })
 })
 
-export const decrementPills = onCall({region: 'europe-west3'}, async ({data}) => {
-    const medication = data.medication as Medication
-    return await database.doc(medication.medicationId).update({'quantity': FieldValue.increment(-1)})
-})
-
-export const deletePills = onCall({region: 'europe-west3'}, async ({data}) => {
+export const deletePills = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     return await database.doc(medication.medicationId).delete()
 })
 
-export const updateMedicationName = onCall({region: 'europe-west3'}, async ({data}) => {
+export const updateMedicationName = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medication = data.medication as Medication
     const newName = data.newName as string
-    return await database.doc(medication.medicationId).update({'name': newName})
+    return await database.doc(medication.medicationId).update({ 'name': newName })
 })
 
-export const setExpiredStatus = onCall({region: 'europe-west3'}, async ({data}) => {
+export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medicationIds = data.medicationIds as string[]
 
     if (!medicationIds || medicationIds.length === 0) {
-        return {updated: 0}
+        return { updated: 0 }
     }
 
     try {
@@ -61,13 +63,13 @@ export const setExpiredStatus = onCall({region: 'europe-west3'}, async ({data}) 
 
             for (const id of batchIds) {
                 const docRef = database.doc(id)
-                batch.update(docRef, {expired: true})
+                batch.update(docRef, { expired: true })
             }
 
             await batch.commit()
             totalUpdated += batchIds.length
         }
-        return {updated: totalUpdated}
+        return { updated: totalUpdated }
     } catch (error) {
         console.error('Error updating expired status:', error)
         throw error
@@ -76,7 +78,7 @@ export const setExpiredStatus = onCall({region: 'europe-west3'}, async ({data}) 
 
 // -- CIP13 to CIS Migration and Lookup --
 
-export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({data}): Promise<GetMedicationDetailsResponse> => {
+export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }): Promise<GetMedicationDetailsResponse> => {
     const cip13 = data.cip13 as string
     if (!cip13) {
         throw new HttpsError('invalid-argument', 'CIP13 is required')
@@ -121,9 +123,8 @@ export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({dat
         return {
             name,
             cis,
-            details: mappedDetails
+            details: mappedDetails,
         }
-
     } catch (e: any) {
         // Re-throw HttpsError as-is
         if (e instanceof HttpsError) {
@@ -134,47 +135,46 @@ export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({dat
     }
 })
 
-
 export const scheduleReminderTask = onDocumentCreated({
-    document: "reminders/{id}",
-    region: 'europe-west3'
+    document: 'reminders/{id}',
+    region: 'europe-west3',
 }, async (event) => {
-    const data = event.data?.data();
-    if (!data) return;
+    const data = event.data?.data()
+    if (!data) return
 
-    const project = process.env.GCLOUD_PROJECT!;
-    const location = "europe-west3";
-    const queue = "reminder";
+    const project = process.env.GCLOUD_PROJECT!
+    const location = 'europe-west3'
+    const queue = 'reminder'
 
-    const serviceAccountEmail = `${project}@appspot.gserviceaccount.com`;
+    const serviceAccountEmail = `${project}@appspot.gserviceaccount.com`
 
-    const queuePath = client.queuePath(project, location, queue);
+    const queuePath = client.queuePath(project, location, queue)
 
     const task = {
         httpRequest: {
-            httpMethod: "POST" as const,
+            httpMethod: 'POST' as const,
             url: `https://${location}-${project}.cloudfunctions.net/sendFCMNotification`,
 
             body: Buffer.from(JSON.stringify({
                 userId: data.userId,
                 medName: data.medName,
-                quantity: data.quantity || "1"
-            })).toString("base64"),
+                quantity: data.quantity || '1',
+            })).toString('base64'),
 
-            headers: {"Content-Type": "application/json"},
+            headers: { 'Content-Type': 'application/json' },
 
             oidcToken: {
                 serviceAccountEmail: serviceAccountEmail,
-            }
+            },
         },
-        scheduleTime: {seconds: data.scheduledTime.seconds},
+        scheduleTime: { seconds: data.scheduledTime.seconds },
     }
 
-    await client.createTask({parent: queuePath, task});
+    await client.createTask({ parent: queuePath, task })
 })
 
-export const createSchedule = onCall({region: 'europe-west3'}, async (request) => {
-    const {medication, startDate, endDate, doses, timezone} = request.data
+export const createSchedule = onCall({ region: 'europe-west3' }, async (request) => {
+    const { medication, startDate, endDate, doses, timezone } = request.data
 
     const batch = firestore.batch()
     let currentDate = parse(startDate, 'yyyy-MM-dd', new Date())
@@ -190,33 +190,32 @@ export const createSchedule = onCall({region: 'europe-west3'}, async (request) =
             const dateTimeString = `${datePart} ${timePart}`
             const scheduledTime = fromZonedTime(dateTimeString, timezone)
 
-            const reminderRef = firestore.collection("reminders").doc();
+            const reminderRef = firestore.collection('reminders').doc()
             batch.set(reminderRef, {
                 userId: request.auth?.uid,
                 medName: medication.name,
                 quantity: dose.quantity,
                 scheduledTime: Timestamp.fromDate(scheduledTime),
-                status: "pending"
+                status: 'pending',
             })
         })
         currentDate = addDays(currentDate, 1)
     }
 
     await batch.commit()
-    return {success: true}
-});
+    return { success: true }
+})
 
-
-export const sendFCMNotification = onRequest({region: 'europe-west3'}, async (req, res) => {
-    const {userId, medName, quantity} = req.body
+export const sendFCMNotification = onRequest({ region: 'europe-west3' }, async (req, res) => {
+    const { userId, medName, quantity } = req.body
 
     try {
-        const userDoc = await firestore.collection("users").doc(userId).get()
+        const userDoc = await firestore.collection('users').doc(userId).get()
         const userData = userDoc.data()
 
         if (!userData?.fcmToken) {
             console.error(`No FCM token found for user: ${userId}`)
-            res.status(200).send("No token available")
+            res.status(200).send('No token available')
             return
         }
 
@@ -229,15 +228,15 @@ export const sendFCMNotification = onRequest({region: 'europe-west3'}, async (re
         }
 
         await getMessaging().send(message)
-        res.status(200).send("Notification sent")
+        res.status(200).send('Notification sent')
     } catch (error) {
         res.status(500).send(error)
     }
 })
 
-export const saveUserToken = onCall({region: 'europe-west3'}, async (request) => {
+export const saveUserToken = onCall({ region: 'europe-west3' }, async (request) => {
     if (!request.auth) {
-        throw new HttpsError("unauthenticated", "User must be logged in.")
+        throw new HttpsError('unauthenticated', 'User must be logged in.')
     }
 
     const fcmToken = request.data.fcmToken
@@ -246,21 +245,20 @@ export const saveUserToken = onCall({region: 'europe-west3'}, async (request) =>
     try {
         // We use set with { merge: true } so we don't overwrite
         // other user data (like their name or email)
-        await firestore.collection("users").doc(uid).set({
+        await firestore.collection('users').doc(uid).set({
             fcmToken: fcmToken,
             lastUpdated: new Date().toISOString(),
-            userId: uid // Good for querying later
-        }, {merge: true})
+            userId: uid, // Good for querying later
+        }, { merge: true })
 
-        return {success: true}
+        return { success: true }
     } catch (error) {
-        throw new HttpsError("internal", "Failed to save token")
+        throw new HttpsError('internal', 'Failed to save token')
     }
 })
 
-
-export const searchTunisianMeds = onCall({region: 'europe-west3'}, async (request) => {
-    const searchText = request.data.query || ""
+export const searchTunisianMeds = onCall({ region: 'europe-west3' }, async (request) => {
+    const searchText = request.data.query || ''
 
     if (!searchText || searchText.length < 2) {
         return []
@@ -270,21 +268,20 @@ export const searchTunisianMeds = onCall({region: 'europe-west3'}, async (reques
 
     try {
         const snapshot = await tunisianMedications
-            .where("name", ">=", searchTerm)
-            .where("name", "<=", searchTerm + "\uf8ff")
+            .where('name', '>=', searchTerm)
+            .where('name', '<=', searchTerm + '\uf8ff')
             .limit(10)
             .get()
 
-        return snapshot.docs.map(doc => ({
+        return snapshot.docs.map((doc) => ({
             id: doc.id,
-            ...doc.data()
+            ...doc.data(),
         }))
     } catch (error) {
-        console.error("Search error:", error)
-        throw new HttpsError("internal", "Search failed")
+        console.error('Search error:', error)
+        throw new HttpsError('internal', 'Search failed')
     }
 })
-
 
 // const createData = async () => {
 //     const backup = {
