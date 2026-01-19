@@ -22,23 +22,21 @@ describe('HTTPS Functions Entry Point: updateMedication', () => {
         const mockMedication = { medicationId: '123', name: 'Doliprane' }
         const mockNewName = 'Doliprane 1000mg'
 
-        // Get the mocked instance of the UseCase execute method
         const useCaseSpy = UpdateMedication.prototype.execute as jest.Mock
         useCaseSpy.mockResolvedValue(undefined)
 
-        // Wrap the function so we can call it
         const wrapped = testEnv.wrap(functions.updateMedication)
 
         // 2. Act
         const result = await wrapped({
             data: {
                 medication: mockMedication,
-                newName: mockNewName
+                key: 'name',         // Match the variable name in your function
+                value: mockNewName   // Match the variable name in your function
             },
         } as any)
 
         // 3. Assert
-        // FIXED: Now checking for all three arguments: medication, key, and value
         expect(useCaseSpy).toHaveBeenCalledWith(mockMedication, 'name', mockNewName)
         expect(result).toEqual({ success: true })
     })
