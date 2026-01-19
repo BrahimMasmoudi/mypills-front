@@ -1,7 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
-import * as functions from '../https-functions'
-import {DeleteMedication} from "../../../application/usecases/delete-medication/delete-medication";
+import {CreateMedication} from "../../../../application/usecases/create-medication/create-medication";
+import * as functions from '../../https-functions'
 
 const testEnv = firebaseFunctionsTest()
 
@@ -9,7 +9,7 @@ if (admin.apps.length === 0) {
     admin.initializeApp()
 }
 
-jest.mock('../../../application/usecases/delete-medication/delete-medication')
+jest.mock('../../../../application/usecases/create-medication/create-medication')
 
 describe('HTTPS Functions Entry Point', () => {
     afterAll(() => {
@@ -21,11 +21,11 @@ describe('HTTPS Functions Entry Point', () => {
         const mockMedication = {medicationId: '123', name: 'Doliprane'}
 
         // Get the mocked instance of the UseCase
-        const useCaseSpy = DeleteMedication.prototype.execute as jest.Mock
+        const useCaseSpy = CreateMedication.prototype.execute as jest.Mock
         useCaseSpy.mockResolvedValue(undefined)
 
         // Wrap the function so we can call it
-        const wrapped = testEnv.wrap(functions.deleteMedication)
+        const wrapped = testEnv.wrap(functions.createMedication)
 
         // 2. Act
         const result = await wrapped({
@@ -39,14 +39,14 @@ describe('HTTPS Functions Entry Point', () => {
 
     it('should throw HttpsError when the use case fails', async () => {
         // 1. Arrange
-        const useCaseSpy = DeleteMedication.prototype.execute as jest.Mock
+        const useCaseSpy = CreateMedication.prototype.execute as jest.Mock
         useCaseSpy.mockRejectedValue(new Error('Domain Error'))
 
-        const wrapped = testEnv.wrap(functions.deleteMedication)
+        const wrapped = testEnv.wrap(functions.createMedication)
 
         // 2. Act & Assert
         await expect(wrapped({
             data: {medication: {}},
-        } as any)).rejects.toThrow('Could not delete medication')
+        } as any)).rejects.toThrow('Could not create medication')
     })
 })

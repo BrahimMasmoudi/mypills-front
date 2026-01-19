@@ -1,6 +1,6 @@
 import {MedicationRepository} from '../../../domain/repositories/medication-repository'
 import {Medication} from '../../../domain/entities/medication'
-import {IncrementMedicationUseCase} from "../../ports/input/increment-medication-use-case";
+import {IncrementMedicationUseCase} from "../../ports/input/medication/increment-medication-use-case";
 
 export class IncrementMedication implements IncrementMedicationUseCase {
     constructor(private medicationRepo: MedicationRepository) {

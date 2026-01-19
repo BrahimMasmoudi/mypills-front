@@ -1,8 +1,8 @@
 import {HttpsError, onCall} from "firebase-functions/v2/https";
-import {Medication} from "../../../types/medication";
-import {FirestoreMedicationRepositoryAdapter} from "../../adapters/persistence/firestore-medication-repository-adapter";
-import {$firebaseConnector} from "../../config/firebase";
-import {DecrementMedication} from "../../../application/usecases/decrement-medication/decrement-medication";
+import {Medication} from "../../../../types/medication";
+import {FirestoreMedicationRepositoryAdapter} from "../../../adapters/persistence/firestore-medication-repository-adapter";
+import {$firebaseConnector} from "../../../config/firebase";
+import {DecrementMedication} from "../../../../application/usecases/decrement-medication/decrement-medication";
 
 export const decrementMedication = onCall({region: 'europe-west3'}, async ({data}) => {
     const medicationRepo = new FirestoreMedicationRepositoryAdapter($firebaseConnector)

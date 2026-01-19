@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import vueI18n from '@intlify/unplugin-vue-i18n/vite'
 import {fileURLToPath} from "node:url";
 import path from "node:path";
 
@@ -114,14 +115,7 @@ export default defineNuxtConfig({
                 propsDestructure: true,
             },
         },
-        plugins: [
-            // 2. Use a dynamic require or the module-specific import inside the config
-            require('@intlify/unplugin-vue-i18n/vite').default({
-                include: [
-                    require('node:path').resolve(__dirname, './locales/**')
-                ]
-            })
-        ]
+        plugins: [vueI18n({defaultSFCLang: 'yaml'}),]
     },
     vuetify: {
         vuetifyOptions: {

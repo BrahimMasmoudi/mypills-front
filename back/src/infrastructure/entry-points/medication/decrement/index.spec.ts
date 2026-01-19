@@ -1,7 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
-import * as functions from '../https-functions'
-import {DecrementMedication} from "../../../application/usecases/decrement-medication/decrement-medication";
+import * as functions from '../../https-functions'
+import {DecrementMedication} from "../../../../application/usecases/decrement-medication/decrement-medication";
 
 const testEnv = firebaseFunctionsTest()
 
@@ -10,7 +10,7 @@ if (admin.apps.length === 0) {
 }
 
 // Mock the Use Case class
-jest.mock('../../../application/usecases/decrement-medication/decrement-medication')
+jest.mock('../../../../application/usecases/decrement-medication/decrement-medication')
 
 describe('decrementPills HTTPS Function', () => {
     afterAll(() => {

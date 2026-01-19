@@ -1,5 +1,5 @@
 import {MedicationRepository} from '../../../domain/repositories/medication-repository'
-import {CreateMedicationUseCase} from '../../ports/input/create-medication-use-case'
+import {CreateMedicationUseCase} from '../../ports/input/medication/create-medication-use-case'
 import {Medication} from '../../../domain/entities/medication'
 
 export class CreateMedication implements CreateMedicationUseCase {
