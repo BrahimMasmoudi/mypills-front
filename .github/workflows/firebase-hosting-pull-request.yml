@@ -7,29 +7,76 @@ permissions:
   pull-requests: write
 
 jobs:
-  build_and_preview:
-    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+  # JOB 1: Install Dependencies
+  install_dependencies:
     runs-on: ubuntu-latest
-    environment: staging
-
     steps:
       - uses: actions/checkout@v4
 
-      # Root dependencies (optional)
-      - name: Install root dependencies
-        run: if [ -f package.json ]; then yarn install --frozen-lockfile; fi
+      - name: Cache Front Node Modules
+        id: cache-front
+        uses: actions/cache@v4
+        with:
+          path: front/node_modules
+          key: ${{ runner.os }}-front-${{ hashFiles('front/yarn.lock') }}
 
-      # Frontend dependencies
-      - name: Install frontend dependencies
-        run: cd front && yarn install --frozen-lockfile
+      - name: Install Front Dependencies
+        if: steps.cache-front.outputs.cache-hit != 'true'
+        run: |
+          cd front
+          yarn install --frozen-lockfile --ignore-scripts
 
-      # Firebase Functions dependencies
-      - name: Install Firebase Functions dependencies
-        run: cd back && yarn install --frozen-lockfile
+      - name: Install Back Dependencies
+        run: |
+          cd back
+          yarn install --frozen-lockfile
 
-      # Build frontend
-      - name: Build frontend
-        run: cd front && yarn generate
+  # JOB 2: Build, Test and Deploy
+  build_and_deploy:
+    needs: install_dependencies
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      # Retrieve Front Cache
+      - name: Restore Front Cache
+        uses: actions/cache@v4
+        with:
+          path: front/node_modules
+          key: ${{ runner.os }}-front-${{ hashFiles('front/yarn.lock') }}
+
+      # 1. CREATE THE KEY
+      - name: Create SA Key
+        run: |
+          mkdir -p back
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > back/serviceAccountKey.json
+
+      # 2. TEST BACKEND (Requires local install since back isn't usually cached)
+      - name: Backend Tests
+        run: |
+          cd back
+          yarn install --frozen-lockfile
+          yarn test
+        env:
+          TZ: UTC
+          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
+
+      # 3. RUN MIGRATIONS
+      - name: Run Backend Migrations
+        run: |
+          cd back
+          yarn migrate:prod
+        env:
+          GCLOUD_PROJECT: my-pills-staging-460b5
+          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
+
+      # 4. GENERATE FRONTEND (Using cached node_modules)
+      - name: Generate Frontend
+        run: |
+          cd front
+          npx nuxi prepare
+          yarn generate
         env:
           NODE_ENV: production
           ENVIRONMENT: staging
@@ -41,26 +88,22 @@ jobs:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
           FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
-      # Build Firebase functions
-      - name: Build Firebase functions
-        run: cd back && yarn build
 
-      - name: Create SA Key
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > $HOME/gcloud.json
-
-      - name: Run Backend Migrations
+      # 5. BUILD BACKEND
+      - name: Build Backend
         run: |
-          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json
-          cd back && yarn migrate:prod
-        env:
-          GCLOUD_PROJECT: my-pills-staging-460b5
+          cd back
+          yarn build
 
-      - name: Cleanup SA Key
-        run: rm $HOME/gcloud.json
-
+      # 6. DEPLOY
       - name: '🚀 Deploy to Firebase'
         uses: w9jds/firebase-action@v13.16.0
         with:
           args: deploy --only functions,hosting --project my-pills-staging-460b5 --force
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+
+      # 7. CLEANUP
+      - name: Cleanup SA Key
+        if: always()
+        run: rm -f back/serviceAccountKey.json
