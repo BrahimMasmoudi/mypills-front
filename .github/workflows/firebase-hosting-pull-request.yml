@@ -15,23 +15,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Install all dependencies
-      - name: Install dependencies
-        run: |
-          if [ -f package.json ]; then yarn install --frozen-lockfile; fi
-          cd front && yarn install --frozen-lockfile
-          cd back && yarn install --frozen-lockfile
+      # 1. Install Firebase Functions dependencies
+      - name: Install Firebase Functions dependencies
+        run: cd back && yarn install --frozen-lockfile
 
-      # 2. CREATE THE KEY FIRST 🔑
+      # 2. CREATE THE KEY
       - name: Create SA Key
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > ${{ github.workspace }}/back/serviceAccountKey.json
+        run: |
+          # Use -p to ensure parent directories exist just in case
+          mkdir -p back 
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > back/serviceAccountKey.json
 
       # 3. 🧪 RUN TESTS
       - name: Run Backend Tests
-        run: cd back && yarn test
+        run: |
+          cd back
+          yarn test
         env:
           TZ: UTC
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/back/serviceAccountKey.json
+          # Using a relative path is safer if you are already in the 'back' folder
+          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
 
       # 4. Run Backend Migrations
       - name: Run Backend Migrations
