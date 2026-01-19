@@ -15,6 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+       # Root dependencies (optional)
+      - name: Install root dependencies
+        run: if [ -f package.json ]; then yarn install --frozen-lockfile; fi
+
       # 1. CREATE THE KEY FIRST (Used by Tests, Migrations, and Build)
       - name: Create SA Key
         run: |
