@@ -1,10 +1,10 @@
 import { initializeApp, getApp, deleteApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 import { credential } from 'firebase-admin'
-import {FirestoreCisLookupAdapter} from "../../infrastructure/adapters/persistence/firestore-cis-lookup-adapter";
-import {FirestoreConnector} from "../../infrastructure/adapters/connectors/firestore-connector";
-import {Cip13} from "../../types/cip13";
-import {Cis} from "../../types/cis";
+import { FirestoreCisLookupAdapter } from '../../infrastructure/adapters/persistence/firestore-cis-lookup-adapter'
+import { FirestoreConnector } from '../../infrastructure/adapters/connectors/firestore-connector'
+import { Cip13 } from '../../types/cip13'
+import { Cis } from '../../types/cis'
 
 describe('FirestoreCisLookupAdapter Integration Test', () => {
     let adapter: FirestoreCisLookupAdapter
@@ -12,7 +12,7 @@ describe('FirestoreCisLookupAdapter Integration Test', () => {
 
     beforeAll(() => {
         const app = initializeApp({
-            credential: credential.applicationDefault()
+            credential: credential.applicationDefault(),
         }, 'cis-lookup-test')
 
         firestore = getFirestore(app)
@@ -29,7 +29,7 @@ describe('FirestoreCisLookupAdapter Integration Test', () => {
         const testCip = Cip13.create('3400934913154')
         const testCisString = '61234567'
         await firestore.collection('cip_to_cis').doc(testCip.getValue()).set({
-            cis: testCisString
+            cis: testCisString,
         })
 
         // Act

@@ -1,11 +1,11 @@
-import {onCall, HttpsError, onRequest} from 'firebase-functions/v2/https'
-import {initializeApp} from 'firebase-admin/app'
-import {getFirestore, Timestamp} from 'firebase-admin/firestore'
-import {getMessaging} from 'firebase-admin/messaging'
-import {addDays, isBefore, isSameDay, parse, format} from 'date-fns'
-import {onDocumentCreated} from 'firebase-functions/v2/firestore'
-import {CloudTasksClient} from '@google-cloud/tasks'
-import {fromZonedTime} from 'date-fns-tz'
+import { onCall, HttpsError, onRequest } from 'firebase-functions/v2/https'
+import { initializeApp } from 'firebase-admin/app'
+import { getFirestore, Timestamp } from 'firebase-admin/firestore'
+import { getMessaging } from 'firebase-admin/messaging'
+import { addDays, isBefore, isSameDay, parse, format } from 'date-fns'
+import { onDocumentCreated } from 'firebase-functions/v2/firestore'
+import { CloudTasksClient } from '@google-cloud/tasks'
+import { fromZonedTime } from 'date-fns-tz'
 
 initializeApp()
 export * from './infrastructure/entry-points/https-functions'
@@ -43,20 +43,20 @@ export const scheduleReminderTask = onDocumentCreated({
                 quantity: data.quantity || '1',
             })).toString('base64'),
 
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
 
             oidcToken: {
                 serviceAccountEmail: serviceAccountEmail,
             },
         },
-        scheduleTime: {seconds: data.scheduledTime.seconds},
+        scheduleTime: { seconds: data.scheduledTime.seconds },
     }
 
-    await client.createTask({parent: queuePath, task})
+    await client.createTask({ parent: queuePath, task })
 })
 
-export const createSchedule = onCall({region: 'europe-west3'}, async (request) => {
-    const {medication, startDate, endDate, doses, timezone} = request.data
+export const createSchedule = onCall({ region: 'europe-west3' }, async (request) => {
+    const { medication, startDate, endDate, doses, timezone } = request.data
 
     const batch = firestore.batch()
     let currentDate = parse(startDate, 'yyyy-MM-dd', new Date())
@@ -85,11 +85,11 @@ export const createSchedule = onCall({region: 'europe-west3'}, async (request) =
     }
 
     await batch.commit()
-    return {success: true}
+    return { success: true }
 })
 
-export const sendFCMNotification = onRequest({region: 'europe-west3'}, async (req, res) => {
-    const {userId, medName, quantity} = req.body
+export const sendFCMNotification = onRequest({ region: 'europe-west3' }, async (req, res) => {
+    const { userId, medName, quantity } = req.body
 
     try {
         const userDoc = await firestore.collection('users').doc(userId).get()
@@ -116,7 +116,7 @@ export const sendFCMNotification = onRequest({region: 'europe-west3'}, async (re
     }
 })
 
-export const saveUserToken = onCall({region: 'europe-west3'}, async (request) => {
+export const saveUserToken = onCall({ region: 'europe-west3' }, async (request) => {
     if (!request.auth) {
         throw new HttpsError('unauthenticated', 'User must be logged in.')
     }
@@ -131,15 +131,15 @@ export const saveUserToken = onCall({region: 'europe-west3'}, async (request) =>
             fcmToken: fcmToken,
             lastUpdated: new Date().toISOString(),
             userId: uid, // Good for querying later
-        }, {merge: true})
+        }, { merge: true })
 
-        return {success: true}
+        return { success: true }
     } catch (error) {
         throw new HttpsError('internal', 'Failed to save token')
     }
 })
 
-export const searchTunisianMeds = onCall({region: 'europe-west3'}, async (request) => {
+export const searchTunisianMeds = onCall({ region: 'europe-west3' }, async (request) => {
     const searchText = request.data.query || ''
 
     if (!searchText || searchText.length < 2) {

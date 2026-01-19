@@ -1,8 +1,8 @@
-import {CisLookupRepository} from "../../../../domain/gateway/cis-lookup-repository";
-import {MedicamentApiGateway} from "../../../../domain/gateway/medicament-api-gateway";
-import {toMedicationDto} from "../../../../utils/mapper";
-import {GetMedicationDetailsUseCase} from "../../../ports/input/medication/get-medication-details-use-case";
-import {Cip13} from "../../../../types/cip13";
+import { CisLookupRepository } from '../../../../domain/gateway/cis-lookup-repository'
+import { MedicamentApiGateway } from '../../../../domain/gateway/medicament-api-gateway'
+import { toMedicationDto } from '../../../../utils/mapper'
+import { GetMedicationDetailsUseCase } from '../../../ports/input/medication/get-medication-details-use-case'
+import { Cip13 } from '../../../../types/cip13'
 
 export class GetMedicationDetails implements GetMedicationDetailsUseCase {
     constructor(

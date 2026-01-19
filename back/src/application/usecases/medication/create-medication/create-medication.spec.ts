@@ -1,6 +1,6 @@
-import {CreateMedication} from './create-medication'
-import {MedicationRepository} from '../../../../domain/repositories/medication-repository'
-import {Medication} from '../../../../domain/entities/medication'
+import { CreateMedication } from './create-medication'
+import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { Medication } from '../../../../domain/entities/medication'
 
 describe('IncrementMedication Use Case', () => {
     it('should execute the repository create method with the provided medication', async () => {

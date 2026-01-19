@@ -1,6 +1,6 @@
-import {UpdateMedication} from './update-medication'
-import {MedicationRepository} from '../../../../domain/repositories/medication-repository'
-import {Medication} from '../../../../domain/entities/medication'
+import { UpdateMedication } from './update-medication'
+import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { Medication } from '../../../../domain/entities/medication'
 
 describe('SetExpiredStatus Use Case', () => {
     it('should execute the repository update method with the provided medication', async () => {

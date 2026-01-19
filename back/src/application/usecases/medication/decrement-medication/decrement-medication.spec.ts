@@ -1,6 +1,6 @@
-import {DecrementMedication} from './decrement-medication'
-import {MedicationRepository} from '../../../../domain/repositories/medication-repository'
-import {Medication} from '../../../../domain/entities/medication'
+import { DecrementMedication } from './decrement-medication'
+import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { Medication } from '../../../../domain/entities/medication'
 
 describe('DecrementMedication Use Case', () => {
     it('should execute the repository decrement method with the provided medication', async () => {

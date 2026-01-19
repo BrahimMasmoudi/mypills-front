@@ -1,7 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
 import * as functions from '../../https-functions'
-import { UpdateMedication } from "../../../../application/usecases/medication/update-medication/update-medication"
+import { UpdateMedication } from '../../../../application/usecases/medication/update-medication/update-medication'
 
 const testEnv = firebaseFunctionsTest()
 
@@ -31,8 +31,8 @@ describe('HTTPS Functions Entry Point: updateMedication', () => {
         const result = await wrapped({
             data: {
                 medication: mockMedication,
-                key: 'name',         // Match the variable name in your function
-                value: mockNewName   // Match the variable name in your function
+                key: 'name', // Match the variable name in your function
+                value: mockNewName, // Match the variable name in your function
             },
         } as any)
 

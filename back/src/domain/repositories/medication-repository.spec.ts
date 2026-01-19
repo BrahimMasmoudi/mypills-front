@@ -1,9 +1,9 @@
 import { initializeApp, getApp, deleteApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
-import { FirestoreMedicationRepositoryAdapter } from "../../infrastructure/adapters/persistence/firestore-medication-repository-adapter";
-import { FirestoreConnector } from "../../infrastructure/adapters/connectors/firestore-connector";
-import { Medication } from "../entities/medication";
-import { credential } from "firebase-admin";
+import { FirestoreMedicationRepositoryAdapter } from '../../infrastructure/adapters/persistence/firestore-medication-repository-adapter'
+import { FirestoreConnector } from '../../infrastructure/adapters/connectors/firestore-connector'
+import { Medication } from '../entities/medication'
+import { credential } from 'firebase-admin'
 
 describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
     let adapter: FirestoreMedicationRepositoryAdapter
@@ -11,7 +11,7 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
 
     beforeAll(() => {
         const app = initializeApp({
-            credential: credential.applicationDefault()
+            credential: credential.applicationDefault(),
         }, 'test-app')
 
         firestore = getFirestore(app)
@@ -20,12 +20,12 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
     })
 
     afterAll(async () => {
-        const app = getApp('test-app');
-        await deleteApp(app);
-    });
+        const app = getApp('test-app')
+        await deleteApp(app)
+    })
 
     // Helper to generate unique IDs to avoid collision in shared staging DB
-    const createId = () => `test-med-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const createId = () => `test-med-${Date.now()}-${Math.floor(Math.random() * 1000)}`
 
     const createTestMedication = (id: string): Medication => ({
         medicationId: id,
@@ -36,12 +36,12 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
         expired: false,
         quantity: 5,
         image: '',
-        email: 'test@test.com'
-    });
+        email: 'test@test.com',
+    })
 
     describe('Single Document Operations', () => {
-        const uniqueId = createId();
-        const testMedication = createTestMedication(uniqueId);
+        const uniqueId = createId()
+        const testMedication = createTestMedication(uniqueId)
 
         it('should create and then retrieve the document from Firestore', async () => {
             await adapter.create(testMedication)
@@ -67,38 +67,38 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
     describe('Batch Operations', () => {
         it('should set expired status for multiple medications using a batch', async () => {
             // 1. Arrange: Create 3 medications that are NOT expired
-            const id1 = createId();
-            const id2 = createId();
-            const id3 = createId();
-            const ids = [id1, id2, id3];
+            const id1 = createId()
+            const id2 = createId()
+            const id3 = createId()
+            const ids = [id1, id2, id3]
 
             await Promise.all([
                 adapter.create(createTestMedication(id1)),
                 adapter.create(createTestMedication(id2)),
-                adapter.create(createTestMedication(id3))
-            ]);
+                adapter.create(createTestMedication(id3)),
+            ])
 
             // 2. Act: Run the batch update
-            const result = await adapter.setExpiredStatus(ids);
+            const result = await adapter.setExpiredStatus(ids)
 
             // 3. Assert
-            expect(result.updated).toBe(3);
+            expect(result.updated).toBe(3)
 
             // Verify each document in Firestore
             for (const id of ids) {
-                const doc = await firestore.collection('medications').doc(id).get();
-                expect(doc.data().expired).toBe(true);
+                const doc = await firestore.collection('medications').doc(id).get()
+                expect(doc.data().expired).toBe(true)
             }
 
             // Cleanup
-            const batch = firestore.batch();
-            ids.forEach(id => batch.delete(firestore.collection('medications').doc(id)));
-            await batch.commit();
+            const batch = firestore.batch()
+            ids.forEach((id) => batch.delete(firestore.collection('medications').doc(id)))
+            await batch.commit()
         })
 
         it('should return updated: 0 when empty list provided', async () => {
-            const result = await adapter.setExpiredStatus([]);
-            expect(result.updated).toBe(0);
+            const result = await adapter.setExpiredStatus([])
+            expect(result.updated).toBe(0)
         })
     })
 })

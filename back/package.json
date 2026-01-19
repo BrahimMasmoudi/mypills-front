@@ -2,6 +2,7 @@
   "name": "functions",
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
+    "linter" : "yarn lint --fix",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "test": "jest",

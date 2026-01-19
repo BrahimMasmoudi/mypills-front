@@ -29,29 +29,27 @@ module.exports = {
         'quotes': ['error', 'single'],
         'import/no-unresolved': 0,
         'indent': 'off',
-        // --- ADD THESE ---
-        'semi': 'off', // Turn off the standard semi rule
-        '@typescript-eslint/semi': ['error', 'never'], // Use the TS version and set to 'never'
-        // --- ADD THESE TO FIX YOUR ERRORS ---
-        'max-len': 'off',                 // Disable the 80-character limit
-        'require-jsdoc': 'off',            // Disable required JSDoc comments
-        'valid-jsdoc': 'off',              // Disable JSDoc validation
-        '@typescript-eslint/no-explicit-any': 'off', // Allow 'any' for now (especially in tests)
-        '@typescript-eslint/no-non-null-assertion': 'off', // Allow '!' (process.env.GCLOUD_PROJECT!)
-        'object-curly-spacing': ['error', 'always'], // Better readability
-        'no-multiple-empty-lines': ['error', {'max': 1, 'maxEOF': 0}],
+        'semi': 'off',
+        '@typescript-eslint/semi': ['error', 'never'],
+        'max-len': 'off',
+        'require-jsdoc': 'off',
+        'valid-jsdoc': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        'object-curly-spacing': ['error', 'always'],
+        'no-multiple-empty-lines': ['error', { 'max': 1, 'maxEOF': 0 }],
         '@typescript-eslint/member-delimiter-style': [
             'error',
             {
                 multiline: {
-                    delimiter: 'none', // No semicolon/comma at the end of lines in interfaces
+                    delimiter: 'none',
                     requireLast: false,
                 },
                 singleline: {
-                    delimiter: 'comma', // Use commas for single-line types
+                    delimiter: 'comma',
                     requireLast: false,
                 },
             },
         ],
     },
-};
+}

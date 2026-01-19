@@ -1,5 +1,5 @@
-import {GetMedicationDetailsResponse} from "../../../../types/medicationApi";
-import {Cip13} from "../../../../types/cip13";
+import { GetMedicationDetailsResponse } from '../../../../types/medicationApi'
+import { Cip13 } from '../../../../types/cip13'
 
 export interface GetMedicationDetailsUseCase {
     execute(

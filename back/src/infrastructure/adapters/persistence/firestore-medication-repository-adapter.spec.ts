@@ -9,8 +9,8 @@ jest.mock('firebase-admin/firestore', () => {
     return {
         ...original,
         FieldValue: {
-            increment: jest.fn((val: number) => ({ type: 'increment', value: val }))
-        }
+            increment: jest.fn((val: number) => ({ type: 'increment', value: val })),
+        },
     }
 })
 
@@ -36,28 +36,28 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
         mockDoc = jest.fn().mockReturnValue({
             set: mockSet,
             update: mockUpdate,
-            delete: mockDelete
+            delete: mockDelete,
         })
 
         // Setup Collection
         mockCollection = {
-            doc: mockDoc
+            doc: mockDoc,
         } as unknown as jest.Mocked<CollectionReference>
 
         // Setup Batch for setExpiredStatus
         mockBatch = {
             update: jest.fn().mockReturnThis(),
-            commit: jest.fn().mockResolvedValue(undefined)
+            commit: jest.fn().mockResolvedValue(undefined),
         }
 
         mockFirestore = {
-            batch: jest.fn().mockReturnValue(mockBatch)
+            batch: jest.fn().mockReturnValue(mockBatch),
         }
 
         // Setup Connector
         mockConnector = {
             collection: jest.fn().mockReturnValue(mockCollection),
-            firestore: mockFirestore // The adapter uses this for .batch()
+            firestore: mockFirestore, // The adapter uses this for .batch()
         } as unknown as any
 
         adapter = new FirestoreMedicationRepositoryAdapter(mockConnector)
@@ -73,7 +73,7 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
         quantity: 10,
         image: 'https://example.com/image.png',
         email: 'test@example.com',
-        ...overrides
+        ...overrides,
     })
 
     describe('create', () => {

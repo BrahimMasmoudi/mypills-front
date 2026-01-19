@@ -1,7 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
 import * as functions from '../../https-functions'
-import { SetExpiredStatus } from "../../../../application/usecases/medication/set-expired-status/set-expired-status";
+import { SetExpiredStatus } from '../../../../application/usecases/medication/set-expired-status/set-expired-status'
 
 const testEnv = firebaseFunctionsTest()
 
@@ -31,7 +31,7 @@ describe('HTTPS Functions Entry Point: setExpiredStatus', () => {
         // 2. Act
         const result = await wrapped({
             data: {
-                medicationIds: mockMedicationIds // Must match your Cloud Function 'data.medicationIds'
+                medicationIds: mockMedicationIds, // Must match your Cloud Function 'data.medicationIds'
             },
         } as any)
 

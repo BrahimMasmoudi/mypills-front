@@ -1,7 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
 import * as functions from '../../https-functions'
-import {GetMedicationDetails} from "../../../../application/usecases/medication/get-details/get-medication-details";
+import { GetMedicationDetails } from '../../../../application/usecases/medication/get-details/get-medication-details'
 
 const testEnv = firebaseFunctionsTest()
 
@@ -23,7 +23,7 @@ describe('HTTPS Functions Entry Point: getMedicationDetails', () => {
         const mockDetails = {
             name: 'Doliprane 1000mg',
             cis: '61234567',
-            details: {company: 'SANOFI'}
+            details: { company: 'SANOFI' },
         }
 
         // Setup the mock to return specific data
@@ -34,7 +34,7 @@ describe('HTTPS Functions Entry Point: getMedicationDetails', () => {
 
         // 2. Act
         const result = await wrapped({
-            data: {cip13: mockCip13}, // MUST match data.cip13 in your function
+            data: { cip13: mockCip13 }, // MUST match data.cip13 in your function
         } as any)
 
         // 3. Assert
@@ -52,7 +52,7 @@ describe('HTTPS Functions Entry Point: getMedicationDetails', () => {
         // 2. Act & Assert
         // The catch block in your function converts 'NOT_FOUND_IN_DB' to 'Medication not found in database'
         await expect(wrapped({
-            data: {cip13: 'wrong-cip'},
+            data: { cip13: 'wrong-cip' },
         } as any)).rejects.toThrow(/Medication not found in database/)
     })
 
@@ -65,7 +65,7 @@ describe('HTTPS Functions Entry Point: getMedicationDetails', () => {
 
         // 2. Act & Assert
         await expect(wrapped({
-            data: {cip13: '3400934913154'},
+            data: { cip13: '3400934913154' },
         } as any)).rejects.toThrow(/Search failed/)
     })
 })

@@ -1,6 +1,6 @@
-import {DeleteMedication} from './delete-medication'
-import {MedicationRepository} from '../../../../domain/repositories/medication-repository'
-import {Medication} from '../../../../domain/entities/medication'
+import { DeleteMedication } from './delete-medication'
+import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { Medication } from '../../../../domain/entities/medication'
 
 describe('DeleteMedication Use Case', () => {
     it('should execute the repository delete method with the provided medication', async () => {

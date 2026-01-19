@@ -1,16 +1,16 @@
-import {HttpsError, onCall} from "firebase-functions/v2/https";
-import {FirestoreMedicationRepositoryAdapter} from "../../../adapters/persistence/firestore-medication-repository-adapter";
-import {$firebaseConnector} from "../../../config/firebase";
-import {SetExpiredStatus} from "../../../../application/usecases/medication/set-expired-status/set-expired-status";
+import { HttpsError, onCall } from 'firebase-functions/v2/https'
+import { FirestoreMedicationRepositoryAdapter } from '../../../adapters/persistence/firestore-medication-repository-adapter'
+import { $firebaseConnector } from '../../../config/firebase'
+import { SetExpiredStatus } from '../../../../application/usecases/medication/set-expired-status/set-expired-status'
 
-export const setExpiredStatus = onCall({region: 'europe-west3'}, async ({data}) => {
+export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data }) => {
     const medicationRepo = new FirestoreMedicationRepositoryAdapter($firebaseConnector)
     const setMedicationExpiredStatusUseCase = new SetExpiredStatus(medicationRepo)
 
     const medicationIds = data.medicationIds as string[]
 
     if (!medicationIds || medicationIds.length === 0) {
-        return {updated: 0}
+        return { updated: 0 }
     }
 
     try {
