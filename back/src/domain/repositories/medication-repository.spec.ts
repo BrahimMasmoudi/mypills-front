@@ -1,6 +1,8 @@
 import { initializeApp, getApp, deleteApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
-import { FirestoreMedicationRepositoryAdapter } from '../../infrastructure/adapters/persistence/firestore-medication-repository-adapter'
+import {
+    FirestoreMedicationRepositoryAdapter,
+} from '../../infrastructure/adapters/persistence/firestore-medication-repository-adapter'
 import { FirestoreConnector } from '../../infrastructure/adapters/connectors/firestore-connector'
 import { Medication } from '../entities/medication'
 import { credential } from 'firebase-admin'
@@ -99,6 +101,68 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
         it('should return updated: 0 when empty list provided', async () => {
             const result = await adapter.setExpiredStatus([])
             expect(result.updated).toBe(0)
+        })
+    })
+
+    describe('fetchTunisianMedications (Integration)', () => {
+        const tunisianCollectionName = 'tunisian_meds'
+
+        beforeAll(async () => {
+            // Seed the database with known Tunisian medications
+            const batch = firestore.batch()
+
+            const medsToSeed = [
+                { id: 'tn-1', name: 'DOLIPRANE 500', cis: '6001', details: { form: 'Tab' } },
+                { id: 'tn-2', name: 'DOLIPRANE 1000', cis: '6002', details: { form: 'Cap' } },
+                { id: 'tn-3', name: 'ASPIRINE', cis: '7001', details: { form: 'Tab' } },
+            ]
+
+            medsToSeed.forEach((med) => {
+                const ref = firestore.collection(tunisianCollectionName).doc(med.id)
+                batch.set(ref, { name: med.name, cis: med.cis, details: med.details })
+            })
+
+            await batch.commit()
+        })
+
+        it('should return medications matching the prefix query', async () => {
+            // Act: Search for "DOLI"
+            const results = await adapter.fetchTunisianMedications('DOLI')
+
+            // Assert
+            expect(results.length).toBeGreaterThanOrEqual(2)
+
+            // Verify structure
+            const doli500 = results.find((m) => m.name === 'DOLIPRANE 500')
+            expect(doli500).toBeDefined()
+            expect(doli500?.id).toBe('tn-1')
+            expect(doli500?.details).toHaveProperty('form', 'Tab')
+        })
+
+        it('should respect the limit of 10 items', async () => {
+            // Act
+            const results = await adapter.fetchTunisianMedications('D')
+
+            // Assert
+            expect(results.length).toBeLessThanOrEqual(10)
+        })
+
+        it('should return an empty array if no names match the prefix', async () => {
+            // Act
+            const results = await adapter.fetchTunisianMedications('XYZ_NON_EXISTENT')
+
+            // Assert
+            expect(results).toEqual([])
+        })
+
+        afterAll(async () => {
+            // Cleanup seeded meds
+            const ids = ['tn-1', 'tn-2', 'tn-3']
+            const batch = firestore.batch()
+            ids.forEach((id) => {
+                batch.delete(firestore.collection(tunisianCollectionName).doc(id))
+            })
+            await batch.commit()
         })
     })
 })

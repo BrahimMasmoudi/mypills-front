@@ -13,10 +13,6 @@ export * from './infrastructure/config/firebase'
 const firestore = getFirestore()
 const client = new CloudTasksClient()
 
-const tunisianMedications = firestore.collection('tunisian_meds')
-
-// -- CIP13 to CIS Migration and Lookup --
-
 export const scheduleReminderTask = onDocumentCreated({
     document: 'reminders/{id}',
     region: 'europe-west3',
@@ -136,32 +132,6 @@ export const saveUserToken = onCall({ region: 'europe-west3' }, async (request) 
         return { success: true }
     } catch (error) {
         throw new HttpsError('internal', 'Failed to save token')
-    }
-})
-
-export const searchTunisianMeds = onCall({ region: 'europe-west3' }, async (request) => {
-    const searchText = request.data.query || ''
-
-    if (!searchText || searchText.length < 2) {
-        return []
-    }
-
-    const searchTerm = searchText.toUpperCase()
-
-    try {
-        const snapshot = await tunisianMedications
-            .where('name', '>=', searchTerm)
-            .where('name', '<=', searchTerm + '\uf8ff')
-            .limit(10)
-            .get()
-
-        return snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }))
-    } catch (error) {
-        console.error('Search error:', error)
-        throw new HttpsError('internal', 'Search failed')
     }
 })
 

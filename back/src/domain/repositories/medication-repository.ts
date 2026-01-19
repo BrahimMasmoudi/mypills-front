@@ -1,4 +1,5 @@
 import { Medication } from '../entities/medication'
+import { GetMedicationDetailsResponse } from '../../types/medicationApi'
 
 export interface MedicationRepository {
     create(medication: Medication): Promise<void>
@@ -15,5 +16,7 @@ export interface MedicationRepository {
         value: Medication[K]
     ): Promise<void>
 
-    setExpiredStatus(medicationIds: Medication['medicationId'][]): Promise<{updated: number}>
+    setExpiredStatus(medicationIds: Medication['medicationId'][]): Promise<{ updated: number }>
+
+    fetchTunisianMedications(query: string): Promise<(GetMedicationDetailsResponse & { id: string })[]>
 }

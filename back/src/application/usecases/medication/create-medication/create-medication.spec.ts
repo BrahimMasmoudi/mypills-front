@@ -13,6 +13,7 @@ describe('IncrementMedication Use Case', () => {
             delete: jest.fn().mockResolvedValue(undefined),
             update: jest.fn().mockResolvedValue(undefined),
             setExpiredStatus: jest.fn().mockResolvedValue(undefined),
+            fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new CreateMedication(mockRepo)
