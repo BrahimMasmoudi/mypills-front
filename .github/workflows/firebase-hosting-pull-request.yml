@@ -15,46 +15,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Install Firebase Functions dependencies
-      - name: Install Firebase Functions dependencies
-        run: cd back && yarn install --frozen-lockfile
-
-      # 2. CREATE THE KEY
+      # 1. CREATE THE KEY FIRST (Used by Tests, Migrations, and Build)
       - name: Create SA Key
         run: |
-          # Use -p to ensure parent directories exist just in case
-          mkdir -p back 
+          mkdir -p back
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > back/serviceAccountKey.json
 
-      # 3. 🧪 RUN TESTS
-      - name: Run Backend Tests
+      # 2. INSTALL & TEST BACKEND
+      - name: Backend Tests
         run: |
           cd back
+          yarn install --frozen-lockfile
           yarn test
         env:
           TZ: UTC
-          # Using a relative path is safer if you are already in the 'back' folder
           GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
 
-      # 4. Run Backend Migrations
+      # 3. RUN MIGRATIONS
       - name: Run Backend Migrations
-        run: cd back && yarn migrate:prod
+        run: |
+          cd back
+          yarn migrate:prod
         env:
           GCLOUD_PROJECT: my-pills-staging-460b5
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/back/serviceAccountKey.json
+          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
 
-      # 5. Build applications
-      - name: Build frontend and back
+      # 4. BUILD FRONTEND
+      - name: Build Frontend
         run: |
-        # Build Front
           cd front
-          yarn install --frozen-lockfile  # Double-check deps are here
-          yarn generate                  # This runs 'nuxt generate' via yarn context
-
-        # Build Back
-          cd ../back
           yarn install --frozen-lockfile
-          yarn build
+          yarn generate
         env:
           NODE_ENV: production
           ENVIRONMENT: staging
@@ -66,23 +57,14 @@ jobs:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
           FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
-      # Build Firebase functions
-      - name: Build Firebase functions
-        run: cd back && yarn build
 
-      - name: Create SA Key
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > $HOME/gcloud.json
-
-      - name: Run Backend Migrations
+      # 5. BUILD BACKEND (Functions)
+      - name: Build Backend
         run: |
-          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json
-          cd back && yarn migrate:prod
-        env:
-          GCLOUD_PROJECT: my-pills-staging-460b5
+          cd back
+          yarn build
 
-      - name: Cleanup SA Key
-        run: rm $HOME/gcloud.json
-
+      # 6. DEPLOY
       - name: '🚀 Deploy to Firebase'
         uses: w9jds/firebase-action@v13.16.0
         with:
@@ -90,7 +72,7 @@ jobs:
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
 
-      # 7. CLEANUP AT THE VERY END 🧹
+      # 7. CLEANUP
       - name: Cleanup SA Key
-        if: always() # Runs even if tests or deploy fail
-        run: rm ${{ github.workspace }}/back/serviceAccountKey.json
+        if: always()
+        run: rm -f back/serviceAccountKey.json
