@@ -7,12 +7,17 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
-    "target": "es2022",           // Node 20 supports es2022 features natively
-    "esModuleInterop": true,      // Essential for importing CJS/ESM mixed libraries
-    "skipLibCheck": true          // Recommended to avoid errors from node_modules types
+    "target": "es2022",
+    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "compileOnSave": true,
   "include": [
     "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "migrations",
+    "lib"
   ]
 }

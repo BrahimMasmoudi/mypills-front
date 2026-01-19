@@ -7,29 +7,89 @@ permissions:
   pull-requests: write
 
 jobs:
-  build_and_preview:
-    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+  # JOB 1: Install Dependencies
+  install:
     runs-on: ubuntu-latest
-    environment: staging
-
     steps:
       - uses: actions/checkout@v4
 
-      # Root dependencies (optional)
-      - name: Install root dependencies
-        run: if [ -f package.json ]; then yarn install --frozen-lockfile; fi
+      - name: Cache Node Modules
+        id: cache-modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            front/node_modules
+            back/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
 
-      # Frontend dependencies
-      - name: Install frontend dependencies
-        run: cd front && yarn install --frozen-lockfile
+      - name: Install All Dependencies
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: |
+          cd front && yarn install --frozen-lockfile --ignore-scripts
+          cd ../back && yarn install --frozen-lockfile
 
-      # Firebase Functions dependencies
-      - name: Install Firebase Functions dependencies
-        run: cd back && yarn install --frozen-lockfile
+  # JOB 2: Run Backend Tests
+  test:
+    needs: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      # Build frontend
-      - name: Build frontend
-        run: cd front && yarn generate
+      - name: Restore Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            front/node_modules
+            back/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
+
+      - name: Create SA Key for Integration Tests
+        run: |
+          mkdir -p back
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > back/serviceAccountKey.json
+
+      - name: Run Backend Tests
+        run: cd back && yarn test
+        env:
+          TZ: UTC
+          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
+
+      - name: Cleanup SA Key
+        if: always()
+        run: rm -f back/serviceAccountKey.json
+
+  # JOB 3: Build & Deploy (Only runs if 'test' passes)
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            front/node_modules
+            back/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
+
+      - name: Create SA Key for Migrations & Deploy
+        run: |
+          mkdir -p back
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > back/serviceAccountKey.json
+
+      - name: Run Backend Migrations
+        run: cd back && yarn migrate:prod
+        env:
+          GCLOUD_PROJECT: my-pills-staging-460b5
+          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
+
+      - name: Generate Frontend
+        run: |
+          cd front
+          npx nuxi prepare
+          yarn generate
         env:
           NODE_ENV: production
           ENVIRONMENT: staging
@@ -41,22 +101,9 @@ jobs:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
           FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
-      # Build Firebase functions
-      - name: Build Firebase functions
+
+      - name: Build Backend (Functions)
         run: cd back && yarn build
-
-      - name: Create SA Key
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > $HOME/gcloud.json
-
-      - name: Run Backend Migrations
-        run: |
-          export GOOGLE_APPLICATION_CREDENTIALS=$HOME/gcloud.json
-          cd back && yarn migrate:prod
-        env:
-          GCLOUD_PROJECT: my-pills-staging-460b5
-
-      - name: Cleanup SA Key
-        run: rm $HOME/gcloud.json
 
       - name: '🚀 Deploy to Firebase'
         uses: w9jds/firebase-action@v13.16.0
@@ -64,3 +111,7 @@ jobs:
           args: deploy --only functions,hosting --project my-pills-staging-460b5 --force
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+
+      - name: Cleanup SA Key
+        if: always()
+        run: rm -f back/serviceAccountKey.json

@@ -1,14 +1,14 @@
-import {MedicationDetailDto} from "./medicationDto";
+import { MedicationDetailDto } from './medicationDto'
 
 export type Medication = {
     medicationId: string
     uid: string
-    bareCode: string,
-    name: string,
+    bareCode: string
+    name: string
     expiryDate: Date
-    expired: boolean,
+    expired: boolean
     quantity: number
-    image: string,
-    email: string,
+    image: string
+    email: string
     details? : MedicationDetailDto
 }

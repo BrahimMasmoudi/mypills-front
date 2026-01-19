@@ -29,8 +29,6 @@ import {getMessaging, onBackgroundMessage} from 'firebase/messaging/sw';
 // Retrieve the config injected via vite.define
 fetch('/__/firebase/init.json').then(res => res.json())
     .then((firebaseConfig) => {
-        console.log('firebaseConfig', firebaseConfig)
-// Initialize Firebase (Modular style)
         const app = initializeApp(firebaseConfig);
         const messaging = getMessaging(app);
 

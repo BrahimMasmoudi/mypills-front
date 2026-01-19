@@ -5,7 +5,6 @@ import {useQueueToast} from "~/composables/useQueueToast";
 export const useNotifications = () => {
     const {$functions, $config, $messaging, $i18n} = useNuxtApp()
     const {addToast} = useQueueToast()
-    const app = useFirebaseApp()
     const registerNotificationToken = async () => {
         try {
 
@@ -17,7 +16,6 @@ export const useNotifications = () => {
                 vapidKey: $config.public.firebase.cloudMessaging.vapidKey,
                 serviceWorkerRegistration: registration,
             })
-            console.log('currentToken', currentToken)
             if (currentToken) {
                 const saveToken = httpsCallable($functions, 'saveUserToken')
                 await saveToken({fcmToken: currentToken})

@@ -1,0 +1,5 @@
+# .eslintignore
+lib/
+migrations/
+jest.config.ts
+*.config.ts
