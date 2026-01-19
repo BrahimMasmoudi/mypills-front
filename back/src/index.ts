@@ -1,8 +1,6 @@
 import {onCall, HttpsError, onRequest} from 'firebase-functions/v2/https'
 import {initializeApp} from 'firebase-admin/app'
 import {getFirestore, Timestamp} from 'firebase-admin/firestore'
-import {toMedicationDto} from './utils/mapper'
-import {GetMedicationDetailsResponse} from './types/medicationApi'
 import {getMessaging} from 'firebase-admin/messaging'
 import {addDays, isBefore, isSameDay, parse, format} from 'date-fns'
 import {onDocumentCreated} from 'firebase-functions/v2/firestore'
@@ -18,63 +16,6 @@ const client = new CloudTasksClient()
 const tunisianMedications = firestore.collection('tunisian_meds')
 
 // -- CIP13 to CIS Migration and Lookup --
-
-export const getMedicationDetails = onCall({region: 'europe-west3'}, async ({data}): Promise<GetMedicationDetailsResponse> => {
-    const cip13 = data.cip13 as string
-    if (!cip13) {
-        throw new HttpsError('invalid-argument', 'CIP13 is required')
-    }
-
-    // Bypass SSL validation in emulator
-    if (process.env.FUNCTIONS_EMULATOR === 'true') {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-    }
-
-    try {
-        // 1. Lookup CIS from Firestore
-        const docSnap = await firestore.collection('cip_to_cis').doc(cip13).get()
-
-        if (!docSnap.exists) {
-            console.warn(`CIP13 ${cip13} not found in DB`)
-            throw new HttpsError('not-found', 'Medication not found in database')
-        }
-
-        const cis = docSnap.data()?.cis
-        if (!cis) {
-            throw new HttpsError('not-found', 'CIS code not found for this medication')
-        }
-
-        // 2. Fetch details from Giygas API
-        // Note: fetch is available globally in Node 18+ (Firebase Functions Node 20 environment)
-        // If not, we might need axios or node-fetch, but let's try native fetch first.
-        const response = await fetch(`https://medicaments-api.giygas.dev/medicament/id/${cis}`)
-
-        if (!response.ok) {
-            console.warn(`Giygas API failed for CIS ${cis}: ${response.statusText}`)
-            throw new HttpsError('not-found', 'Medication details not available from external API')
-        }
-
-        const apiDetails = await response.json()
-
-        const mappedDetails = toMedicationDto(apiDetails)
-
-        // Return only the name for now as per requirements, or the whole object
-        const name = apiDetails.elementPharmaceutique || apiDetails.denomination || ''
-
-        return {
-            name,
-            cis,
-            details: mappedDetails,
-        }
-    } catch (e: any) {
-        // Re-throw HttpsError as-is
-        if (e instanceof HttpsError) {
-            throw e
-        }
-        console.error('getMedicationDetails error:', e)
-        throw new HttpsError('internal', 'Failed to retrieve medication details')
-    }
-})
 
 export const scheduleReminderTask = onDocumentCreated({
     document: 'reminders/{id}',
