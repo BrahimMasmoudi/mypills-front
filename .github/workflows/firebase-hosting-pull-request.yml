@@ -15,27 +15,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Root dependencies (optional)
-      - name: Install root dependencies
-        run: if [ -f package.json ]; then yarn install --frozen-lockfile; fi
+      # 1. Install all dependencies
+      - name: Install dependencies
+        run: |
+          if [ -f package.json ]; then yarn install --frozen-lockfile; fi
+          cd front && yarn install --frozen-lockfile
+          cd back && yarn install --frozen-lockfile
 
-      # Frontend dependencies
-      - name: Install frontend dependencies
-        run: cd front && yarn install --frozen-lockfile
+      # 2. CREATE THE KEY FIRST 🔑
+      - name: Create SA Key
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > ${{ github.workspace }}/back/serviceAccountKey.json
 
-      # Firebase Functions dependencies
-      - name: Install Firebase Functions dependencies
-        run: cd back && yarn install --frozen-lockfile
-
-      # 🧪 RUN TESTS BEFORE BUILD
+      # 3. 🧪 RUN TESTS
       - name: Run Backend Tests
         run: cd back && yarn test
         env:
           TZ: UTC
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/back/serviceAccountKey.json
 
-      # Build frontend
-      - name: Build frontend
-        run: cd front && yarn generate
+      # 4. Run Backend Migrations
+      - name: Run Backend Migrations
+        run: cd back && yarn migrate:prod
+        env:
+          GCLOUD_PROJECT: my-pills-staging-460b5
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/back/serviceAccountKey.json
+
+      # 5. Build applications
+      - name: Build frontend and back
+        run: |
+          cd front && yarn generate
+          cd ../back && yarn build
         env:
           NODE_ENV: production
           ENVIRONMENT: staging
@@ -70,3 +79,8 @@ jobs:
           args: deploy --only functions,hosting --project my-pills-staging-460b5 --force
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+
+      # 7. CLEANUP AT THE VERY END 🧹
+      - name: Cleanup SA Key
+        if: always() # Runs even if tests or deploy fail
+        run: rm ${{ github.workspace }}/back/serviceAccountKey.json
