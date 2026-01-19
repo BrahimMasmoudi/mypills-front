@@ -46,8 +46,15 @@ jobs:
       # 5. Build applications
       - name: Build frontend and back
         run: |
-          cd front && yarn generate
-          cd ../back && yarn build
+        # Build Front
+          cd front
+          yarn install --frozen-lockfile  # Double-check deps are here
+          yarn generate                  # This runs 'nuxt generate' via yarn context
+
+        # Build Back
+          cd ../back
+          yarn install --frozen-lockfile
+          yarn build
         env:
           NODE_ENV: production
           ENVIRONMENT: staging
