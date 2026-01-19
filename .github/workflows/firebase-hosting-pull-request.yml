@@ -42,7 +42,16 @@ jobs:
 
       # 4. BUILD FRONTEND
       - name: Build Frontend
-        run: cd front && yarn install --frozen-lockfile && yarn generate
+        run: |
+          cd front
+          # --ignore-scripts stops 'nuxt prepare' from running too early
+          yarn install --frozen-lockfile --ignore-scripts 
+          
+          # Now manually run prepare once everything is installed
+          npx nuxi prepare
+          
+          # Finally, generate
+          yarn generate
         env:
           NODE_ENV: production
           ENVIRONMENT: staging
