@@ -41,4 +41,34 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
             [key]: value
         })
     }
+
+    // infrastructure/adapters/persistence/firestore-medication-repository-adapter.ts
+    async setExpiredStatus(medicationIds: Medication['medicationId'][]): Promise<{updated: number}> {
+        try {
+            if (!medicationIds || medicationIds.length === 0) {
+                return { updated: 0 };
+            }
+
+            const batchSize = 500;
+            let totalUpdated = 0;
+
+            for (let i = 0; i < medicationIds.length; i += batchSize) {
+                // CRITICAL: Access via this.connector.firestore
+                const batch = this.connector.firestore.batch();
+                const batchIds = medicationIds.slice(i, i + batchSize);
+
+                for (const id of batchIds) {
+                    const docRef = this.collection.doc(id);
+                    batch.update(docRef, { expired: true });
+                }
+
+                await batch.commit();
+                totalUpdated += batchIds.length;
+            }
+            return { updated: totalUpdated };
+        } catch (error) {
+            console.error('Error updating expired status:', error);
+            throw error;
+        }
+    }
 }

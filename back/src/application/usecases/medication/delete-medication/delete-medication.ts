@@ -1,5 +1,5 @@
-import {MedicationRepository} from '../../../domain/repositories/medication-repository'
-import {Medication} from '../../../domain/entities/medication'
+import {MedicationRepository} from '../../../../domain/repositories/medication-repository'
+import {Medication} from '../../../../domain/entities/medication'
 
 export class DeleteMedication implements DeleteMedication {
     constructor(private medicationRepo: MedicationRepository) {

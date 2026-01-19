@@ -1,9 +1,9 @@
-import {UpdateMedication} from './update-medication'
-import {MedicationRepository} from '../../../domain/repositories/medication-repository'
-import {Medication} from '../../../domain/entities/medication'
+import {DecrementMedication} from './decrement-medication'
+import {MedicationRepository} from '../../../../domain/repositories/medication-repository'
+import {Medication} from '../../../../domain/entities/medication'
 
-describe('UpdateMedication Use Case', () => {
-    it('should execute the repository update method with the provided medication', async () => {
+describe('DecrementMedication Use Case', () => {
+    it('should execute the repository decrement method with the provided medication', async () => {
         // 1. Arrange: Create a "Mock" Repository
         // We don't need Firestore here, just a fake object that follows the interface
         const mockRepo: jest.Mocked<MedicationRepository> = {
@@ -12,9 +12,10 @@ describe('UpdateMedication Use Case', () => {
             decrement: jest.fn().mockResolvedValue(undefined),
             delete: jest.fn().mockResolvedValue(undefined),
             update: jest.fn().mockResolvedValue(undefined),
+            setExpiredStatus: jest.fn().mockResolvedValue(undefined),
         }
 
-        const useCase = new UpdateMedication(mockRepo)
+        const useCase = new DecrementMedication(mockRepo)
         const medication: Medication = {
             medicationId: 'med-unique-123',
             uid: 'user-auth-001',
@@ -53,10 +54,10 @@ describe('UpdateMedication Use Case', () => {
         }
 
         // 2. Act
-        await useCase.execute(medication, 'name', 'test')
+        await useCase.execute(medication)
 
         // 3. Assert
-        expect(mockRepo.update).toHaveBeenCalledWith(medication, 'name', 'test')
-        expect(mockRepo.update).toHaveBeenCalledTimes(1)
+        expect(mockRepo.decrement).toHaveBeenCalledWith(medication)
+        expect(mockRepo.decrement).toHaveBeenCalledTimes(1)
     })
 })

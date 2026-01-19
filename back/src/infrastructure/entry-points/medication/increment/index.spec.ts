@@ -1,6 +1,6 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
-import {IncrementMedication} from '../../../../application/usecases/increment-medication/increment-medication'
+import {IncrementMedication} from '../../../../application/usecases/medication/increment-medication/increment-medication'
 import * as functions from '../../https-functions'
 
 const testEnv = firebaseFunctionsTest()
@@ -10,7 +10,7 @@ if (admin.apps.length === 0) {
 }
 
 // Mock the Use Case class
-jest.mock('../../../../application/usecases/increment-medication/increment-medication')
+jest.mock('../../../../application/usecases/medication/increment-medication/increment-medication')
 
 describe('incrementPills HTTPS Function', () => {
     afterAll(() => {

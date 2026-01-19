@@ -1,6 +1,6 @@
 import {DeleteMedication} from './delete-medication'
-import {MedicationRepository} from '../../../domain/repositories/medication-repository'
-import {Medication} from '../../../domain/entities/medication'
+import {MedicationRepository} from '../../../../domain/repositories/medication-repository'
+import {Medication} from '../../../../domain/entities/medication'
 
 describe('DeleteMedication Use Case', () => {
     it('should execute the repository delete method with the provided medication', async () => {
@@ -12,6 +12,7 @@ describe('DeleteMedication Use Case', () => {
             decrement: jest.fn().mockResolvedValue(undefined),
             delete: jest.fn().mockResolvedValue(undefined),
             update: jest.fn().mockResolvedValue(undefined),
+            setExpiredStatus: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new DeleteMedication(mockRepo)

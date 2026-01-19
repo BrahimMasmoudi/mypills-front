@@ -1,6 +1,6 @@
 import {HttpsError, onCall} from "firebase-functions/v2/https";
 import {FirestoreMedicationRepositoryAdapter} from "../../../adapters/persistence/firestore-medication-repository-adapter";
-import {CreateMedication} from "../../../../application/usecases/create-medication/create-medication";
+import {CreateMedication} from "../../../../application/usecases/medication/create-medication/create-medication";
 import {Medication} from "../../../../domain/entities/medication";
 import {$firebaseConnector} from "../../../config/firebase";
 

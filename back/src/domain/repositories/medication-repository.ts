@@ -14,4 +14,6 @@ export interface MedicationRepository {
         key: K,
         value: Medication[K]
     ): Promise<void>
+
+    setExpiredStatus(medicationIds: Medication['medicationId'][]): Promise<{updated: number}>
 }
