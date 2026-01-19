@@ -44,7 +44,7 @@ jobs:
       - name: Build Frontend
         run: |
           cd front
-          yarn install --frozen-lockfile
+          yarn install --frozen-lockfile --check-files
           yarn generate
         env:
           NODE_ENV: production
