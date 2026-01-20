@@ -1,7 +1,7 @@
-import {Reminder} from '../../../domain/entities/reminder'
-import {FirestoreConnector} from '../connectors/firestore-connector'
-import {CollectionReference, Timestamp} from 'firebase-admin/firestore'
-import {ReminderRepository} from '../../../domain/gateway/reminder/reminder-repository'
+import { Reminder } from '../../../domain/entities/reminder'
+import { FirestoreConnector } from '../connectors/firestore-connector'
+import { CollectionReference, Timestamp } from 'firebase-admin/firestore'
+import { ReminderRepository } from '../../../domain/gateway/reminder/reminder-repository'
 
 export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
     private readonly collection: CollectionReference
@@ -11,7 +11,7 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
     }
 
     nextId(): string {
-        return this.collection.doc().id;
+        return this.collection.doc().id
     }
 
     async saveBatch(reminders: Reminder[]): Promise<void> {
