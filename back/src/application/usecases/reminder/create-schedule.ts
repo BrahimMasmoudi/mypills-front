@@ -1,7 +1,6 @@
 import { ScheduleRequestDto, Reminder } from '../../../domain/entities/reminder'
 import { parse, isBefore, isSameDay, addDays, format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
-import { v4 as uuidv4 } from 'uuid'
 import { ReminderRepository } from '../../../domain/gateway/reminder/reminder-repository'
 
 export class CreateSchedule {
@@ -21,7 +20,7 @@ export class CreateSchedule {
                 const scheduledTime = fromZonedTime(dateTimeString, request.timezone)
 
                 reminders.push({
-                    reminderId: uuidv4(),
+                    reminderId: this.reminderRepo.nextId(),
                     userId,
                     medName: request.medication.name,
                     quantity: dose.quantity,

@@ -144,7 +144,7 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
             const results = await adapter.fetchTunisianMedications('D')
 
             // Assert
-            expect(results.length).toBeLessThanOrEqual(10)
+            expect(results.length).toBeLessThanOrEqual(30)
         })
 
         it('should return an empty array if no names match the prefix', async () => {

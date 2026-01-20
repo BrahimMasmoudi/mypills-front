@@ -1,13 +1,17 @@
-import { Reminder } from '../../../domain/entities/reminder'
-import { FirestoreConnector } from '../connectors/firestore-connector'
-import { CollectionReference, Timestamp } from 'firebase-admin/firestore'
-import { ReminderRepository } from '../../../domain/gateway/reminder/reminder-repository'
+import {Reminder} from '../../../domain/entities/reminder'
+import {FirestoreConnector} from '../connectors/firestore-connector'
+import {CollectionReference, Timestamp} from 'firebase-admin/firestore'
+import {ReminderRepository} from '../../../domain/gateway/reminder/reminder-repository'
 
 export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
     private readonly collection: CollectionReference
 
     constructor(private readonly connector: FirestoreConnector) {
         this.collection = this.connector.collection('reminders')
+    }
+
+    nextId(): string {
+        return this.collection.doc().id;
     }
 
     async saveBatch(reminders: Reminder[]): Promise<void> {
@@ -45,13 +49,11 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
         const data = doc.data()
         if (!data) return null
 
-        // Map Firestore Document -> Domain Entity
         return {
             reminderId: doc.id,
             userId: data.userId,
             medName: data.medName,
             quantity: data.quantity,
-            // Convert Firestore Timestamp back to JS Date
             scheduledTime: (data.scheduledTime as Timestamp).toDate(),
             status: data.status,
         }
