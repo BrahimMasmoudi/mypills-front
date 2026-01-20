@@ -1,6 +1,6 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
-import {IncrementMedication} from '../../../../application/usecases/increment-medication/increment-medication'
+import { IncrementMedication } from '../../../../application/usecases/medication/increment-medication/increment-medication'
 import * as functions from '../../https-functions'
 
 const testEnv = firebaseFunctionsTest()
@@ -10,7 +10,7 @@ if (admin.apps.length === 0) {
 }
 
 // Mock the Use Case class
-jest.mock('../../../../application/usecases/increment-medication/increment-medication')
+jest.mock('../../../../application/usecases/medication/increment-medication/increment-medication')
 
 describe('incrementPills HTTPS Function', () => {
     afterAll(() => {
@@ -19,7 +19,7 @@ describe('incrementPills HTTPS Function', () => {
 
     it('should call the increment use case and return success', async () => {
         // 1. Arrange
-        const mockMedication = {medicationId: 'med-123', name: 'Doliprane'}
+        const mockMedication = { medicationId: 'med-123', name: 'Doliprane' }
 
         // Get the mocked instance of the UseCase execute method
         const useCaseSpy = IncrementMedication.prototype.execute as jest.Mock
@@ -30,12 +30,12 @@ describe('incrementPills HTTPS Function', () => {
 
         // 2. Act
         const result = await wrapped({
-            data: {medication: mockMedication}
+            data: { medication: mockMedication },
         } as any)
 
         // 3. Assert
         expect(useCaseSpy).toHaveBeenCalledWith(mockMedication)
-        expect(result).toEqual({success: true})
+        expect(result).toEqual({ success: true })
     })
 
     it('should throw HttpsError when the increment use case fails', async () => {
@@ -48,7 +48,7 @@ describe('incrementPills HTTPS Function', () => {
         // 2. Act & Assert
         // The catch block in your function maps any error to 'Could not increment medication'
         await expect(wrapped({
-            data: {medication: {medicationId: 'error-id'}}
+            data: { medication: { medicationId: 'error-id' } },
         } as any)).rejects.toThrow('Could not increment medication')
     })
 })

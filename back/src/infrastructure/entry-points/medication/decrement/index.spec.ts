@@ -1,7 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
 import * as functions from '../../https-functions'
-import {DecrementMedication} from "../../../../application/usecases/decrement-medication/decrement-medication";
+import { DecrementMedication } from '../../../../application/usecases/medication/decrement-medication/decrement-medication'
 
 const testEnv = firebaseFunctionsTest()
 
@@ -10,7 +10,7 @@ if (admin.apps.length === 0) {
 }
 
 // Mock the Use Case class
-jest.mock('../../../../application/usecases/decrement-medication/decrement-medication')
+jest.mock('../../../../application/usecases/medication/decrement-medication/decrement-medication')
 
 describe('decrementPills HTTPS Function', () => {
     afterAll(() => {
@@ -19,7 +19,7 @@ describe('decrementPills HTTPS Function', () => {
 
     it('should call the increment use case and return success', async () => {
         // 1. Arrange
-        const mockMedication = {medicationId: 'med-123', name: 'Doliprane'}
+        const mockMedication = { medicationId: 'med-123', name: 'Doliprane' }
 
         // Get the mocked instance of the UseCase execute method
         const useCaseSpy = DecrementMedication.prototype.execute as jest.Mock
@@ -30,12 +30,12 @@ describe('decrementPills HTTPS Function', () => {
 
         // 2. Act
         const result = await wrapped({
-            data: {medication: mockMedication}
+            data: { medication: mockMedication },
         } as any)
 
         // 3. Assert
         expect(useCaseSpy).toHaveBeenCalledWith(mockMedication)
-        expect(result).toEqual({success: true})
+        expect(result).toEqual({ success: true })
     })
 
     it('should throw HttpsError when the decrement use case fails', async () => {
@@ -48,7 +48,7 @@ describe('decrementPills HTTPS Function', () => {
         // 2. Act & Assert
         // The catch block in your function maps any error to 'Could not increment medication'
         await expect(wrapped({
-            data: {medication: {medicationId: 'error-id'}}
+            data: { medication: { medicationId: 'error-id' } },
         } as any)).rejects.toThrow('Could not decrement medication')
     })
 })

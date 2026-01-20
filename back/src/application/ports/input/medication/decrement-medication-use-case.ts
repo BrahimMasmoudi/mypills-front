@@ -1,4 +1,4 @@
-import {Medication} from '../../../../domain/entities/medication'
+import { Medication } from '../../../../domain/entities/medication'
 
 export interface DecrementMedicationUseCase {
     execute(medication: Medication): Promise<void>

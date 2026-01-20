@@ -26,8 +26,8 @@
             :model-value="modelValue"
             format="24hr"
             full-width
-            hide-title
             color="primary"
+            :title="t('reminderDialog.time-picker-title')"
             @update:model-value="$emit('update:modelValue', $event)"
             @update:minute="isOpen = false"
         />
@@ -37,7 +37,10 @@
 </template>
 
 <script setup>
+import {useI18n} from "vue-i18n";
+
 const modelValue = defineModel()
+const {t} = useI18n()
 
 const isOpen = ref(false)
 defineOptions({ inheritAttrs: false })

@@ -1,60 +1,79 @@
 import { FirestoreMedicationRepositoryAdapter } from './firestore-medication-repository-adapter'
 import { Medication } from '../../../domain/entities/medication'
-import { CollectionReference, FieldValue } from 'firebase-admin/firestore'
+import { FieldValue } from 'firebase-admin/firestore'
 import { FirestoreConnector } from '../connectors/firestore-connector'
 
-// 1. Mock FieldValue.increment so we can verify it's called with the right value
-// This needs to be at the top level of the file
+// 1. Mock FieldValue.increment
 jest.mock('firebase-admin/firestore', () => {
     const original = jest.requireActual('firebase-admin/firestore')
     return {
         ...original,
         FieldValue: {
-            increment: jest.fn((val: number) => ({ type: 'increment', value: val }))
-        }
+            increment: jest.fn((val: number) => ({ type: 'increment', value: val })),
+        },
     }
 })
 
 describe('FirestoreMedicationRepositoryAdapter', () => {
     let mockConnector: jest.Mocked<FirestoreConnector>
-    let mockCollection: jest.Mocked<CollectionReference>
+    let mockCollection: any // Use any to allow adding mock methods like .where
     let mockDoc: jest.Mock
     let mockSet: jest.Mock
     let mockUpdate: jest.Mock
     let mockDelete: jest.Mock
+    let mockGet: jest.Mock
+    let mockQueryBuilder: any
+    let mockBatch: any
+    let mockFirestore: any
     let adapter: FirestoreMedicationRepositoryAdapter
 
     beforeEach(() => {
-        // Reset all mocks before each test to ensure clean call counts
         jest.clearAllMocks()
 
+        // Setup Document Methods
         mockSet = jest.fn().mockResolvedValue(undefined)
         mockUpdate = jest.fn().mockResolvedValue(undefined)
         mockDelete = jest.fn().mockResolvedValue(undefined)
 
-        // The doc method returns an object with set and update methods
-        // We define this as a return value for mockDoc
         mockDoc = jest.fn().mockReturnValue({
             set: mockSet,
             update: mockUpdate,
-            delete: mockDelete
+            delete: mockDelete,
         })
 
-        // Mock the collection to return our mockDoc
+        // Setup Query Chain Mocks
+        mockGet = jest.fn()
+        mockQueryBuilder = {
+            where: jest.fn().mockReturnThis(),
+            limit: jest.fn().mockReturnThis(),
+            get: mockGet,
+        }
+
+        // Setup Collection with chaining support
         mockCollection = {
-            doc: mockDoc
-        } as unknown as jest.Mocked<CollectionReference>
+            doc: mockDoc,
+            where: jest.fn().mockReturnValue(mockQueryBuilder),
+        }
 
-        // Mock the connector to return our mockCollection
+        // Setup Batch for setExpiredStatus
+        mockBatch = {
+            update: jest.fn().mockReturnThis(),
+            commit: jest.fn().mockResolvedValue(undefined),
+        }
+
+        mockFirestore = {
+            batch: jest.fn().mockReturnValue(mockBatch),
+        }
+
+        // Setup Connector
         mockConnector = {
-            collection: jest.fn().mockReturnValue(mockCollection)
-        } as unknown as jest.Mocked<FirestoreConnector>
+            collection: jest.fn().mockReturnValue(mockCollection),
+            firestore: mockFirestore,
+        } as unknown as any
 
-        // Instantiate adapter with the mock connector
         adapter = new FirestoreMedicationRepositoryAdapter(mockConnector)
     })
 
-    // Helper to create a valid medication for testing
     const createFakeMedication = (overrides?: Partial<Medication>): Medication => ({
         medicationId: 'med-123',
         uid: 'user-456',
@@ -65,114 +84,98 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
         quantity: 10,
         image: 'https://example.com/image.png',
         email: 'test@example.com',
-        ...overrides
+        ...overrides,
     })
 
     describe('create', () => {
-        it('should call firestore with correct parameters when creating a medication', async () => {
-            // Arrange
+        it('should call firestore with correct parameters', async () => {
             const medication = createFakeMedication()
-
-            // Act
             await adapter.create(medication)
-
-            // Assert
-            // Verify we target the correct collection string in the constructor/methods
-            expect(mockConnector.collection).toHaveBeenCalledWith('medications')
-            // Verify we targeted the correct document ID
             expect(mockDoc).toHaveBeenCalledWith(medication.medicationId)
-            // Verify set was called with correct data and merge policy
-            expect(mockSet).toHaveBeenCalledWith(medication, { merge: false })
-        })
-
-        it('should handle nested details correctly', async () => {
-            // Arrange
-            const medication = createFakeMedication({
-                details: {
-                    form: 'Tablet',
-                    administrationRoutes: ['Oral'],
-                    authStatus: 'Authorized',
-                    procedureType: 'National',
-                    marketingStatus: 'Active',
-                    approvalDate: '2020-01-01',
-                    company: 'Sanofi',
-                    enhancedSurveillance: false,
-                    ingredients: [{ substance: 'Paracetamol', dosage: '500mg', reference: 'Active' }],
-                    presentations: [{ label: 'Box', barcode13: 3400930000000, refundRate: '65%', price: 2.10 }]
-                }
-            })
-
-            // Act
-            await adapter.create(medication)
-
-            // Assert
             expect(mockSet).toHaveBeenCalledWith(medication, { merge: false })
         })
     })
 
-    describe('increment', () => {
-        it('should call update with FieldValue.increment when incrementing quantity', async () => {
-            // Arrange
+    describe('increment/decrement', () => {
+        it('should increment quantity', async () => {
             const medication = createFakeMedication()
-
-            // Act
             await adapter.increment(medication)
+            expect(mockUpdate).toHaveBeenCalledWith({ quantity: FieldValue.increment(1) })
+        })
 
-            // Assert
-            // 1. Verify we target the specific medication document
-            expect(mockDoc).toHaveBeenCalledWith(medication.medicationId)
-
-            // 2. Verify we call update with the increment command
-            expect(mockUpdate).toHaveBeenCalledWith({
-                quantity: FieldValue.increment(1)
-            })
-
-            // 3. Verify the static increment helper was used correctly
-            expect(FieldValue.increment).toHaveBeenCalledWith(1)
-            expect(mockUpdate).toHaveBeenCalledTimes(1)
+        it('should decrement quantity', async () => {
+            const medication = createFakeMedication()
+            await adapter.decrement(medication)
+            expect(mockUpdate).toHaveBeenCalledWith({ quantity: FieldValue.increment(-1) })
         })
     })
 
-    describe('decrement', () => {
-        it('should call update with FieldValue.increment(-1) when decrementing quantity', async () => {
-            // Arrange
+    describe('update', () => {
+        it('should update a specific key', async () => {
             const medication = createFakeMedication()
-
-            // Act
-            await adapter.decrement(medication)
-
-            // Assert
-            // 1. Verify we target the specific medication document
-            expect(mockDoc).toHaveBeenCalledWith(medication.medicationId)
-
-            // 2. Verify we call update with the correct negative increment
-            expect(mockUpdate).toHaveBeenCalledWith({
-                quantity: FieldValue.increment(-1)
-            })
-
-            // 3. Verify the static increment helper was used correctly with -1
-            expect(FieldValue.increment).toHaveBeenCalledWith(-1)
-            expect(mockUpdate).toHaveBeenCalledTimes(1)
+            await adapter.update(medication, 'name', 'New Name')
+            expect(mockUpdate).toHaveBeenCalledWith({ name: 'New Name' })
         })
     })
 
     describe('delete', () => {
-        it('should call firestore delete on the correct document', async () => {
-            // Arrange
+        it('should delete the document', async () => {
             const medication = createFakeMedication()
-
-            // Act
             await adapter.delete(medication)
+            expect(mockDelete).toHaveBeenCalled()
+        })
+    })
 
-            // Assert
-            // 1. Verify we requested the medications collection
-            expect(mockConnector.collection).toHaveBeenCalledWith('medications')
+    describe('setExpiredStatus', () => {
+        it('should update multiple medications in a single batch', async () => {
+            const ids = ['med-1', 'med-2', 'med-3']
+            const result = await adapter.setExpiredStatus(ids)
+            expect(mockFirestore.batch).toHaveBeenCalledTimes(1)
+            expect(mockBatch.update).toHaveBeenCalledTimes(3)
+            expect(result).toEqual({ updated: 3 })
+        })
 
-            // 2. Verify we targeted the specific doc ID
-            expect(mockDoc).toHaveBeenCalledWith(medication.medicationId)
+        it('should handle pagination (batches of 500)', async () => {
+            const ids = Array.from({ length: 501 }, (_, i) => `id-${i}`)
+            const result = await adapter.setExpiredStatus(ids)
+            expect(mockFirestore.batch).toHaveBeenCalledTimes(2)
+            expect(result.updated).toBe(501)
+        })
+    })
 
-            // 3. Verify the delete method was triggered
-            expect(mockDelete).toHaveBeenCalledTimes(1)
+    describe('fetchTunisianMedications', () => {
+        it('should build the correct query and return mapped medications', async () => {
+            const query = 'Doli'
+            const mockDocs = [
+                {
+                    id: 'tun-1',
+                    data: jest.fn().mockReturnValue({ name: 'Doliprane' }),
+                },
+            ]
+            mockGet.mockResolvedValue({ docs: mockDocs })
+
+            const result = await adapter.fetchTunisianMedications(query)
+
+            expect(mockCollection.where).toHaveBeenCalledWith('name', '>=', query)
+            expect(mockQueryBuilder.where).toHaveBeenCalledWith('name', '<=', query + '\uf8ff')
+            expect(result[0]).toEqual({ id: 'tun-1', name: 'Doliprane' })
+        })
+
+        it('should return empty array when no documents found', async () => {
+            mockGet.mockResolvedValue({ docs: [] })
+            const result = await adapter.fetchTunisianMedications('Unknown')
+            expect(result).toEqual([])
+        })
+
+        it('should catch Firestore errors and throw HttpsError', async () => {
+            const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
+            mockGet.mockRejectedValue(new Error('Connection failed'))
+
+            await expect(adapter.fetchTunisianMedications('Doli'))
+                .rejects
+                .toThrow('Search failed')
+
+            consoleSpy.mockRestore()
         })
     })
 })

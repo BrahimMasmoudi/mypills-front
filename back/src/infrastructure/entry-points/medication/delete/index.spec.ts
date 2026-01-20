@@ -1,7 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
 import * as functions from '../../https-functions'
-import {DeleteMedication} from "../../../../application/usecases/delete-medication/delete-medication";
+import { DeleteMedication } from '../../../../application/usecases/medication/delete-medication/delete-medication'
 
 const testEnv = firebaseFunctionsTest()
 
@@ -9,7 +9,7 @@ if (admin.apps.length === 0) {
     admin.initializeApp()
 }
 
-jest.mock('../../../../application/usecases/delete-medication/delete-medication')
+jest.mock('../../../../application/usecases/medication/delete-medication/delete-medication')
 
 describe('HTTPS Functions Entry Point', () => {
     afterAll(() => {
@@ -18,7 +18,7 @@ describe('HTTPS Functions Entry Point', () => {
 
     it('should call the use case and return success', async () => {
         // 1. Arrange
-        const mockMedication = {medicationId: '123', name: 'Doliprane'}
+        const mockMedication = { medicationId: '123', name: 'Doliprane' }
 
         // Get the mocked instance of the UseCase
         const useCaseSpy = DeleteMedication.prototype.execute as jest.Mock
@@ -29,12 +29,12 @@ describe('HTTPS Functions Entry Point', () => {
 
         // 2. Act
         const result = await wrapped({
-            data: {medication: mockMedication},
+            data: { medication: mockMedication },
         } as any)
 
         // 3. Assert
         expect(useCaseSpy).toHaveBeenCalledWith(mockMedication)
-        expect(result).toEqual({success: true})
+        expect(result).toEqual({ success: true })
     })
 
     it('should throw HttpsError when the use case fails', async () => {
@@ -46,7 +46,7 @@ describe('HTTPS Functions Entry Point', () => {
 
         // 2. Act & Assert
         await expect(wrapped({
-            data: {medication: {}},
+            data: { medication: {} },
         } as any)).rejects.toThrow('Could not delete medication')
     })
 })
