@@ -1,139 +1,130 @@
-import { onCall, HttpsError, onRequest } from 'firebase-functions/v2/https'
 import { initializeApp } from 'firebase-admin/app'
-import { getFirestore, Timestamp } from 'firebase-admin/firestore'
-import { getMessaging } from 'firebase-admin/messaging'
-import { addDays, isBefore, isSameDay, parse, format } from 'date-fns'
-import { onDocumentCreated } from 'firebase-functions/v2/firestore'
-import { CloudTasksClient } from '@google-cloud/tasks'
-import { fromZonedTime } from 'date-fns-tz'
 
 initializeApp()
 export * from './infrastructure/entry-points/https-functions'
 export * from './infrastructure/config/firebase'
-const firestore = getFirestore()
-const client = new CloudTasksClient()
 
-export const scheduleReminderTask = onDocumentCreated({
-    document: 'reminders/{id}',
-    region: 'europe-west3',
-}, async (event) => {
-    const data = event.data?.data()
-    if (!data) return
-
-    const project = process.env.GCLOUD_PROJECT!
-    const location = 'europe-west3'
-    const queue = 'reminder'
-
-    const serviceAccountEmail = `${project}@appspot.gserviceaccount.com`
-
-    const queuePath = client.queuePath(project, location, queue)
-
-    const task = {
-        httpRequest: {
-            httpMethod: 'POST' as const,
-            url: `https://${location}-${project}.cloudfunctions.net/sendFCMNotification`,
-
-            body: Buffer.from(JSON.stringify({
-                userId: data.userId,
-                medName: data.medName,
-                quantity: data.quantity || '1',
-            })).toString('base64'),
-
-            headers: { 'Content-Type': 'application/json' },
-
-            oidcToken: {
-                serviceAccountEmail: serviceAccountEmail,
-            },
-        },
-        scheduleTime: { seconds: data.scheduledTime.seconds },
-    }
-
-    await client.createTask({ parent: queuePath, task })
-})
-
-export const createSchedule = onCall({ region: 'europe-west3' }, async (request) => {
-    const { medication, startDate, endDate, doses, timezone } = request.data
-
-    const batch = firestore.batch()
-    let currentDate = parse(startDate, 'yyyy-MM-dd', new Date())
-    const end = parse(endDate, 'yyyy-MM-dd', new Date())
-
-    while (isBefore(currentDate, end) || isSameDay(currentDate, end)) {
-        doses.forEach((dose: any) => {
-            if (!dose.time) return
-
-            const datePart = format(currentDate, 'yyyy-MM-dd')
-            const timePart = dose.time
-
-            const dateTimeString = `${datePart} ${timePart}`
-            const scheduledTime = fromZonedTime(dateTimeString, timezone)
-
-            const reminderRef = firestore.collection('reminders').doc()
-            batch.set(reminderRef, {
-                userId: request.auth?.uid,
-                medName: medication.name,
-                quantity: dose.quantity,
-                scheduledTime: Timestamp.fromDate(scheduledTime),
-                status: 'pending',
-            })
-        })
-        currentDate = addDays(currentDate, 1)
-    }
-
-    await batch.commit()
-    return { success: true }
-})
-
-export const sendFCMNotification = onRequest({ region: 'europe-west3' }, async (req, res) => {
-    const { userId, medName, quantity } = req.body
-
-    try {
-        const userDoc = await firestore.collection('users').doc(userId).get()
-        const userData = userDoc.data()
-
-        if (!userData?.fcmToken) {
-            console.error(`No FCM token found for user: ${userId}`)
-            res.status(200).send('No token available')
-            return
-        }
-
-        const message = {
-            token: userData.fcmToken,
-            data: {
-                medName: medName,
-                quantity: String(quantity),
-            },
-        }
-
-        await getMessaging().send(message)
-        res.status(200).send('Notification sent')
-    } catch (error) {
-        res.status(500).send(error)
-    }
-})
-
-export const saveUserToken = onCall({ region: 'europe-west3' }, async (request) => {
-    if (!request.auth) {
-        throw new HttpsError('unauthenticated', 'User must be logged in.')
-    }
-
-    const fcmToken = request.data.fcmToken
-    const uid = request.auth.uid
-
-    try {
-        // We use set with { merge: true } so we don't overwrite
-        // other user data (like their name or email)
-        await firestore.collection('users').doc(uid).set({
-            fcmToken: fcmToken,
-            lastUpdated: new Date().toISOString(),
-            userId: uid, // Good for querying later
-        }, { merge: true })
-
-        return { success: true }
-    } catch (error) {
-        throw new HttpsError('internal', 'Failed to save token')
-    }
-})
+// export const scheduleReminderTask = onDocumentCreated({
+//     document: 'reminders/{id}',
+//     region: 'europe-west3',
+// }, async (event) => {
+//     const data = event.data?.data()
+//     if (!data) return
+//
+//     const project = process.env.GCLOUD_PROJECT!
+//     const location = 'europe-west3'
+//     const queue = 'reminder'
+//
+//     const serviceAccountEmail = `${project}@appspot.gserviceaccount.com`
+//
+//     const queuePath = client.queuePath(project, location, queue)
+//
+//     const task = {
+//         httpRequest: {
+//             httpMethod: 'POST' as const,
+//             url: `https://${location}-${project}.cloudfunctions.net/sendFCMNotification`,
+//
+//             body: Buffer.from(JSON.stringify({
+//                 userId: data.userId,
+//                 medName: data.medName,
+//                 quantity: data.quantity || '1',
+//             })).toString('base64'),
+//
+//             headers: { 'Content-Type': 'application/json' },
+//
+//             oidcToken: {
+//                 serviceAccountEmail: serviceAccountEmail,
+//             },
+//         },
+//         scheduleTime: { seconds: data.scheduledTime.seconds },
+//     }
+//
+//     await client.createTask({ parent: queuePath, task })
+// })
+//
+// export const createSchedule = onCall({ region: 'europe-west3' }, async (request) => {
+//     const { medication, startDate, endDate, doses, timezone } = request.data
+//
+//     const batch = firestore.batch()
+//     let currentDate = parse(startDate, 'yyyy-MM-dd', new Date())
+//     const end = parse(endDate, 'yyyy-MM-dd', new Date())
+//
+//     while (isBefore(currentDate, end) || isSameDay(currentDate, end)) {
+//         doses.forEach((dose: any) => {
+//             if (!dose.time) return
+//
+//             const datePart = format(currentDate, 'yyyy-MM-dd')
+//             const timePart = dose.time
+//
+//             const dateTimeString = `${datePart} ${timePart}`
+//             const scheduledTime = fromZonedTime(dateTimeString, timezone)
+//
+//             const reminderRef = firestore.collection('reminders').doc()
+//             batch.set(reminderRef, {
+//                 userId: request.auth?.uid,
+//                 medName: medication.name,
+//                 quantity: dose.quantity,
+//                 scheduledTime: Timestamp.fromDate(scheduledTime),
+//                 status: 'pending',
+//             })
+//         })
+//         currentDate = addDays(currentDate, 1)
+//     }
+//
+//     await batch.commit()
+//     return { success: true }
+// })
+//
+// export const sendFCMNotification = onRequest({ region: 'europe-west3' }, async (req, res) => {
+//     const { userId, medName, quantity } = req.body
+//
+//     try {
+//         const userDoc = await firestore.collection('users').doc(userId).get()
+//         const userData = userDoc.data()
+//
+//         if (!userData?.fcmToken) {
+//             console.error(`No FCM token found for user: ${userId}`)
+//             res.status(200).send('No token available')
+//             return
+//         }
+//
+//         const message = {
+//             token: userData.fcmToken,
+//             data: {
+//                 medName: medName,
+//                 quantity: String(quantity),
+//             },
+//         }
+//
+//         await getMessaging().send(message)
+//         res.status(200).send('Notification sent')
+//     } catch (error) {
+//         res.status(500).send(error)
+//     }
+// })
+//
+// export const saveUserToken = onCall({ region: 'europe-west3' }, async (request) => {
+//     if (!request.auth) {
+//         throw new HttpsError('unauthenticated', 'User must be logged in.')
+//     }
+//
+//     const fcmToken = request.data.fcmToken
+//     const uid = request.auth.uid
+//
+//     try {
+//         // We use set with { merge: true } so we don't overwrite
+//         // other user data (like their name or email)
+//         await firestore.collection('users').doc(uid).set({
+//             fcmToken: fcmToken,
+//             lastUpdated: new Date().toISOString(),
+//             userId: uid, // Good for querying later
+//         }, { merge: true })
+//
+//         return { success: true }
+//     } catch (error) {
+//         throw new HttpsError('internal', 'Failed to save token')
+//     }
+// })
 
 // const createData = async () => {
 //     const backup = {
