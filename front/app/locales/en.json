@@ -138,6 +138,7 @@
       "success" : "The reminder is created successfully",
       "error" : "An error happened while creating the reminder"
     },
+    "time-picker-title" : "select the time",
     "dateRange" : "Duration"
   },
   "actions": {

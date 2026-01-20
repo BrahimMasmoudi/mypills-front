@@ -134,6 +134,7 @@
     "endDate": "Date de fin",
     "timeLabel": "Heure de la dose",
     "quantity" : "Qté",
+    "time-picker-title" : "Sélectionner l'horaire",
     "toast": {
       "success" : "Le rappel est crée avec succés",
       "error" : "Échec lors de la creation d'un rappel"
