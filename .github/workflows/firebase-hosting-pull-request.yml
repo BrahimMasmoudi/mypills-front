@@ -105,10 +105,17 @@ jobs:
       - name: Build Backend (Functions)
         run: cd back && yarn build
 
+      - name: '🚀 Force Override Firestore Indexes'
+        uses: w9jds/firebase-action@v13.16.0
+        with:
+          args: deploy --only firestore:indexes --project my-pills-staging-460b5 --force
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+
       - name: '🚀 Deploy to Firebase'
         uses: w9jds/firebase-action@v13.16.0
         with:
-          args: deploy --only functions,hosting,firestore --project my-pills-staging-460b5 --force
+          args: deploy --only functions,hosting --project my-pills-staging-460b5 --force
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
 
