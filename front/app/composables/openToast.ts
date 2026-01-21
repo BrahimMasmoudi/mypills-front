@@ -1,14 +1,14 @@
-import Toast from "~/components/molecules/Toast.vue";
+import Toast from '~/components/molecules/Toast.vue'
 
 export type ToastType = 'success' | 'error' | 'canceled'
 export const openToast = (toastType: ToastType, message: string) => {
-    const {$open} = useNuxtApp()
+    const { $open } = useNuxtApp()
     setTimeout(() => {
         $open<any>(Toast, {
             scrim: false,
             isPersistent: false,
             message,
-            toastType
+            toastType,
         })
     }, 400)
 }
