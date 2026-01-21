@@ -40,7 +40,7 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const props = defineProps<{
+const {sortBy, sortOptions} = defineProps<{
   sortBy: string | null
   sortOrder: 'asc' | 'desc'
   sortOptions: Array<{ value: string; label: string; icon: string }>
@@ -52,14 +52,14 @@ defineEmits<{
 }>()
 
 const currentSortLabel = computed(() => {
-  if (!props.sortBy) return t('sort.label')
-  const option = props.sortOptions.find(opt => opt.value === props.sortBy)
+  if (!sortBy) return t('sort.label')
+  const option = sortOptions.find(opt => opt.value === sortBy)
   return option ? t(option.label) : t('sort.label')
 })
 
 const currentSortIcon = computed(() => {
-  if (!props.sortBy) return 'mdi-sort'
-  const option = props.sortOptions.find(opt => opt.value === props.sortBy)
+  if (!sortBy) return 'mdi-sort'
+  const option = sortOptions.find(opt => opt.value === sortBy)
   return option?.icon || 'mdi-sort'
 })
 </script>

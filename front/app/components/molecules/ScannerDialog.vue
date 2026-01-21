@@ -42,9 +42,7 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const props = defineProps<{
-  modelValue: boolean
-}>()
+const modelValue = defineModel()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
@@ -52,8 +50,8 @@ const emit = defineEmits<{
 }>()
 
 const isOpen = computed({
-  get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
+  get: () => modelValue.value,
+  set: (val) => modelValue.value = val,
 })
 
 const isLoading = ref(true)

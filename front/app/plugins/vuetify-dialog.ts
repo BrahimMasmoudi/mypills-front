@@ -28,7 +28,9 @@ export default defineNuxtPlugin(({ vueApp, provide }) => {
         const result = await new Promise((resolve) => {
             const vNode: VNode | null = createVNode(component, {
                 ...props,
-                close: (returnValue: any) => { resolve(returnValue) },
+                close: (returnValue: any) => {
+ resolve(returnValue)
+},
             }, slot)
             vNode.appContext = app._context
             render(vNode, container)

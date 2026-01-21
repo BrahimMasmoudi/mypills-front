@@ -1,13 +1,12 @@
-import {getToken, onMessage} from "firebase/messaging";
-import {httpsCallable} from "firebase/functions";
-import {useQueueToast} from "~/composables/useQueueToast";
+import { getToken, onMessage } from 'firebase/messaging'
+import { httpsCallable } from 'firebase/functions'
+import { useQueueToast } from '~/composables/useQueueToast'
 
 export const useNotifications = () => {
-    const {$functions, $config, $messaging, $i18n} = useNuxtApp()
-    const {addToast} = useQueueToast()
+    const { $functions, $config, $messaging, $i18n } = useNuxtApp()
+    const { addToast } = useQueueToast()
     const registerNotificationToken = async () => {
         try {
-
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') return
 
@@ -18,9 +17,8 @@ export const useNotifications = () => {
             })
             if (currentToken) {
                 const saveToken = httpsCallable($functions, 'saveUserToken')
-                await saveToken({fcmToken: currentToken})
+                await saveToken({ fcmToken: currentToken })
             }
-
         } catch (error) {
             console.error('Error saving notification token:', error)
         }
@@ -28,14 +26,14 @@ export const useNotifications = () => {
 
     const listenForMessages = () => {
         onMessage($messaging, (payload) => {
-            const {medName, quantity} = payload.data || {}
+            const { medName, quantity } = payload.data || {}
 
             const title = $i18n.t('notification.title')
-            const body = $i18n.t('notification.body', {quantity, medName})
+            const body = $i18n.t('notification.body', { quantity, medName })
 
             addToast('success', `${title} ${body}`)
         })
     }
 
-    return {registerNotificationToken, listenForMessages}
+    return { registerNotificationToken, listenForMessages }
 }

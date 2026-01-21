@@ -1,23 +1,26 @@
-import type {Firestore} from '@firebase/firestore/lite'
-import type {Functions} from '@firebase/functions'
+import type { Firestore } from '@firebase/firestore/lite'
+import type { Functions } from '@firebase/functions'
+import type { Messaging } from '@firebase/messaging'
 import {
     getAnalytics,
     type Analytics,
     setUserId,
-    setUserProperties
+    setUserProperties,
 } from '@firebase/analytics'
-import {connectFunctionsEmulator, getFunctions} from "@firebase/functions";
-import {useFirebaseApp, useFirestore, getCurrentUser} from 'vuefire'
-import {getMessaging} from "firebase/messaging";
+import { connectFunctionsEmulator, getFunctions } from '@firebase/functions'
+import { useFirebaseApp, useFirestore, getCurrentUser } from 'vuefire'
+import { getMessaging } from 'firebase/messaging'
 
-type RemoteConfig = {}
+type RemoteConfig = Record<string, any>
 
 declare module '#app' {
+
     interface NuxtApp {
         $firestore: Firestore
         $functions: Functions
         $remoteConfig: RemoteConfig
         $analytics: Analytics
+        $messaging: Messaging
     }
 }
 
@@ -39,7 +42,7 @@ declare module '@vue/runtime-core' {
     }
 }
 
-export default defineNuxtPlugin(async ({provide, $config}) => {
+export default defineNuxtPlugin(async ({ provide, $config }) => {
     const {
         functions: functionsConfig,
         firestore: firestoreConfig,
@@ -53,7 +56,6 @@ export default defineNuxtPlugin(async ({provide, $config}) => {
     }
 
     if (functionsConfig.enable) {
-        // functions usually need region
         const functionsInstance = getFunctions(firebaseApp, 'europe-west3')
 
         if (functionsConfig.enableEmulator) {
@@ -73,17 +75,14 @@ export default defineNuxtPlugin(async ({provide, $config}) => {
 
     const user = await getCurrentUser()
 
-
-    // Initialize Analytics if enabled
     if (analyticsConfig?.enable) {
         const analyticsInstance = getAnalytics(firebaseApp)
 
-        // Set user ID and properties for analytics tracking
         if (user?.uid) {
             setUserId(analyticsInstance, user.uid)
             setUserProperties(analyticsInstance, {
                 email: user.email,
-                displayName: user.displayName
+                displayName: user.displayName,
             })
         }
 
@@ -93,10 +92,9 @@ export default defineNuxtPlugin(async ({provide, $config}) => {
     if (import.meta.client) {
         try {
             const messaging = getMessaging(firebaseApp)
-            console.log("✅ Firebase Messaging initialized")
             provide('messaging', messaging)
         } catch (e) {
-            console.error("Messaging init failed:", e)
+            console.error('Messaging init failed:', e)
         }
     }
 })

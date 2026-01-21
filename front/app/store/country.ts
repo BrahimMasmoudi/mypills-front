@@ -1,5 +1,5 @@
-import {defineStore} from 'pinia'
-import type {Country} from "~/types/country";
+import { defineStore } from 'pinia'
+import type { Country } from '~/types/country'
 
 export const useCountryStore = defineStore('country', () => {
     const selectedCountry = useCookie<Country | null>('user-country', {
@@ -7,14 +7,13 @@ export const useCountryStore = defineStore('country', () => {
         watch: true,
         path: '/',
         sameSite: 'lax',
-        default: () => null
+        default: () => null,
     })
 
     const isFrance = computed(() => selectedCountry.value === 'FR')
     const isScanningReady = computed(() => isFrance.value)
 
     const confirmFrance = () => selectedCountry.value = 'FR'
-
 
     const clearCountry = () => {
         selectedCountry.value = 'OTHER'
@@ -25,6 +24,6 @@ export const useCountryStore = defineStore('country', () => {
         isFrance,
         isScanningReady,
         confirmFrance,
-        clearCountry
+        clearCountry,
     }
 })

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { GoogleAuthProvider, signInWithPopup, signOut, type User, type UserCredential } from "@firebase/auth";
-import { useFirebaseAuth } from "vuefire"
+import { GoogleAuthProvider, signInWithPopup, signOut, type User, type UserCredential } from '@firebase/auth'
+import { useFirebaseAuth } from 'vuefire'
 
 export const useUserStore = defineStore('userStore', () => {
     const auth = useFirebaseAuth()
@@ -20,6 +20,6 @@ export const useUserStore = defineStore('userStore', () => {
         login,
         logOut,
         userCredentials,
-        user
+        user,
     }
 }, { persist: { paths: ['user'] } })

@@ -1,4 +1,4 @@
-import type {Medication} from "~/types/medication";
+import type { Medication } from '~/types/medication'
 
 export interface Dose {
     time: string

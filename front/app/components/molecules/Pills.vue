@@ -9,10 +9,10 @@
       >
         <AtomsPill
             :medication="medication"
-            :decrement-pills="decrementPills"
-            :increment-pills="incrementPills"
-            :delete-pills="deletePills"
-            :update-medication-name="updateMedicationName"
+            @decrement-pills="(med, done) => $emit('decrement-pills', med, done)"
+            @increment-pills="(med, done) => $emit('increment-pills', med, done)"
+            @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+            @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
         />
       </v-col>
     </v-row>
@@ -20,17 +20,16 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from 'vue-i18n'
-import type {Medication} from '~/types/medication'
+import type { Medication } from '~/types/medication'
 
-const {t} = useI18n()
-const {$device} = useNuxtApp()
-
-const {medications, incrementPills, decrementPills, deletePills, updateMedicationName} = defineProps<{
+defineProps<{
   medications: Medication[] | undefined
-  incrementPills: (medication: Medication) => Promise<void>
-  decrementPills: (medication: Medication) => Promise<void>
-  deletePills: (medication: Medication) => Promise<void>
-  updateMedicationName: (medication: Medication, newName: string) => Promise<void>
+}>()
+
+defineEmits<{
+  (e: 'increment-pills', medication: Medication, done: () => void): void
+  (e: 'decrement-pills', medication: Medication, done: () => void): void
+  (e: 'delete-pills', medication: Medication, done: () => void): void
+  (e: 'update-medication-name', medication: Medication, newName: string, done: () => void): void
 }>()
 </script>

@@ -1,0 +1,7 @@
+# .eslintignore
+lib/
+migrations/
+jest.config.ts
+*.config.ts
+tsconfig.dev.json
+server-worker/sw.js

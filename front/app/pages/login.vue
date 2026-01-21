@@ -19,15 +19,12 @@
     </v-app-bar>
 
     <v-main>
-      <!-- Hero Section -->
       <section class="position-relative overflow-hidden">
-        <!-- Abstract Background Shapes -->
         <div class="bg-shape shape-1"></div>
         <div class="bg-shape shape-2"></div>
 
         <v-container max-width="1200">
           <v-row align="center" justify="center" class="py-4">
-            <!-- Text Content -->
             <v-col cols="12" md="6" class="text-center text-md-left z-index-10">
               <h1 class="font-weight-black mb-2 text-dark-blue line-height-tight"
                   :class="{
@@ -63,7 +60,6 @@
               </div>
             </v-col>
 
-            <!-- Hero Illustration -->
             <v-col cols="12" md="6" class="text-center position-relative z-index-10">
               <div class="hero-image-container">
                 <div class="floating-pill pill-1"></div>
@@ -77,7 +73,6 @@
         </v-container>
       </section>
 
-      <!-- Features Section -->
       <section class="pb-4">
         <v-container max-width="1200" class="py-0">
           <v-row justify="center" dense>
@@ -123,9 +118,9 @@
 </template>
 
 <script lang="ts" setup>
-import {useI18n} from "vue-i18n";
-import {useUserStore} from "~/store/userStore";
-import MoleculesLanguageMenu from "~/components/molecules/LanguageMenu.vue";
+import {useI18n} from "vue-i18n"
+import {useUserStore} from "~/store/userStore"
+import MoleculesLanguageMenu from "~/components/molecules/LanguageMenu.vue"
 
 const userStore = useUserStore()
 const {$device} = useNuxtApp()
@@ -148,7 +143,7 @@ const features = [
     icon: 'mdi-pill',
     titleKey: 'landing.features.track.title',
     descKey: 'landing.features.track.desc',
-    colorClass: 'bg-emerald'
+    colorClass: 'bg-primary'
   },
   {
     icon: 'mdi-shield-check',
@@ -193,7 +188,6 @@ const login = async () => {
 </script>
 
 <style scoped>
-/* Color Palette & Variables */
 .text-dark-blue { color: #1e293b; }
 .text-primary-darken-1 { color: #2563EB; }
 
@@ -203,7 +197,6 @@ const login = async () => {
   font-family: 'Inter', Roboto, sans-serif;
 }
 
-/* Background Abstract Shapes */
 .bg-shape {
   position: absolute;
   border-radius: 50%;
@@ -227,7 +220,6 @@ const login = async () => {
   left: -200px;
 }
 
-/* Typography */
 .line-height-tight {
   line-height: 1.1;
 }
@@ -236,7 +228,6 @@ const login = async () => {
   letter-spacing: -0.5px;
 }
 
-/* Components */
 .shadow-lg {
   box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
 }
@@ -252,7 +243,6 @@ const login = async () => {
   height: 18px;
 }
 
-/* Hero Illustration */
 .hero-image-container {
   position: relative;
   height: 300px;
@@ -332,7 +322,6 @@ const login = async () => {
   backdrop-filter: blur(4px);
 }
 
-/* Animations */
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -351,7 +340,6 @@ const login = async () => {
   }
 }
 
-/* Utils */
 .z-index-10 {
   z-index: 10;
 }
