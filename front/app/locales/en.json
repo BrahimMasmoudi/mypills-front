@@ -163,7 +163,7 @@
   },
   "status": {
     "pending": "Pending",
-    "sent": "Sent",
+    "sent": "Done",
     "failed": "Failed"
   },
   "validation": {

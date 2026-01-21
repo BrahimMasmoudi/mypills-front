@@ -3,7 +3,6 @@
     <v-app-bar elevation="0" border="b">
       <div class="d-flex align-center w-100 px-4">
         <v-btn
-            v-if="$device.isDesktop"
             icon
             variant="text"
             class="mr-2"

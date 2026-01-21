@@ -57,11 +57,17 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
         }
     }
 
-    async updateStatus(id: string, status: 'pending' | 'sent' | 'failed'): Promise<void> {
-        await this.collection.doc(id).update({
-            status: status,
-            updatedAt: Timestamp.now(),
+    async updateRemindersStatus(ids: string[], status: 'pending' | 'sent' | 'failed'): Promise<void> {
+        if (ids.length === 0) return
+        const batch = this.connector.firestore.batch()
+        ids.forEach((id) => {
+            const docRef = this.collection.doc(id)
+            batch.update(docRef, {
+                status: status,
+                updatedAt: Timestamp.now(),
+            })
         })
+        await batch.commit()
     }
 
     async delete(reminderIds: ReminderId[]): Promise<void> {

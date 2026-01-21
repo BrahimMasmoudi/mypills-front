@@ -23,6 +23,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             set: jest.fn().mockReturnThis(),
             commit: jest.fn().mockResolvedValue(undefined),
             delete: jest.fn().mockReturnThis(),
+            update: jest.fn().mockReturnThis(),
         }
 
         mockCollection = {
@@ -124,15 +125,38 @@ describe('FirestoreReminderRepositoryAdapter', () => {
         })
     })
 
-    describe('updateStatus', () => {
-        it('should update only the status and updatedAt field', async () => {
-            await adapter.updateStatus('id-1', 'sent')
+    describe('updateRemindersStatus', () => {
+        it('should update the status and updatedAt field via batch for all provided IDs', async () => {
+            // Arrange
+            const ids = ['id-1', 'id-2']
+            const status = 'sent'
 
+            // Act
+            await adapter.updateRemindersStatus(ids, status)
+
+            // Assert
+            // 1. Verify batch was created
+            expect(mockConnector.firestore.batch).toHaveBeenCalled()
+
+            // 2. Verify doc was called for each ID to get references
             expect(mockCollection.doc).toHaveBeenCalledWith('id-1')
-            expect(mockDoc.update).toHaveBeenCalledWith({
+            expect(mockCollection.doc).toHaveBeenCalledWith('id-2')
+
+            // 3. Verify batch.update was called with correct data
+            // In your mock setup, mockCollection.doc returns mockDoc
+            expect(mockBatch.update).toHaveBeenCalledTimes(2)
+            expect(mockBatch.update).toHaveBeenCalledWith(mockDoc, {
                 status: 'sent',
                 updatedAt: expect.any(Timestamp),
             })
+
+            // 4. Verify the batch was committed
+            expect(mockBatch.commit).toHaveBeenCalled()
+        })
+
+        it('should return early and not create a batch if IDs array is empty', async () => {
+            await adapter.updateRemindersStatus([], 'sent')
+            expect(mockConnector.firestore.batch).not.toHaveBeenCalled()
         })
     })
 

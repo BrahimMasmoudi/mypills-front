@@ -20,7 +20,7 @@
       <template #[`item.sicknessName`]="{ item }">
         <div class="d-flex align-center py-2">
           <v-avatar color="primary-lighten-5" size="36" class="mr-3 border">
-            <v-icon icon="mdi-medical-bag" color="primary" size="20" />
+            <v-icon icon="mdi-medical-bag" color="primary" size="20"/>
           </v-avatar>
           <span class="font-weight-bold text-body-1">{{ item.sicknessName || t('reminders.general') }}</span>
         </div>
@@ -33,10 +33,10 @@
               :key="name"
               border
               rounded="pill"
-              class="px-3 py-1 d-flex align-center"
+              class="px-3 py-1 bg-surface-variant d-flex align-center"
               elevation="0"
           >
-            <v-icon icon="mdi-pill" size="14" class="mr-2 text-primary" />
+            <v-icon icon="mdi-pill" size="14" class="mr-2 text-primary"/>
             <span class="text-caption font-weight-bold text-truncate" style="max-width: 120px;">
               {{ name }}
             </span>
@@ -47,7 +47,7 @@
       <template #[`item.dateRange`]="{ item }">
         <v-sheet border rounded="pill" class="px-3 py-1 bg-surface-variant d-flex align-center" width="fit-content">
           <span class="text-caption font-weight-bold">{{ formatDate(item.startDate) }}</span>
-          <v-icon icon="mdi-arrow-right" size="12" class="mx-2 opacity-50" />
+          <v-icon icon="mdi-arrow-right" size="12" class="mx-2 opacity-50"/>
           <span class="text-caption font-weight-bold">{{ formatDate(item.endDate) }}</span>
         </v-sheet>
       </template>
@@ -61,9 +61,9 @@
               rounded="pill"
               class="px-3 py-1 bg-primary d-flex align-center"
           >
-            <v-icon icon="mdi-clock-outline" size="14" color="white" class="mr-2" />
+            <v-icon icon="mdi-clock-outline" size="14" color="white" class="mr-2"/>
             <span class="text-caption font-weight-black text-white">{{ dose.time }}</span>
-            <v-divider vertical class="mx-2 border-opacity-50" color="white" length="12" />
+            <v-divider vertical class="mx-2 border-opacity-50" color="white" length="12"/>
             <span class="text-caption font-weight-medium text-white opacity-90">{{ dose.quantity }}x</span>
           </v-sheet>
         </div>
@@ -82,22 +82,33 @@
       </template>
 
       <template #[`item.actions`]="{ item }">
-        <v-btn
-            icon="mdi-delete-outline"
-            variant="tonal"
-            color="error"
-            size="small"
-            @click="$emit('delete', item)"
-        />
+        <div class="d-flex align-center justify-end" style="gap: 8px">
+            <template v-if="item.status === 'pending'">
+              <v-btn
+                  icon="mdi-check-circle-outline"
+                  variant="tonal"
+                  color="success"
+                  size="small"
+                  @click="$emit('update-status', item.ids, 'sent')"
+              />
+            </template>
+          <v-btn
+              icon="mdi-delete-outline"
+              variant="tonal"
+              color="error"
+              size="small"
+              @click="$emit('delete', item)"
+          />
+        </div>
       </template>
     </v-data-table>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns'
-import type { ReminderGroup } from '~/types/reminder'
-import { useI18n } from "vue-i18n";
+import {format} from 'date-fns'
+import type {ReminderGroup} from '~/types/reminder'
+import {useI18n} from "vue-i18n";
 
 defineProps<{
   items: ReminderGroup[]
@@ -106,22 +117,7 @@ defineProps<{
   statusConfig: any
 }>()
 
-const { t } = useI18n()
+const emit = defineEmits(['delete', 'update-status'])
+const {t} = useI18n()
 const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
 </script>
-
-<style scoped>
-:deep(.v-data-table-header__content) {
-  letter-spacing: 0.1em !important;
-}
-
-:deep(.v-data-table__tr:hover) {
-  background-color: rgba(var(--v-theme-primary), 0.04) !important;
-  transition: background-color 0.2s ease;
-}
-
-:deep(.v-data-table__td) {
-  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.05) !important;
-  padding: 12px 16px !important;
-}
-</style>

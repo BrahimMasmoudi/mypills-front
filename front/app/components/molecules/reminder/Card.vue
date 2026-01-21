@@ -17,13 +17,27 @@
           </div>
         </div>
       </div>
-      <v-btn
-          icon="mdi-delete-outline"
-          variant="text"
-          color="error"
-          density="comfortable"
-          @click="$emit('delete', item)"
-      />
+
+      <div class="d-flex align-center" style="gap: 4px">
+        <template v-if="item.status === 'pending'">
+          <v-btn
+              icon="mdi-check-circle-outline"
+              variant="tonal"
+              color="success"
+              size="small"
+              @click="$emit('update-status', item.ids, 'sent')"
+          />
+          <v-divider vertical class="mx-1" />
+        </template>
+
+        <v-btn
+            icon="mdi-delete-outline"
+            variant="tonal"
+            color="error"
+            size="small"
+            @click="$emit('delete', item)"
+        />
+      </div>
     </div>
 
     <v-divider class="my-3" />
@@ -39,29 +53,47 @@
       </v-chip>
     </div>
 
-    <div class="d-flex flex-column" style="gap: 16px">
-      <div v-for="med in item.medications" :key="med.name" class="medication-section">
-        <div class="d-flex align-center mb-2">
-          <v-icon icon="mdi-pill" size="14" class="mr-1 text-medium-emphasis" />
-          <span class="text-caption font-weight-black text-uppercase tracking-wider text-medium-emphasis">
-            {{ med.name }}
-          </span>
-        </div>
-
-        <div class="d-flex flex-wrap" style="gap: 6px">
+    <div class="d-flex flex-column" style="gap: 12px">
+      <v-row
+          v-for="med in item.medications"
+          :key="med.name"
+          class="ma-0 align-center medication-row"
+          no-gutters
+      >
+        <v-col cols="5" class="pr-2">
           <v-sheet
-              v-for="dose in med.doses"
-              :key="dose.time"
               border
               rounded="pill"
-              class="px-2 py-1 bg-primary d-flex align-center"
+              class="px-2 py-1 d-flex align-center w-100 overflow-hidden"
+              elevation="0"
           >
-            <span class="text-caption font-weight-black text-white">{{ dose.time }}</span>
-            <v-divider vertical class="mx-2 opacity-50" color="white" length="10" />
-            <span class="text-caption text-white font-weight-medium">{{ dose.qty }}x</span>
+            <v-icon icon="mdi-pill" size="14" class="mr-1 text-primary" />
+            <span class="text-caption font-weight-bold text-truncate">
+          {{ med.name }}
+        </span>
           </v-sheet>
-        </div>
-      </div>
+        </v-col>
+
+        <v-col cols="7">
+          <div class="d-flex flex-wrap" style="gap: 4px">
+            <v-sheet
+                v-for="dose in med.doses"
+                :key="dose.time"
+                border
+                rounded="pill"
+                class="px-2 py-1 bg-primary d-flex align-center"
+            >
+          <span class="text-caption font-weight-black text-white" style="font-size: 0.7rem !important;">
+            {{ dose.time }}
+          </span>
+              <v-divider vertical class="mx-1 opacity-50" color="white" />
+              <span class="text-caption text-white font-weight-medium" style="font-size: 0.7rem !important;">
+            {{ dose.quantity }}x
+          </span>
+            </v-sheet>
+          </div>
+        </v-col>
+      </v-row>
     </div>
   </v-card>
 </template>
@@ -76,23 +108,7 @@ defineProps<{
   statusConfig: any
 }>()
 
+const emit = defineEmits(['delete', 'update-status'])
 const { t } = useI18n()
 const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
 </script>
-
-<style scoped>
-.tracking-wider {
-  letter-spacing: 0.05em;
-}
-.line-clamp-1 {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.medication-section {
-  background: rgba(var(--v-theme-on-surface), 0.02);
-  padding: 8px;
-  border-radius: 12px;
-}
-</style>

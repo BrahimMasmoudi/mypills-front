@@ -62,7 +62,7 @@ export const useReminderStore = defineStore('reminder', () => {
         }
     }
 
-    const deleteReminder = async (reminderGroup: ReminderGroup) => {
+    const deleteReminders = async (reminderGroup: ReminderGroup) => {
         const ids = reminderGroup.ids
         const remove = httpsCallable($functions, 'deleteReminders')
         await remove(ids)
@@ -70,10 +70,26 @@ export const useReminderStore = defineStore('reminder', () => {
             ids.forEach((id) => {
                 logEvent($analytics, 'delete_reminder', {
                     sickness_name: reminderGroup.sicknessName,
-                    medication_name: reminderGroup.medName,
                     reminder_id: id,
                 })
             })
+        }
+    }
+
+    const updateRemindersStatus = async (ids: string[], status: 'sent' | 'failed') => {
+        loading.value = true
+        try {
+            const callUpdate = httpsCallable($functions, 'updateRemindersStatus')
+            await callUpdate({ ids, status })
+
+            if ($analytics) {
+                logEvent($analytics, 'update_reminder_status', {
+                    status,
+                    count: ids.length
+                })
+            }
+        } finally {
+            loading.value = false
         }
     }
 
@@ -82,6 +98,7 @@ export const useReminderStore = defineStore('reminder', () => {
         loading,
         initReminders,
         createSchedule,
-        deleteReminders: deleteReminder,
+        deleteReminders,
+        updateRemindersStatus
     }
 })
