@@ -1,6 +1,6 @@
-import {defineStore} from 'pinia'
-import {httpsCallable} from 'firebase/functions'
-import type {CreateReminderRequest} from "~/types/reminder";
+import { defineStore } from 'pinia'
+import { httpsCallable } from 'firebase/functions'
+import type { CreateReminderRequest } from '~/types/reminder'
 
 export const useReminderStore = defineStore('reminder', () => {
     // State
@@ -13,7 +13,7 @@ export const useReminderStore = defineStore('reminder', () => {
         error.value = null
 
         try {
-            const {$functions} = useNuxtApp()
+            const { $functions } = useNuxtApp()
 
             // Reference the function.
             // Note: Region 'europe-west3' is handled by your plugin initialization
@@ -25,10 +25,9 @@ export const useReminderStore = defineStore('reminder', () => {
             const result = await callCreateSchedule(payload)
 
             return result.data
-
         } catch (err: any) {
-            console.error("Error creating schedule:", err)
-            error.value = err.message || "Failed to create schedule"
+            console.error('Error creating schedule:', err)
+            error.value = err.message || 'Failed to create schedule'
             throw err // Re-throw so the component can handle it if needed
         } finally {
             loading.value = false
@@ -38,6 +37,6 @@ export const useReminderStore = defineStore('reminder', () => {
     return {
         loading,
         error,
-        createSchedule
+        createSchedule,
     }
 })

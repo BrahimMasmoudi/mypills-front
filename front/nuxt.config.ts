@@ -25,7 +25,6 @@ export default defineNuxtConfig({
     spaLoadingTemplate: fileURLToPath(new URL('./spa-loading-template.html', import.meta.url)),
     modules: [
         'vuetify-nuxt-module',
-        'nuxt-lodash',
         'nuxt-icons',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',

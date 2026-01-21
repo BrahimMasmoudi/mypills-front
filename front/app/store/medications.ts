@@ -1,12 +1,12 @@
-import {defineStore} from 'pinia'
-import {httpsCallable} from 'firebase/functions';
-import type {Medication} from "~/types/medication";
-import {collection, orderBy, query, where} from "firebase/firestore";
-import {logEvent} from "@firebase/analytics";
-import type {GetMedicationDetailsResponse} from "../types/api";
+import { defineStore } from 'pinia'
+import { httpsCallable } from 'firebase/functions'
+import type { Medication } from '~/types/medication'
+import { collection, orderBy, query, where } from 'firebase/firestore'
+import { logEvent } from '@firebase/analytics'
+import type { GetMedicationDetailsResponse } from '../types/api'
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
-    const {$functions, $firestore, $analytics} = useNuxtApp()
+    const { $functions, $firestore, $analytics } = useNuxtApp()
 
     /* ------------------------------------------------------------------
      * STATE
@@ -46,7 +46,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
             (value) => {
                 medications.value = value as Medication[]
             },
-            {immediate: true}
+            { immediate: true }
         )
     }
 
@@ -55,12 +55,12 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
      * ------------------------------------------------------------------ */
     const createMedication = async (medication: Medication) => {
         const create = httpsCallable($functions, 'createMedication')
-        const result = await create({medication})
+        const result = await create({ medication })
 
         $analytics &&
         logEvent($analytics, 'create_medication', {
             medication_name: medication.name,
-            expiry_date: medication.expiryDate
+            expiry_date: medication.expiryDate,
         })
 
         return result
@@ -68,12 +68,12 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
 
     const incrementPills = async (medication: Medication) => {
         const increase = httpsCallable($functions, 'incrementMedication')
-        const result = await increase({medication})
+        const result = await increase({ medication })
 
         $analytics &&
         logEvent($analytics, 'increment_pills', {
             medication_name: medication.name,
-            medication_id: medication.medicationId
+            medication_id: medication.medicationId,
         })
 
         return result
@@ -81,12 +81,12 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
 
     const decrementPills = async (medication: Medication) => {
         const decrease = httpsCallable($functions, 'decrementMedication')
-        const result = await decrease({medication})
+        const result = await decrease({ medication })
 
         $analytics &&
         logEvent($analytics, 'decrement_pills', {
             medication_name: medication.name,
-            medication_id: medication.medicationId
+            medication_id: medication.medicationId,
         })
 
         return result
@@ -94,12 +94,12 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
 
     const deletePills = async (medication: Medication) => {
         const remove = httpsCallable($functions, 'deleteMedication')
-        const result = await remove({medication})
+        const result = await remove({ medication })
 
         $analytics &&
         logEvent($analytics, 'delete_medication', {
             medication_name: medication.name,
-            medication_id: medication.medicationId
+            medication_id: medication.medicationId,
         })
 
         return result
@@ -113,14 +113,14 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         const result = await update({
             medication,
             key,
-            value
+            value,
         })
 
         if ($analytics) {
             logEvent($analytics, 'update_medication_name', {
                 old_name: medication.name,
                 new_name: newName,
-                medication_id: medication.medicationId
+                medication_id: medication.medicationId,
             })
         }
 
@@ -143,7 +143,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
 
         if (expiredIds.length > 0) {
             const setExpiredStatus = httpsCallable($functions, 'setExpiredStatus')
-            await setExpiredStatus({medicationIds: expiredIds})
+            await setExpiredStatus({ medicationIds: expiredIds })
         }
     }
 
@@ -151,7 +151,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         cip13: string
     ): Promise<GetMedicationDetailsResponse | undefined> => {
         const getDetails = httpsCallable($functions, 'getMedicationDetails')
-        const result = await getDetails({cip13})
+        const result = await getDetails({ cip13 })
         return (result.data as GetMedicationDetailsResponse) || undefined
     }
 
@@ -163,7 +163,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         const targetMonth = expiryDate.getMonth()
         const targetYear = expiryDate.getFullYear()
 
-        const duplicate = list.find(med => {
+        const duplicate = list.find((med) => {
             const medDate = ensureDate(med.expiryDate)
             return (
                 med.name.toLowerCase() === name.toLowerCase() &&
@@ -177,7 +177,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         logEvent($analytics, 'duplicate_medication_detected', {
             medication_name: name,
             existing_quantity: duplicate.quantity,
-            expiry_date: expiryDate
+            expiry_date: expiryDate,
         })
 
         return duplicate || null
@@ -188,7 +188,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         logEvent($analytics, 'duplicate_medication_increment', {
             medication_name: medication.name,
             medication_id: medication.medicationId,
-            new_quantity: medication.quantity + 1
+            new_quantity: medication.quantity + 1,
         })
 
         return incrementPills(medication)
@@ -209,6 +209,6 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         checkAndUpdateExpiredMedications,
         getMedicationDetails,
         findDuplicateMedication,
-        incrementPillsFromDuplicate
+        incrementPillsFromDuplicate,
     }
 })

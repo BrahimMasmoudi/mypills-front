@@ -148,7 +148,7 @@ const features = [
     icon: 'mdi-pill',
     titleKey: 'landing.features.track.title',
     descKey: 'landing.features.track.desc',
-    colorClass: 'bg-emerald'
+    colorClass: 'bg-primary'
   },
   {
     icon: 'mdi-shield-check',

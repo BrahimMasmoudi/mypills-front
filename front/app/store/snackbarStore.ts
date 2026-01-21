@@ -1,5 +1,5 @@
 // stores/snackbar.ts
-import {defineStore} from 'pinia'
+import { defineStore } from 'pinia'
 
 export const useSnackbarStore = defineStore('snackbar', () => {
     const show = ref(false)
@@ -13,5 +13,5 @@ export const useSnackbarStore = defineStore('snackbar', () => {
         show.value = true
     }
 
-    return {show, text, title, color, notify}
+    return { show, text, title, color, notify }
 })
