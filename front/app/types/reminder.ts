@@ -6,6 +6,7 @@ export interface Dose {
 }
 
 export interface CreateReminderRequest {
+    sicknessName: string
     medication: Medication
     startDate: Date
     endDate: Date

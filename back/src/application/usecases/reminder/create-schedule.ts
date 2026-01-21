@@ -20,6 +20,7 @@ export class CreateSchedule {
                 const scheduledTime = fromZonedTime(dateTimeString, request.timezone)
 
                 reminders.push({
+                    sicknessName: request.sicknessName,
                     reminderId: this.reminderRepo.nextId(),
                     userId,
                     medName: request.medication.name,

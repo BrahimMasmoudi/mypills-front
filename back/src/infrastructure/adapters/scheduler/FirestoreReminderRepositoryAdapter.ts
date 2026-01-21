@@ -1,7 +1,7 @@
-import { Reminder } from '../../../domain/entities/reminder'
-import { FirestoreConnector } from '../connectors/firestore-connector'
-import { CollectionReference, Timestamp } from 'firebase-admin/firestore'
-import { ReminderRepository } from '../../../domain/gateway/reminder/reminder-repository'
+import {Reminder} from '../../../domain/entities/reminder'
+import {FirestoreConnector} from '../connectors/firestore-connector'
+import {CollectionReference, Timestamp} from 'firebase-admin/firestore'
+import {ReminderRepository} from '../../../domain/gateway/reminder/reminder-repository'
 
 export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
     private readonly collection: CollectionReference
@@ -17,19 +17,16 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
     async saveBatch(reminders: Reminder[]): Promise<void> {
         if (reminders.length === 0) return
 
-        // Firestore batches can handle up to 500 ops.
-        // For simplicity, we assume <500 here, or you can use a chunking utility.
         const batch = this.connector.firestore.batch()
 
         reminders.forEach((reminder) => {
             const docRef = this.collection.doc(reminder.reminderId)
 
-            // Map Domain Entity -> Firestore Document
             batch.set(docRef, {
+                sicknessName: reminder.sicknessName,
                 userId: reminder.userId,
                 medName: reminder.medName,
                 quantity: reminder.quantity,
-                // Convert JS Date to Firestore Timestamp
                 scheduledTime: Timestamp.fromDate(reminder.scheduledTime),
                 status: reminder.status,
                 createdAt: Timestamp.now(),
@@ -46,15 +43,16 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
             return null
         }
 
-        const data = doc.data()
+        const data = doc.data() as Reminder
         if (!data) return null
 
         return {
+            sicknessName: data.sicknessName,
             reminderId: doc.id,
             userId: data.userId,
             medName: data.medName,
             quantity: data.quantity,
-            scheduledTime: (data.scheduledTime as Timestamp).toDate(),
+            scheduledTime: (data.scheduledTime as unknown as Timestamp).toDate(),
             status: data.status,
         }
     }

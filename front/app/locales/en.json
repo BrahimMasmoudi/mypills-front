@@ -139,7 +139,8 @@
       "error" : "An error happened while creating the reminder"
     },
     "time-picker-title" : "select the time",
-    "dateRange" : "Duration"
+    "dateRange" : "Duration",
+    "reminderNameLabel" : "Sickness name"
   },
   "actions": {
     "main": "Add New",

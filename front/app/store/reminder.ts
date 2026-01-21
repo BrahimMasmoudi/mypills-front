@@ -15,8 +15,6 @@ export const useReminderStore = defineStore('reminder', () => {
         try {
             const { $functions } = useNuxtApp()
 
-            // Reference the function.
-            // Note: Region 'europe-west3' is handled by your plugin initialization
             const callCreateSchedule = httpsCallable<CreateReminderRequest, { success: boolean }>(
                 $functions,
                 'createSchedule'

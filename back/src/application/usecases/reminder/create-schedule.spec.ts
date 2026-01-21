@@ -21,6 +21,7 @@ describe('CreateSchedule Use Case', () => {
     it('should create correct number of reminders for a given date range and doses', async () => {
         // Arrange: 2 days, 2 doses per day = 4 reminders total
         const request: ScheduleRequestDto = {
+            sicknessName : 'sickness',
             medication: { name: 'Doliprane' },
             startDate: '2024-01-01',
             endDate: '2024-01-02',
@@ -61,6 +62,7 @@ describe('CreateSchedule Use Case', () => {
     it('should create reminders when start and end date are the same', async () => {
         // Arrange
         const request: ScheduleRequestDto = {
+            sicknessName : 'sickness',
             medication: { name: 'Aspegic' },
             startDate: '2024-05-01',
             endDate: '2024-05-01',
@@ -79,6 +81,7 @@ describe('CreateSchedule Use Case', () => {
 
     it('should not call saveBatch if no doses are provided', async () => {
         const request: ScheduleRequestDto = {
+            sicknessName : 'sickness',
             medication: { name: 'Test' },
             startDate: '2024-01-01',
             endDate: '2024-01-02',

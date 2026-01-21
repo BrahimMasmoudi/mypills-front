@@ -51,6 +51,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             const reminders: Reminder[] = [
                 {
                     reminderId: 'id-1',
+                    sicknessName : 'sickness',
                     userId: 'u1',
                     medName: 'Doli',
                     quantity: 1,

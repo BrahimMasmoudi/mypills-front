@@ -139,7 +139,8 @@
       "success" : "Le rappel est crée avec succés",
       "error" : "Échec lors de la creation d'un rappel"
     },
-    "dateRange" : "Durée"
+    "dateRange" : "Durée",
+    "reminderNameLabel" : "Nom de la maladie"
   },
   "actions": {
     "main": "Ajouter",

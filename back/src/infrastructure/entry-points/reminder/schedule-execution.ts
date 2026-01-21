@@ -23,6 +23,7 @@ export const scheduleReminderTask = onDocumentCreated({
 
     // Map Firestore data to Domain Entity
     const reminder: Reminder = {
+        sicknessName : 'sickness',
         reminderId: event.params.id,
         userId: data.userId,
         medName: data.medName,

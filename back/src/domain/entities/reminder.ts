@@ -1,4 +1,5 @@
 export interface Reminder {
+    sicknessName: string
     reminderId: string
     userId: string
     medName: string
@@ -8,6 +9,7 @@ export interface Reminder {
 }
 
 export interface ScheduleRequestDto {
+    sicknessName: string
     medication: { name: string }
     startDate: string
     endDate: string

@@ -121,6 +121,7 @@ import { useI18n } from 'vue-i18n'
 import type { Medication } from '~/types/medication'
 import { parseDate } from "~/composables/parseDate"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
+import type {ToastType} from "~/composables/openToast";
 
 const { t } = useI18n()
 const { $open } = useNuxtApp()
@@ -143,7 +144,6 @@ const headers = computed(() => [
   { title: t('meds.actions'), key: 'actions', align: 'end' as const, sortable: false },
 ])
 
-// Per-item loading states
 const loadingStates = ref<Record<string, { increment?: boolean, decrement?: boolean, delete?: boolean, rename?: boolean }>>({})
 
 const startLoading = (id: string, action: 'increment' | 'decrement' | 'delete' | 'rename') => {
@@ -168,7 +168,7 @@ const handleDecrement = (item: Medication) => {
 }
 
 const confirmDelete = async (item: Medication) => {
-  const result = await $open<string>(ValidationWithWarningDialog, {
+  const result = await $open<ToastType>(ValidationWithWarningDialog, {
     scrim: true,
     isPersistent: true,
     title: t('dialogDelete.title'),
