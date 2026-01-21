@@ -8,15 +8,12 @@ export async function migrate({firestore}: MigrateOptions) {
     const snapshot = await remindersCollection.get()
     let updatedCount = 0
 
-    snapshot.docs.forEach((doc) => {
-        const data = doc.data()
-        if (data.sicknessName === undefined) {
-            batch.update(doc.ref, {
-                sicknessName: 'sickness name',
-                updatedAt: new Date(),
-            })
-            updatedCount++
-        }
+    snapshot.docs.forEach((doc, index) => {
+        batch.set(doc.ref, {
+            sicknessName: `sickness name ${index}`,
+            updatedAt: new Date(),
+        }, {merge: true})
+        updatedCount++
     })
 
     if (updatedCount === 0) {

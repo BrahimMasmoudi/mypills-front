@@ -13,3 +13,14 @@ export interface CreateReminderRequest {
     doses: Dose[]
     timezone: string
 }
+
+
+export interface Reminder {
+    sicknessName: string
+    reminderId: string
+    userId: string
+    medName: string
+    quantity: string | number
+    scheduledTime: Date
+    status: 'pending' | 'sent' | 'failed'
+}

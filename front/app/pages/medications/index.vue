@@ -7,7 +7,6 @@
       @delete-pills="(med, done) => deletePills(med, done)"
       @update-medication-name="(med, name, done) => updateMedicationName(med, name, done)"
       @create-medication="createMedication"
-      @create-reminder="createReminder"
   />
 </template>
 
@@ -86,19 +85,17 @@ const updateMedicationName = async (medication: Medication, newName: string, don
   }
 }
 
-const createReminder = async (reminderRequest: CreateReminderRequest) => {
-  await reminderStore.createSchedule(reminderRequest)
-}
-
-watch(medications, (newMeds: Medication[] | undefined) => {
-  if (!newMeds) return
-  medicationLoading.value = false
-  if (newMeds.length > 0) {
-    void handleExpiredMedications(newMeds as Medication[])
-  }
-}, { immediate: true })
-
 const handleExpiredMedications = async (meds: Medication[]) => {
   await medicationStore.checkAndUpdateExpiredMedications(meds)
 }
+
+watch(medications, async (newMeds: Medication[] | undefined) => {
+  if (!newMeds) return
+  medicationLoading.value = false
+  if (newMeds.length > 0) {
+    await handleExpiredMedications(newMeds as Medication[])
+  }
+}, { immediate: true })
+
+
 </script>

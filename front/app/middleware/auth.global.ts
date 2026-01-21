@@ -4,7 +4,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
     const user = await getCurrentUser()
 
     if (user && to.path === '/login') {
-        return navigateTo('/')
+        return navigateTo('/medications')
     }
 
     if (!user && to.path !== '/login') {

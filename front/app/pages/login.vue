@@ -171,14 +171,14 @@ const features = [
   }
 ]
 
-if (userStore.user) navigateTo('/')
+if (userStore.user) navigateTo('/medications')
 
 const login = async () => {
   if (isLoading.value) return
   isLoading.value = true
   try {
     await userStore.login()
-    await navigateTo('/')
+    await navigateTo('/medications')
   } catch (e) {
     console.error('Login failed', e)
   } finally {
