@@ -153,6 +153,7 @@
       "time": "Heure prévue",
       "status": "Statut"
     },
+    "medsCount": "{n} médicament | {n} médicaments",
     "dialogDelete": {
       "title": "Es-tu sûr de supprimer ce rappel ?",
       "message": "Attention, la suppression du rappel est irréversible",

@@ -1,4 +1,4 @@
-import type { Medication } from '~/types/medication'
+import type {Medication} from '~/types/medication'
 
 export interface Dose {
     time: string
@@ -24,14 +24,19 @@ export interface Reminder {
     status: 'pending' | 'sent' | 'failed'
 }
 
+export interface MedicationInfo {
+    name: string
+    doses: Dose[]
+}
+
 export interface ReminderGroup {
     sicknessName: string
-    medName: string
+    medNames: string[]
+    medications: MedicationInfo[]
     startDate: Date
     endDate: Date
     ids: string[]
     status: 'pending' | 'sent' | 'failed'
-    doses: Dose[]
     fullObject: Reminder
-    dosesMap?: Map<string, string | number>
+    doses: Dose[]
 }
