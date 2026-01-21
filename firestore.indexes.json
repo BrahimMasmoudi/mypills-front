@@ -30,6 +30,10 @@
         {
           "fieldPath": "expiryDate",
           "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
         }
       ],
       "density": "SPARSE_ALL"
@@ -44,6 +48,10 @@
         },
         {
           "fieldPath": "scheduledTime",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
           "order": "DESCENDING"
         }
       ],
