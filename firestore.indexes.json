@@ -46,7 +46,8 @@
           "fieldPath": "scheduledTime",
           "order": "DESCENDING"
         }
-      ]
+      ],
+      "density": "SPARSE_ALL"
     }
   ],
   "fieldOverrides": []
