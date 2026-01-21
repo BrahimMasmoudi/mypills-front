@@ -146,6 +146,7 @@
   "reminders": {
     "title": "My Reminders",
     "subtitle": "Manage your intake schedules and track current treatments",
+    "empty": "No treatments scheduled yet available",
     "table": {
       "sicknessName": "Treatment / Sickness",
       "medication": "Medication",

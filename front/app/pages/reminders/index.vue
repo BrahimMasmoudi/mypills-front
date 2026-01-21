@@ -22,11 +22,11 @@
       </v-btn-toggle>
     </v-sheet>
 
-    <div v-if="!reminderStore.loading && groupedReminders.length === 0"
-         class="d-flex flex-column align-center justify-center py-12">
+    <v-sheet width="100%" height="100%" v-if="!reminderStore.loading && groupedReminders.length === 0"
+             class="d-flex flex-column align-center justify-center">
       <v-icon icon="mdi-calendar-blank" size="64" color="medium-emphasis" class="mb-4"/>
       <p class="text-h6 text-medium-emphasis">{{ t('reminders.empty') }}</p>
-    </div>
+    </v-sheet>
 
     <div v-else>
       <v-row v-if="$device.isMobile || viewType === 'grid'" class="d-flex align-stretch justify-start mt-0 px-1">
