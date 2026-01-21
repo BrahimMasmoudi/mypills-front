@@ -59,6 +59,6 @@ jobs:
       - name: '🚀 Deploy to Firebase'
         uses: w9jds/firebase-action@v13.16.0
         with:
-          args: deploy --only functions,hosting --project mypills-prod --force
+          args: deploy --only functions,hosting,firestore --project mypills-prod --force
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_PROD }}
