@@ -22,6 +22,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
         mockBatch = {
             set: jest.fn().mockReturnThis(),
             commit: jest.fn().mockResolvedValue(undefined),
+            delete: jest.fn().mockReturnThis(),
         }
 
         mockCollection = {
@@ -136,24 +137,36 @@ describe('FirestoreReminderRepositoryAdapter', () => {
     })
 
     describe('delete', () => {
-        it('should call delete on the correct document reference', async () => {
+        it('should execute a batch delete for all provided IDs', async () => {
             // Arrange
-            const reminderToDelete: Reminder = {
-                reminderId: 'id-to-delete',
-                sicknessName: 'flu',
-                userId: 'u1',
-                medName: 'Aspirin',
-                quantity: 2,
-                scheduledTime: new Date(),
-                status: 'pending',
-            }
+            const idsToDelete = ['id-1', 'id-2']
 
             // Act
-            await adapter.delete(reminderToDelete)
+            await adapter.delete(idsToDelete)
 
             // Assert
-            expect(mockCollection.doc).toHaveBeenCalledWith('id-to-delete')
-            expect(mockDoc.delete).toHaveBeenCalledTimes(1)
+            // 1. Verify batch was created
+            expect(mockConnector.firestore.batch).toHaveBeenCalled()
+
+            // 2. Verify collection.doc was called for each ID
+            expect(mockCollection.doc).toHaveBeenCalledWith('id-1')
+            expect(mockCollection.doc).toHaveBeenCalledWith('id-2')
+
+            // 3. Verify batch.delete was called with the docRefs
+            // Note: because mockCollection.doc returns mockDoc every time in this mock:
+            expect(mockBatch.delete).toHaveBeenCalledTimes(2)
+            expect(mockBatch.delete).toHaveBeenCalledWith(mockDoc)
+
+            // 4. Verify batch was committed
+            expect(mockBatch.commit).toHaveBeenCalled()
+        })
+
+        it('should return early if the array of IDs is empty', async () => {
+            // Act
+            await adapter.delete([])
+
+            // Assert
+            expect(mockConnector.firestore.batch).not.toHaveBeenCalled()
         })
     })
 })

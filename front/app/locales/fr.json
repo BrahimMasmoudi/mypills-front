@@ -152,6 +152,12 @@
       "quantity": "Quantité",
       "time": "Heure prévue",
       "status": "Statut"
+    },
+    "dialogDelete": {
+      "title": "Es-tu sûr de supprimer ce rappel ?",
+      "message": "Attention, la suppression du rappel est irréversible",
+      "success": "Le rappel est supprimé avec succès",
+      "error": "Échec lors de la suppression."
     }
   },
   "status": {

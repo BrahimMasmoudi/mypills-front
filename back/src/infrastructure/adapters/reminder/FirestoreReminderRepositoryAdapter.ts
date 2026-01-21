@@ -1,7 +1,7 @@
 import { Reminder } from '../../../domain/entities/reminder'
 import { FirestoreConnector } from '../connectors/firestore-connector'
 import { CollectionReference, Timestamp } from 'firebase-admin/firestore'
-import { ReminderRepository } from '../../../domain/repositories/reminder/reminder-repository'
+import { ReminderId, ReminderRepository } from '../../../domain/repositories/reminder/reminder-repository'
 
 export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
     private readonly collection: CollectionReference
@@ -64,7 +64,14 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
         })
     }
 
-    async delete(reminder: Reminder): Promise<void> {
-        await this.collection.doc(reminder.reminderId).delete()
+    async delete(reminderIds: ReminderId[]): Promise<void> {
+        if (reminderIds.length === 0) return
+        const batch = this.connector.firestore.batch()
+
+        reminderIds.forEach((id) => {
+            const docRef = this.collection.doc(id)
+            batch.delete(docRef)
+        })
+        await batch.commit()
     }
 }

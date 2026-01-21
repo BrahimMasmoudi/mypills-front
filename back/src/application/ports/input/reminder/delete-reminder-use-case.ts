@@ -1,5 +1,5 @@
-import { Reminder } from '../../../../domain/entities/reminder'
+import {ReminderId} from "../../../../domain/repositories/reminder/reminder-repository";
 
 export interface DeleteReminderUseCase {
-    execute(reminder: Reminder): Promise<void>
+    execute(reminderIds: ReminderId[]): Promise<void>
 }

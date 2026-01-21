@@ -23,3 +23,15 @@ export interface Reminder {
     scheduledTime: Date
     status: 'pending' | 'sent' | 'failed'
 }
+
+export interface ReminderGroup {
+    sicknessName: string
+    medName: string
+    startDate: Date
+    endDate: Date
+    ids: string[]
+    status: 'pending' | 'sent' | 'failed'
+    doses: Dose[]
+    fullObject: Reminder
+    dosesMap?: Map<string, string | number>
+}

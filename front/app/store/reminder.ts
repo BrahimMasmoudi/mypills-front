@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 import { httpsCallable } from 'firebase/functions'
 import { collection, query, where, orderBy } from 'firebase/firestore'
 import { useCollection, getCurrentUser } from 'vuefire'
-import type { CreateReminderRequest, Reminder } from '~/types/reminder'
-import {logEvent} from "@firebase/analytics";
+import type { CreateReminderRequest, Reminder, ReminderGroup } from '~/types/reminder'
+import { logEvent } from '@firebase/analytics'
 
 export const useReminderStore = defineStore('reminder', () => {
     const { $functions, $firestore, $analytics } = useNuxtApp()
@@ -40,7 +40,9 @@ export const useReminderStore = defineStore('reminder', () => {
     const createSchedule = async (payload: CreateReminderRequest) => {
         loading.value = true
         try {
-            const callCreateSchedule = httpsCallable<CreateReminderRequest, { success: boolean }>($functions, 'createReminder')
+            const callCreateSchedule = httpsCallable<CreateReminderRequest, {
+                success: boolean
+            }>($functions, 'createReminder')
             const result = await callCreateSchedule(payload)
 
             // Analytics for creating a schedule
@@ -50,7 +52,7 @@ export const useReminderStore = defineStore('reminder', () => {
                     medication_name: payload.medication.name,
                     start_date: payload.startDate,
                     end_date: payload.endDate,
-                    dose_count: payload.doses.length
+                    dose_count: payload.doses.length,
                 })
             }
 
@@ -60,15 +62,17 @@ export const useReminderStore = defineStore('reminder', () => {
         }
     }
 
-    const deleteReminder = async (reminder: Reminder) => {
-        const remove = httpsCallable($functions, 'deleteReminder')
-        await remove(reminder)
+    const deleteReminder = async (reminderGroup: ReminderGroup) => {
+        const ids = reminderGroup.ids
+        const remove = httpsCallable($functions, 'deleteReminders')
+        await remove(ids)
         if ($analytics) {
-            logEvent($analytics, 'delete_reminder', {
-                sickness_name: reminder.sicknessName,
-                medication_name: reminder.medName,
-                reminder_id: reminder.reminderId,
-                status_at_deletion: reminder.status
+            ids.forEach((id) => {
+                logEvent($analytics, 'delete_reminder', {
+                    sickness_name: reminderGroup.sicknessName,
+                    medication_name: reminderGroup.medName,
+                    reminder_id: id,
+                })
             })
         }
     }
@@ -78,6 +82,6 @@ export const useReminderStore = defineStore('reminder', () => {
         loading,
         initReminders,
         createSchedule,
-        deleteReminder,
+        deleteReminders: deleteReminder,
     }
 })

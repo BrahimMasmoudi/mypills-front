@@ -152,6 +152,12 @@
       "quantity": "Quantity",
       "time": "Scheduled Time",
       "status": "Status"
+    },
+    "dialogDelete": {
+      "title": "Are you sure you want to delete this reminder?",
+      "message": "Please note, the deletion of the reminder is permanent and irreversible",
+      "success": "The reminder has been deleted",
+      "error": "Deletion failed. Try again."
     }
   },
   "status": {

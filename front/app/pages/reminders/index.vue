@@ -104,50 +104,62 @@ import {format} from 'date-fns'
 import {useReminderStore} from '~/store/reminder'
 import type {ToastType} from "~/composables/openToast"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
+import type {ReminderGroup} from "~/types/reminder";
 
 const {t} = useI18n()
 const {$open} = useNuxtApp()
 const reminderStore = useReminderStore()
 const {reminders} = storeToRefs(reminderStore) // Reactivity maintained
 
-const groupedReminders = computed(() => {
+const groupedReminders = computed((): ReminderGroup[] => {
   const rawReminders = reminders.value
   if (!rawReminders || rawReminders.length === 0) return []
 
-  const groups = new Map<string, any>()
+  const groups = new Map<string, ReminderGroup>()
 
   rawReminders.forEach((r) => {
     const key = `${r.sicknessName}-${r.medName}`
+
     if (!groups.has(key)) {
       groups.set(key, {
         sicknessName: r.sicknessName,
         medName: r.medName,
-        startDate: r.scheduledTime,
-        endDate: r.scheduledTime,
-        dosesMap: new Map<string, any>(),
+        startDate: new Date(r.scheduledTime),
+        endDate: new Date(r.scheduledTime),
+        doses: [], // Will be populated at the end
+        dosesMap: new Map<string, string | number>(), // Temp storage for grouping
         ids: [],
         status: r.status,
         fullObject: r
       })
     }
 
-    const group = groups.get(key)
+    const group = groups.get(key)!
     const rDate = new Date(r.scheduledTime)
 
     if (rDate < group.startDate) group.startDate = rDate
     if (rDate > group.endDate) group.endDate = rDate
 
     const timeStr = format(rDate, 'HH:mm')
-    group.dosesMap.set(timeStr, r.quantity)
+    group.dosesMap?.set(timeStr, r.quantity)
+
     group.ids.push(r.reminderId)
+
+    group.status = r.status
   })
 
-  return Array.from(groups.values()).map(g => ({
-    ...g,
-    doses: Array.from(g.dosesMap.entries())
+  return Array.from(groups.values()).map(g => {
+    const sortedDoses = Array.from(g.dosesMap?.entries() || [])
         .map(([time, qty]) => ({time, qty}))
         .sort((a, b) => a.time.localeCompare(b.time))
-  }))
+
+    const {dosesMap, ...rest} = g
+
+    return {
+      ...rest,
+      doses: sortedDoses
+    } as unknown as ReminderGroup
+  })
 })
 
 
@@ -172,12 +184,12 @@ const handleDelete = async (item: any) => {
   const result = await $open<ToastType>(ValidationWithWarningDialog, {
     scrim: true,
     isPersistent: true,
-    title: t('dialogDelete.title'),
-    message: t('dialogDelete.message')
+    title: t('reminders.dialogDelete.title'),
+    message: t('reminders.dialogDelete.message')
   })
 
   if (result === 'success') {
-    await reminderStore.deleteReminder(item.fullObject)
+    await reminderStore.deleteReminders(item)
   }
 }
 </script>
