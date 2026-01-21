@@ -1,7 +1,7 @@
 {
   "indexes": [
     {
-      "collectionGroup": "medications",
+      "collectionId": "medications",
       "queryScope": "COLLECTION",
       "fields": [
         {
@@ -16,11 +16,10 @@
           "fieldPath": "__name__",
           "order": "DESCENDING"
         }
-      ],
-      "density": "SPARSE_ALL"
+      ]
     },
     {
-      "collectionGroup": "medications",
+      "collectionId": "medications",
       "queryScope": "COLLECTION",
       "fields": [
         {
@@ -30,12 +29,15 @@
         {
           "fieldPath": "expiryDate",
           "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "DESCENDING"
         }
-      ],
-      "density": "SPARSE_ALL"
+      ]
     },
     {
-      "collectionGroup": "reminders",
+      "collectionId": "reminders",
       "queryScope": "COLLECTION",
       "fields": [
         {
