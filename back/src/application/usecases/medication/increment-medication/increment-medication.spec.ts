@@ -1,5 +1,5 @@
 import { IncrementMedication } from './increment-medication'
-import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { Medication } from '../../../../domain/entities/medication'
 
 describe('IncrementMedication Use Case', () => {

@@ -5,4 +5,5 @@ export interface ReminderRepository {
     getById(id: string): Promise<Reminder | null>
     updateStatus(id: string, status: 'sent' | 'failed'): Promise<void>
     nextId(): string
+    delete(reminder: Reminder): Promise<void>
 }

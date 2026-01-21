@@ -1,7 +1,7 @@
-import * as functions from '../https-functions'
+import * as functions from '../../https-functions'
 
-import { SendReminderNotification } from '../../../application/usecases/reminder/send-notification'
-jest.mock('../../../application/usecases/reminder/send-notification')
+import { SendReminderNotification } from '../../../../application/usecases/scheduler/notification/send-notification'
+jest.mock('../../../../application/usecases/scheduler/notification/send-notification')
 
 describe('sendFCMNotification Webhook', () => {
     it('should call SendReminderNotification and return 200', async () => {

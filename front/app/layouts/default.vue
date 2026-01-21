@@ -104,12 +104,39 @@ import type {Medication} from "~/types/medication";
 import {useMedicationsStore} from "~/store/medications";
 import type {CreateReminderRequest} from "~/types/reminder";
 import {useReminderStore} from "~/store/reminder";
+import CountryDialog from "~/components/molecules/CountryDialog.vue";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
 const {selectedCountry} = storeToRefs(useCountryStore())
 const medicationStore = useMedicationsStore()
 const reminderStore = useReminderStore()
+const countryStore = useCountryStore()
+const notifications = useNotifications()
+
+
+const checkCountryStatus = async () => {
+  if (countryStore.selectedCountry === null) {
+    const result = await $open<string | null>(CountryDialog, {
+      scrim: true,
+      isPersistent: true
+    })
+
+    if (result === 'FR') {
+      countryStore.confirmFrance()
+    } else {
+      countryStore.clearCountry()
+    }
+  }
+}
+
+onMounted(async () => {
+  await medicationStore.initMedications()
+  await reminderStore.initReminders()
+  await checkCountryStatus()
+  await notifications.registerNotificationToken()
+  notifications.listenForMessages()
+})
 
 const userStore = useUserStore()
 const isDialOpen = ref(false)
@@ -137,7 +164,9 @@ const openReminderDialog = async () => {
   const toastType = await $open<ToastType>(ReminderCreationDialog, {
     scrim: true,
     isPersistent: true,
-    createReminder: async (req: CreateReminderRequest) => await reminderStore.createSchedule(req),
+    createReminder: async (req: CreateReminderRequest) => {
+      await reminderStore.createSchedule(req)
+    },
     validMedications: validMedication.value
   })
   if (toastType && toastType !== 'canceled') openToast(toastType, t(`reminderDialog.toast.${toastType}`))

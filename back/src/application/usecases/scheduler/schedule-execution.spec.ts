@@ -1,5 +1,5 @@
 import { ScheduleExecution } from './schedule-execution'
-import { TaskSchedulerPort } from '../../../domain/gateway/reminder/task-scheduler-port'
+import { TaskSchedulerPort } from '../../../domain/gateway/scheduler/task-scheduler-port'
 import { Reminder } from '../../../domain/entities/reminder'
 
 describe('ScheduleExecution Use Case', () => {
@@ -18,7 +18,7 @@ describe('ScheduleExecution Use Case', () => {
     it('should call the scheduler with correctly mapped data from the reminder', async () => {
         // Arrange
         const mockReminder: Reminder = {
-            sicknessName : 'sickness',
+            sicknessName: 'sickness',
             reminderId: 'rem-abc',
             userId: 'user-123',
             medName: 'Doliprane',
@@ -48,7 +48,7 @@ describe('ScheduleExecution Use Case', () => {
         mockScheduler.scheduleNotificationTask.mockRejectedValue(new Error('GCP Queue Error'))
 
         const mockReminder: Reminder = {
-            sicknessName : 'sickness',
+            sicknessName: 'sickness',
             reminderId: 'rem-abc',
             userId: 'user-123',
             medName: 'Doliprane',

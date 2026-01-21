@@ -1,9 +1,9 @@
 import { ScheduleRequestDto, Reminder } from '../../../domain/entities/reminder'
 import { parse, isBefore, isSameDay, addDays, format } from 'date-fns'
 import { fromZonedTime } from 'date-fns-tz'
-import { ReminderRepository } from '../../../domain/gateway/reminder/reminder-repository'
+import { ReminderRepository } from '../../../domain/repositories/reminder/reminder-repository'
 
-export class CreateSchedule {
+export class CreateReminder {
     constructor(private reminderRepo: ReminderRepository) {
     }
 

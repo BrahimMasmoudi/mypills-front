@@ -1,6 +1,6 @@
 import { Reminder } from '../../../domain/entities/reminder'
-import { TaskSchedulerPort } from '../../../domain/gateway/reminder/task-scheduler-port'
-import { ScheduleReminderExecutionUseCase } from '../../ports/input/reminder/schedule-reminder-execution-use-case'
+import { TaskSchedulerPort } from '../../../domain/gateway/scheduler/task-scheduler-port'
+import { ScheduleReminderExecutionUseCase } from '../../ports/input/scheduler/schedule-reminder-execution-use-case'
 
 export class ScheduleExecution implements ScheduleReminderExecutionUseCase {
     constructor(private scheduler: TaskSchedulerPort) {

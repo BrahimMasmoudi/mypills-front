@@ -1,5 +1,5 @@
-import { NotificationGateway } from '../../../domain/gateway/reminder/notification-gateway'
-import { UserRepository } from '../../../domain/gateway/reminder/user-repository'
+import { NotificationGateway } from '../../../../domain/gateway/scheduler/notification-gateway'
+import { UserRepository } from '../../../../domain/repositories/reminder/user-repository'
 
 export interface SendNotificationCommand {
     userId: string

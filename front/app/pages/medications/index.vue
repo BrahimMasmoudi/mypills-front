@@ -18,36 +18,11 @@ import CountryDialog from "~/components/molecules/CountryDialog.vue"
 import type { CreateReminderRequest } from "~/types/reminder"
 import { useReminderStore } from "~/store/reminder"
 
-const { $open } = useNuxtApp()
-const countryStore = useCountryStore()
-const notifications = useNotifications()
+
 
 const medicationLoading = ref(true)
 const medicationStore = useMedicationsStore()
 const medications = computed(() => medicationStore.medications)
-const reminderStore = useReminderStore()
-
-onMounted(async () => {
-  await medicationStore.initMedications()
-  await checkCountryStatus()
-  await notifications.registerNotificationToken()
-  notifications.listenForMessages()
-})
-
-const checkCountryStatus = async () => {
-  if (countryStore.selectedCountry === null) {
-    const result = await $open<string | null>(CountryDialog, {
-      scrim: true,
-      isPersistent: true
-    })
-
-    if (result === 'FR') {
-      countryStore.confirmFrance()
-    } else {
-      countryStore.clearCountry()
-    }
-  }
-}
 
 const createMedication = async (medication: Medication) => {
   await medicationStore.createMedication(medication)

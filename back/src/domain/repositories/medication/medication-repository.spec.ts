@@ -2,9 +2,9 @@ import { initializeApp, getApp, deleteApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 import {
     FirestoreMedicationRepositoryAdapter,
-} from '../../infrastructure/adapters/persistence/firestore-medication-repository-adapter'
-import { FirestoreConnector } from '../../infrastructure/adapters/connectors/firestore-connector'
-import { Medication } from '../entities/medication'
+} from '../../../infrastructure/adapters/persistence/firestore-medication-repository-adapter'
+import { FirestoreConnector } from '../../../infrastructure/adapters/connectors/firestore-connector'
+import { Medication } from '../../entities/medication'
 import { credential } from 'firebase-admin'
 
 describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {

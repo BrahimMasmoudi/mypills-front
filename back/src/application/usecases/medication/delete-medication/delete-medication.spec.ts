@@ -1,5 +1,5 @@
 import { DeleteMedication } from './delete-medication'
-import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { Medication } from '../../../../domain/entities/medication'
 
 describe('DeleteMedication Use Case', () => {

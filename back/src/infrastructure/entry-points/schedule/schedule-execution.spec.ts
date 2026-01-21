@@ -2,8 +2,8 @@ import * as functions from '../https-functions'
 
 import firebaseFunctionsTest from 'firebase-functions-test'
 
-import { ScheduleExecution } from '../../../application/usecases/reminder/schedule-execution'
-jest.mock('../../../application/usecases/reminder/schedule-execution')
+import { ScheduleExecution } from '../../../application/usecases/scheduler/schedule-execution'
+jest.mock('../../../application/usecases/scheduler/schedule-execution')
 
 const testEnv = firebaseFunctionsTest()
 

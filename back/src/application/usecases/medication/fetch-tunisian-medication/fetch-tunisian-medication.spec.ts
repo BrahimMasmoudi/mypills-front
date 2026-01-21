@@ -1,5 +1,5 @@
 import { FetchTunisianMedication } from './fetch-tunisian-medication'
-import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { GetMedicationDetailsResponse } from '../../../../types/medicationApi'
 
 describe('FetchTunisianMedication Use Case', () => {

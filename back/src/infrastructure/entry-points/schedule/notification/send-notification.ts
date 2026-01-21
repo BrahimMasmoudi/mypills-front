@@ -1,8 +1,8 @@
-import { FirestoreUserRepositoryAdapter } from '../../adapters/scheduler/firestore-user-repository-adapter'
+import { FirestoreUserRepositoryAdapter } from '../../../adapters/scheduler/firestore-user-repository-adapter'
 import { onRequest } from 'firebase-functions/v2/https'
-import { $firebaseConnector } from '../../config/firebase'
-import { FirebaseFcmAdapter } from '../../adapters/messaging/firebase-fcm-adapter'
-import { SendReminderNotification } from '../../../application/usecases/reminder/send-notification'
+import { $firebaseConnector } from '../../../config/firebase'
+import { FirebaseFcmAdapter } from '../../../adapters/messaging/firebase-fcm-adapter'
+import { SendReminderNotification } from '../../../../application/usecases/scheduler/notification/send-notification'
 
 export const sendFCMNotification = onRequest({ region: 'europe-west3' }, async (req, res) => {
     const { userId, medName, quantity } = req.body

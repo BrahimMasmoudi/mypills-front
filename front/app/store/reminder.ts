@@ -1,101 +1,61 @@
-import {defineStore} from 'pinia'
-import {httpsCallable} from 'firebase/functions'
-import {
-    collection,
-    query,
-    where,
-    getDocs,
-    doc,
-    deleteDoc,
-    orderBy
-} from 'firebase/firestore'
-import type {CreateReminderRequest, Reminder} from '~/types/reminder'
-import {getCurrentUser} from 'vuefire'
+import { defineStore } from 'pinia'
+import { httpsCallable } from 'firebase/functions'
+import { collection, query, where, orderBy } from 'firebase/firestore'
+import { useCollection, getCurrentUser } from 'vuefire'
+import type { CreateReminderRequest, Reminder } from '~/types/reminder'
 
 export const useReminderStore = defineStore('reminder', () => {
-    const {$functions, $firestore} = useNuxtApp()
+    const { $functions, $firestore, $analytics } = useNuxtApp()
 
-    const reminders = ref<Reminder[]>([])
+    // 1. Set up a source ref that useCollection will populate
+    const reminderSource = ref<any[]>([])
     const loading = ref(false)
-    const error = ref<string | null>(null)
 
-    const fetchUserReminders = async () => {
-        loading.value = true
-        error.value = null
+    const initReminders = async () => {
+        const user = await getCurrentUser()
+        if (!user) return
 
-        try {
-            const user = await getCurrentUser()
-            if (!user) throw new Error('User not authenticated')
+        const q = query(
+            collection($firestore, 'reminders'),
+            where('userId', '==', user.uid),
+            orderBy('scheduledTime', 'desc')
+        )
 
-            const q = query(
-                collection($firestore, 'reminders'),
-                where('userId', '==', user.uid),
-                orderBy('scheduledTime', 'desc')
-            )
-
-            const querySnapshot = await getDocs(q)
-
-            reminders.value = querySnapshot.docs.map(doc => {
-                const data = doc.data()
-                return {
-                    ...data,
-                    reminderId: doc.id,
-                    scheduledTime: data.scheduledTime?.toDate() || new Date()
-                } as Reminder
-            })
-
-            return reminders.value
-        } catch (err: any) {
-            console.error('Error fetching reminders:', err)
-            error.value = err.message
-            return []
-        } finally {
-            loading.value = false
-        }
+        // Bind the source directly to the collection
+        // VueFire will now update reminderSource automatically in real-time
+        useCollection(q, { target: reminderSource })
     }
+
+    // 2. Create a computed property to handle the Date conversion
+    // This ensures the rest of your app sees JS Dates, not Firestore Timestamps
+    const reminders = computed(() => {
+        return reminderSource.value.map((doc) => ({
+            ...doc,
+            reminderId: doc.id,
+            scheduledTime: doc.scheduledTime?.toDate ? doc.scheduledTime.toDate() : new Date(doc.scheduledTime),
+        })) as Reminder[]
+    })
 
     const createSchedule = async (payload: CreateReminderRequest) => {
         loading.value = true
-        error.value = null
-
         try {
-            const callCreateSchedule = httpsCallable<CreateReminderRequest, { success: boolean }>(
-                $functions,
-                'createSchedule'
-            )
-
-            const result = await callCreateSchedule(payload)
-
-            await fetchUserReminders()
-
-            return result.data
-        } catch (err: any) {
-            console.error('Error creating schedule:', err)
-            error.value = err.message || 'Failed to create schedule'
-            throw err
+            const callCreateSchedule = httpsCallable<CreateReminderRequest, { success: boolean }>($functions, 'createReminder')
+            return (await callCreateSchedule(payload)).data
         } finally {
             loading.value = false
         }
     }
 
-    const deleteById = async (reminderId: string) => {
-        try {
-            const docRef = doc($firestore, 'reminders', reminderId)
-            await deleteDoc(docRef)
-
-            reminders.value = reminders.value.filter((r: Reminder) => r.reminderId !== reminderId)
-        } catch (err: any) {
-            error.value = 'Failed to delete reminder'
-            throw err
-        }
+    const deleteReminder = async (reminder: Reminder) => {
+        const remove = httpsCallable($functions, 'deleteReminder')
+        await remove(reminder)
     }
 
     return {
-        reminders,
+        reminders, // This is now a computed reactive array
         loading,
-        error,
-        fetchUserReminders,
+        initReminders,
         createSchedule,
-        deleteById
+        deleteReminder,
     }
 })

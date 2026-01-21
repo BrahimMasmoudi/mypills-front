@@ -1,7 +1,7 @@
-import {Reminder} from '../../../domain/entities/reminder'
-import {FirestoreConnector} from '../connectors/firestore-connector'
-import {CollectionReference, Timestamp} from 'firebase-admin/firestore'
-import {ReminderRepository} from '../../../domain/gateway/reminder/reminder-repository'
+import { Reminder } from '../../../domain/entities/reminder'
+import { FirestoreConnector } from '../connectors/firestore-connector'
+import { CollectionReference, Timestamp } from 'firebase-admin/firestore'
+import { ReminderRepository } from '../../../domain/repositories/reminder/reminder-repository'
 
 export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
     private readonly collection: CollectionReference
@@ -62,5 +62,9 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
             status: status,
             updatedAt: Timestamp.now(),
         })
+    }
+
+    async delete(reminder: Reminder): Promise<void> {
+        await this.collection.doc(reminder.reminderId).delete()
     }
 }

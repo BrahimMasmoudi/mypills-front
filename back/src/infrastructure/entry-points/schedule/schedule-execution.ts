@@ -1,6 +1,6 @@
 import { onDocumentCreated } from 'firebase-functions/v2/firestore'
 import { Reminder } from '../../../domain/entities/reminder'
-import { ScheduleExecution } from '../../../application/usecases/reminder/schedule-execution'
+import { ScheduleExecution } from '../../../application/usecases/scheduler/schedule-execution'
 import { GoogleCloudTaskSchedulerAdapter } from '../../adapters/scheduler/google-cloud-task-scheduler-adapter'
 
 export const scheduleReminderTask = onDocumentCreated({
@@ -23,7 +23,7 @@ export const scheduleReminderTask = onDocumentCreated({
 
     // Map Firestore data to Domain Entity
     const reminder: Reminder = {
-        sicknessName : 'sickness',
+        sicknessName: 'sickness',
         reminderId: event.params.id,
         userId: data.userId,
         medName: data.medName,

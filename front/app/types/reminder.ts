@@ -14,7 +14,6 @@ export interface CreateReminderRequest {
     timezone: string
 }
 
-
 export interface Reminder {
     sicknessName: string
     reminderId: string

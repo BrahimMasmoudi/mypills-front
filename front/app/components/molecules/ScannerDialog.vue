@@ -84,9 +84,8 @@ const startScanning = async () => {
             { facingMode: "environment" },
             config,
             (decodedText) => {
-                console.log('decodedText,',decodedText)
                 emit('detect', decodedText)
-                close() // close will call stopScanning
+                close()
             },
             (errorMessage) => {
                 // scanning...

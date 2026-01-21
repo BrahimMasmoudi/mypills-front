@@ -16,6 +16,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             set: jest.fn(),
             get: jest.fn(),
             update: jest.fn().mockResolvedValue(undefined),
+            delete: jest.fn().mockResolvedValue(undefined), // Added mock for delete
         }
 
         mockBatch = {
@@ -51,7 +52,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             const reminders: Reminder[] = [
                 {
                     reminderId: 'id-1',
-                    sicknessName : 'sickness',
+                    sicknessName: 'sickness',
                     userId: 'u1',
                     medName: 'Doli',
                     quantity: 1,
@@ -91,6 +92,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
                 exists: true,
                 id: 'id-1',
                 data: () => ({
+                    sicknessName: 'sickness',
                     userId: 'u1',
                     medName: 'Doli',
                     quantity: 1,
@@ -104,6 +106,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
 
             // Assert
             expect(result).toEqual({
+                sicknessName: 'sickness',
                 reminderId: 'id-1',
                 userId: 'u1',
                 medName: 'Doli',
@@ -129,6 +132,28 @@ describe('FirestoreReminderRepositoryAdapter', () => {
                 status: 'sent',
                 updatedAt: expect.any(Timestamp),
             })
+        })
+    })
+
+    describe('delete', () => {
+        it('should call delete on the correct document reference', async () => {
+            // Arrange
+            const reminderToDelete: Reminder = {
+                reminderId: 'id-to-delete',
+                sicknessName: 'flu',
+                userId: 'u1',
+                medName: 'Aspirin',
+                quantity: 2,
+                scheduledTime: new Date(),
+                status: 'pending',
+            }
+
+            // Act
+            await adapter.delete(reminderToDelete)
+
+            // Assert
+            expect(mockCollection.doc).toHaveBeenCalledWith('id-to-delete')
+            expect(mockDoc.delete).toHaveBeenCalledTimes(1)
         })
     })
 })

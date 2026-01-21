@@ -1,5 +1,5 @@
 import { FetchTunisianMedicationUseCase } from '../../../ports/input/medication/fetch-tunisian-medication-use-case'
-import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { GetMedicationDetailsResponse } from '../../../../types/medicationApi'
 
 export class FetchTunisianMedication implements FetchTunisianMedicationUseCase {

@@ -1,6 +1,6 @@
 import { SendReminderNotification, SendNotificationCommand } from './send-notification'
-import { UserRepository } from '../../../domain/gateway/reminder/user-repository'
-import { NotificationGateway } from '../../../domain/gateway/reminder/notification-gateway'
+import { UserRepository } from '../../../../domain/repositories/reminder/user-repository'
+import { NotificationGateway } from '../../../../domain/gateway/scheduler/notification-gateway'
 
 describe('SendReminderNotification Use Case', () => {
     let mockUserRepo: jest.Mocked<UserRepository>
@@ -19,9 +19,6 @@ describe('SendReminderNotification Use Case', () => {
         }
 
         useCase = new SendReminderNotification(mockUserRepo, mockNotificationGateway)
-
-        // Clear console spies
-        jest.spyOn(console, 'warn').mockImplementation(() => {})
     })
 
     afterEach(() => {

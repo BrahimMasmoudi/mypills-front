@@ -1,5 +1,5 @@
 import { SaveUserToken } from './save-token'
-import { UserRepository } from '../../../domain/gateway/reminder/user-repository'
+import { UserRepository } from '../../../../domain/repositories/reminder/user-repository'
 
 describe('SaveUserToken Use Case', () => {
     let mockUserRepo: jest.Mocked<UserRepository>

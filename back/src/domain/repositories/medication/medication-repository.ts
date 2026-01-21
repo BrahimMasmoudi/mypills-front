@@ -1,5 +1,5 @@
-import { Medication } from '../entities/medication'
-import { GetMedicationDetailsResponse } from '../../types/medicationApi'
+import { Medication } from '../../entities/medication'
+import { GetMedicationDetailsResponse } from '../../../types/medicationApi'
 
 export interface MedicationRepository {
     create(medication: Medication): Promise<void>
