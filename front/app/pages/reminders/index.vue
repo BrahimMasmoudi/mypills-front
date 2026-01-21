@@ -147,7 +147,7 @@ const groupedReminders = computed((): ReminderGroup[] => {
     const medications = medsEntries.map(([name, dosesMap]) => ({
       name,
       doses: Array.from(dosesMap.entries())
-          .map(([time, qty]) => ({time, qty}))
+          .map(([time, quantity]) => ({time, quantity}))
           .sort((a, b) => a.time.localeCompare(b.time))
     }))
 
