@@ -3,6 +3,7 @@ import { httpsCallable } from 'firebase/functions'
 import { collection, query, where, orderBy } from 'firebase/firestore'
 import { useCollection, getCurrentUser } from 'vuefire'
 import type { CreateReminderRequest, Reminder } from '~/types/reminder'
+import {logEvent} from "@firebase/analytics";
 
 export const useReminderStore = defineStore('reminder', () => {
     const { $functions, $firestore, $analytics } = useNuxtApp()
@@ -40,7 +41,20 @@ export const useReminderStore = defineStore('reminder', () => {
         loading.value = true
         try {
             const callCreateSchedule = httpsCallable<CreateReminderRequest, { success: boolean }>($functions, 'createReminder')
-            return (await callCreateSchedule(payload)).data
+            const result = await callCreateSchedule(payload)
+
+            // Analytics for creating a schedule
+            if ($analytics) {
+                logEvent($analytics, 'create_schedule', {
+                    sickness_name: payload.sicknessName,
+                    medication_name: payload.medication.name,
+                    start_date: payload.startDate,
+                    end_date: payload.endDate,
+                    dose_count: payload.doses.length
+                })
+            }
+
+            return result.data
         } finally {
             loading.value = false
         }
@@ -49,6 +63,14 @@ export const useReminderStore = defineStore('reminder', () => {
     const deleteReminder = async (reminder: Reminder) => {
         const remove = httpsCallable($functions, 'deleteReminder')
         await remove(reminder)
+        if ($analytics) {
+            logEvent($analytics, 'delete_reminder', {
+                sickness_name: reminder.sicknessName,
+                medication_name: reminder.medName,
+                reminder_id: reminder.reminderId,
+                status_at_deletion: reminder.status
+            })
+        }
     }
 
     return {
