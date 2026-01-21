@@ -8,7 +8,7 @@
     <div class="d-flex justify-space-between align-start mb-2">
       <div class="d-flex align-center">
         <v-avatar color="primary-lighten-5" size="40" class="mr-3 border">
-          <v-icon icon="mdi-medical-bag" color="primary" />
+          <v-icon icon="mdi-medical-bag" color="primary"/>
         </v-avatar>
         <div>
           <div class="text-subtitle-1 font-weight-bold line-clamp-1">{{ item.sicknessName }}</div>
@@ -24,30 +24,35 @@
               icon="mdi-check-circle-outline"
               variant="tonal"
               color="success"
+              :loading="loadingAction === 'sent'"
+              :disabled="!!loadingAction"
               size="small"
-              @click="$emit('update-status', item.ids, 'sent')"
+              @click="handleAction('sent')"
           />
-          <v-divider vertical class="mx-1" />
+
+          <v-divider vertical class="mx-1" length="20"/>
         </template>
 
         <v-btn
             icon="mdi-delete-outline"
             variant="tonal"
             color="error"
+            :loading="loadingAction === 'delete'"
+            :disabled="!!loadingAction"
             size="small"
-            @click="$emit('delete', item)"
+            @click="handleAction('delete')"
         />
       </div>
     </div>
 
-    <v-divider class="my-3" />
+    <v-divider class="my-3"/>
 
     <div class="d-flex align-center mb-4">
-      <v-icon icon="mdi-calendar-range" size="16" class="mr-2 text-primary" />
+      <v-icon icon="mdi-calendar-range" size="16" class="mr-2 text-primary"/>
       <span class="text-caption font-weight-bold">
         {{ formatDate(item.startDate) }} - {{ formatDate(item.endDate) }}
       </span>
-      <v-spacer />
+      <v-spacer/>
       <v-chip :color="statusConfig[item.status].color" size="x-small" variant="flat" class="font-weight-black">
         {{ t(`status.${item.status}`) }}
       </v-chip>
@@ -67,10 +72,10 @@
               class="px-2 py-1 d-flex align-center w-100 overflow-hidden"
               elevation="0"
           >
-            <v-icon icon="mdi-pill" size="14" class="mr-1 text-primary" />
+            <v-icon icon="mdi-pill" size="14" class="mr-1 text-primary"/>
             <span class="text-caption font-weight-bold text-truncate">
-          {{ med.name }}
-        </span>
+              {{ med.name }}
+            </span>
           </v-sheet>
         </v-col>
 
@@ -83,13 +88,13 @@
                 rounded="pill"
                 class="px-2 py-1 bg-primary d-flex align-center"
             >
-          <span class="text-caption font-weight-black text-white" style="font-size: 0.7rem !important;">
-            {{ dose.time }}
-          </span>
-              <v-divider vertical class="mx-1 opacity-50" color="white" />
+              <span class="text-caption font-weight-black text-white" style="font-size: 0.7rem !important;">
+                {{ dose.time }}
+              </span>
+              <v-divider vertical class="mx-1 opacity-50" color="white" length="8"/>
               <span class="text-caption text-white font-weight-medium" style="font-size: 0.7rem !important;">
-            {{ dose.quantity }}x
-          </span>
+                {{ dose.quantity }}x
+              </span>
             </v-sheet>
           </div>
         </v-col>
@@ -99,16 +104,44 @@
 </template>
 
 <script setup lang="ts">
-import { format } from 'date-fns'
-import type { ReminderGroup } from '~/types/reminder'
+import {format} from 'date-fns'
+import type {ReminderGroup} from '~/types/reminder'
 import {useI18n} from "vue-i18n";
+import {ref} from 'vue' // Added missing ref import
 
-defineProps<{
+const props = defineProps<{
   item: ReminderGroup,
   statusConfig: any
 }>()
 
 const emit = defineEmits(['delete', 'update-status'])
-const { t } = useI18n()
+
+const loadingAction = ref<string | null>(null)
+const {t} = useI18n()
+
 const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
+
+const handleAction = async (type: 'sent' | 'failed' | 'delete') => {
+  loadingAction.value = type
+
+  // Parent must call this 'done' function to stop the loader
+  const done = () => {
+    loadingAction.value = null
+  }
+
+  if (type === 'delete') {
+    emit('delete', props.item, done)
+  } else {
+    emit('update-status', props.item.ids, type, done)
+  }
+}
 </script>
+
+<style scoped>
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>

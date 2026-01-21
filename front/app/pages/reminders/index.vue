@@ -56,44 +56,30 @@
           @update-status="handleUpdateStatus"
       />
     </div>
-
-    <v-overlay
-        v-model="reminderStore.loading"
-        class="align-center justify-center"
-        persistent
-        scrim="surface"
-        :opacity="0.5"
-    >
-      <v-progress-circular color="primary" indeterminate size="64"/>
-    </v-overlay>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { logEvent } from "firebase/analytics";
-import { format } from 'date-fns'
-import type { ReminderGroup } from '~/types/reminder'
-import type { ToastType } from "~/composables/openToast"
+import {storeToRefs} from 'pinia'
+import {logEvent} from "firebase/analytics";
+import {format} from 'date-fns'
+import type {ReminderGroup} from '~/types/reminder'
+import type {ToastType} from "~/composables/openToast"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
 import {useI18n} from "vue-i18n";
 import {useReminderStore} from "~/store/reminder";
 
-const { t } = useI18n()
-const { $open, $device, $analytics } = useNuxtApp()
+const {t} = useI18n()
+const {$open, $device, $analytics} = useNuxtApp()
 const reminderStore = useReminderStore()
-const { reminders } = storeToRefs(reminderStore)
+const {reminders} = storeToRefs(reminderStore)
 
-const viewType = ref<'grid' | 'table'>('table')
+const viewType = ref<'grid' | 'table'>('grid')
 
 const handleViewTypeUpdate = (value: any) => {
   if ($analytics && value) {
-    logEvent($analytics, 'change_view_type', { view_type: value })
+    logEvent($analytics, 'change_view_type', {view_type: value})
   }
-}
-
-const handleUpdateStatus = async (ids: string[], status: 'sent' | 'failed') => {
-  await reminderStore.updateRemindersStatus(ids, status)
 }
 
 const groupedReminders = computed((): ReminderGroup[] => {
@@ -140,7 +126,7 @@ const groupedReminders = computed((): ReminderGroup[] => {
     const medications = medsEntries.map(([name, dosesMap]) => ({
       name,
       doses: Array.from(dosesMap.entries())
-          .map(([time, quantity]) => ({ time, quantity }))
+          .map(([time, quantity]) => ({time, quantity}))
           .sort((a, b) => a.time.localeCompare(b.time))
     }))
 
@@ -159,21 +145,29 @@ const groupedReminders = computed((): ReminderGroup[] => {
 })
 
 const statusConfig = {
-  pending: { color: 'warning', icon: 'mdi-timer-sand' },
-  sent: { color: 'success', icon: 'mdi-check-circle' },
-  failed: { color: 'error', icon: 'mdi-alert-circle' }
+  pending: {color: 'warning', icon: 'mdi-timer-sand'},
+  sent: {color: 'success', icon: 'mdi-check-circle'},
+  failed: {color: 'error', icon: 'mdi-alert-circle'}
 }
 
 const headers = computed(() => [
-  { title: t('reminders.table.sicknessName'), key: 'sicknessName', align: 'start' as const },
-  { title: t('reminders.table.medication'), key: 'medName', align: 'start' as const },
-  { title: t('reminderDialog.dateRange'), key: 'dateRange', align: 'start' as const },
-  { title: t('reminderDialog.frequency'), key: 'doses', align: 'start' as const },
-  { title: t('reminders.table.status'), key: 'status', align: 'center' as const },
-  { title: '', key: 'actions', align: 'end' as const, sortable: false },
+  {title: t('reminders.table.sicknessName'), key: 'sicknessName', align: 'start' as const},
+  {title: t('reminders.table.medication'), key: 'medName', align: 'start' as const},
+  {title: t('reminderDialog.dateRange'), key: 'dateRange', align: 'start' as const},
+  {title: t('reminderDialog.frequency'), key: 'doses', align: 'start' as const},
+  {title: t('reminders.table.status'), key: 'status', align: 'center' as const},
+  {title: '', key: 'actions', align: 'end' as const, sortable: false},
 ])
 
-const handleDelete = async (item: ReminderGroup) => {
+const handleUpdateStatus = async (ids: string[], status: 'sent' | 'failed', done: () => void) => {
+  try {
+    await reminderStore.updateRemindersStatus(ids, status)
+  } finally {
+    done() // This stops the spinner on the specific button
+  }
+}
+
+const handleDelete = async (item: ReminderGroup, done: () => void) => {
   const result = await $open<ToastType>(ValidationWithWarningDialog, {
     scrim: true,
     isPersistent: true,
@@ -182,7 +176,13 @@ const handleDelete = async (item: ReminderGroup) => {
   })
 
   if (result === 'success') {
-    await reminderStore.deleteReminders(item)
+    try {
+      await reminderStore.deleteReminders(item)
+    } finally {
+      done()
+    }
+  } else {
+    done()
   }
 }
 </script>

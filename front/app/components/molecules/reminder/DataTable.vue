@@ -83,21 +83,28 @@
 
       <template #[`item.actions`]="{ item }">
         <div class="d-flex align-center justify-end" style="gap: 8px">
-            <template v-if="item.status === 'pending'">
-              <v-btn
-                  icon="mdi-check-circle-outline"
-                  variant="tonal"
-                  color="success"
-                  size="small"
-                  @click="$emit('update-status', item.ids, 'sent')"
-              />
-            </template>
+          <template v-if="item.status === 'pending'">
+            <v-btn
+                icon="mdi-check-circle-outline"
+                variant="tonal"
+                color="success"
+                size="small"
+                :loading="getLoading(item, 'sent')"
+                :disabled="isAnyLoading(item)"
+                @click="handleAction(item, 'update-status', 'sent')"
+            />
+          </template>
+
+          <v-divider v-if="item.status === 'pending'" vertical class="mx-1" length="20" />
+
           <v-btn
               icon="mdi-delete-outline"
               variant="tonal"
               color="error"
               size="small"
-              @click="$emit('delete', item)"
+              :loading="getLoading(item, 'delete')"
+              :disabled="isAnyLoading(item)"
+              @click="handleAction(item, 'delete')"
           />
         </div>
       </template>
@@ -106,11 +113,12 @@
 </template>
 
 <script setup lang="ts">
-import {format} from 'date-fns'
-import type {ReminderGroup} from '~/types/reminder'
-import {useI18n} from "vue-i18n";
+import { format } from 'date-fns'
+import type { ReminderGroup } from '~/types/reminder'
+import { useI18n } from "vue-i18n"
+import { ref } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   items: ReminderGroup[]
   loading: boolean
   headers: any[]
@@ -118,6 +126,57 @@ defineProps<{
 }>()
 
 const emit = defineEmits(['delete', 'update-status'])
-const {t} = useI18n()
+const { t } = useI18n()
+
+// Track loading per item group { "SicknessName": "sent" | "failed" | "delete" | null }
+const loadingStates = ref<Record<string, string | null>>({})
+
+/**
+ * Checks if a specific action is loading for a row
+ */
+const getLoading = (item: ReminderGroup, action: string) =>
+    loadingStates.value[item.sicknessName] === action
+
+/**
+ * Disables other buttons in the same row when one is loading
+ */
+const isAnyLoading = (item: ReminderGroup) =>
+    !!loadingStates.value[item.sicknessName]
+
+/**
+ * Handles clicks by setting local state and calling parent emitters
+ */
+const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'update-status', status?: string) => {
+  const actionKey = status || 'delete'
+  loadingStates.value[item.sicknessName] = actionKey
+
+  // This callback is passed to the parent to reset the button spinner
+  const done = () => {
+    loadingStates.value[item.sicknessName] = null
+  }
+
+  if (emitName === 'delete') {
+    emit('delete', item, done)
+  } else {
+    emit('update-status', item.ids, status, done)
+  }
+}
+
 const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
 </script>
+
+<style scoped>
+:deep(.v-data-table-header__content) {
+  letter-spacing: 0.1em !important;
+}
+
+:deep(.v-data-table__tr:hover) {
+  background-color: rgba(var(--v-theme-primary), 0.04) !important;
+  transition: background-color 0.2s ease;
+}
+
+:deep(.v-data-table__td) {
+  border-bottom: 1px solid rgba(var(--v-theme-on-surface), 0.05) !important;
+  padding: 12px 16px !important;
+}
+</style>
