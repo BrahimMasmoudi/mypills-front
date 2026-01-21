@@ -26,7 +26,6 @@ export const useNotifications = () => {
 
     const listenForMessages = () => {
         onMessage($messaging, (payload) => {
-            console.log('AMNA', payload)
             const { medName, quantity } = payload.data || {}
 
             const title = $i18n.t('notification.title')
