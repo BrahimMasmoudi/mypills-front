@@ -10,7 +10,7 @@
     <v-card class="rounded-xl pa-6" elevation="24">
       <div class="d-flex flex-column align-center text-center mb-6">
         <v-avatar color="blue-lighten-5" size="64" class="mb-4">
-          <v-icon icon="mdi-map-marker-radius" color="primary" size="36" />
+          <v-icon icon="mdi-map-marker-radius" color="primary" size="36"/>
         </v-avatar>
         <v-card-title class="text-h5 font-weight-bold pt-0 pb-1">
           {{ t('countryDialog.title') }}
@@ -57,10 +57,10 @@
   >
     <v-card class="rounded-t-xl pa-6 pb-8">
       <div class="d-flex flex-column align-center text-center">
-        <v-sheet color="grey-lighten-2" height="4" width="40" class="rounded-pill mb-6" />
+        <v-sheet color="grey-lighten-2" height="4" width="40" class="rounded-pill mb-6"/>
 
         <v-avatar color="blue-lighten-5" size="56" class="mb-3">
-          <v-icon icon="mdi-map-marker-radius" color="primary" size="32" />
+          <v-icon icon="mdi-map-marker-radius" color="primary" size="32"/>
         </v-avatar>
 
         <h3 class="text-h6 font-weight-bold mb-2">{{ t('countryDialog.title') }}</h3>
@@ -94,9 +94,10 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
-const { $device } = useNuxtApp()
+import {useI18n} from 'vue-i18n'
+
+const {t} = useI18n()
+const {$device} = useNuxtApp()
 
 const props = defineProps<{
   close: (value: string | null) => void

@@ -6,7 +6,6 @@
       class="d-flex flex-column fill-height position-relative feature-card"
       @click="handleCardClick"
   >
-    <!-- Delete Button (Top Right) -->
     <div class="position-absolute top-0 right-0 ma-1 z-index-1">
       <v-btn
           icon="mdi-delete-outline"
@@ -14,13 +13,12 @@
           color="error"
           size="small"
           density="comfortable"
-          :loading="isDeleting"
-          :disabled="isDeleting"
+          :loading="loadingAction === 'delete'"
+          :disabled="loadingAction !== null"
           @click.stop="confirmDelete"
       />
     </div>
 
-    <!-- scanned Button (Top left) -->
     <div v-if="medication.bareCode" class="position-absolute top-0 left-0 ma-1 z-index-1">
       <v-btn
           icon="mdi-barcode-scan"
@@ -31,9 +29,7 @@
           @click.stop="showMedicationDetails"
       />
     </div>
-
-    <!-- searched Button (Top left) -->
-    <div v-if="!medication.bareCode && medication.details" class="position-absolute top-0 left-0 ma-1 z-index-1">
+    <div v-else-if="medication.details" class="position-absolute top-0 left-0 ma-1 z-index-1">
       <v-btn
           icon="mdi-information-outline"
           variant="text"
@@ -44,21 +40,15 @@
       />
     </div>
 
-    <!-- Card Content -->
     <div
         class="d-flex flex-column align-center flex-grow-1 px-2"
         :class="$device.isMobile ? 'pt-4 pb-2' : 'pt-6 pb-2'"
     >
-      <!-- Image -->
-      <div
-          class="pill-image-container mb-2"
-          :class="$device.isMobile ? 'mobile-image' : ''"
-      >
+      <div class="pill-image-container mb-2" :class="{'mobile-image': $device.isMobile}">
         <nuxt-icon filled :name="medication.image" class="pill-icon"
                    :class="medication.expired ? 'text-error' : 'text-primary'"/>
       </div>
 
-      <!-- Name (Editable) -->
       <div class="w-100 mb-1 position-relative d-flex justify-center">
         <div
             v-if="!isEditing"
@@ -93,22 +83,15 @@
             bg-color="surface"
             autofocus
             single-line
-            :loading="isUpdatingName"
-            :disabled="isUpdatingName"
+            :loading="loadingAction === 'rename'"
+            :disabled="loadingAction === 'rename'"
             @blur="toggleEdit"
             @keydown.enter="toggleEdit"
             @click.stop
         >
           <template #append-inner>
-            <v-progress-circular
-                v-if="isUpdatingName"
-                indeterminate
-                size="20"
-                width="2"
-                color="primary"
-            />
             <v-icon
-                v-else
+                v-if="loadingAction !== 'rename'"
                 icon="mdi-check"
                 color="success"
                 size="small"
@@ -119,7 +102,6 @@
         </v-text-field>
       </div>
 
-      <!-- Expiry Date -->
       <v-chip
           :color="medication.expired ? 'error' : 'success'"
           :variant="medication.expired ? 'flat' : 'tonal'"
@@ -133,15 +115,14 @@
 
     <v-divider/>
 
-    <!-- Actions Footer -->
     <div class="d-flex align-center justify-space-between px-2 py-2">
       <v-btn
           icon="mdi-minus"
           variant="tonal"
           color="primary"
           size="x-small"
-          :loading="isDecrementing"
-          :disabled="medication.quantity <= 1 || isDecrementing"
+          :loading="loadingAction === 'decrement'"
+          :disabled="medication.quantity <= 1 || loadingAction !== null"
           @click.stop="handleDecrement"
       />
 
@@ -161,8 +142,8 @@
           variant="flat"
           color="primary"
           size="x-small"
-          :loading="isIncrementing"
-          :disabled="isIncrementing"
+          :loading="loadingAction === 'increment'"
+          :disabled="loadingAction !== null"
           @click.stop="handleIncrement"
       />
     </div>
@@ -170,119 +151,100 @@
 </template>
 
 <script setup lang="ts">
-import type {Medication} from "~/types/medication";
-import {parseDate} from "~/composables/parseDate";
-import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue";
-import {useI18n} from "vue-i18n";
-import MedicationInfoDialog from "~/components/molecules/MedicationInfoDialog.vue";
+import type {Medication} from "~/types/medication"
+import {parseDate} from "~/composables/parseDate"
+import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
+import MedicationInfoDialog from "~/components/molecules/MedicationInfoDialog.vue"
+import {useI18n} from "vue-i18n"
 
 const {$open, $device} = useNuxtApp()
 const {t} = useI18n()
 
-const props = defineProps<{
+const {medication} = defineProps<{
   medication: Medication
-  incrementPills: (medication: Medication) => Promise<void>
-  decrementPills: (medication: Medication) => Promise<void>
-  deletePills: (medication: Medication) => Promise<void>
-  updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 
+const emit = defineEmits<{
+  (e: 'increment-pills', medication: Medication, done: () => void): void
+  (e: 'decrement-pills', medication: Medication, done: () => void): void
+  (e: 'delete-pills', medication: Medication, done: () => void): void
+  (e: 'update-medication-name', medication: Medication, newName: string, done: () => void): void
+}>()
+
+// UI state for loading and editing
+const loadingAction = ref<'increment' | 'decrement' | 'delete' | 'rename' | null>(null)
 const isEditing = ref(false)
-const editedName = ref(props.medication.name)
+const editedName = ref(medication.name)
 const showFooterMobile = ref(false)
 
-// Loading states
-const isIncrementing = ref(false)
-const isDecrementing = ref(false)
-const isDeleting = ref(false)
-
-const isUpdatingName = ref(false)
-
-const handleCardClick = async () => {
+const handleCardClick = () => {
   if ($device.isMobile) {
     showFooterMobile.value = !showFooterMobile.value
   }
 }
 
 const handleNameClick = (e: Event) => {
-  if ($device.isMobile && !showFooterMobile.value) {
-    return
-  }
+  if ($device.isMobile && !showFooterMobile.value) return
   e.stopPropagation()
   startEdit()
 }
 
 const startEdit = () => {
-  editedName.value = props.medication.name
+  editedName.value = medication.name
   isEditing.value = true
 }
 
-const toggleEdit = async () => {
+const toggleEdit = () => {
   if (isEditing.value) {
-    if (editedName.value.trim() && editedName.value !== props.medication.name) {
-      if (isUpdatingName.value) return
-      isUpdatingName.value = true
-      try {
-        await props.updateMedicationName(props.medication, editedName.value.trim())
+    // Only emit if name actually changed and isn't empty
+    if (editedName.value.trim() && editedName.value !== medication.name) {
+      loadingAction.value = 'rename'
+      emit('update-medication-name', medication, editedName.value.trim(), () => {
+        loadingAction.value = null
         isEditing.value = false
-      } catch (error) {
-        console.error('Failed to update name:', error)
-      } finally {
-        isUpdatingName.value = false
-      }
+      })
     } else {
-      editedName.value = props.medication.name
+      editedName.value = medication.name
       isEditing.value = false
     }
   }
 }
 
 const confirmDelete = async () => {
-  const toastType = await $open<QueueToastType>(ValidationWithWarningDialog, {
+  const result = await $open<string>(ValidationWithWarningDialog, {
     scrim: true,
     isPersistent: true,
     title: t('dialogDelete.title'),
     message: t('dialogDelete.message')
   })
 
-  if (toastType === 'success') {
-    isDeleting.value = true
-    try {
-      await props.deletePills(props.medication)
-      openToast(toastType, t(`dialogDelete.${toastType}`))
-    } finally {
-      isDeleting.value = false
-    }
-  } else if (toastType === 'error') {
-    openToast(toastType, t(`dialogDelete.${toastType}`))
+  if (result === 'success') {
+    loadingAction.value = 'delete'
+    emit('delete-pills', medication, () => {
+      loadingAction.value = null
+    })
   }
 }
 
-const handleIncrement = async () => {
-  if (isIncrementing.value) return
-  isIncrementing.value = true
-  try {
-    await props.incrementPills(props.medication)
-  } finally {
-    isIncrementing.value = false
-  }
+const handleIncrement = () => {
+  loadingAction.value = 'increment'
+  emit('increment-pills', medication, () => {
+    loadingAction.value = null
+  })
 }
 
-const handleDecrement = async () => {
-  if (isDecrementing.value) return
-  isDecrementing.value = true
-  try {
-    await props.decrementPills(props.medication)
-  } finally {
-    isDecrementing.value = false
-  }
+const handleDecrement = () => {
+  loadingAction.value = 'decrement'
+  emit('decrement-pills', medication, () => {
+    loadingAction.value = null
+  })
 }
 
 const showMedicationDetails = async () => {
   await $open(MedicationInfoDialog, {
     scrim: true,
     isPersistent: false,
-    data: props.medication
+    data: medication
   })
 }
 </script>

@@ -1,10 +1,8 @@
 <template>
   <div class="d-flex flex-column h-100">
-    <!-- Fixed Tabs Header -->
     <v-sheet class="w-100 flex-shrink-0" min-height="60">
       <v-tabs
-          :model-value="modelValue"
-          @update:model-value="$emit('update:modelValue', $event as string)"
+          v-model="modelValue"
           align-tabs="center"
           class="mt-2 w-100"
           hide-slider
@@ -22,11 +20,7 @@
             <v-icon icon="mdi-earth" color="primary"/>
           </template>
           {{ $device.isMobile ? t('meds.all') : t('meds.all_long') }}
-          <v-badge
-              :content="allMedication.length"
-              color="primary"
-              inline
-          />
+          <v-badge :content="allMedication.length" color="primary" inline/>
         </v-tab>
 
         <v-tab
@@ -40,11 +34,7 @@
             <nuxt-icon name="validate-edit-action"/>
           </template>
           {{ $device.isMobile ? t('meds.valid') : t('meds.valid_long') }}
-          <v-badge
-              :content="validMedication.length"
-              color="green"
-              inline
-          />
+          <v-badge :content="validMedication.length" color="green" inline/>
         </v-tab>
 
         <v-tab
@@ -58,106 +48,35 @@
             <nuxt-icon name="error-warning"/>
           </template>
           {{ $device.isMobile ? t('meds.expired') : t('meds.expired_long') }}
-          <v-badge
-              :content="expiredMedication.length"
-              color="error"
-              inline
-          />
+          <v-badge :content="expiredMedication.length" color="error" inline/>
         </v-tab>
       </v-tabs>
     </v-sheet>
 
-    <!-- Scrollable Window Content -->
     <v-sheet class="flex-grow-1 overflow-hidden position-relative rounded-lg">
-      <v-window v-model="activeTab" class="h-100">
-        <!-- All Tab -->
-        <v-window-item value="all" class="h-100">
+      <v-window v-model="modelValue" class="h-100">
+        <v-window-item v-for="tabType in ['all', 'valid', 'expired']" :key="tabType" :value="tabType" class="h-100">
           <div
               :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
-            <template v-if="allMedication.length > 0">
+            <template v-if="getMedicationList(tabType).length > 0">
               <MoleculesPills
                   v-if="viewType === 'grid'"
-                  :medications="allMedication"
-                  :increment-pills="incrementPills"
-                  :decrement-pills="decrementPills"
-                  :delete-pills="deletePills"
-                  :update-medication-name="updateMedicationName"
+                  :medications="getMedicationList(tabType)"
+                  @decrement-pills="(med, done) => $emit('decrement-pills', med, done)"
+                  @increment-pills="(med, done) => $emit('increment-pills', med, done)"
+                  @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+                  @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
               />
               <MoleculesMedicationTable
                   v-else-if="viewType === 'table' && !$device.isMobile"
-                  :medications="allMedication"
-                  :increment-pills="incrementPills"
-                  :decrement-pills="decrementPills"
-                  :delete-pills="deletePills"
-                  :update-medication-name="updateMedicationName"
+                  :medications="getMedicationList(tabType)"
+                  @decrement-pills="(med, done) => $emit('decrement-pills', med, done)"
+                  @increment-pills="(med, done) => $emit('increment-pills', med, done)"
+                  @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+                  @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
               />
             </template>
-            <v-sheet v-else width="100%" height="100%"
-                     class="d-flex flex-column align-center font-weight-bold">
-              <v-img
-                  :src="useAsset(colorMode.value === 'dark' ? '/assets/img/no-result-dark.png' : '/assets/img/no-result.png')"
-                  max-height="400" width="400"/>
-              {{ t('meds.no-result') }}
-            </v-sheet>
-          </div>
-        </v-window-item>
-
-        <!-- Valid Tab -->
-        <v-window-item value="valid" class="h-100">
-          <div
-              :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
-            <template v-if="validMedication.length > 0">
-              <MoleculesPills
-                  v-if="viewType === 'grid'"
-                  :medications="validMedication"
-                  :increment-pills="incrementPills"
-                  :decrement-pills="decrementPills"
-                  :delete-pills="deletePills"
-                  :update-medication-name="updateMedicationName"
-              />
-              <MoleculesMedicationTable
-                  v-else-if="viewType === 'table' && !$device.isMobile"
-                  :medications="validMedication"
-                  :increment-pills="incrementPills"
-                  :decrement-pills="decrementPills"
-                  :delete-pills="deletePills"
-                  :update-medication-name="updateMedicationName"
-              />
-            </template>
-            <v-sheet v-else width="100%" height="100%"
-                     class="d-flex flex-column align-center font-weight-bold">
-              <v-img
-                  :src="useAsset(colorMode.value === 'dark' ? '/assets/img/no-result-dark.png' : '/assets/img/no-result.png')"
-                  max-height="400" width="400"/>
-              {{ t('meds.no-result') }}
-            </v-sheet>
-          </div>
-        </v-window-item>
-
-        <!-- Expired Tab -->
-        <v-window-item value="expired" class="h-100">
-          <div
-              :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
-            <template v-if="expiredMedication.length > 0">
-              <MoleculesPills
-                  v-if="viewType === 'grid'"
-                  :medications="expiredMedication"
-                  :increment-pills="incrementPills"
-                  :decrement-pills="decrementPills"
-                  :delete-pills="deletePills"
-                  :update-medication-name="updateMedicationName"
-              />
-              <MoleculesMedicationTable
-                  v-else-if="viewType === 'table' && !$device.isMobile"
-                  :medications="expiredMedication"
-                  :increment-pills="incrementPills"
-                  :decrement-pills="decrementPills"
-                  :delete-pills="deletePills"
-                  :update-medication-name="updateMedicationName"
-              />
-            </template>
-            <v-sheet v-else width="100%" height="100%"
-                     class="d-flex flex-column align-center font-weight-bold">
+            <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center font-weight-bold">
               <v-img
                   :src="useAsset(colorMode.value === 'dark' ? '/assets/img/no-result-dark.png' : '/assets/img/no-result.png')"
                   max-height="400" width="400"/>
@@ -180,26 +99,27 @@ const {t} = useI18n()
 const {$device} = useNuxtApp()
 const colorMode = useColorMode()
 
-const props = defineProps<{
-  modelValue: string
+const modelValue = defineModel()
+
+const {allMedication, validMedication, expiredMedication} = defineProps<{
   viewType: 'grid' | 'table'
   allMedication: Medication[]
   validMedication: Medication[]
   expiredMedication: Medication[]
-  incrementPills: (medication: Medication) => Promise<void>
-  decrementPills: (medication: Medication) => Promise<void>
-  deletePills: (medication: Medication) => Promise<void>
-  updateMedicationName: (medication: Medication, newName: string) => Promise<void>
 }>()
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void
+defineEmits<{
+  (e: 'increment-pills', medication: Medication, done: () => void): void
+  (e: 'decrement-pills', medication: Medication, done: () => void): void
+  (e: 'delete-pills', medication: Medication, done: () => void): void
+  (e: 'update-medication-name', medication: Medication, newName: string, done: () => void): void
 }>()
 
-const activeTab = computed({
-  get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+const getMedicationList = (type: string) => {
+  if (type === 'valid') return validMedication
+  if (type === 'expired') return expiredMedication
+  return allMedication
+}
 </script>
 
 <style scoped>

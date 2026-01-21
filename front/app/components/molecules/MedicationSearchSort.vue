@@ -98,7 +98,7 @@ import { logEvent } from 'firebase/analytics'
 const { t } = useI18n()
 const { $analytics } = useNuxtApp()
 
-const props = defineProps<{
+const {sortBy, sortOptions} = defineProps<{
   searchQuery: string
   sortBy: string | null
   sortOrder: 'asc' | 'desc'
@@ -128,8 +128,8 @@ const handleViewTypeUpdate = (value: any) => {
 }
 
 const currentSortIcon = computed(() => {
-  if (!props.sortBy) return 'mdi-sort'
-  const option = props.sortOptions.find(opt => opt.value === props.sortBy)
+  if (!sortBy) return 'mdi-sort'
+  const option = sortOptions.find(opt => opt.value === sortBy)
   return option?.icon || 'mdi-sort'
 })
 </script>
