@@ -1,5 +1,5 @@
 <template>
-  <v-card border elevation="0" rounded="xl" class="bg-surface overflow-hidden">
+  <v-card border elevation="0" rounded="xl" class="bg-surface overflow-hidden mt-2">
     <v-data-table
         :headers="headers"
         :items="items"
@@ -33,7 +33,7 @@
               :key="name"
               border
               rounded="pill"
-              class="px-3 py-1 bg-surface-variant d-flex align-center"
+              class="px-3 py-1 d-flex align-center"
               elevation="0"
           >
             <v-icon icon="mdi-pill" size="14" class="mr-2 text-primary"/>
@@ -45,7 +45,7 @@
       </template>
 
       <template #[`item.dateRange`]="{ item }">
-        <v-sheet border rounded="pill" class="px-3 py-1 bg-surface-variant d-flex align-center" width="fit-content">
+        <v-sheet border rounded="pill" class="px-3 py-1 d-flex align-center" width="fit-content">
           <span class="text-caption font-weight-bold">{{ formatDate(item.startDate) }}</span>
           <v-icon icon="mdi-arrow-right" size="12" class="mx-2 opacity-50"/>
           <span class="text-caption font-weight-bold">{{ formatDate(item.endDate) }}</span>

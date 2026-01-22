@@ -1,8 +1,8 @@
 <template>
   <v-sheet class="pa-4 h-100 overflow-hidden">
     <v-sheet class="d-flex align-center justify-space-between">
-      <div class="mb-6">
-        <h1 class="text-h4 font-weight-bold text-primary">{{ t('reminders.title') }}</h1>
+      <div class="mb-2">
+        <h1 class="text-h4 font-weight-bold text-primary mb-2">{{ t('reminders.title') }}</h1>
         <p class="text-body-1 text-medium-emphasis">{{ t('reminders.subtitle') }}</p>
       </div>
 

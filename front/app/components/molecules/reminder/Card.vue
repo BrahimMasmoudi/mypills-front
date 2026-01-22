@@ -30,7 +30,7 @@
               @click="handleAction('sent')"
           />
 
-          <v-divider vertical class="mx-1" length="20"/>
+          <v-divider vertical class="mx-1"/>
         </template>
 
         <v-btn
