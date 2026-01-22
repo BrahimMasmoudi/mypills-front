@@ -138,6 +138,7 @@
     "dateRange": "Durée",
     "reminderNameLabel": "Nom de la maladie",
     "reminderNamePlaceholder": "ex: Grippe, Hypertension...",
+    "sicknessNameLabel" : "Nom du traitement",
     "toast": {
       "success": "Le rappel est crée avec succés",
       "error": "Échec lors de la creation d'un rappel"

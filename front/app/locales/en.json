@@ -138,6 +138,7 @@
     "dateRange": "Duration",
     "reminderNameLabel": "Sickness name",
     "reminderNamePlaceholder": "e.g., Flu, Hypertension...",
+    "sicknessNameLabel" : "Treatment",
     "toast": {
       "success": "The reminder is created successfully",
       "error": "An error happened while creating the reminder"
