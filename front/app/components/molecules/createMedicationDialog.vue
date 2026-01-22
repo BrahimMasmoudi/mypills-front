@@ -8,6 +8,7 @@
       @keydown.esc="cancelAndClose"
       width="550"
       content-class="elevation-0"
+      data-cy="create-medication-dialog"
   >
     <v-card class="rounded-xl pa-6" elevation="24">
       <!-- Header -->
@@ -40,6 +41,7 @@
               hide-details="auto"
               rounded="lg"
               class="font-weight-medium"
+              data-cy="medication-name-input"
               no-filter
               return-object
           >
@@ -109,6 +111,7 @@
                   prepend-inner-icon="mdi-calendar-blank"
                   readonly
                   loading
+                  data-cy="expiry-date-input"
                   class="font-weight-medium cursor-pointer elegant-input"
               >
                 <template v-slot:loader>
@@ -146,6 +149,7 @@
               rounded="lg"
               prepend-inner-icon="mdi-pill"
               min="1"
+              data-cy="quantity-input"
               class="font-weight-medium elegant-input"
           />
         </div>
@@ -172,6 +176,7 @@
             height="48"
             :loading="loading"
             :disabled="!medication.name"
+            data-cy="confirm-create-button"
             @click="onConfirmClick"
         >
           {{ t('confirm') }}
@@ -415,6 +420,7 @@ const {close, createMedication, userUid, email, medications, selectedCountry} = 
   medications: Medication[],
   selectedCountry: Country,
 }>()
+console.log('EMAIL',email)
 
 const medication = ref<Medication>({
   expiryDate: new Date(),

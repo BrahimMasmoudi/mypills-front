@@ -4,23 +4,29 @@ import admin from 'firebase-admin'
 
 export default defineConfig({
     e2e: {
-        // This points back to your Nuxt app running at the root
-        baseUrl: 'http://localhost:3000',
+        baseUrl: process.env.CYPRESS_BASE_URL ?? 'http://localhost:3000',
         supportFile: './support/e2e.ts',
         specPattern: 'tests/**/*.cy.{js,jsx,ts,tsx}',
+        env: {
+            GCLOUD_PROJECT: 'my-pills-staging-460b5'
+        },
         setupNodeEvents(on, config) {
-            // 1. Force Admin SDK to look at the local emulator
-            process.env.FIREBASE_AUTH_EMULATOR_HOST = '127.0.0.1:9099';
-            process.env.GCLOUD_PROJECT = 'my-pills-staging-460b5';
+            const isLocal = config.baseUrl!.includes('localhost') || config.baseUrl!.includes('127.0.0.1')
 
-            // 2. Initialize Admin with a placeholder for the Emulator
-            if (admin.apps.length === 0) {
-                admin.initializeApp({
-                    projectId: 'my-pills-staging-460b5',
-                });
+            if (isLocal) {
+                process.env.FIREBASE_AUTH_EMULATOR_HOST = '127.0.0.1:9099'
+                process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080'
             }
 
-            return cypressFirebasePlugin(on, config, admin);
-        },
+            process.env.GCLOUD_PROJECT = config.env.GCLOUD_PROJECT
+
+            if (admin.apps.length === 0) {
+                admin.initializeApp({
+                    projectId: config.env.GCLOUD_PROJECT,
+                })
+            }
+
+            return cypressFirebasePlugin(on, config, admin)
+        }
     },
 })
