@@ -166,7 +166,8 @@ const openReminderDialog = async () => {
     createReminder: async (req: CreateReminderRequest) => {
       await reminderStore.createSchedule(req)
     },
-    validMedications: validMedication.value
+    validMedications: validMedication.value,
+    reminders: reminderStore.reminders
   })
   if (toastType && toastType !== 'canceled') openToast(toastType, t(`reminderDialog.toast.${toastType}`))
 }

@@ -26,21 +26,20 @@
           {{ t('reminderDialog.createSubtitle') }}
         </div>
       </div>
-
       <v-card-text class="pa-0">
         <div class="d-flex flex-column gap-4">
-
-          <v-text-field
+          <v-combobox
               v-model="form.sicknessName"
-              :placeholder="t('reminderDialog.reminderNameLabel')"
+              :items="reminders"
+              item-title="sicknessName"
+              item-value="sicknessName"
+              :label="t('reminderDialog.sicknessNameLabel')"
               variant="outlined"
-              rounded="lg"
-              prepend-inner-icon="mdi-medical-bag"
-              class="font-weight-medium"
               hide-details="auto"
-              :rules="[v => !!v || t('validation.required')]"
+              rounded="lg"
+              class="font-weight-medium"
+              :return-object="false"
           />
-
           <v-select
               v-model="form.medication"
               :items="validMedications"
@@ -146,7 +145,7 @@
 import {useI18n} from "vue-i18n"
 import {isSameDay, isAfter, format} from "date-fns"
 import type {Medication} from "~/types/medication"
-import type {CreateReminderRequest} from "~/types/reminder"
+import type {CreateReminderRequest, Reminder} from "~/types/reminder"
 import {enUS, fr} from "date-fns/locale"
 
 const {$device} = useNuxtApp()
@@ -161,13 +160,14 @@ const {close, createReminder, validMedications} = defineProps<{
   scrim: boolean
   createReminder: (createReminderRequest: CreateReminderRequest) => Promise<void>
   validMedications: Medication[]
+  reminders: Reminder[]
 }>()
 
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenu = ref(false)
 const form = ref({
-  sicknessName: '',
+  sicknessName: null as any,
   medication: null as unknown as Medication,
   startDate: new Date(),
   endDate: new Date(),
@@ -202,9 +202,7 @@ const handleDateChange = (val: Date[]) => {
   if (val.length === 1) {
     form.value.startDate = val[0]
     form.value.endDate = val[0]
-  }
-
-  else if (val.length >= 2) {
+  } else if (val.length >= 2) {
     const sorted = [...val].sort((a, b) => a.getTime() - b.getTime())
     form.value.startDate = sorted[0]
     form.value.endDate = sorted[sorted.length - 1]
@@ -214,7 +212,7 @@ const handleDateChange = (val: Date[]) => {
 }
 
 const isFormInvalid = computed(() => {
-  const hasName = !!form.value.sicknessName.trim()
+  const hasName = !!form.value.sicknessName?.trim()
   const hasMed = !!form.value.medication
   const validDate =
       isAfter(form.value.endDate, form.value.startDate) ||
