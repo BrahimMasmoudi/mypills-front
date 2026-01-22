@@ -63,7 +63,7 @@
           >
             <v-icon icon="mdi-clock-outline" size="14" color="white" class="mr-2"/>
             <span class="text-caption font-weight-black text-white">{{ dose.time }}</span>
-            <v-divider vertical class="mx-2 border-opacity-50" color="white" length="12"/>
+            <v-divider vertical class="mx-2 border-opacity-50" color="white"/>
             <span class="text-caption font-weight-medium text-white opacity-90">{{ dose.quantity }}x</span>
           </v-sheet>
         </div>
@@ -95,7 +95,7 @@
             />
           </template>
 
-          <v-divider v-if="item.status === 'pending'" vertical class="mx-1" length="20" />
+          <v-divider v-if="item.status === 'pending'" vertical class="mx-1" />
 
           <v-btn
               icon="mdi-delete-outline"

@@ -91,7 +91,7 @@
               <span class="text-caption font-weight-black text-white" style="font-size: 0.7rem !important;">
                 {{ dose.time }}
               </span>
-              <v-divider vertical class="mx-1 opacity-50" color="white" length="8"/>
+              <v-divider vertical class="mx-1 opacity-50" color="white"/>
               <span class="text-caption text-white font-weight-medium" style="font-size: 0.7rem !important;">
                 {{ dose.quantity }}x
               </span>
