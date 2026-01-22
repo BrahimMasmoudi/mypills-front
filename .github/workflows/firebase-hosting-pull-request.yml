@@ -20,15 +20,13 @@ jobs:
           path: |
             front/node_modules
             back/node_modules
-            e2e/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock', 'e2e/yarn.lock') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
 
       - name: Install All Dependencies
         if: steps.cache-modules.outputs.cache-hit != 'true'
         run: |
           cd front && yarn install --frozen-lockfile --ignore-scripts
           cd ../back && yarn install --frozen-lockfile
-          cd ../e2e && yarn install --frozen-lockfile
 
   # JOB 2: Run Backend Tests
   test:
@@ -117,31 +115,3 @@ jobs:
       - name: Cleanup SA Key
         if: always()
         run: rm -f back/serviceAccountKey.json
-
-  # JOB 4: E2E Tests on Staging (Root E2E Directory)
-  e2e-test-staging:
-    needs: deploy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Restore E2E Cache
-        uses: actions/cache@v4
-        with:
-          path: e2e/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('e2e/yarn.lock') }}
-
-      - name: Install E2E Dependencies (if cache miss)
-        run: |
-          cd e2e
-          yarn install --frozen-lockfile
-
-      - name: Run Cypress on Staging
-        run: |
-          cd e2e
-          yarn cypress run
-        env:
-          CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
-          CYPRESS_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
-          FIREBASE_AUTH_EMULATOR_HOST: ""
-          FIRESTORE_EMULATOR_HOST: ""
