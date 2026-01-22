@@ -4,6 +4,7 @@
       v-model="isActive"
       :persistent="isPersistent"
       :scrim="scrim"
+      data-cy="country-dialog"
       width="450"
       content-class="elevation-0"
   >
