@@ -62,7 +62,7 @@
       <v-row
           v-for="med in item.medications"
           :key="med.name"
-          class="ma-0 align-center medication-row"
+          class="ma-0 align-start medication-row"
           no-gutters
       >
         <v-col cols="5" class="pr-2">
