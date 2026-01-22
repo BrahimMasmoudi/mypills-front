@@ -43,7 +43,7 @@ jobs:
           path: |
             front/node_modules
             back/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock', 'e2e/yarn.lock') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
 
       - name: Create SA Key for Integration Tests
         run: |
@@ -60,7 +60,7 @@ jobs:
         if: always()
         run: rm -f back/serviceAccountKey.json
 
-  # JOB 3: Build & Deploy
+  # JOB 3: Build & Deploy (Only runs if 'test' passes)
   deploy:
     needs: test
     runs-on: ubuntu-latest
@@ -74,7 +74,7 @@ jobs:
           path: |
             front/node_modules
             back/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock', 'e2e/yarn.lock') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
 
       - name: Create SA Key for Migrations & Deploy
         run: |
