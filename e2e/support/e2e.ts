@@ -1,6 +1,7 @@
 import { attachCustomCommands } from 'cypress-firebase'
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
+import 'firebase/compat/firestore'
 
 const fbConfig = {
     "apiKey": "AIzaSyD8L9ygNvkH0FO46dceDGmneRwQ7WuaFBk",
@@ -12,11 +13,18 @@ const fbConfig = {
     "measurementId": "G-SBR5TS02DD"
 }
 
-if (firebase.apps.length === 0) {
-    firebase.initializeApp(fbConfig)
-}
+const app = firebase.apps.length === 0
+    ? firebase.initializeApp(fbConfig)
+    : firebase.app()
 
-// FORCE client SDK to use the emulator
-firebase.auth().useEmulator('http://localhost:9099')
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+
+if (isLocal) {
+    app.auth().useEmulator('http://localhost:9099')
+    app.firestore().useEmulator('localhost', 8080)
+    console.log('Cypress is using Firebase Emulators')
+} else {
+    console.log('Cypress is using Live Staging Firebase')
+}
 
 attachCustomCommands({ Cypress, cy, firebase })
