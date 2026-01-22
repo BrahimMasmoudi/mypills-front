@@ -18,22 +18,30 @@ export default defineConfig({
                 process.env.FIREBASE_AUTH_EMULATOR_HOST = '127.0.0.1:9099'
                 process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080'
             } else {
-                // IMPORTANT: Clear emulator variables so Admin SDK goes to the Cloud
                 delete process.env.FIREBASE_AUTH_EMULATOR_HOST
                 delete process.env.FIRESTORE_EMULATOR_HOST
             }
 
-            // Initialize Admin SDK with the Service Account on Staging
+            process.env.GCLOUD_PROJECT = projectId
+
             if (admin.apps.length === 0) {
-                const serviceAccount = process.env.CYPRESS_FIREBASE_SERVICE_ACCOUNT
-                    ? JSON.parse(process.env.CYPRESS_FIREBASE_SERVICE_ACCOUNT)
-                    : undefined
+                let credential;
+                const saEnv = process.env.CYPRESS_FIREBASE_SERVICE_ACCOUNT || process.env.SERVICE_ACCOUNT;
+
+                if (saEnv) {
+                    try {
+                        // Handle both stringified JSON and potential raw objects
+                        const serviceAccount = typeof saEnv === 'string' ? JSON.parse(saEnv) : saEnv;
+                        credential = admin.credential.cert(serviceAccount);
+                    } catch (e) {
+                        console.error("Cypress Config: Failed to parse Service Account JSON", e);
+                    }
+                }
 
                 admin.initializeApp({
                     projectId: projectId,
-                    // If we have a service account (on Staging), use it.
-                    // If not (Local), it will fallback to emulator behavior.
-                    credential: serviceAccount ? admin.credential.cert(serviceAccount) : undefined
+                    // Only include credential if it was successfully created
+                    ...(credential ? { credential } : {})
                 })
             }
 
