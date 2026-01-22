@@ -10,7 +10,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "start": "nuxt start",
+    "start": "nuxt start"
   },
   "devDependencies": {
     "@date-io/date-fns": "3.2.1",
