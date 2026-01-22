@@ -1,4 +1,4 @@
-import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { CreateMedicationUseCase } from '../../../ports/input/medication/create-medication-use-case'
 import { Medication } from '../../../../domain/entities/medication'
 

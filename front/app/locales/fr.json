@@ -6,6 +6,9 @@
   "title": "MyPills",
   "close": "Fermer",
   "select": "Sélectionner",
+  "save": "Enregistrer",
+  "medicationName": "Nom du médicament",
+  "qty": "Qté",
   "add-pill": "Ajouter un médicament",
   "success": "Le medicament est ajouté avec succès",
   "error": "Une erreur est survenue",
@@ -41,9 +44,6 @@
     "choose-date-title": "Choisir une date",
     "quantity": "Quantité"
   },
-  "save": "Enregistrer",
-  "medicationName": "Nom du médicament",
-  "qty": "Qté",
   "meds": {
     "all": "Tous",
     "all_long": "Tous les médicaments",
@@ -61,9 +61,9 @@
     "title": "Bienvenu à MY PILLS"
   },
   "nav": {
-    "all-medications": "Tous les médicaments",
-    "valid-medications": "Médicaments valides",
-    "expired-medications": "Médicaments expirés"
+    "main_menu": "Menu Principal",
+    "medications": "Médicaments",
+    "reminders": "Rappels"
   },
   "user-menu": {
     "disconnect": "Déconnexion",
@@ -106,21 +106,21 @@
     },
     "cta": "Se connecter avec Google"
   },
-  "countryDialog" :{
+  "countryDialog": {
     "title": "Confirmation de région",
     "subtitle": "Les fonctionnalités de scan sont optimisées pour la France. Veuillez confirmer votre emplacement pour activer le scanner.",
     "confirmFr": "Je suis en France",
     "confirmElseWhere": "Je suis ailleurs"
   },
-  "detailsDialog" : {
-      "substances": "Substances Actives",
-      "activeComponent": "Composant principal",
-      "method": "Voie d'administration",
-      "form": "Forme pharmaceutique",
-      "refund": "Prise en charge",
-      "technicalDetails": "Informations techniques",
-      "ammDate": "Date d'autorisation (AMM)",
-      "notRefunded": "Non remboursé",
+  "detailsDialog": {
+    "substances": "Substances Actives",
+    "activeComponent": "Composant principal",
+    "method": "Voie d'administration",
+    "form": "Forme pharmaceutique",
+    "refund": "Prise en charge",
+    "technicalDetails": "Informations techniques",
+    "ammDate": "Date d'autorisation (AMM)",
+    "notRefunded": "Non remboursé",
     "scanner": {
       "not_found_message": "Médicament introuvable dans la base de données."
     }
@@ -133,21 +133,51 @@
     "startDate": "Date de début",
     "endDate": "Date de fin",
     "timeLabel": "Heure de la dose",
-    "quantity" : "Qté",
-    "time-picker-title" : "Sélectionner l'horaire",
+    "quantity": "Qté",
+    "time-picker-title": "Sélectionner l'horaire",
+    "dateRange": "Durée",
+    "reminderNameLabel": "Nom de la maladie",
+    "reminderNamePlaceholder": "ex: Grippe, Hypertension...",
     "toast": {
-      "success" : "Le rappel est crée avec succés",
-      "error" : "Échec lors de la creation d'un rappel"
+      "success": "Le rappel est crée avec succés",
+      "error": "Échec lors de la creation d'un rappel"
+    }
+  },
+  "reminders": {
+    "title": "Mes Rappels",
+    "subtitle": "Gérez vos horaires de prise et suivez vos traitements en cours",
+    "empty": "Pas de rappels disponible pour le moment",
+    "table": {
+      "sicknessName": "Traitement / Maladie",
+      "medication": "Médicament",
+      "quantity": "Quantité",
+      "time": "Heure prévue",
+      "status": "Statut"
     },
-    "dateRange" : "Durée"
+    "medsCount": "{n} médicament | {n} médicaments",
+    "dialogDelete": {
+      "title": "Es-tu sûr de supprimer ce rappel ?",
+      "message": "Attention, la suppression du rappel est irréversible",
+      "success": "Le rappel est supprimé avec succès",
+      "error": "Échec lors de la suppression."
+    }
+  },
+  "status": {
+    "pending": "En attente",
+    "sent": "validé",
+    "failed": "Échoué"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire"
   },
   "actions": {
     "main": "Ajouter",
+    "add_new": "Ajouter",
     "addMedication": "Ajouter un médicament",
     "createReminder": "Créer un rappel"
   },
-  "notification" : {
-    "title" : "L'heure de prendre vos medicaments !",
+  "notification": {
+    "title": "L'heure de prendre vos medicaments !",
     "body": "Prenez {quantity}x {medName}"
   },
   "sort": {

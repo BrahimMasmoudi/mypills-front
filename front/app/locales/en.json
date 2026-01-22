@@ -3,9 +3,12 @@
   "search": "Search for a medication",
   "confirm": "Confirm",
   "cancel": "Cancel",
-  "select": "Select",
-  "close": "Close",
   "title": "MyPills",
+  "close": "Close",
+  "select": "Select",
+  "save": "Save",
+  "medicationName": "Medication Name",
+  "qty": "Qty",
   "add-pill": "Create a medication",
   "success": "The pills are added successfully",
   "error": "An error happened",
@@ -41,9 +44,6 @@
     "choose-date-title": "Choose a date",
     "quantity": "Quantity"
   },
-  "save": "Save",
-  "medicationName": "Medication Name",
-  "qty": "Qty",
   "meds": {
     "all": "All",
     "all_long": "All medications",
@@ -61,15 +61,15 @@
     "title": "Welcome to MY PILLS"
   },
   "nav": {
-    "all-medications": "All Medications",
-    "valid-medications": "Valid Medications",
-    "expired-medications": "Expired Medications"
+    "main_menu": "Main Menu",
+    "medications": "Medications",
+    "reminders": "Reminders"
   },
   "user-menu": {
     "disconnect": "Disconnect",
     "change-theme": "Change theme",
     "change-country": "Change country",
-    "change-language": "Change langauge"
+    "change-language": "Change language"
   },
   "login": {
     "google": "Login with Google",
@@ -133,21 +133,51 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "timeLabel": "Dose Time",
-    "quantity" : "Qty",
+    "quantity": "Qty",
+    "time-picker-title": "select the time",
+    "dateRange": "Duration",
+    "reminderNameLabel": "Sickness name",
+    "reminderNamePlaceholder": "e.g., Flu, Hypertension...",
     "toast": {
-      "success" : "The reminder is created successfully",
-      "error" : "An error happened while creating the reminder"
+      "success": "The reminder is created successfully",
+      "error": "An error happened while creating the reminder"
+    }
+  },
+  "reminders": {
+    "title": "My Reminders",
+    "subtitle": "Manage your intake schedules and track current treatments",
+    "empty": "No treatments scheduled yet available",
+    "table": {
+      "sicknessName": "Treatment / Sickness",
+      "medication": "Medication",
+      "quantity": "Quantity",
+      "time": "Scheduled Time",
+      "status": "Status"
     },
-    "time-picker-title" : "select the time",
-    "dateRange" : "Duration"
+    "medsCount": "{n} medication | {n} medications",
+    "dialogDelete": {
+      "title": "Are you sure you want to delete this reminder?",
+      "message": "Please note, the deletion of the reminder is permanent and irreversible",
+      "success": "The reminder has been deleted",
+      "error": "Deletion failed. Try again."
+    }
+  },
+  "status": {
+    "pending": "Pending",
+    "sent": "Done",
+    "failed": "Failed"
+  },
+  "validation": {
+    "required": "This field is required"
   },
   "actions": {
     "main": "Add New",
+    "add_new": "Add",
     "addMedication": "Add a medication",
     "createReminder": "Create a reminder"
   },
-  "notification" : {
-    "title" : "It's time to take your pills !",
+  "notification": {
+    "title": "It's time to take your pills !",
     "body": "Take {quantity}x {medName}"
   },
   "sort": {

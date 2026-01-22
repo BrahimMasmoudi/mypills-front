@@ -1,6 +1,6 @@
 import { FirestoreConnector } from '../connectors/firestore-connector'
 import { CollectionReference, Timestamp } from 'firebase-admin/firestore'
-import { UserRepository } from '../../../domain/gateway/reminder/user-repository'
+import { UserRepository } from '../../../domain/repositories/reminder/user-repository'
 
 export class FirestoreUserRepositoryAdapter implements UserRepository {
     private readonly collection: CollectionReference

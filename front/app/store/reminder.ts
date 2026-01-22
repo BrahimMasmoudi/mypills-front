@@ -1,42 +1,104 @@
 import { defineStore } from 'pinia'
 import { httpsCallable } from 'firebase/functions'
-import type { CreateReminderRequest } from '~/types/reminder'
+import { collection, query, where, orderBy } from 'firebase/firestore'
+import { useCollection, getCurrentUser } from 'vuefire'
+import type { CreateReminderRequest, Reminder, ReminderGroup } from '~/types/reminder'
+import { logEvent } from '@firebase/analytics'
 
 export const useReminderStore = defineStore('reminder', () => {
-    // State
-    const loading = ref(false)
-    const error = ref<string | null>(null)
+    const { $functions, $firestore, $analytics } = useNuxtApp()
 
-    // Actions
+    // 1. Set up a source ref that useCollection will populate
+    const reminderSource = ref<any[]>([])
+    const loading = ref(false)
+
+    const initReminders = async () => {
+        const user = await getCurrentUser()
+        if (!user) return
+
+        const q = query(
+            collection($firestore, 'reminders'),
+            where('userId', '==', user.uid),
+            orderBy('scheduledTime', 'desc')
+        )
+
+        // Bind the source directly to the collection
+        // VueFire will now update reminderSource automatically in real-time
+        useCollection(q, { target: reminderSource })
+    }
+
+    // 2. Create a computed property to handle the Date conversion
+    // This ensures the rest of your app sees JS Dates, not Firestore Timestamps
+    const reminders = computed(() => {
+        return reminderSource.value.map((doc) => ({
+            ...doc,
+            reminderId: doc.id,
+            scheduledTime: doc.scheduledTime?.toDate ? doc.scheduledTime.toDate() : new Date(doc.scheduledTime),
+        })) as Reminder[]
+    })
+
     const createSchedule = async (payload: CreateReminderRequest) => {
         loading.value = true
-        error.value = null
-
         try {
-            const { $functions } = useNuxtApp()
-
-            // Reference the function.
-            // Note: Region 'europe-west3' is handled by your plugin initialization
-            const callCreateSchedule = httpsCallable<CreateReminderRequest, { success: boolean }>(
-                $functions,
-                'createSchedule'
-            )
-
+            const callCreateSchedule = httpsCallable<CreateReminderRequest, {
+                success: boolean
+            }>($functions, 'createReminder')
             const result = await callCreateSchedule(payload)
 
+            // Analytics for creating a schedule
+            if ($analytics) {
+                logEvent($analytics, 'create_schedule', {
+                    sickness_name: payload.sicknessName,
+                    medication_name: payload.medication.name,
+                    start_date: payload.startDate,
+                    end_date: payload.endDate,
+                    dose_count: payload.doses.length,
+                })
+            }
+
             return result.data
-        } catch (err: any) {
-            console.error('Error creating schedule:', err)
-            error.value = err.message || 'Failed to create schedule'
-            throw err // Re-throw so the component can handle it if needed
+        } finally {
+            loading.value = false
+        }
+    }
+
+    const deleteReminders = async (reminderGroup: ReminderGroup) => {
+        const ids = reminderGroup.ids
+        const remove = httpsCallable($functions, 'deleteReminders')
+        await remove(ids)
+        if ($analytics) {
+            ids.forEach((id) => {
+                logEvent($analytics, 'delete_reminder', {
+                    sickness_name: reminderGroup.sicknessName,
+                    reminder_id: id,
+                })
+            })
+        }
+    }
+
+    const updateRemindersStatus = async (ids: string[], status: 'sent' | 'failed') => {
+        loading.value = true
+        try {
+            const callUpdate = httpsCallable($functions, 'updateRemindersStatus')
+            await callUpdate({ ids, status })
+
+            if ($analytics) {
+                logEvent($analytics, 'update_reminder_status', {
+                    status,
+                    count: ids.length
+                })
+            }
         } finally {
             loading.value = false
         }
     }
 
     return {
+        reminders, // This is now a computed reactive array
         loading,
-        error,
+        initReminders,
         createSchedule,
+        deleteReminders,
+        updateRemindersStatus
     }
 })

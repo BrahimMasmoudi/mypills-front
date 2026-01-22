@@ -29,6 +29,18 @@
 
       <v-card-text class="pa-0">
         <div class="d-flex flex-column gap-4">
+
+          <v-text-field
+              v-model="form.sicknessName"
+              :placeholder="t('reminderDialog.reminderNameLabel')"
+              variant="outlined"
+              rounded="lg"
+              prepend-inner-icon="mdi-medical-bag"
+              class="font-weight-medium"
+              hide-details="auto"
+              :rules="[v => !!v || t('validation.required')]"
+          />
+
           <v-select
               v-model="form.medication"
               :items="validMedications"
@@ -136,7 +148,6 @@ import {isSameDay, isAfter, format} from "date-fns"
 import type {Medication} from "~/types/medication"
 import type {CreateReminderRequest} from "~/types/reminder"
 import {enUS, fr} from "date-fns/locale"
-import TimePicker from "~/components/molecules/TimePicker.vue";
 
 const {$device} = useNuxtApp()
 const {t, locale} = useI18n()
@@ -152,13 +163,11 @@ const {close, createReminder, validMedications} = defineProps<{
   validMedications: Medication[]
 }>()
 
-// UI State
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenu = ref(false)
-const menuIsOpen = ref(false)
-// Form Data
 const form = ref({
+  sicknessName: '',
   medication: null as unknown as Medication,
   startDate: new Date(),
   endDate: new Date(),
@@ -167,10 +176,8 @@ const form = ref({
   ]
 })
 
-// Range Picker State
 const rangeValue = ref<Date[]>([form.value.startDate, form.value.endDate])
 
-// Formatting Logic
 const formatDate = (date: Date | string) => {
   if (!date) return ''
   return format(new Date(date), 'dd MMM yyyy', {locale: locales[locale.value] || enUS})
@@ -182,38 +189,32 @@ const dateRangeText = computed(() => {
   const start = form.value.startDate
   const end = form.value.endDate
 
-  // If it's the same day, just show one date (e.g., "08 Jan 2026")
   if (isSameDay(start, end)) {
     return formatDate(start)
   }
 
-  // Otherwise show the range
   return `${formatDate(start)} - ${formatDate(end)}`
 })
 
-// Handle Range Selection
 const handleDateChange = (val: Date[]) => {
   if (!val || val.length === 0) return
 
-  // 1. If user clicks one date, set it as both start and end
   if (val.length === 1) {
     form.value.startDate = val[0]
     form.value.endDate = val[0]
-    // We don't close the menu yet, in case they want to pick a second date
   }
 
-  // 2. If user selects a range (two clicks)
   else if (val.length >= 2) {
     const sorted = [...val].sort((a, b) => a.getTime() - b.getTime())
     form.value.startDate = sorted[0]
     form.value.endDate = sorted[sorted.length - 1]
 
-    // Range is complete, close the menu
     dateMenu.value = false
   }
 }
 
 const isFormInvalid = computed(() => {
+  const hasName = !!form.value.sicknessName.trim()
   const hasMed = !!form.value.medication
   const validDate =
       isAfter(form.value.endDate, form.value.startDate) ||
@@ -222,10 +223,9 @@ const isFormInvalid = computed(() => {
       form.value.doses.length > 0 &&
       form.value.doses.every(d => d.time && d.quantity > 0)
 
-  return !hasMed || !validDate || !validDoses
+  return !hasMed || !validDate || !validDoses || !hasName
 })
 
-// Dose Management
 const addDose = () => {
   const lastDose = form.value.doses[form.value.doses.length - 1]!
   const [hours, minutes] = lastDose.time.split(':').map(Number)
@@ -239,7 +239,6 @@ const addDose = () => {
 
 const removeDose = (index: number) => form.value.doses.splice(index, 1)
 
-// Save Logic
 const handleSave = async () => {
   loading.value = true
   try {
@@ -266,10 +265,6 @@ const cancelAndClose = () => close('canceled')
 </script>
 
 <style scoped>
-.gap-2 {
-  gap: 8px
-}
-
 .gap-3 {
   gap: 12px
 }

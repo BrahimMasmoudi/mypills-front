@@ -156,6 +156,7 @@ import {parseDate} from "~/composables/parseDate"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
 import MedicationInfoDialog from "~/components/molecules/MedicationInfoDialog.vue"
 import {useI18n} from "vue-i18n"
+import type {ToastType} from "~/composables/openToast";
 
 const {$open, $device} = useNuxtApp()
 const {t} = useI18n()
@@ -211,7 +212,7 @@ const toggleEdit = () => {
 }
 
 const confirmDelete = async () => {
-  const result = await $open<string>(ValidationWithWarningDialog, {
+  const result = await $open<ToastType>(ValidationWithWarningDialog, {
     scrim: true,
     isPersistent: true,
     title: t('dialogDelete.title'),

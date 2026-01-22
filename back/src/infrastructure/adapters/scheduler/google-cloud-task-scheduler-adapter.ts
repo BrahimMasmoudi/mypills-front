@@ -1,5 +1,5 @@
 import { CloudTasksClient } from '@google-cloud/tasks'
-import { TaskSchedulerPort } from '../../../domain/gateway/reminder/task-scheduler-port'
+import { TaskSchedulerPort } from '../../../domain/gateway/scheduler/task-scheduler-port'
 
 export class GoogleCloudTaskSchedulerAdapter implements TaskSchedulerPort {
     private client = new CloudTasksClient()

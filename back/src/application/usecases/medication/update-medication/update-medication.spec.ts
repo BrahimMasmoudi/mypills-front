@@ -1,5 +1,5 @@
 import { UpdateMedication } from './update-medication'
-import { MedicationRepository } from '../../../../domain/repositories/medication-repository'
+import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { Medication } from '../../../../domain/entities/medication'
 
 describe('SetExpiredStatus Use Case', () => {

@@ -35,59 +35,29 @@
         </v-col>
       </v-row>
     </v-sheet>
-
-    <v-speed-dial v-model="isDialOpen" location="bottom end" transition="slide-y-reverse-transition" class="mb-4 mr-4">
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-fab v-bind="activatorProps" color="primary" size="x-large" app :icon="isDialOpen ? 'mdi-close' : 'mdi-plus'"
-               location="bottom end" :extended="!$device.isMobile" :text="!$device.isMobile ? t('add-pill') : ''"
-               class="mb-4 mr-4"/>
-      </template>
-      <v-btn key="1" color="secondary" prepend-icon="mdi-pill" class="text-capitalize font-weight-bold" rounded="lg"
-             size="large" @click="openAddMedicationDialog">
-        {{ t('actions.addMedication') }}
-      </v-btn>
-      <v-btn key="2" color="primary" prepend-icon="mdi-alarm-plus" class="text-capitalize font-weight-bold" rounded="lg"
-             size="large" @click="openReminderDialog">
-        {{ t('actions.createReminder') }}
-      </v-btn>
-    </v-speed-dial>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
 import type {Medication} from "~/types/medication"
-import type {CreateReminderRequest} from "~/types/reminder"
-import {useI18n} from "vue-i18n"
-import {storeToRefs} from "pinia"
-import {useCountryStore} from "~/store/country"
-import CreateMedicationDialog from "~/components/molecules/createMedicationDialog.vue"
-import ReminderCreationDialog from "~/components/molecules/ReminderCreationDialog.vue"
-import {openToast, type ToastType} from "~/composables/openToast"
-import {getCurrentUser} from "vuefire"
-
-const {t} = useI18n()
-const {$open, $device} = useNuxtApp()
-const {selectedCountry} = storeToRefs(useCountryStore())
 
 const {medications} = defineProps<{
   medications: Medication[] | undefined
   medicationLoading: boolean
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'create-medication', medication: Medication): void
   (e: 'increment-pills', medication: Medication, done: () => void): void
   (e: 'decrement-pills', medication: Medication, done: () => void): void
   (e: 'delete-pills', medication: Medication, done: () => void): void
   (e: 'update-medication-name', medication: Medication, newName: string, done: () => void): void
-  (e: 'create-reminder', request: CreateReminderRequest): void
 }>()
 
 const searchQuery = ref('')
 const viewType = ref<'grid' | 'table'>('grid')
 const sortBy = ref<'name' | 'expiryDate' | 'quantity' | null>(null)
 const sortOrder = ref<'asc' | 'desc'>('asc')
-const isDialOpen = ref(false)
 const tab = ref<string>('all')
 
 const sortOptions = [
@@ -130,28 +100,4 @@ const filterAndSort = (meds: Medication[]) => {
 const validMedication = computed(() => filterAndSort(medications?.filter(m => !m.expired) ?? []))
 const expiredMedication = computed(() => filterAndSort(medications?.filter(m => m.expired) ?? []))
 const allMedication = computed(() => filterAndSort(medications ?? []))
-
-const openAddMedicationDialog = async () => {
-  const user = await getCurrentUser()
-  const toastType = await $open<ToastType>(CreateMedicationDialog, {
-    scrim: true,
-    isPersistent: true,
-    createMedication: (med: Medication) => emit('create-medication', med),
-    userUid: user?.uid,
-    email: user?.email,
-    medications: medications,
-    selectedCountry: selectedCountry.value,
-  })
-  if (toastType && toastType !== 'canceled') openToast(toastType, t(toastType))
-}
-
-const openReminderDialog = async () => {
-  const toastType = await $open<ToastType>(ReminderCreationDialog, {
-    scrim: true,
-    isPersistent: true,
-    createReminder: (req: CreateReminderRequest) => emit('create-reminder', req),
-    validMedications: validMedication.value
-  })
-  if (toastType && toastType !== 'canceled') openToast(toastType, t(`reminderDialog.toast.${toastType}`))
-}
 </script>
