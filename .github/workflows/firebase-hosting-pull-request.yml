@@ -116,14 +116,13 @@ jobs:
         if: always()
         run: rm -f back/serviceAccountKey.json
 
-  # JOB 4: NEW E2E Job (Isolated from others)
+  # JOB 4: E2E Tests on Staging
   e2e-test:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      # We handle E2E cache separately so it doesn't touch Job 1/2/3
       - name: Cache E2E Modules
         id: cache-e2e
         uses: actions/cache@v4
@@ -138,11 +137,11 @@ jobs:
       - name: Run Cypress on Staging
         run: |
           cd e2e
-          # Using npx cypress run ensures it finds the binary in e2e/node_modules
           npx cypress run
         env:
+          # Tells Cypress where to go
           CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
+          # Used by the Cypress Node process to initialize Firebase Admin
           CYPRESS_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
-          # Leave these empty to ensure we don't look for emulators on Staging
-          FIREBASE_AUTH_EMULATOR_HOST: ""
-          FIRESTORE_EMULATOR_HOST: ""
+          # Some versions of the plugin look for this specifically:
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
