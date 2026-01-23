@@ -17,7 +17,6 @@ describe('Medication Management', () => {
         cy.login(testUid)
 
         cy.callFirestore('get', 'medications', {where: [['email', '==', 'test.test@test.com']]}).then((medications) => {
-            console.log('BRAHIM', medications)
             if (medications) {
                 medications.forEach((med: any) => {
                     cy.callFirestore('delete', `medications/${med.medicationId}`)
