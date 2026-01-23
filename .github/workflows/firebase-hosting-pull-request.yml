@@ -134,6 +134,10 @@ jobs:
         if: steps.cache-e2e.outputs.cache-hit != 'true'
         run: cd e2e && yarn install --frozen-lockfile
 
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: latest
       - name: Run Cypress on Staging
         run: |
           cd e2e
