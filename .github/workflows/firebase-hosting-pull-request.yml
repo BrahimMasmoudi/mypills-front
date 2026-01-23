@@ -137,7 +137,7 @@ jobs:
       - name: Run Cypress on Staging
         run: |
           cd e2e
-          yarn cypress run --browser chrome
+          yarn cypress run --browser chrome --headless
         env:
           # Tells Cypress where to go
           CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
