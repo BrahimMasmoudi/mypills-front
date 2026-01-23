@@ -8,6 +8,7 @@ export default defineConfig({
         supportFile: './support/e2e.ts',
         specPattern: 'tests/**/*.cy.{js,jsx,ts,tsx}',
         numTestsKeptInMemory: 0,
+        experimentalFastVisibility : true,
         experimentalMemoryManagement: true,
         screenshotOnRunFailure: true,
         env: {

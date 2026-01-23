@@ -137,7 +137,7 @@ jobs:
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@v1
         with:
-          chrome-version: latest
+          chrome-version: 143
       - name: Run Cypress on Staging
         run: |
           cd e2e
