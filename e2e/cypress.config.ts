@@ -7,6 +7,8 @@ export default defineConfig({
         baseUrl: process.env.CYPRESS_BASE_URL ?? 'http://localhost:3000',
         supportFile: './support/e2e.ts',
         specPattern: 'tests/**/*.cy.{js,jsx,ts,tsx}',
+        numTestsKeptInMemory: 0,
+        experimentalMemoryManagement: true,
         env: {
             GCLOUD_PROJECT: 'my-pills-staging-460b5'
         },
