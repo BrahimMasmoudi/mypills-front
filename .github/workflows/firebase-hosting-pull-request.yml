@@ -120,33 +120,19 @@ jobs:
   e2e-test:
     needs: deploy
     runs-on: ubuntu-latest
-    container:
-      image: cypress/included:cypress-15.9.0-node-24.13.0-chrome-143.0.7499.192-1-ff-147.0-edge-143.0.3650.139-1
-      options: --user 1001
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Cache E2E Modules
-        id: cache-e2e
-        uses: actions/cache@v4
-        with:
-          path: e2e/node_modules
-          key: ${{ runner.os }}-e2e-${{ hashFiles('e2e/yarn.lock') }}
-
-      - name: Install E2E Dependencies
-        if: steps.cache-e2e.outputs.cache-hit != 'true'
-        run: cd e2e && yarn install --frozen-lockfile
-
-      - name: Run Cypress on Staging
-        run: |
-          cd e2e
-          # Cypress will now automatically detect Chrome 143 inside the container
-          yarn cypress run --browser chrome --headless
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
         env:
           CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
           CYPRESS_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
           SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+        with:
+          working-directory: e2e
+          browser: chrome
+          install-command: yarn install --frozen-lockfile
+          summary-title: 'Chrome Staging E2E'
 
       - name: Upload Cypress artifacts
         uses: actions/upload-artifact@v4
@@ -154,6 +140,6 @@ jobs:
         with:
           name: cypress-results
           path: |
-            e2e/screenshots
-            e2e/videos
+            e2e/cypress/screenshots
+            e2e/cypress/videos
           if-no-files-found: ignore
