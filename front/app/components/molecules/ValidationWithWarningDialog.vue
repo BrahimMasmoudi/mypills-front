@@ -6,6 +6,7 @@
       :persistent="isPersistent"
       :scrim="scrim"
       :width="width"
+      data-cy="validation-with-warning-dialog"
       content-class="elevation-0"
       @keydown.esc="cancelAndClose"
   >
@@ -45,6 +46,7 @@
               size="large"
               class="flex-grow-1 text-capitalize font-weight-bold"
               height="48"
+              data-cy="confirm-deletion-button"
               :loading="loading"
               @click="onConfirmClick"
           >
@@ -94,6 +96,7 @@
               color="error"
               variant="flat"
               size="x-large"
+              data-cy="confirm-deletion-button"
               class="text-capitalize font-weight-bold rounded-lg"
               :loading="loading"
               @click="onConfirmClick"

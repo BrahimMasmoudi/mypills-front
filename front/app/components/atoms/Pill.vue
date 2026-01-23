@@ -3,6 +3,7 @@
       :class="['pill-card', { 'expired-card': medication.expired }]"
       elevation="2"
       rounded="lg"
+      data-cy="medication-card"
       class="d-flex flex-column fill-height position-relative feature-card"
       @click="handleCardClick"
   >
@@ -13,6 +14,7 @@
           color="error"
           size="small"
           density="comfortable"
+          data-cy="delete-pill-button"
           :loading="loadingAction === 'delete'"
           :disabled="loadingAction !== null"
           @click.stop="confirmDelete"
