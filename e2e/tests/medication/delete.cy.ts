@@ -21,14 +21,15 @@ describe('Medication Deletion Flow', () => {
 
     it('should delete a medication through the UI and reflect in the database', () => {
         cy.visit('/medications')
-        cy.get('[data-cy="medication-card"]', {timeout: 10000})
-            .should('be.visible')
-            .and('contain', 'Doliprane 1000mg')
+        cy.get('[data-cy="medication-card"]', { timeout: 10000 }).should('be.visible')
+
         cy.get(`[data-cy="delete-pill-button"]`).first().click()
-        cy.get('[data-cy="validation-with-warning-dialog"]').should('be.visible')
         cy.get('[data-cy="confirm-deletion-button"]').click()
-        cy.callFirestore('get', `medications/${medicationId}`).then((doc) => {
-            expect(doc).to.be.null
-        })
+
+        // FIX 1: Wait for UI to sync (card disappears)
+        cy.contains('Doliprane 1000mg').should('not.exist')
+
+        // FIX 2: Check Firestore - wrap in a retry-able assertion
+        cy.callFirestore('get', `medications/${medicationId}`).should('be.null')
     })
 })

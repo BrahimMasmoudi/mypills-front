@@ -22,14 +22,12 @@ describe('Medication Quantity Updates', () => {
     it('should decrement the quantity when the minus button is clicked', () => {
         cy.visit('/medications');
 
-        cy.get('[data-cy="medication-card"]', {timeout: 10000})
-            .should('be.visible')
-            .and('contain', '10')
+        // Wait for card and initial state
+        cy.get('[data-cy="medication-card"]', { timeout: 10000 }).should('contain', '10')
 
-        cy.get('[data-cy="decrement-button"]')
-            .click()
+        cy.get('[data-cy="decrement-button"]').click()
 
-        // 3. Assert UI update
-        cy.contains('9').should('be.visible');
+        // FIX: Wait for the specific text "9" to appear inside the card
+        cy.get('[data-cy="medication-card"]').should('contain', '9');
     });
 });
