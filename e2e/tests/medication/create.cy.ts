@@ -1,21 +1,5 @@
 describe('Medication Management', () => {
-    const testEmail = 'test.test@test.com'
-    const testUid = 'test-user-123'
-
     beforeEach(() => {
-        cy.setCookie('user-country', 'FR')
-
-        cy.authDeleteUser(testUid)
-
-        cy.authCreateUser({
-            uid: testUid,
-            email: testEmail,
-            emailVerified: true,
-            displayName: 'Test User'
-        })
-
-        cy.login(testUid)
-
         cy.callFirestore('get', 'medications', {where: [['email', '==', 'test.test@test.com']]}).then((medications) => {
             if (medications) {
                 medications.forEach((med: any) => {

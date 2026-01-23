@@ -1,4 +1,4 @@
-import { attachCustomCommands } from 'cypress-firebase'
+import {attachCustomCommands} from 'cypress-firebase'
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
 import 'firebase/compat/firestore'
@@ -27,4 +27,24 @@ if (isLocal) {
     console.log('Cypress is using Live Staging Firebase')
 }
 
-attachCustomCommands({ Cypress, cy, firebase })
+attachCustomCommands({Cypress, cy, firebase})
+
+
+export const testEmail = 'test.test@test.com'
+export const testUid = 'test-user-123'
+export const medicationId = 'med-unique-123'
+
+beforeEach(() => {
+    cy.setCookie('user-country', 'FR')
+
+    cy.authDeleteUser(testUid)
+
+    cy.authCreateUser({
+        uid: testUid,
+        email: testEmail,
+        emailVerified: true,
+        displayName: 'Test User'
+    })
+
+    cy.login(testUid)
+})
