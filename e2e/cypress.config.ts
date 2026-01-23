@@ -50,10 +50,11 @@ export default defineConfig({
             }
 
             on('before:browser:launch', (browser, launchOptions) => {
-                if (browser.name === 'chrome') {
+                if (browser.name === 'chrome' || browser.name === 'chromium') {
                     launchOptions.args.push('--disable-dev-shm-usage')
+                    launchOptions.args.push('--no-sandbox') // Adds extra stability in CI
+                    launchOptions.args.push('--disable-gpu') // Saves additional memory
                 }
-
                 return launchOptions
             })
 

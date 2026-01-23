@@ -140,6 +140,6 @@ jobs:
         with:
           name: cypress-results
           path: |
-            e2e/cypress/screenshots
-            e2e/cypress/videos
-          if-no-files-found: ignore
+            ${{ github.workspace }}/e2e/cypress/screenshots
+            ${{ github.workspace }}/e2e/cypress/videos
+          if-no-files-found: warn
