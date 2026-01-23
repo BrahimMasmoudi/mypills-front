@@ -120,6 +120,10 @@ jobs:
   e2e-test:
     needs: deploy
     runs-on: ubuntu-latest
+    container:
+      image: cypress/included:cypress-15.9.0-node-24.13.0-chrome-143.0.7499.192-1-ff-147.0-edge-143.0.3650.139-1
+      options: --user 1001
+
     steps:
       - uses: actions/checkout@v4
 
@@ -134,20 +138,14 @@ jobs:
         if: steps.cache-e2e.outputs.cache-hit != 'true'
         run: cd e2e && yarn install --frozen-lockfile
 
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          chrome-version: 143
       - name: Run Cypress on Staging
         run: |
           cd e2e
+          # Cypress will now automatically detect Chrome 143 inside the container
           yarn cypress run --browser chrome --headless
         env:
-          # Tells Cypress where to go
           CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
-          # Used by the Cypress Node process to initialize Firebase Admin
           CYPRESS_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
-          # Some versions of the plugin look for this specifically:
           SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
 
       - name: Upload Cypress artifacts
