@@ -9,6 +9,7 @@ export default defineConfig({
         specPattern: 'tests/**/*.cy.{js,jsx,ts,tsx}',
         numTestsKeptInMemory: 0,
         experimentalMemoryManagement: true,
+        screenshotOnRunFailure: true,
         env: {
             GCLOUD_PROJECT: 'my-pills-staging-460b5'
         },

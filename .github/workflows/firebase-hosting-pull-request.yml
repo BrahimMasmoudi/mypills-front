@@ -138,6 +138,9 @@ jobs:
         run: |
           cd e2e
           yarn cypress run
+        with:
+          browser: chrome
+          summary-title: 'Chrome headless'
         env:
           # Tells Cypress where to go
           CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
