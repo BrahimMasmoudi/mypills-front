@@ -420,7 +420,6 @@ const {close, createMedication, userUid, email, medications, selectedCountry} = 
   medications: Medication[],
   selectedCountry: Country,
 }>()
-console.log('EMAIL',email)
 
 const medication = ref<Medication>({
   expiryDate: new Date(),

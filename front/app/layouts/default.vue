@@ -129,6 +129,7 @@ const notifications = useNotifications()
 const langStore = useLanguageStore()
 langStore.initLocale()
 
+
 const checkCountryStatus = async () => {
   if (countryStore.selectedCountry === null) {
     const result = await $open<string | null>(CountryDialog, {
@@ -156,10 +157,11 @@ const userStore = useUserStore()
 const isDialOpen = ref(false)
 
 const drawer = ref(false)
+const { medications } = storeToRefs(medicationStore)
 
-const medications = computed(() => medicationStore.medications)
-const validMedication = computed(() => medications.value?.filter(m => !m.expired) ?? [])
-
+const validMedications = computed(() =>
+    medications.value?.filter(m => !m.expired) ?? []
+)
 const openAddMedicationDialog = async () => {
   const user = await getCurrentUser()
   const toastType = await $open<ToastType>(CreateMedicationDialog, {
@@ -168,7 +170,7 @@ const openAddMedicationDialog = async () => {
     createMedication: async (med: Medication) => await medicationStore.createMedication(med),
     userUid: user?.uid,
     email: user?.email,
-    medications: medications,
+    medications: medications.value,
     selectedCountry: selectedCountry.value,
   })
   if (toastType && toastType !== 'canceled') openToast(toastType, t(toastType))
@@ -181,7 +183,7 @@ const openReminderDialog = async () => {
     createReminder: async (req: CreateReminderRequest) => {
       await reminderStore.createSchedule(req)
     },
-    validMedications: validMedication.value,
+    validMedications: validMedications.value,
     reminders: reminderStore.reminders
   })
   if (toastType && toastType !== 'canceled') openToast(toastType, t(`reminderDialog.toast.${toastType}`))

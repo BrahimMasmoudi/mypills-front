@@ -46,7 +46,7 @@
         class="d-flex flex-column align-center flex-grow-1 px-2"
         :class="$device.isMobile ? 'pt-4 pb-2' : 'pt-6 pb-2'"
     >
-      <div class="pill-image-container mb-2" :class="{'mobile-image': $device.isMobile}">
+      <div class="pill-image-container" :class="{'mobile-image': $device.isMobile}">
         <v-avatar
             :color="medication.expired ? 'error' : 'primary'"
             size="48"
