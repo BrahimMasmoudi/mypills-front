@@ -115,3 +115,31 @@ jobs:
       - name: Cleanup SA Key
         if: always()
         run: rm -f back/serviceAccountKey.json
+
+  # JOB 4: E2E Tests on Staging
+  e2e-test:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        env:
+          CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
+          CYPRESS_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+        with:
+          working-directory: e2e
+          browser: firefox
+          install-command: yarn install --frozen-lockfile
+          summary-title: 'Chrome Staging E2E'
+
+      - name: Upload Cypress artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-results
+          path: |
+            ${{ github.workspace }}/e2e/cypress/screenshots
+            ${{ github.workspace }}/e2e/cypress/videos
+          if-no-files-found: warn

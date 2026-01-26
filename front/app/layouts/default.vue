@@ -65,17 +65,29 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-speed-dial v-model="isDialOpen" location="bottom end" transition="slide-y-reverse-transition" class="mb-4 mr-4">
+    <v-speed-dial v-model="isDialOpen"
+                  location="bottom end"
+                  transition="slide-y-reverse-transition"
+                  class="mb-4 mr-4">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-fab v-bind="activatorProps" color="primary" size="x-large" app :icon="isDialOpen ? 'mdi-close' : 'mdi-plus'"
-               location="bottom end" :extended="!$device.isMobile" :text="!$device.isMobile ? t('add-pill') : ''"
+        <v-fab v-bind="activatorProps"
+               color="primary"
+               size="x-large"
+               app
+               data-cy="fab-button"
+               :icon="isDialOpen ? 'mdi-close' : 'mdi-plus'"
+               location="bottom end"
+               :extended="!$device.isMobile"
+               :text="!$device.isMobile ? t('add-pill') : ''"
                class="mb-4 mr-4"/>
       </template>
-      <v-btn key="1" color="secondary" prepend-icon="mdi-pill" class="text-capitalize font-weight-bold" rounded="lg"
+      <v-btn data-cy="add-medication-button" key="1" color="secondary" prepend-icon="mdi-pill"
+             class="text-capitalize font-weight-bold" rounded="lg"
              size="large" @click="openAddMedicationDialog">
         {{ t('actions.addMedication') }}
       </v-btn>
-      <v-btn key="2" color="primary" prepend-icon="mdi-alarm-plus" class="text-capitalize font-weight-bold" rounded="lg"
+      <v-btn data-cy="create-reminder-button" key="2" color="primary" prepend-icon="mdi-alarm-plus"
+             class="text-capitalize font-weight-bold" rounded="lg"
              size="large" @click="openReminderDialog">
         {{ t('actions.createReminder') }}
       </v-btn>
