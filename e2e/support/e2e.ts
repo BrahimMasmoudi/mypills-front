@@ -44,20 +44,24 @@ export const testUid = 'test-user-123'
 export const medicationId = 'med-unique-123'
 
 Cypress.Commands.add('setupTestUser', () => {
-    cy.setCookie('user-country', 'FR')
+    // cy.session wraps the login logic
+    cy.session(testUid, () => {
+        cy.task('resetUserMedications', testEmail)
+        cy.authDeleteUser(testUid)
+        cy.authCreateUser({
+            uid: testUid,
+            email: testEmail,
+            emailVerified: true,
+            displayName: 'Test User'
+        })
+        cy.login(testUid)
 
-    cy.task('resetUserMedications', testEmail)
-    cy.authDeleteUser(testUid)
-
-    cy.authCreateUser({
-        uid: testUid,
-        email: testEmail,
-        emailVerified: true,
-        displayName: 'Test User'
+        cy.visit('/')
     })
-    cy.login(testUid)
+
+    cy.setCookie('user-country', 'FR')
 })
 
-before(() => {
+beforeEach(() => {
     cy.setupTestUser()
 })
