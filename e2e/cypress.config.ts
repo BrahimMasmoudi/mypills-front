@@ -52,7 +52,7 @@ export default defineConfig({
             on('before:browser:launch', (browser, launchOptions) => {
                 if (browser.name === 'chrome' || browser.name === 'chromium') {
                     // High-level memory management
-                    launchOptions.args.push('--js-flags=--max-old-space-size=2500 --expose-gc')
+                    launchOptions.args.push('--js-flags=--max-old-space-size=3500')
                     launchOptions.args.push('--disable-dev-shm-usage')
                     launchOptions.args.push('--disable-gpu')
                     launchOptions.args.push('--no-sandbox')
