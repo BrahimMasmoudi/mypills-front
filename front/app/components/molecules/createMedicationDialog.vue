@@ -535,9 +535,6 @@ const onBarcodeDetected = async (code: string) => {
 
 const performCreation = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
-  const randomIconNumber = Math.floor(Math.random() * 30) + 1
-  medication.value.image = `pill-${randomIconNumber}`
-
   try {
     loading.value = true
     medication.value.quantity = Number(medication.value.quantity)

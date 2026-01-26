@@ -47,8 +47,15 @@
         :class="$device.isMobile ? 'pt-4 pb-2' : 'pt-6 pb-2'"
     >
       <div class="pill-image-container mb-2" :class="{'mobile-image': $device.isMobile}">
-        <nuxt-icon filled :name="medication.image" class="pill-icon"
-                   :class="medication.expired ? 'text-error' : 'text-primary'"/>
+        <v-avatar
+            :color="medication.expired ? 'error' : 'primary'"
+            size="48"
+            class="elevation-1"
+        >
+    <span class="text-h5 text-white font-weight-bold">
+      {{ medication.name.charAt(0).toUpperCase() }}
+    </span>
+        </v-avatar>
       </div>
 
       <div class="w-100 mb-1 position-relative d-flex justify-center">
