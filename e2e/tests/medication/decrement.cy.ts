@@ -2,14 +2,6 @@ import {medicationId, testEmail, testUid} from "../../support/e2e";
 
 describe('Medication Quantity Updates', () => {
     beforeEach(() => {
-        cy.callFirestore('get', 'medications', {where: [['email', '==', 'test.test@test.com']]}).then((medications) => {
-            if (medications) {
-                medications.forEach((med: any) => {
-                    cy.callFirestore('delete', `medications/${med.medicationId}`)
-                })
-            }
-        })
-
         cy.callFirestore('set', `medications/${medicationId}`, {
             medicationId: medicationId,
             uid: testUid,

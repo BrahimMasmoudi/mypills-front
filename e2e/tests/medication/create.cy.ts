@@ -1,12 +1,6 @@
 describe('Medication Management', () => {
     beforeEach(() => {
-        cy.callFirestore('get', 'medications', {where: [['email', '==', 'test.test@test.com']]}).then((medications) => {
-            if (medications) {
-                medications.forEach((med: any) => {
-                    cy.callFirestore('delete', `medications/${med.medicationId}`)
-                })
-            }
-        })
+        cy.task('resetUserMedications', 'test.test@test.com')
     })
 
     it('should create a new medication successfully', () => {

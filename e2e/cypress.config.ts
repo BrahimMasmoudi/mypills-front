@@ -1,5 +1,5 @@
-import { defineConfig } from 'cypress'
-import { plugin as cypressFirebasePlugin } from 'cypress-firebase'
+import {defineConfig} from 'cypress'
+import {plugin as cypressFirebasePlugin} from 'cypress-firebase'
 import admin from 'firebase-admin'
 
 export default defineConfig({
@@ -8,7 +8,7 @@ export default defineConfig({
         supportFile: './support/e2e.ts',
         specPattern: 'tests/**/*.cy.{js,jsx,ts,tsx}',
         numTestsKeptInMemory: 0,
-        experimentalFastVisibility : true,
+        experimentalFastVisibility: true,
         experimentalMemoryManagement: true,
         screenshotOnRunFailure: true,
         env: {
@@ -29,37 +29,53 @@ export default defineConfig({
             process.env.GCLOUD_PROJECT = projectId
 
             if (admin.apps.length === 0) {
-                let credential;
-                const saEnv = process.env.CYPRESS_FIREBASE_SERVICE_ACCOUNT || process.env.SERVICE_ACCOUNT;
+                let credential
+                const saEnv = process.env.CYPRESS_FIREBASE_SERVICE_ACCOUNT || process.env.SERVICE_ACCOUNT
 
                 if (saEnv) {
                     try {
                         // Handle both stringified JSON and potential raw objects
-                        const serviceAccount = typeof saEnv === 'string' ? JSON.parse(saEnv) : saEnv;
-                        credential = admin.credential.cert(serviceAccount);
+                        const serviceAccount = typeof saEnv === 'string' ? JSON.parse(saEnv) : saEnv
+                        credential = admin.credential.cert(serviceAccount)
                     } catch (e) {
-                        console.error("Cypress Config: Failed to parse Service Account JSON", e);
+                        console.error("Cypress Config: Failed to parse Service Account JSON", e)
                     }
                 }
 
                 admin.initializeApp({
                     projectId: projectId,
                     // Only include credential if it was successfully created
-                    ...(credential ? { credential } : {})
+                    ...(credential ? {credential} : {})
                 })
             }
 
             on('before:browser:launch', (browser, launchOptions) => {
                 if (browser.name === 'chrome' || browser.name === 'chromium') {
-                    // Force the browser to use a larger memory heap
-                    launchOptions.args.push('--js-flags=--max-old-space-size=3500')
-
-                    // standard CI stability flags
+                    // High-level memory management
+                    launchOptions.args.push('--js-flags=--max-old-space-size=2500 --expose-gc')
                     launchOptions.args.push('--disable-dev-shm-usage')
                     launchOptions.args.push('--disable-gpu')
                     launchOptions.args.push('--no-sandbox')
+
+                    // These two help specifically with "Renderer Process Crashed"
+                    launchOptions.args.push('--disable-renderer-backgrounding')
+                    launchOptions.args.push('--disable-background-timer-throttling')
                 }
                 return launchOptions
+            })
+
+            on('task', {
+                async resetUserMedications(email: string) {
+                    const db = admin.firestore()
+                    const snapshot = await db.collection('medications')
+                        .where('email', '==', email)
+                        .get()
+
+                    const batch = db.batch()
+                    snapshot.docs.forEach((doc) => batch.delete(doc.ref))
+                    await batch.commit()
+                    return null
+                }
             })
 
 

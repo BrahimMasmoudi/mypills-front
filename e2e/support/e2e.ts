@@ -37,6 +37,7 @@ export const medicationId = 'med-unique-123'
 beforeEach(() => {
     cy.setCookie('user-country', 'FR')
 
+    cy.task('resetUserMedications', testEmail)
     cy.authDeleteUser(testUid)
 
     cy.authCreateUser({
