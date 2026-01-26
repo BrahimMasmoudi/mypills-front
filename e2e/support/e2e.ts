@@ -46,6 +46,6 @@ beforeEach(() => {
         emailVerified: true,
         displayName: 'Test User'
     })
-
+    cy.wait(2000)
     cy.login(testUid)
 })
