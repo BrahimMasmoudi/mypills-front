@@ -1,7 +1,7 @@
 import {medicationId, testEmail, testUid} from "../../support/e2e";
 
 describe('Medication Deletion Flow', () => {
-    beforeEach(() => {
+    it('should delete a medication through the UI and reflect in the database', () => {
         const medicationSeed = {
             medicationId: medicationId,
             uid: testUid,
@@ -17,9 +17,7 @@ describe('Medication Deletion Flow', () => {
         }
 
         cy.callFirestore('set', `medications/${medicationId}`, medicationSeed)
-    })
 
-    it('should delete a medication through the UI and reflect in the database', () => {
         cy.visit('/medications')
         cy.get('[data-cy="medication-card"]', { timeout: 10000 }).should('be.visible')
 

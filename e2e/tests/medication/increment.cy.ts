@@ -1,9 +1,7 @@
-import {medicationId, testEmail, testUid} from "../../support/e2e";
+import {medicationId, testEmail, testUid} from "../../support/e2e"
 
 describe('Medication Quantity Updates', () => {
-    beforeEach(() => {
-        cy.task('resetUserMedications', 'test.test@test.com')
-
+    it('should decrement the quantity when the minus button is clicked', () => {
         cy.callFirestore('set', `medications/${medicationId}`, {
             medicationId: medicationId,
             uid: testUid,
@@ -11,10 +9,9 @@ describe('Medication Quantity Updates', () => {
             name: 'Doliprane 1000mg',
             quantity: 10, // Starting quantity
             expiryDate: new Date('2026-12-31').toISOString(),
-        });
-    })
-    it('should decrement the quantity when the minus button is clicked', () => {
-        cy.visit('/medications');
+        })
+        
+        cy.visit('/medications')
 
         cy.get('[data-cy="medication-card"]', {timeout: 10000})
             .should('be.visible')
@@ -23,6 +20,6 @@ describe('Medication Quantity Updates', () => {
         cy.get('[data-cy="increment-button"]')
             .click()
 
-        cy.contains('11').should('be.visible');
-    });
-});
+        cy.contains('11').should('be.visible')
+    })
+})

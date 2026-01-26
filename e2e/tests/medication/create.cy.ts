@@ -1,8 +1,4 @@
 describe('Medication Management', () => {
-    beforeEach(() => {
-        cy.task('resetUserMedications', 'test.test@test.com')
-    })
-
     it('should create a new medication successfully', () => {
         cy.visit('/')
         cy.get('.v-fab__container > .v-btn', { timeout: 15000 }).should('be.visible').click()
