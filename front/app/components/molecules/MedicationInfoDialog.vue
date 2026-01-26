@@ -41,7 +41,7 @@
           <v-col cols="6">
             <v-card variant="outlined" class="pa-4 rounded-lg bg-surface border-light h-100">
               <suspense>
-                <nuxt-icon name="mouth" size="24" class="text-medium-emphasis mb-2 d-block"/>
+                <nuxt-icon name="cup" class="text-medium-emphasis d-block oral"/>
               </suspense>
               <div class="text-caption text-medium-emphasis">{{ t('detailsDialog.method') }}</div>
               <div class="text-body-2 font-weight-bold capitalize">{{ details?.administrationRoutes[0] }}</div>
@@ -158,5 +158,11 @@ const handleClose = () => {
 :deep(.nuxt-icon svg) {
   fill: currentColor !important;
   display: block;
+}
+
+.oral :deep(svg) {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 10px;
 }
 </style>

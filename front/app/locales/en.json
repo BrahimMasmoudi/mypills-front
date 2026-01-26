@@ -83,10 +83,6 @@
         "title": "Track Inventory",
         "desc": "Add medicines with quantity & expiry dates"
       },
-      "safety": {
-        "title": "Ensure Safety",
-        "desc": "Automatic categorization into Valid and Expired tabs"
-      },
       "organize": {
         "title": "Stay Organized",
         "desc": "Search, filter, and sort medicines quickly"
@@ -102,6 +98,10 @@
       "duplicate": {
         "title": "Duplicate Guard",
         "desc": "Intelligently detects and merges medications you already own"
+      },
+      "reminders": {
+        "title": "Reminders",
+        "desc": "Manage your intake schedules and track current treatments"
       }
     },
     "cta": "Connect with Google"

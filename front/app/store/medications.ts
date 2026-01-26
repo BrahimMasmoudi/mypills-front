@@ -4,6 +4,7 @@ import type { Medication } from '~/types/medication'
 import { collection, orderBy, query, where } from 'firebase/firestore'
 import { logEvent } from '@firebase/analytics'
 import type { GetMedicationDetailsResponse } from '../types/api'
+import type {_RefFirestore} from "vuefire";
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
     const { $functions, $firestore, $analytics } = useNuxtApp()
@@ -11,8 +12,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     /* ------------------------------------------------------------------
      * STATE
      * ------------------------------------------------------------------ */
-    const medications = ref<Medication[] | undefined>(undefined)
-
+    const medications = ref<Medication[]>([]) as _RefFirestore<Medication[]>
     /* ------------------------------------------------------------------
      * HELPERS
      * ------------------------------------------------------------------ */
@@ -23,7 +23,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         if (dateValue.seconds !== undefined) return new Date(dateValue.seconds * 1000)
 
         const date = new Date(dateValue)
-        return isNaN(date.getTime()) ? new Date(0) : date
+        return Number.isNaN(date.getTime()) ? new Date(0) : date
     }
 
     /* ------------------------------------------------------------------
@@ -39,15 +39,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
             orderBy('expiryDate', 'desc')
         )
 
-        const collectionRef = useCollection(q)
-
-        watch(
-            collectionRef,
-            (value) => {
-                medications.value = value as Medication[]
-            },
-            { immediate: true }
-        )
+        useCollection(q, { target: medications })
     }
 
     /* ------------------------------------------------------------------
@@ -200,7 +192,6 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     return {
         medications,
         initMedications,
-
         createMedication,
         incrementPills,
         decrementPills,

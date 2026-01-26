@@ -76,6 +76,10 @@ const {reminders} = storeToRefs(reminderStore)
 
 const viewType = ref<'grid' | 'table'>('grid')
 
+useSeoMeta({
+  title: () => t('nav.reminders')
+})
+
 const handleViewTypeUpdate = (value: any) => {
   if ($analytics && value) {
     logEvent($analytics, 'change_view_type', {view_type: value})
@@ -163,7 +167,7 @@ const handleUpdateStatus = async (ids: string[], status: 'sent' | 'failed', done
   try {
     await reminderStore.updateRemindersStatus(ids, status)
   } finally {
-    done() // This stops the spinner on the specific button
+    done()
   }
 }
 

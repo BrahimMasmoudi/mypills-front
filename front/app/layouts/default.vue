@@ -27,6 +27,7 @@
     <v-navigation-drawer
         v-model="drawer"
         temporary
+        close-delay="0"
         elevation="0"
         border="e"
     >
@@ -116,6 +117,7 @@ import {useMedicationsStore} from "~/store/medications";
 import type {CreateReminderRequest} from "~/types/reminder";
 import {useReminderStore} from "~/store/reminder";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
+import {useLanguageStore} from "~/store/language";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
@@ -124,6 +126,8 @@ const medicationStore = useMedicationsStore()
 const reminderStore = useReminderStore()
 const countryStore = useCountryStore()
 const notifications = useNotifications()
+const langStore = useLanguageStore()
+langStore.initLocale()
 
 
 const checkCountryStatus = async () => {
@@ -153,10 +157,11 @@ const userStore = useUserStore()
 const isDialOpen = ref(false)
 
 const drawer = ref(false)
+const { medications } = storeToRefs(medicationStore)
 
-const medications = computed(() => medicationStore.medications)
-const validMedication = computed(() => medications.value?.filter(m => !m.expired) ?? [])
-
+const validMedications = computed(() =>
+    medications.value?.filter(m => !m.expired) ?? []
+)
 const openAddMedicationDialog = async () => {
   const user = await getCurrentUser()
   const toastType = await $open<ToastType>(CreateMedicationDialog, {
@@ -165,7 +170,7 @@ const openAddMedicationDialog = async () => {
     createMedication: async (med: Medication) => await medicationStore.createMedication(med),
     userUid: user?.uid,
     email: user?.email,
-    medications: medications,
+    medications: medications.value,
     selectedCountry: selectedCountry.value,
   })
   if (toastType && toastType !== 'canceled') openToast(toastType, t(toastType))
@@ -178,7 +183,7 @@ const openReminderDialog = async () => {
     createReminder: async (req: CreateReminderRequest) => {
       await reminderStore.createSchedule(req)
     },
-    validMedications: validMedication.value,
+    validMedications: validMedications.value,
     reminders: reminderStore.reminders
   })
   if (toastType && toastType !== 'canceled') openToast(toastType, t(`reminderDialog.toast.${toastType}`))

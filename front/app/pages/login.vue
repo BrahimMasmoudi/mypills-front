@@ -4,9 +4,7 @@
     <v-app-bar elevation="1" height="64" color="surface">
       <v-sheet class="d-flex align-center justify-space-between px-5" width="100%" color="transparent">
         <div class="d-flex align-center gap-3">
-          <v-avatar size="48" class="elevation-2">
             <nuxt-icon filled name="application-icon" class="app-icon-nav"/>
-          </v-avatar>
           <span class="text-h5 font-weight-bold text-primary-darken-1 tracking-tight">
         MyPills
       </span>
@@ -146,10 +144,10 @@ const features = [
     colorClass: 'bg-primary'
   },
   {
-    icon: 'mdi-shield-check',
-    titleKey: 'landing.features.safety.title',
-    descKey: 'landing.features.safety.desc',
-    colorClass: 'bg-blue'
+    icon: 'mdi-bell-ring',
+    titleKey: 'landing.features.reminders.title',
+    descKey: 'landing.features.reminders.desc',
+    colorClass: 'bg-red-accent-2'
   },
   {
     icon: 'mdi-format-list-checks',

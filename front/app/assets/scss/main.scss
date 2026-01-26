@@ -13,3 +13,8 @@
   --text-main: #f8fafc;
   --card-bg: #1e293b;
 }
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.2s;
+}

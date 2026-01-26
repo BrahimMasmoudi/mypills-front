@@ -128,14 +128,15 @@
                 :view-mode="viewMode"
                 elevation="4"
                 :min="new Date()"
+                :max="new Date(new Date().getFullYear() + 17, 11, 31)"
+                :year="new Date().getFullYear()"
                 @update:model-value="dateMenuIsOpen = false"
                 hide-header
                 rounded="lg"
                 style="color: rgb(var(--v-theme-primary)) !important"
                 @update:year="updateYear"
                 @update:view-mode="updateViewMode"
-                @update:month="updateMonth"
-            />
+                @update:month="updateMonth"/>
           </v-menu>
 
           <!-- Quantity -->
@@ -321,6 +322,7 @@
               :view-mode="viewMode"
               elevation="4"
               :min="new Date()"
+              :max="new Date(new Date().getFullYear() + 17, 11, 31)"
               @update:model-value="dateMenuIsOpen = false"
               hide-header
               rounded="lg"
@@ -420,7 +422,6 @@ const {close, createMedication, userUid, email, medications, selectedCountry} = 
   medications: Medication[],
   selectedCountry: Country,
 }>()
-console.log('EMAIL',email)
 
 const medication = ref<Medication>({
   expiryDate: new Date(),
@@ -535,9 +536,6 @@ const onBarcodeDetected = async (code: string) => {
 
 const performCreation = async () => {
   medication.value.expiryDate = new Date(medication.value.expiryDate)
-  const randomIconNumber = Math.floor(Math.random() * 30) + 1
-  medication.value.image = `pill-${randomIconNumber}`
-
   try {
     loading.value = true
     medication.value.quantity = Number(medication.value.quantity)

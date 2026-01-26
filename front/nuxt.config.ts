@@ -18,7 +18,7 @@ export default defineNuxtConfig({
         head: {
             title: 'MyPills',
         },
-        pageTransition: {name: 'page', mode: 'out-in'}
+        pageTransition: {name: 'page', mode: 'default'}
     },
     typescript: {strict: true},
     ssr: false,
@@ -183,12 +183,6 @@ export default defineNuxtConfig({
                     purpose: 'any'
                 },
                 {
-                    src: '/icon_x144.png',
-                    sizes: '144x144',
-                    type: 'image/png',
-                    purpose: 'any'
-                },
-                {
                     src: '/icon_x192.png',
                     sizes: '192x192',
                     type: 'image/png',
@@ -212,7 +206,7 @@ export default defineNuxtConfig({
             installPrompt: true,
         },
         devOptions: {
-            enabled: true,
+            enabled: false,
             type: 'module'
         }
     }
