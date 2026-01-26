@@ -130,7 +130,7 @@ jobs:
           SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
         with:
           working-directory: e2e
-          browser: electron
+          browser: firefox
           install-command: yarn install --frozen-lockfile
           summary-title: 'Chrome Staging E2E'
 
