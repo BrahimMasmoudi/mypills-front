@@ -18,7 +18,7 @@ export default defineNuxtConfig({
         head: {
             title: 'MyPills',
         },
-        pageTransition: {name: 'page', mode: 'out-in'}
+        pageTransition: {name: 'page', mode: 'default'}
     },
     typescript: {strict: true},
     ssr: false,

@@ -27,6 +27,7 @@
     <v-navigation-drawer
         v-model="drawer"
         temporary
+        close-delay="0"
         elevation="0"
         border="e"
     >
