@@ -83,10 +83,6 @@
         "title": "Suivi des Stocks",
         "desc": "Ajoutez vos médicaments avec quantité et date de péremption"
       },
-      "safety": {
-        "title": "Sécurité Garantie",
-        "desc": "Catégorisation automatique des médicaments valides et périmés"
-      },
       "organize": {
         "title": "Restez Organisé",
         "desc": "Recherchez, filtrez et triez vos médicaments rapidement"
@@ -102,6 +98,10 @@
       "duplicate": {
         "title": "Alerte Doublons",
         "desc": "Détecte intelligemment si vous avez déjà un médicament identique"
+      },
+      "reminders": {
+        "title": "Rappels",
+        "desc": "Gérez vos horaires de prise et suivez vos traitements en cours"
       }
     },
     "cta": "Se connecter avec Google"
