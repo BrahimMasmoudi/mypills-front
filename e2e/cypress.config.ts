@@ -10,8 +10,8 @@ export default defineConfig({
         numTestsKeptInMemory: 0,
         experimentalFastVisibility: true,
         experimentalMemoryManagement: true,
-        video: false,
-        screenshotOnRunFailure: false,
+        screenshotOnRunFailure: true,
+        video : true,
         env: {
             GCLOUD_PROJECT: 'my-pills-staging-460b5'
         },
