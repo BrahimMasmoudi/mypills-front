@@ -3,6 +3,15 @@ import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
 import 'firebase/compat/firestore'
 
+declare global {
+    namespace Cypress {
+        interface Chainable {
+            setupTestUser(): Chainable<null>
+
+        }
+    }
+}
+
 const fbConfig = {
     "apiKey": "AIzaSyD8L9ygNvkH0FO46dceDGmneRwQ7WuaFBk",
     "authDomain": "my-pills-staging-460b5.firebaseapp.com",
@@ -34,7 +43,7 @@ export const testEmail = 'test.test@test.com'
 export const testUid = 'test-user-123'
 export const medicationId = 'med-unique-123'
 
-beforeEach(() => {
+Cypress.Commands.add('setupTestUser', () => {
     cy.setCookie('user-country', 'FR')
 
     cy.task('resetUserMedications', testEmail)
@@ -46,6 +55,9 @@ beforeEach(() => {
         emailVerified: true,
         displayName: 'Test User'
     })
-    cy.wait(2000)
     cy.login(testUid)
+})
+
+before(() => {
+    cy.setupTestUser()
 })
