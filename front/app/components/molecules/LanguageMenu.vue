@@ -51,7 +51,6 @@ const currentLanguage = computed(() => {
 })
 
 const switchLocale = (newLocale: string) => {
-  console.log('NEW LOCAL', newLocale)
   locale.value = newLocale
   langStore.switchLocale(newLocale)
 }

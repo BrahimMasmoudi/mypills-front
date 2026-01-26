@@ -23,7 +23,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         if (dateValue.seconds !== undefined) return new Date(dateValue.seconds * 1000)
 
         const date = new Date(dateValue)
-        return isNaN(date.getTime()) ? new Date(0) : date
+        return Number.isNaN(date.getTime()) ? new Date(0) : date
     }
 
     /* ------------------------------------------------------------------
@@ -39,8 +39,6 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
             orderBy('expiryDate', 'desc')
         )
 
-        // ✅ TARGET BINDING: This streams Firestore data directly into medications.value
-        // No more "Ref inside Ref" issues.
         useCollection(q, { target: medications })
     }
 
