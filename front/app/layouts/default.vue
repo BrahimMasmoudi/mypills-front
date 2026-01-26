@@ -117,6 +117,7 @@ import {useMedicationsStore} from "~/store/medications";
 import type {CreateReminderRequest} from "~/types/reminder";
 import {useReminderStore} from "~/store/reminder";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
+import {useLanguageStore} from "~/store/language";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
@@ -125,7 +126,8 @@ const medicationStore = useMedicationsStore()
 const reminderStore = useReminderStore()
 const countryStore = useCountryStore()
 const notifications = useNotifications()
-
+const langStore = useLanguageStore()
+langStore.initLocale()
 
 const checkCountryStatus = async () => {
   if (countryStore.selectedCountry === null) {

@@ -11,14 +11,14 @@
 </template>
 
 <script setup lang="ts">
-import { useMedicationsStore } from "~/store/medications"
-import type { Medication } from "~/types/medication"
-import { useCountryStore } from "~/store/country"
-import CountryDialog from "~/components/molecules/CountryDialog.vue"
-import type { CreateReminderRequest } from "~/types/reminder"
-import { useReminderStore } from "~/store/reminder"
+import {useMedicationsStore} from "~/store/medications"
+import type {Medication} from "~/types/medication"
+import {useI18n} from "vue-i18n";
 
-
+const {t} = useI18n()
+useSeoMeta({
+  title: () => t('nav.medications')
+})
 
 const medicationLoading = ref(true)
 const medicationStore = useMedicationsStore()
@@ -70,7 +70,5 @@ watch(medications, async (newMeds: Medication[] | undefined) => {
   if (newMeds.length > 0) {
     await handleExpiredMedications(newMeds as Medication[])
   }
-}, { immediate: true })
-
-
+}, {immediate: true})
 </script>

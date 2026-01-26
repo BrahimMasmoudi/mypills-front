@@ -17,7 +17,7 @@
           v-for="lang in languages"
           :key="lang.code"
           :value="lang.code"
-          @click="switchLocale(lang.code)"
+          @click="() => switchLocale(lang.code)"
           :active="locale === lang.code"
           color="primary"
           rounded="lg"
@@ -36,8 +36,10 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import {useLanguageStore} from "~/store/language";
 
 const { locale } = useI18n()
+const langStore = useLanguageStore()
 
 const languages = [
   { code: 'en', name: 'English' },
@@ -49,7 +51,9 @@ const currentLanguage = computed(() => {
 })
 
 const switchLocale = (newLocale: string) => {
+  console.log('NEW LOCAL', newLocale)
   locale.value = newLocale
+  langStore.switchLocale(newLocale)
 }
 </script>
 <style scoped>

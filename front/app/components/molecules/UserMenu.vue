@@ -124,6 +124,7 @@ import {useI18n} from "vue-i18n";
 import {useTheme} from 'vuetify'
 import {useCountryStore} from "~/store/country";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
+import {useLanguageStore} from "~/store/language";
 
 const userStore = useUserStore()
 const {t, locale} = useI18n()
@@ -133,6 +134,7 @@ const {$open} = useNuxtApp()
 const {confirmFrance, clearCountry} = useCountryStore()
 
 const {selectedCountry} = storeToRefs(useCountryStore())
+const langStore = useLanguageStore()
 
 const handleSignOut = async () => {
   await userStore.logOut()
@@ -151,7 +153,9 @@ const languages = [
 
 const switchLocale = (newLocale: string) => {
   locale.value = newLocale
+  langStore.switchLocale(newLocale)
 }
+
 watch(() => colorMode.value, (val) => {
   theme.change(val)
 }, {immediate: true})
