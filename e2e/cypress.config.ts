@@ -51,9 +51,13 @@ export default defineConfig({
 
             on('before:browser:launch', (browser, launchOptions) => {
                 if (browser.name === 'chrome' || browser.name === 'chromium') {
+                    // Force the browser to use a larger memory heap
+                    launchOptions.args.push('--js-flags=--max-old-space-size=3500')
+
+                    // standard CI stability flags
                     launchOptions.args.push('--disable-dev-shm-usage')
-                    launchOptions.args.push('--no-sandbox') // Adds extra stability in CI
-                    launchOptions.args.push('--disable-gpu') // Saves additional memory
+                    launchOptions.args.push('--disable-gpu')
+                    launchOptions.args.push('--no-sandbox')
                 }
                 return launchOptions
             })
