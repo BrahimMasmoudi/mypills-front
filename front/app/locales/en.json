@@ -212,6 +212,7 @@
   },
   "prescriptions": {
     "empty": "You dont have any prescriptions for the moment",
-    "subtitle": "Manage and view your scanned medical notices and prescriptions."
+    "subtitle": "Manage and view your scanned medical notices and prescriptions.",
+    "search": "Search a document"
   }
 }

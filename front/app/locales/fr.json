@@ -212,6 +212,7 @@
   },
   "prescriptions" : {
     "empty": "Vous n'avez pas des ordonnances en ce moment",
-    "subtitle": "Gérer and avoir your vos prescriptions scannées"
+    "subtitle": "Gérer and avoir your vos prescriptions scannées",
+    "search": "Chercher un document"
   }
 }
