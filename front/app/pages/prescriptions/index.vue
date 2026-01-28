@@ -31,9 +31,9 @@
         :get-docs="getDocsByFolder"
         :format-date="formatDate"
         @view="viewDocument"
-        @renameFolder="docStore.renameFolder"
+        @renameFolder="handleRenameFolder"
         @deleteFolder="openDeleteFolderDialog"
-        @renameDoc="docStore.renameDocument"
+        @renameDoc="handleRenameDoc"
         @deleteDoc="confirmDelete"
     />
   </v-sheet>
@@ -92,5 +92,25 @@ const confirmDelete = async (doc: any) => {
     scrim: true, title: t('dialogDelete.title'), message: t('dialogDelete.message')
   })
   if (result === 'success') await docStore.deleteDocument(doc)
+}
+
+const handleRenameDoc = async (doc: any, newName: string, done: () => void) => {
+  try {
+    await docStore.renameDocument(doc, newName)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    done()
+  }
+}
+
+const handleRenameFolder = async (oldName: string, newName: string, done: () => void) => {
+  try {
+    await docStore.renameFolder(oldName, newName)
+  } catch (e) {
+    console.error(e)
+  } finally {
+    done()
+  }
 }
 </script>

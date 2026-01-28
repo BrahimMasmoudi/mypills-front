@@ -12,7 +12,7 @@
               v-model="localName"
               density="compact"
               :loading="isLoading"
-              variant="underlined"
+              variant="plain"
               hide-details
               class="text-subtitle-1 font-weight-bold"
               @keyup.enter="save"
@@ -49,9 +49,20 @@ const toggleEdit = () => {
 }
 
 const save = () => {
+  if (!localName.value || localName.value === props.doc.name) {
+    isEditing.value = false
+    return
+  }
+
   isLoading.value = true
-  emit('rename', props.doc, localName.value)
-  isEditing.value = false
-  isLoading.value = false
+  emit('rename', props.doc, localName.value, () => {
+    isLoading.value = false
+    isEditing.value = false
+  })
 }
 </script>
+<style scoped>
+:deep(.v-field__input) {
+  padding : 8px 0;
+}
+</style>

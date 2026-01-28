@@ -6,7 +6,7 @@
           v-if="isEditing"
           v-model="localFolderName"
           density="compact"
-          variant="underlined"
+          variant="plain"
           color="primary"
           hide-details
           :loading="isLoading"
@@ -68,10 +68,16 @@ const toggleEdit = () => {
 }
 
 const save = () => {
+  if (!localFolderName.value || localFolderName.value === props.folderName) {
+    isEditing.value = false
+    return
+  }
+
   isLoading.value = true
-  emit('rename', props.folderName, localFolderName.value)
-  isEditing.value = false
-  isLoading.value = false
+  emit('rename', props.folderName, localFolderName.value, () => {
+    isLoading.value = false
+    isEditing.value = false
+  })
 }
 </script>
 
@@ -84,5 +90,8 @@ const save = () => {
 }
 .no-wrap {
   white-space: nowrap;
+}
+:deep(.v-field__input) {
+  padding : 8px 0;
 }
 </style>
