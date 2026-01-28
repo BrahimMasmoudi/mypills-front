@@ -63,7 +63,8 @@
   "nav": {
     "main_menu": "Menu Principal",
     "medications": "Médicaments",
-    "reminders": "Rappels"
+    "reminders": "Rappels",
+    "prescriptions": "Ordonnances"
   },
   "user-menu": {
     "disconnect": "Déconnexion",
@@ -180,10 +181,11 @@
   },
   "scanDocumentDialog": {
     "title": "Scanner un document",
-    "subtitle": "Numérisez vos notices ou ordonnances pour un accès facile",
+    "subtitle": "Numérisez vos ordonnances pour un accès facile",
     "folderLabel": "Dossier (ex: Moi, Épouse)",
     "nameLabel": "Nom du document",
     "pages": "Page(s)",
+    "documents": "Documents(s)",
     "scanFirst": "Scanner un document",
     "scanNext": "Ajouter un autre document",
     "startScanning": "Commencer le scan",
@@ -207,5 +209,9 @@
     "ascending": "Croissant",
     "descending": "Décroissant",
     "clear": "Effacer le tri"
+  },
+  "prescriptions" : {
+    "empty": "Vous n'avez pas des ordonnances en ce moment",
+    "subtitle": "Gérer and avoir your vos prescriptions scannées"
   }
 }

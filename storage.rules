@@ -3,13 +3,14 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
 
-    // Allow users to access only their own folder
-    // Path: users/{userId}/...
+    // match the exact structure we used in the store: users/{userId}/{folder}/{fileName}
     match /users/{userId}/{allPaths=**} {
+      // allow read: split into 'get' (download) and 'list' (see all files)
+      // allow write: split into 'create', 'update', and 'delete'
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Deny everything else by default
+    // Explicitly deny anything outside the /users/ tree
     match /{allPaths=**} {
       allow read, write: if false;
     }

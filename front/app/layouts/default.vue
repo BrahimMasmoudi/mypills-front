@@ -63,6 +63,22 @@
             {{ t('nav.reminders') }}
           </v-list-item-title>
         </v-list-item>
+
+        <v-list-item
+            to="/prescriptions"
+            rounded="pill"
+            class="mb-2 nav-pill"
+            active-class="active-pill"
+            link
+        >
+          <template #prepend>
+            <v-icon icon="mdi-folder-upload-outline" size="20" class="mr-n2"/>
+          </template>
+
+          <v-list-item-title class="font-weight-bold ml-4">
+            {{ t('nav.prescriptions') }}
+          </v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -93,7 +109,7 @@
         {{ t('actions.createReminder') }}
       </v-btn>
 
-      <v-btn data-cy="scan-document-button" key="2" color="primary" prepend-icon="mdi-folder-upload-outline"
+      <v-btn data-cy="scan-document-button" key="2" color="error" prepend-icon="mdi-folder-upload-outline"
              class="text-capitalize font-weight-bold" rounded="lg"
              size="large" @click="openScanDocumentDialog">
         {{ t('actions.scanDocument') }}

@@ -1,33 +1,26 @@
-import { defineStore } from 'pinia'
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { useCollection, useFirestore, useFirebaseStorage, useCurrentUser } from 'vuefire'
-import { collection, addDoc, serverTimestamp, query, where } from 'firebase/firestore'
-import { computed, ref } from 'vue'
+import {defineStore} from 'pinia'
+import {ref as storageRef, uploadBytes, getDownloadURL, deleteObject} from 'firebase/storage'
+import {useCollection, useCurrentUser} from 'vuefire'
+import {collection, addDoc, serverTimestamp, doc, deleteDoc} from 'firebase/firestore'
+import {computed, ref} from 'vue'
 
 export const useDocumentsStore = defineStore('documents', () => {
-    const db = useFirestore()
-    const storage = useFirebaseStorage()
+    const {$firestore, $storage} = useNuxtApp()
     const user = useCurrentUser()
 
-    const activeFolder = ref('Me')
+    const activeFolder = ref()
 
     const allDocuments = useCollection(() =>
-        user.value ? collection(db, `users/${user.value.uid}/documents`) : null
+        user.value ? collection($firestore, `users/${user.value.uid}/documents`) : null
     )
 
-    const folderDocuments = useCollection(() => {
-        if (!user.value) return null
-        return query(
-            collection(db, `users/${user.value.uid}/documents`),
-            where('folderName', '==', activeFolder.value)
-        )
-    })
+    const isLoading = computed(() => allDocuments.pending.value)
 
     const existingFolders = computed(() => {
-        const folderSet = new Set<string>(['Me'])
+        const folderSet = new Set<string>([])
         if (allDocuments.value) {
-            allDocuments.value.forEach(doc => {
-                if (doc.folderName) folderSet.add(doc.folderName)
+            allDocuments.value.forEach(d => {
+                if (d.folderName) folderSet.add(d.folderName)
             })
         }
         return Array.from(folderSet).sort()
@@ -37,28 +30,43 @@ export const useDocumentsStore = defineStore('documents', () => {
         if (!user.value) throw new Error('Unauthorized')
 
         const path = `users/${user.value.uid}/${folder}/${name}_${Date.now()}.pdf`
-        const fileRef = storageRef(storage, path)
+        const fileRef = storageRef($storage, path)
 
         const snapshot = await uploadBytes(fileRef, pdfBlob)
         const downloadUrl = await getDownloadURL(snapshot.ref)
 
-        await addDoc(collection(db, `users/${user.value.uid}/documents`), {
+        await addDoc(collection($firestore, `users/${user.value.uid}/documents`), {
             name,
-            folderName: folder, // This is our "Virtual Folder" key
+            folderName: folder,
             fileUrl: downloadUrl,
             storagePath: path,
             uploadedAt: serverTimestamp(),
             size: pdfBlob.size,
-            type: 'application/pdf'
+            type: 'application/pdf',
+            uid: user.value.uid
         })
+    }
+
+    const deleteDocument = async (documentItem: any) => {
+        if (!user.value) return
+
+        const fileRef = storageRef($storage, documentItem.storagePath)
+        try {
+            await deleteObject(fileRef)
+        } catch (e) {
+            console.warn("Storage delete failed, proceeding with Firestore cleanup", e)
+        }
+
+        const docRef = doc($firestore, `users/${user.value.uid}/documents`, documentItem.id)
+        await deleteDoc(docRef)
     }
 
     return {
         uploadDocument,
+        deleteDocument,
         allDocuments,
-        folderDocuments,
         existingFolders,
         activeFolder,
-        isLoading: computed(() => allDocuments.pending)
+        isLoading
     }
 })
