@@ -61,9 +61,41 @@ export const useDocumentsStore = defineStore('documents', () => {
         await deleteDoc(docRef)
     }
 
+    const deleteFolder = async (folderName: string) => {
+        if (!user.value || !allDocuments.value) return
+
+        // 1. Identify all documents belonging to this folder
+        const targets = allDocuments.value.filter(d => d.folderName === folderName)
+
+        // 2. Map out the deletion promises
+        const deletionPromises = targets.map(async (documentItem) => {
+            // A. Delete from Storage
+            const fileRef = storageRef($storage, documentItem.storagePath)
+            try {
+                await deleteObject(fileRef)
+            } catch (e) {
+                // If file is already gone, we don't want to stop the DB cleanup
+                console.warn(`Storage file missing for ${documentItem.name}, cleaning up Firestore record anyway.`)
+            }
+
+            // B. Delete from Firestore
+            const docRef = doc($firestore, `users/${user.value!.uid}/documents`, documentItem.id)
+            return deleteDoc(docRef)
+        })
+
+        // 3. Execute all deletions in parallel
+        await Promise.all(deletionPromises)
+
+        // 4. Reset activeFolder if it was the one deleted
+        if (activeFolder.value === folderName) {
+            activeFolder.value = existingFolders.value[0] || 'Me'
+        }
+    }
+
     return {
         uploadDocument,
         deleteDocument,
+        deleteFolder,
         allDocuments,
         existingFolders,
         activeFolder,

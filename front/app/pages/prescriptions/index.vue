@@ -9,20 +9,10 @@
           {{ t('prescriptions.subtitle') }}
         </p>
       </div>
-
-      <v-btn
-          color="primary"
-          prepend-icon="mdi-camera-plus"
-          rounded="pill"
-          elevation="2"
-          @click="openScanDocumentDialog"
-      >
-        {{ t('actions.scanDocument') }}
-      </v-btn>
     </div>
 
     <v-row v-if="docStore.isLoading" justify="center" align="center" class="fill-height">
-      <v-progress-circular indeterminate color="primary" size="64" />
+      <v-progress-circular indeterminate color="primary" size="64"/>
     </v-row>
 
     <v-sheet
@@ -30,7 +20,7 @@
         height="80%"
         class="d-flex flex-column align-center justify-center"
     >
-      <v-icon icon="mdi-file-hidden" size="80" color="grey-lighten-1" class="mb-4" />
+      <v-icon icon="mdi-file-hidden" size="80" color="grey-lighten-1" class="mb-4"/>
       <p class="text-h6 text-medium-emphasis">{{ t('prescriptions.empty') }}</p>
     </v-sheet>
 
@@ -41,12 +31,22 @@
           class="rounded-xl mb-4 "
       >
         <v-expansion-panel-title>
-          <v-icon icon="mdi-folder-account" color="primary" class="mr-4" />
+          <v-icon icon="mdi-folder-account" color="primary" class="mr-4"/>
           <span class="text-h6 font-weight-bold">{{ folder }}</span>
-          <v-spacer />
+          <v-spacer/>
           <v-chip size="small" variant="tonal" color="primary" class="mr-2">
             {{ getDocsByFolder(folder).length }} {{ t('scanDocumentDialog.documents') }}
           </v-chip>
+
+          <v-btn
+              icon="mdi-delete-outline"
+              variant="text"
+              color="error"
+              size="small"
+              density="comfortable"
+              data-cy="delete-pill-button"
+              @click.stop="()=> openDeleteFolderDialog(folder)"
+          />
         </v-expansion-panel-title>
 
         <v-expansion-panel-text class="pt-4">
@@ -62,7 +62,7 @@
               <v-card variant="outlined" class="rounded-lg hover-card" @click="viewDocument(doc.fileUrl)">
                 <div class="d-flex align-center pa-3">
                   <v-avatar color="primary-lighten-5" rounded="lg" size="48" class="mr-3">
-                    <v-icon icon="mdi-file-pdf-box" color="primary" size="32" />
+                    <v-icon icon="mdi-file-pdf-box" color="primary" size="32"/>
                   </v-avatar>
                   <div class="overflow-hidden">
                     <div class="text-subtitle-1 font-weight-bold text-truncate">{{ doc.name }}</div>
@@ -72,12 +72,20 @@
                   </div>
                 </div>
 
-                <v-divider />
+                <v-divider/>
 
                 <v-card-actions class="justify-end px-2 py-1">
-                  <v-btn icon="mdi-eye-outline" variant="text" color="primary" size="small" @click.stop="viewDocument(doc.fileUrl)" />
-                  <v-btn icon="mdi-download" variant="text" color="grey-darken-1" size="small" :href="doc.fileUrl" target="_blank" />
-                  <v-btn icon="mdi-delete-outline" variant="text" color="error" size="small" @click.stop="confirmDelete(doc)" />
+                  <v-btn icon="mdi-eye-outline"
+                         variant="text"
+                         color="primary"
+                         size="small"
+                         @click.stop="viewDocument(doc.fileUrl)"/>
+
+                  <v-btn icon="mdi-delete-outline"
+                         variant="text"
+                         color="error"
+                         size="small"
+                         @click.stop="confirmDelete(doc)"/>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -89,45 +97,72 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import { format } from 'date-fns'
-import { fr, enUS } from 'date-fns/locale'
+import {useI18n} from 'vue-i18n'
+import {format} from 'date-fns'
+import {fr, enUS} from 'date-fns/locale'
 import {useDocumentsStore} from "~/store/documents";
+import type {ToastType} from "~/composables/openToast";
+import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue";
 
-const { t, locale } = useI18n()
+const {t, locale} = useI18n()
 const docStore = useDocumentsStore()
-const { $device } = useNuxtApp()
+const {$open} = useNuxtApp()
 
-const dateLocales: Record<string, any> = { fr, en: enUS }
+const dateLocales: Record<string, any> = {fr, en: enUS}
 
-// SEO
-useSeoMeta({ title: () => t('nav.prescriptions', 'Prescriptions') })
+useSeoMeta({title: () => t('nav.prescriptions')})
 
-// Helper to filter documents for the expansion panels
 const getDocsByFolder = (folderName: string) => {
   return docStore.allDocuments.filter(d => d.folderName === folderName)
 }
 
 const formatDate = (timestamp: any) => {
   if (!timestamp) return ''
-  // Firestore serverTimestamp needs toDate()
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
-  return format(date, 'dd MMM yyyy', { locale: dateLocales[locale.value] || enUS })
+  return format(date, 'dd MMM yyyy', {locale: dateLocales[locale.value] || enUS})
 }
 
-// Actions
 const viewDocument = (url: string) => {
   window.open(url, '_blank')
 }
 
-const openScanDocumentDialog = async () => {
-  // Use the orchestration logic we built in the previous steps
-  // (Assuming you have access to openScanDocumentDialog in this context)
+const openDeleteFolderDialog = async (folder: string) => {
+  const result = await $open<ToastType>(ValidationWithWarningDialog, {
+    scrim: true,
+    isPersistent: true,
+    title: t('dialogDelete.title'),
+    message: t('dialogDelete.message')
+  })
+
+  if (result === 'success') {
+    try {
+      await docStore.deleteFolder(folder)
+      openToast('success', t('success'))
+
+    } catch (e) {
+      openToast('error', t('error'))
+    }
+  }
 }
 
+
 const confirmDelete = async (doc: any) => {
-  // Implementation of a delete confirmation dialog
-  // await docStore.deleteDocument(doc)
+  const result = await $open<ToastType>(ValidationWithWarningDialog, {
+    scrim: true,
+    isPersistent: true,
+    title: t('dialogDelete.title'),
+    message: t('dialogDelete.message')
+  })
+
+  if (result === 'success') {
+    try {
+      await docStore.deleteDocument(doc)
+      openToast('success', t('success'))
+
+    } catch (e) {
+      openToast('error', t('error'))
+    }
+  }
 }
 </script>
 
