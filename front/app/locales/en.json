@@ -185,7 +185,7 @@
     "folderLabel": "Folder (e.g., Me, Wife)",
     "nameLabel": "Document Name",
     "pages": "Page(s)",
-    "documents": "Documents(s)",
+    "documents": "{n} document | {n} Documents",
     "scanFirst": "Scan a document",
     "scanNext": "Scan another document",
     "startScanning": "Start Scanning",
