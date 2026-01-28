@@ -63,6 +63,22 @@
             {{ t('nav.reminders') }}
           </v-list-item-title>
         </v-list-item>
+
+        <v-list-item
+            to="/prescriptions"
+            rounded="pill"
+            class="mb-2 nav-pill"
+            active-class="active-pill"
+            link
+        >
+          <template #prepend>
+            <v-icon icon="mdi-folder-upload-outline" size="20" class="mr-n2"/>
+          </template>
+
+          <v-list-item-title class="font-weight-bold ml-4">
+            {{ t('nav.prescriptions') }}
+          </v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -88,9 +104,15 @@
         {{ t('actions.addMedication') }}
       </v-btn>
       <v-btn data-cy="create-reminder-button" key="2" color="primary" prepend-icon="mdi-alarm-plus"
-             class="text-capitalize font-weight-bold" rounded="lg"
+             class="text-capitalize font-weight-bold d-flex align-center justify-start" rounded="lg"
              size="large" @click="openReminderDialog">
         {{ t('actions.createReminder') }}
+      </v-btn>
+
+      <v-btn data-cy="scan-document-button" key="2" color="error" prepend-icon="mdi-folder-upload-outline"
+             class="text-capitalize font-weight-bold" rounded="lg"
+             size="large" @click="openScanDocumentDialog">
+        {{ t('actions.scanDocument') }}
       </v-btn>
     </v-speed-dial>
 
@@ -118,6 +140,8 @@ import type {CreateReminderRequest} from "~/types/reminder";
 import {useReminderStore} from "~/store/reminder";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
 import {useLanguageStore} from "~/store/language";
+import DocumentScannerDialog from "~/components/molecules/DocumentScannerDialog.vue";
+import {useDocumentsStore} from "~/store/documents";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
@@ -128,6 +152,8 @@ const countryStore = useCountryStore()
 const notifications = useNotifications()
 const langStore = useLanguageStore()
 langStore.initLocale()
+const docStore = useDocumentsStore()
+const pdfService = usePdfService()
 
 
 const checkCountryStatus = async () => {
@@ -188,6 +214,27 @@ const openReminderDialog = async () => {
   })
   if (toastType && toastType !== 'canceled') openToast(toastType, t(`reminderDialog.toast.${toastType}`))
 }
+
+const openScanDocumentDialog = async () => {
+  const toastType = await $open<'success' | 'canceled' | 'error'>(DocumentScannerDialog, {
+    scrim: true,
+    isPersistent: true,
+    userFolders: docStore.existingFolders,
+
+    uploadAction: async ({ folder, name, files }) => {
+      // 1. Business Logic: PDF Generation
+      const pdfBlob = await pdfService.generatePdf(files)
+
+      // 2. Infrastructure: Upload via Store
+      await docStore.uploadDocument(folder, name, pdfBlob)
+    }
+  })
+
+  if (toastType && toastType !== 'canceled') {
+    openToast(toastType, t(`scanDocumentDialog.toast.${toastType}`))
+  }
+}
+
 </script>
 
 <style scoped>

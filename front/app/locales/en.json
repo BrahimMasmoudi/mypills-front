@@ -63,7 +63,8 @@
   "nav": {
     "main_menu": "Main Menu",
     "medications": "Medications",
-    "reminders": "Reminders"
+    "reminders": "Reminders",
+    "prescriptions": "Prescriptions"
   },
   "user-menu": {
     "disconnect": "Disconnect",
@@ -138,7 +139,7 @@
     "dateRange": "Duration",
     "reminderNameLabel": "Sickness name",
     "reminderNamePlaceholder": "e.g., Flu, Hypertension...",
-    "sicknessNameLabel" : "Treatment",
+    "sicknessNameLabel": "Treatment",
     "toast": {
       "success": "The reminder is created successfully",
       "error": "An error happened while creating the reminder"
@@ -175,7 +176,26 @@
     "main": "Add New",
     "add_new": "Add",
     "addMedication": "Add a medication",
-    "createReminder": "Create a reminder"
+    "createReminder": "Create a reminder",
+    "scanDocument": "Scan documents"
+  },
+  "scanDocumentDialog": {
+    "title": "Scan Document",
+    "subtitle": "Digitize your prescriptions for easy access",
+    "folderLabel": "Folder (e.g., Me, Wife)",
+    "nameLabel": "Document Name",
+    "pages": "Page(s)",
+    "documents": "{n} document | {n} Documents",
+    "scanFirst": "Scan a document",
+    "scanNext": "Scan another document",
+    "startScanning": "Start Scanning",
+    "limitReached": "Maximum 3 pages reached",
+    "limitAlert": "Maximum 3 pages allowed",
+    "add": "Add",
+    "toast": {
+      "success": "Document saved successfully",
+      "error": "Failed to save document. Please try again."
+    }
   },
   "notification": {
     "title": "It's time to take your pills !",
@@ -189,5 +209,10 @@
     "ascending": "Ascending",
     "descending": "Descending",
     "clear": "Clear Sort"
+  },
+  "prescriptions": {
+    "empty": "You dont have any prescriptions for the moment",
+    "subtitle": "Manage and view your scanned medical notices and prescriptions.",
+    "search": "Search a document"
   }
 }

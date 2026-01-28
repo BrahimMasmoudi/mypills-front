@@ -52,15 +52,20 @@ export default defineNuxtConfig({
         storage: 'localStorage'
     },
     vuefire: {
-        auth: {
-            enabled: true,
-            sessionCookie: false
-        },
+
         analytics: {
             enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || '')
         },
-        firestore: {
-            enable: true,
+        auth: { enabled: true, sessionCookie: false },
+        firestore: { enable: true },
+        storage: { enable: true },
+        emulators: {
+            enabled: process.env.NODE_ENV !== 'production',
+            hosts: {
+                firestore: '127.0.0.1:8080',
+                auth: '127.0.0.1:9099',
+                storage: '127.0.0.1:9199',
+            },
         },
         config: {
             apiKey: process.env.FIREBASE_API_KEY,
@@ -95,6 +100,13 @@ export default defineNuxtConfig({
                 },
                 cloudMessaging: {
                     vapidKey: process.env.FIREBASE_VAPID_KEY || 'BL1Qie0a3DP7WoWK4V_M7guQ0dE6JtQHIHwOqS5r7YO6NWd9SYgL8DHvmr8jP3i6GsD3A1TGZJCjHRAKW0nyP80'
+                },
+                storage: {
+                    enable : true,
+                    location: 'europe-west3',
+                    enableEmulator: process.env.NODE_ENV !== 'production',
+                    emulatorPort: 9199,
+                    emulatorHost: '127.0.0.1',
                 }
             },
         }

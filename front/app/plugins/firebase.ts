@@ -1,23 +1,25 @@
-import type { Firestore } from '@firebase/firestore/lite'
-import type { Functions } from '@firebase/functions'
-import type { Messaging } from '@firebase/messaging'
+import type {Firestore} from '@firebase/firestore/lite'
+import type {Functions} from '@firebase/functions'
+import type {Messaging} from '@firebase/messaging'
+import type {FirebaseStorage} from '@firebase/storage'
 import {
     getAnalytics,
     type Analytics,
     setUserId,
     setUserProperties,
 } from '@firebase/analytics'
-import { connectFunctionsEmulator, getFunctions } from '@firebase/functions'
-import { useFirebaseApp, useFirestore, getCurrentUser } from 'vuefire'
-import { getMessaging } from 'firebase/messaging'
+import {connectFunctionsEmulator, getFunctions} from '@firebase/functions'
+import {getStorage, connectStorageEmulator} from '@firebase/storage'
+import {useFirebaseApp, useFirestore, getCurrentUser} from 'vuefire'
+import {getMessaging} from 'firebase/messaging'
 
 type RemoteConfig = Record<string, any>
 
 declare module '#app' {
-
     interface NuxtApp {
         $firestore: Firestore
         $functions: Functions
+        $storage: FirebaseStorage
         $remoteConfig: RemoteConfig
         $analytics: Analytics
         $messaging: Messaging
@@ -27,8 +29,9 @@ declare module '#app' {
 declare module 'vue' {
     interface ComponentCustomProperties {
         $firestore: Firestore
-        $remoteConfig: RemoteConfig
         $functions: Functions
+        $storage: FirebaseStorage
+        $remoteConfig: RemoteConfig
         $analytics: Analytics
     }
 }
@@ -36,39 +39,31 @@ declare module 'vue' {
 declare module '@vue/runtime-core' {
     interface ComponentCustomProperties {
         $firestore: Firestore
-        $remoteConfig: RemoteConfig
         $functions: Functions
+        $storage: FirebaseStorage
+        $remoteConfig: RemoteConfig
         $analytics: Analytics
     }
 }
 
-export default defineNuxtPlugin(async ({ provide, $config }) => {
+export default defineNuxtPlugin(async ({provide, $config}) => {
     const {
         functions: functionsConfig,
-        firestore: firestoreConfig,
         analytics: analyticsConfig,
     } = $config.public.firebase
 
     const firebaseApp = useFirebaseApp()
-    if (firestoreConfig.enable) {
-        const firestoreInstance = useFirestore()
-        provide('firestore', firestoreInstance)
-    }
+
+    const firestoreInstance = useFirestore()
+    const storageInstance = useFirebaseStorage()
+
+    provide('firestore', firestoreInstance)
+    provide('storage', storageInstance)
 
     if (functionsConfig.enable) {
         const functionsInstance = getFunctions(firebaseApp, 'europe-west3')
-
         if (functionsConfig.enableEmulator) {
-            try {
-                connectFunctionsEmulator(
-                    functionsInstance,
-                    functionsConfig.emulatorHost || '127.0.0.1',
-                    functionsConfig.emulatorPort || 5001
-                )
-            } catch (e) {
-                // Ignore if already connected
-                console.warn('Failed to connect functions emulator (maybe already connected):', e)
-            }
+            connectFunctionsEmulator(functionsInstance, '127.0.0.1', 5001)
         }
         provide('functions', functionsInstance)
     }

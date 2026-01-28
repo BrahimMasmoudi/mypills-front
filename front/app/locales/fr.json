@@ -63,7 +63,8 @@
   "nav": {
     "main_menu": "Menu Principal",
     "medications": "Médicaments",
-    "reminders": "Rappels"
+    "reminders": "Rappels",
+    "prescriptions": "Ordonnances"
   },
   "user-menu": {
     "disconnect": "Déconnexion",
@@ -175,7 +176,26 @@
     "main": "Ajouter",
     "add_new": "Ajouter",
     "addMedication": "Ajouter un médicament",
-    "createReminder": "Créer un rappel"
+    "createReminder": "Créer un rappel",
+    "scanDocument" : "Scanner des documents"
+  },
+  "scanDocumentDialog": {
+    "title": "Scanner un document",
+    "subtitle": "Numérisez vos ordonnances pour un accès facile",
+    "folderLabel": "Dossier (ex: Moi, Épouse)",
+    "nameLabel": "Nom du document",
+    "pages": "Page(s)",
+    "documents": "{n} document | {n} Documents",
+    "scanFirst": "Scanner un document",
+    "scanNext": "Ajouter un autre document",
+    "startScanning": "Commencer le scan",
+    "limitReached": "Limite de 3 pages atteinte",
+    "limitAlert": "Maximum 3 pages autorisées",
+    "add": "Ajouter",
+    "toast": {
+      "success": "Document enregistré avec succès",
+      "error": "Échec de l'enregistrement. Veuillez réessayer."
+    }
   },
   "notification": {
     "title": "L'heure de prendre vos medicaments !",
@@ -189,5 +209,10 @@
     "ascending": "Croissant",
     "descending": "Décroissant",
     "clear": "Effacer le tri"
+  },
+  "prescriptions" : {
+    "empty": "Vous n'avez pas des ordonnances en ce moment",
+    "subtitle": "Gérer and avoir your vos prescriptions scannées",
+    "search": "Chercher un document"
   }
 }
