@@ -175,7 +175,25 @@
     "main": "Ajouter",
     "add_new": "Ajouter",
     "addMedication": "Ajouter un médicament",
-    "createReminder": "Créer un rappel"
+    "createReminder": "Créer un rappel",
+    "scanDocument" : "Scanner des documents"
+  },
+  "scanDocumentDialog": {
+    "title": "Scanner un document",
+    "subtitle": "Numérisez vos notices ou ordonnances pour un accès facile",
+    "folderLabel": "Dossier (ex: Moi, Épouse)",
+    "nameLabel": "Nom du document",
+    "pages": "Page(s)",
+    "scanFirst": "Scanner un document",
+    "scanNext": "Ajouter un autre document",
+    "startScanning": "Commencer le scan",
+    "limitReached": "Limite de 3 pages atteinte",
+    "limitAlert": "Maximum 3 pages autorisées",
+    "add": "Ajouter",
+    "toast": {
+      "success": "Document enregistré avec succès",
+      "error": "Échec de l'enregistrement. Veuillez réessayer."
+    }
   },
   "notification": {
     "title": "L'heure de prendre vos medicaments !",

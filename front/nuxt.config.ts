@@ -62,6 +62,9 @@ export default defineNuxtConfig({
         firestore: {
             enable: true,
         },
+        storage: {
+            enable: true,
+        },
         config: {
             apiKey: process.env.FIREBASE_API_KEY,
             authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -95,6 +98,13 @@ export default defineNuxtConfig({
                 },
                 cloudMessaging: {
                     vapidKey: process.env.FIREBASE_VAPID_KEY || 'BL1Qie0a3DP7WoWK4V_M7guQ0dE6JtQHIHwOqS5r7YO6NWd9SYgL8DHvmr8jP3i6GsD3A1TGZJCjHRAKW0nyP80'
+                },
+                storage: {
+                    enable : true,
+                    location: 'europe-west3',
+                    enableEmulator: process.env.NODE_ENV !== 'production',
+                    emulatorPort: 9199,
+                    emulatorHost: '127.0.0.1',
                 }
             },
         }
