@@ -24,29 +24,49 @@
       <p class="text-h6 text-medium-emphasis">{{ t('prescriptions.empty') }}</p>
     </v-sheet>
 
-    <v-expansion-panels v-else  class="mt-4" elevation="2">
+    <v-expansion-panels v-else class="mt-4" elevation="2">
       <v-expansion-panel
           v-for="folder in docStore.existingFolders"
           :key="folder"
-          class="rounded-xl mb-4 "
+          class="rounded-xl mb-4"
       >
         <v-expansion-panel-title>
           <v-icon icon="mdi-folder-account" color="primary" class="mr-4"/>
-          <span class="text-h6 font-weight-bold">{{ folder }}</span>
+
+          <v-text-field
+              v-if="editingFolders[folder] !== undefined"
+              v-model="editingFolders[folder]"
+              density="compact"
+              variant="underlined"
+              color="primary"
+              hide-details
+              class="max-width-200 font-weight-bold"
+              @click.stop
+              @keyup.enter="saveFolderRename(folder)"
+              append-inner-icon="mdi-check"
+              @click:append-inner="saveFolderRename(folder)"
+          />
+          <span v-else class="text-h6 font-weight-bold">{{ folder }}</span>
+
           <v-spacer/>
+
           <v-chip size="small" variant="tonal" color="primary" class="mr-2">
             {{ getDocsByFolder(folder).length }} {{ t('scanDocumentDialog.documents') }}
           </v-chip>
 
           <v-btn
+              icon="mdi-pencil-outline"
+              variant="text"
+              color="primary"
+              size="small"
+              @click.stop="toggleFolderEdit(folder)"
+          />
+          <v-btn
               icon="mdi-delete-outline"
               variant="text"
               color="error"
               size="small"
-              density="comfortable"
-              data-cy="delete-pill-button"
-              class="mx-4"
-              @click.stop="()=> openDeleteFolderDialog(folder)"
+              @click.stop="openDeleteFolderDialog(folder)"
           />
         </v-expansion-panel-title>
 
@@ -60,15 +80,30 @@
                 md="4"
                 lg="3"
             >
-              <v-card variant="outlined" class="rounded-lg hover-card" @click="viewDocument(doc.fileUrl)">
-                <div class="d-flex align-center pa-3">
-                  <v-avatar color="primary-lighten-5" rounded="lg" size="48" class="mr-3">
-                    <v-icon icon="mdi-file-pdf-box" color="primary" size="32"/>
-                  </v-avatar>
-                  <div class="overflow-hidden">
-                    <div class="text-subtitle-1 font-weight-bold text-truncate">{{ doc.name }}</div>
-                    <div class="text-caption text-medium-emphasis">
-                      {{ formatDate(doc.uploadedAt) }}
+              <v-card variant="outlined" class="rounded-lg hover-card">
+                <div class="d-flex flex-column pa-3">
+                  <div class="d-flex align-center mb-2">
+                    <v-avatar color="primary-lighten-5" rounded="lg" size="48" class="mr-3">
+                      <v-icon icon="mdi-file-pdf-box" color="primary" size="32"/>
+                    </v-avatar>
+
+                    <div class="overflow-hidden flex-grow-1">
+                      <v-text-field
+                          v-if="editingDocs[doc.id] !== undefined"
+                          v-model="editingDocs[doc.id]"
+                          density="compact"
+                          variant="underlined"
+                          hide-details
+                          class="text-subtitle-1 font-weight-bold"
+                          @keyup.enter="saveDocRename(doc, folder)"
+                          append-inner-icon="mdi-check"
+                          @click:append-inner="saveDocRename(doc, folder)"
+                      />
+                      <div v-else class="text-subtitle-1 font-weight-bold text-truncate">{{ doc.name }}</div>
+
+                      <div class="text-caption text-medium-emphasis">
+                        {{ formatDate(doc.uploadedAt) }}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -76,17 +111,9 @@
                 <v-divider/>
 
                 <v-card-actions class="justify-end px-2 py-1">
-                  <v-btn icon="mdi-eye-outline"
-                         variant="text"
-                         color="primary"
-                         size="small"
-                         @click.stop="viewDocument(doc.fileUrl)"/>
-
-                  <v-btn icon="mdi-delete-outline"
-                         variant="text"
-                         color="error"
-                         size="small"
-                         @click.stop="confirmDelete(doc)"/>
+                  <v-btn icon="mdi-eye-outline" variant="text" color="primary" size="small" @click="viewDocument(doc.fileUrl)"/>
+                  <v-btn icon="mdi-pencil-outline" variant="text" color="grey-darken-1" size="small" @click="toggleDocEdit(doc)"/>
+                  <v-btn icon="mdi-delete-outline" variant="text" color="error" size="small" @click="confirmDelete(doc)"/>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -98,20 +125,22 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from 'vue-i18n'
-import {format} from 'date-fns'
-import {fr, enUS} from 'date-fns/locale'
-import {useDocumentsStore} from "~/store/documents";
-import type {ToastType} from "~/composables/openToast";
+import { useI18n } from 'vue-i18n'
+import { format } from 'date-fns'
+import { fr, enUS } from 'date-fns/locale'
+import { useDocumentsStore } from "~/store/documents";
+import type { ToastType } from "~/composables/openToast";
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue";
 
-const {t, locale} = useI18n()
+const { t, locale } = useI18n()
 const docStore = useDocumentsStore()
-const {$open} = useNuxtApp()
+const { $open } = useNuxtApp()
 
-const dateLocales: Record<string, any> = {fr, en: enUS}
+const dateLocales: Record<string, any> = { fr, en: enUS }
 
-useSeoMeta({title: () => t('nav.prescriptions')})
+// UI State for Editing
+const editingFolders = reactive<Record<string, string | undefined>>({})
+const editingDocs = reactive<Record<string, string | undefined>>({})
 
 const getDocsByFolder = (folderName: string) => {
   return docStore.allDocuments.filter(d => d.folderName === folderName)
@@ -120,11 +149,45 @@ const getDocsByFolder = (folderName: string) => {
 const formatDate = (timestamp: any) => {
   if (!timestamp) return ''
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
-  return format(date, 'dd MMM yyyy', {locale: dateLocales[locale.value] || enUS})
+  return format(date, 'dd MMM yyyy', { locale: dateLocales[locale.value] || enUS })
 }
 
 const viewDocument = (url: string) => {
   window.open(url, '_blank')
+}
+
+const toggleFolderEdit = (folder: string) => {
+  if (editingFolders[folder] === undefined) {
+    editingFolders[folder] = folder
+  } else {
+    editingFolders[folder] = undefined
+  }
+}
+
+const saveFolderRename = async (oldName: string) => {
+  const newName = editingFolders[oldName]
+  if (newName && newName !== oldName) {
+    await docStore.renameFolder(oldName, newName)
+  }
+  editingFolders[oldName] = undefined
+}
+
+/** * DOCUMENT EDITING LOGIC
+ */
+const toggleDocEdit = (doc: any) => {
+  if (editingDocs[doc.id] === undefined) {
+    editingDocs[doc.id] = doc.name
+  } else {
+    editingDocs[doc.id] = undefined
+  }
+}
+
+const saveDocRename = async (doc: any, folder: string) => {
+  const newName = editingDocs[doc.id]
+  if (newName) {
+    await docStore.renameDocument(doc, newName)
+  }
+  editingDocs[doc.id] = undefined
 }
 
 const openDeleteFolderDialog = async (folder: string) => {
@@ -134,18 +197,10 @@ const openDeleteFolderDialog = async (folder: string) => {
     title: t('dialogDelete.title'),
     message: t('dialogDelete.message')
   })
-
   if (result === 'success') {
-    try {
-      await docStore.deleteFolder(folder)
-      openToast('success', t('success'))
-
-    } catch (e) {
-      openToast('error', t('error'))
-    }
+    await docStore.deleteFolder(folder)
   }
 }
-
 
 const confirmDelete = async (doc: any) => {
   const result = await $open<ToastType>(ValidationWithWarningDialog, {
@@ -154,15 +209,8 @@ const confirmDelete = async (doc: any) => {
     title: t('dialogDelete.title'),
     message: t('dialogDelete.message')
   })
-
   if (result === 'success') {
-    try {
-      await docStore.deleteDocument(doc)
-      openToast('success', t('success'))
-
-    } catch (e) {
-      openToast('error', t('error'))
-    }
+    await docStore.deleteDocument(doc)
   }
 }
 </script>
@@ -172,13 +220,9 @@ const confirmDelete = async (doc: any) => {
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 }
-
-.hover-card:hover {
-  border-color: rgb(var(--v-theme-primary)) !important;
-  background-color: rgba(var(--v-theme-primary), 0.02);
-  transform: translateY(-2px);
+.max-width-200 {
+  max-width: 200px;
 }
-
 .text-truncate {
   white-space: nowrap;
   overflow: hidden;

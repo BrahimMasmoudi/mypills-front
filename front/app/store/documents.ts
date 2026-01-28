@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
-import {ref as storageRef, uploadBytes, getDownloadURL, deleteObject} from 'firebase/storage'
+import {ref as storageRef, uploadBytes, getDownloadURL, deleteObject, getBytes} from 'firebase/storage'
 import {useCollection, useCurrentUser} from 'vuefire'
-import {collection, addDoc, serverTimestamp, doc, deleteDoc} from 'firebase/firestore'
+import {collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, writeBatch} from 'firebase/firestore'
 import {computed, ref} from 'vue'
 
 export const useDocumentsStore = defineStore('documents', () => {
@@ -47,53 +47,99 @@ export const useDocumentsStore = defineStore('documents', () => {
         })
     }
 
-    const deleteDocument = async (documentItem: any) => {
+    const moveStorageFile = async (oldPath: string, newPath: string) => {
+        const oldRef = storageRef($storage, oldPath)
+        const newRef = storageRef($storage, newPath)
+
+        const data = await getBytes(oldRef)
+
+        await uploadBytes(newRef, data)
+
+        await deleteObject(oldRef)
+
+        return await getDownloadURL(newRef)
+    }
+
+    const renameDocument = async (docItem: any, newName: string) => {
         if (!user.value) return
 
+        const fileExtension = docItem.storagePath.split('.').pop()
+        const newPath = `users/${user.value.uid}/${docItem.folderName}/${newName}_${Date.now()}.${fileExtension}`
+
+        const newUrl = await moveStorageFile(docItem.storagePath, newPath)
+
+        const docRef = doc($firestore, `users/${user.value.uid}/documents`, docItem.id)
+        await updateDoc(docRef, {
+            name: newName,
+            storagePath: newPath,
+            fileUrl: newUrl
+        })
+    }
+
+    const renameFolder = async (oldFolderName: string, newFolderName: string) => {
+        if (!user.value || !allDocuments.value) return
+        const targets = allDocuments.value.filter(d => d.folderName === oldFolderName)
+        const folderMovePromises = targets.map(async (docItem) => {
+            const fileExtension = docItem.storagePath.split('.').pop()
+            const newPath = `users/${user.value!.uid}/${newFolderName}/${docItem.name}_${Date.now()}.${fileExtension}`
+
+            const newUrl = await moveStorageFile(docItem.storagePath, newPath)
+
+            return {
+                id: docItem.id,
+                storagePath: newPath,
+                fileUrl: newUrl,
+                folderName: newFolderName
+            }
+        })
+
+        const results = await Promise.all(folderMovePromises)
+
+        const batch = writeBatch($firestore)
+        results.forEach(res => {
+            const docRef = doc($firestore, `users/${user.value!.uid}/documents`, res.id)
+            batch.update(docRef, {
+                folderName: res.folderName,
+                storagePath: res.storagePath,
+                fileUrl: res.fileUrl
+            })
+        })
+
+        await batch.commit()
+    }
+
+    const deleteDocument = async (documentItem: any) => {
+        if (!user.value) return
         const fileRef = storageRef($storage, documentItem.storagePath)
         try {
             await deleteObject(fileRef)
         } catch (e) {
             console.warn("Storage delete failed, proceeding with Firestore cleanup", e)
         }
-
         const docRef = doc($firestore, `users/${user.value.uid}/documents`, documentItem.id)
         await deleteDoc(docRef)
     }
 
     const deleteFolder = async (folderName: string) => {
         if (!user.value || !allDocuments.value) return
-
-        // 1. Identify all documents belonging to this folder
         const targets = allDocuments.value.filter(d => d.folderName === folderName)
-
-        // 2. Map out the deletion promises
         const deletionPromises = targets.map(async (documentItem) => {
-            // A. Delete from Storage
             const fileRef = storageRef($storage, documentItem.storagePath)
             try {
                 await deleteObject(fileRef)
             } catch (e) {
-                // If file is already gone, we don't want to stop the DB cleanup
-                console.warn(`Storage file missing for ${documentItem.name}, cleaning up Firestore record anyway.`)
+                console.warn(`Storage missing: ${documentItem.name}`)
             }
-
-            // B. Delete from Firestore
             const docRef = doc($firestore, `users/${user.value!.uid}/documents`, documentItem.id)
             return deleteDoc(docRef)
         })
-
-        // 3. Execute all deletions in parallel
         await Promise.all(deletionPromises)
-
-        // 4. Reset activeFolder if it was the one deleted
-        if (activeFolder.value === folderName) {
-            activeFolder.value = existingFolders.value[0] || 'Me'
-        }
     }
 
     return {
         uploadDocument,
+        renameDocument,
+        renameFolder,
         deleteDocument,
         deleteFolder,
         allDocuments,
