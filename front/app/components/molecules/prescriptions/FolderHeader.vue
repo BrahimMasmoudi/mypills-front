@@ -9,6 +9,7 @@
           variant="underlined"
           color="primary"
           hide-details
+          :loading="isLoading"
           autofocus
           class="font-weight-bold"
           @click.stop
@@ -58,6 +59,7 @@ const props = defineProps<{ folderName: string; docCountLabel: string }>()
 const emit = defineEmits(['rename', 'delete'])
 
 const isEditing = ref(false)
+const isLoading = ref(false)
 const localFolderName = ref(props.folderName)
 
 const toggleEdit = () => {
@@ -66,8 +68,10 @@ const toggleEdit = () => {
 }
 
 const save = () => {
+  isLoading.value = true
   emit('rename', props.folderName, localFolderName.value)
   isEditing.value = false
+  isLoading.value = false
 }
 </script>
 

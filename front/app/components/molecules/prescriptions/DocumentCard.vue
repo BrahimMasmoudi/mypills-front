@@ -11,6 +11,7 @@
               v-if="isEditing"
               v-model="localName"
               density="compact"
+              :loading="isLoading"
               variant="underlined"
               hide-details
               class="text-subtitle-1 font-weight-bold"
@@ -39,6 +40,7 @@ const props = defineProps<{ doc: any; formattedDate: string }>()
 const emit = defineEmits(['view', 'delete', 'rename'])
 
 const isEditing = ref(false)
+const isLoading = ref(false)
 const localName = ref(props.doc.name)
 
 const toggleEdit = () => {
@@ -47,7 +49,9 @@ const toggleEdit = () => {
 }
 
 const save = () => {
+  isLoading.value = true
   emit('rename', props.doc, localName.value)
   isEditing.value = false
+  isLoading.value = false
 }
 </script>
