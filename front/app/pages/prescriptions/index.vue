@@ -24,7 +24,7 @@
       <p class="text-h6 text-medium-emphasis">{{ t('prescriptions.empty') }}</p>
     </v-sheet>
 
-    <v-expansion-panels v-else variant="popout" class="mt-4" elevation="2">
+    <v-expansion-panels v-else  class="mt-4" elevation="2">
       <v-expansion-panel
           v-for="folder in docStore.existingFolders"
           :key="folder"
@@ -45,6 +45,7 @@
               size="small"
               density="comfortable"
               data-cy="delete-pill-button"
+              class="mx-4"
               @click.stop="()=> openDeleteFolderDialog(folder)"
           />
         </v-expansion-panel-title>
