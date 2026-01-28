@@ -220,10 +220,10 @@ const isUploading = ref(false)
 const isCompressing = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 
-const scanData = reactive({folder: 'Me', name: ''})
+const scanData = reactive({folder: '', name: ''})
 const pages = ref<{ file: File; previewUrl: string }[]>([])
 
-const existingFolders = computed(() => Array.from(new Set(['Me', ...props.userFolders])))
+const existingFolders = computed(() => Array.from(new Set([...props.userFolders])))
 
 const triggerCamera = () => {
   if (pages.value.length < 3) fileInput.value?.click()
