@@ -5,7 +5,7 @@
         <h1 class="text-h4 font-weight-bold text-primary mb-2">{{ t('nav.prescriptions') }}</h1>
         <p class="text-body-1 text-medium-emphasis">{{ t('prescriptions.subtitle') }}</p>
       </div>
-      <v-responsive max-width="300" class="mt-4 mt-sm-0">
+      <v-responsive :max-width="$device.isDesktop ? '300px' : '100%'" class="mt-4 mt-sm-0">
         <v-text-field v-model="searchQuery" :placeholder="t('prescriptions.search')" prepend-inner-icon="mdi-magnify"
                       variant="outlined" density="comfortable" rounded="pill" hide-details clearable color="primary"/>
       </v-responsive>
