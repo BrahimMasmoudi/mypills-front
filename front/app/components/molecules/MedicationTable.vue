@@ -2,9 +2,9 @@
   <v-data-table
       :headers="headers"
       :items="medications"
-      class="elevation-2 medication-table rounded-lg"
+      class="elevation-2 medication-table rounded-xl"
       fixed-header
-      height="100vh"
+      height="90vh"
       hide-default-footer
       :items-per-page="-1"
   >

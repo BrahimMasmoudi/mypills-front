@@ -1,5 +1,9 @@
 <template>
-  <v-sheet width="100%" height="calc(100vh - 64px)" class="d-flex flex-column align-start mb-2 overflow-hidden pa-4">
+  <v-sheet v-if="medicationLoading" width="100%" height="100%">
+    <MoleculesMedicationsSkeletonLoader :viewType="viewType"/>
+  </v-sheet>
+
+  <v-sheet v-else width="100%" height="calc(100vh - 64px)" class="d-flex flex-column align-start mb-2 overflow-hidden pa-4">
     <div class="w-100 flex-shrink-0">
       <MoleculesMedicationSearchSort
           v-model:search-query="searchQuery"
@@ -25,16 +29,6 @@
           @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
       />
     </div>
-
-    <v-sheet v-if="medicationLoading" width="100%" height="100%"
-             class="position-absolute top-0 left-0 d-flex align-center justify-center bg-surface opacity-80"
-             style="z-index: 5;">
-      <v-row class="d-flex align-start justify-start pa-4 w-100 h-100">
-        <v-col v-for="i in 8" :key="i" md="3" cols="6">
-          <AtomsLoadingMed/>
-        </v-col>
-      </v-row>
-    </v-sheet>
   </v-sheet>
 </template>
 

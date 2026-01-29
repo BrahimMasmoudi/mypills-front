@@ -1,7 +1,7 @@
 <template>
   <TemplatesPills
       :medications="medications ?? []"
-      :medication-loading="medicationLoading"
+      :medication-loading="isLoading"
       @decrement-pills="(med, done) => decrementPills(med, done)"
       @increment-pills="(med, done) => incrementPills(med, done)"
       @delete-pills="(med, done) => deletePills(med, done)"
@@ -20,9 +20,8 @@ useSeoMeta({
   title: () => t('nav.medications')
 })
 
-const medicationLoading = ref(true)
 const medicationStore = useMedicationsStore()
-const medications = computed(() => medicationStore.medications)
+const {isLoading, medications} = storeToRefs(medicationStore)
 
 const createMedication = async (medication: Medication) => {
   await medicationStore.createMedication(medication)
@@ -66,7 +65,6 @@ const handleExpiredMedications = async (meds: Medication[]) => {
 
 watch(medications, async (newMeds: Medication[] | undefined) => {
   if (!newMeds) return
-  medicationLoading.value = false
   if (newMeds.length > 0) {
     await handleExpiredMedications(newMeds as Medication[])
   }
