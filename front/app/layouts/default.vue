@@ -33,8 +33,6 @@
         v-model="isDialOpen"
         location="bottom end"
         transition="slide-y-reverse-transition"
-        class="mr-4"
-        :class="$device.isMobile ? 'mb-16 pb-2' : 'mb-4'"
     >
       <template v-slot:activator="{ props: activatorProps }">
         <v-fab
@@ -47,8 +45,7 @@
             location="bottom end"
             :extended="!$device.isMobile"
             :text="!$device.isMobile ? t('add-pill') : ''"
-            class="mr-4"
-            :class="$device.isMobile ? 'mb-16 pb-2' : 'mb-4'"
+            class="mr-4 mb-4"
         />
       </template>
 
