@@ -3,6 +3,7 @@
     <v-app-bar elevation="0" border="b">
       <div class="d-flex align-center w-100 px-4">
         <v-btn
+            v-if="$device.isDesktop"
             icon
             variant="text"
             class="mr-2"
@@ -11,7 +12,7 @@
           <v-icon :icon="drawer ? 'mdi-close' : 'mdi-menu'"/>
         </v-btn>
 
-        <div class="d-flex align-center cursor-pointer" @click="navigateTo('/')">
+        <div class="d-flex align-center cursor-pointer">
           <nuxt-icon name="application-icon" filled class="app-title-icon mr-2"/>
           <span class="app-title-text text-primary">{{ t('title') }}</span>
         </div>
@@ -24,94 +25,46 @@
       </div>
     </v-app-bar>
 
-    <v-navigation-drawer
-        v-model="drawer"
-        temporary
-        close-delay="0"
-        elevation="0"
-        border="e"
+    <LayoutNavigationDrawer v-if="$device.isDesktop" v-model="drawer"/>
+
+    <LayoutBottomDrawer v-if="$device.isMobile"/>
+
+    <v-speed-dial
+        v-model="isDialOpen"
+        location="bottom end"
+        transition="slide-y-reverse-transition"
+        class="mr-4"
+        :class="$device.isMobile ? 'mb-16 pb-2' : 'mb-4'"
     >
-      <v-list nav class="pa-4">
-        <v-list-item
-            to="/medications"
-            rounded="pill"
-            class="mb-2 nav-pill"
-            active-class="active-pill"
-            link
-        >
-          <template #prepend>
-            <v-icon icon="mdi-pill" size="20" class="mr-n2"/>
-          </template>
-
-          <v-list-item-title class="font-weight-bold ml-4">
-            {{ t('nav.medications') }}
-          </v-list-item-title>
-        </v-list-item>
-
-        <v-list-item
-            to="/reminders"
-            rounded="pill"
-            class="mb-2 nav-pill"
-            active-class="active-pill"
-            link
-        >
-          <template #prepend>
-            <v-icon icon="mdi-calendar-clock" size="20" class="mr-n2"/>
-          </template>
-
-          <v-list-item-title class="font-weight-bold ml-4">
-            {{ t('nav.reminders') }}
-          </v-list-item-title>
-        </v-list-item>
-
-        <v-list-item
-            to="/prescriptions"
-            rounded="pill"
-            class="mb-2 nav-pill"
-            active-class="active-pill"
-            link
-        >
-          <template #prepend>
-            <v-icon icon="mdi-folder-upload-outline" size="20" class="mr-n2"/>
-          </template>
-
-          <v-list-item-title class="font-weight-bold ml-4">
-            {{ t('nav.prescriptions') }}
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
-    <v-speed-dial v-model="isDialOpen"
-                  location="bottom end"
-                  transition="slide-y-reverse-transition"
-                  class="mb-4 mr-4">
       <template v-slot:activator="{ props: activatorProps }">
-        <v-fab v-bind="activatorProps"
-               color="primary"
-               size="x-large"
-               app
-               data-cy="fab-button"
-               :icon="isDialOpen ? 'mdi-close' : 'mdi-plus'"
-               location="bottom end"
-               :extended="!$device.isMobile"
-               :text="!$device.isMobile ? t('add-pill') : ''"
-               class="mb-4 mr-4"/>
+        <v-fab
+            v-bind="activatorProps"
+            color="primary"
+            size="x-large"
+            app
+            data-cy="fab-button"
+            :icon="isDialOpen ? 'mdi-close' : 'mdi-plus'"
+            location="bottom end"
+            :extended="!$device.isMobile"
+            :text="!$device.isMobile ? t('add-pill') : ''"
+            class="mr-4"
+            :class="$device.isMobile ? 'mb-16 pb-2' : 'mb-4'"
+        />
       </template>
+
       <v-btn data-cy="add-medication-button" key="1" color="secondary" prepend-icon="mdi-pill"
-             class="text-capitalize font-weight-bold" rounded="lg"
-             size="large" @click="openAddMedicationDialog">
+             class="text-capitalize font-weight-bold" rounded="lg" size="large"
+             @click="openAddMedicationDialog">
         {{ t('actions.addMedication') }}
       </v-btn>
       <v-btn data-cy="create-reminder-button" key="2" color="primary" prepend-icon="mdi-alarm-plus"
-             class="text-capitalize font-weight-bold d-flex align-center justify-start" rounded="lg"
-             size="large" @click="openReminderDialog">
+             class="text-capitalize font-weight-bold d-flex align-center justify-start" rounded="lg" size="large"
+             @click="openReminderDialog">
         {{ t('actions.createReminder') }}
       </v-btn>
-
-      <v-btn data-cy="scan-document-button" key="2" color="error" prepend-icon="mdi-folder-upload-outline"
-             class="text-capitalize font-weight-bold" rounded="lg"
-             size="large" @click="openScanDocumentDialog">
+      <v-btn data-cy="scan-document-button" key="3" color="error" prepend-icon="mdi-folder-upload-outline"
+             class="text-capitalize font-weight-bold" rounded="lg" size="large"
+             @click="openScanDocumentDialog">
         {{ t('actions.scanDocument') }}
       </v-btn>
     </v-speed-dial>
@@ -260,30 +213,6 @@ const openScanDocumentDialog = async () => {
 .app-title-icon :deep(svg) {
   width: 28px !important;
   height: 28px !important;
-}
-
-/* Base Pill Style */
-.nav-pill {
-  transition: all 0.2s ease-in-out;
-  color: rgba(var(--v-theme-on-surface), 0.6);
-  min-height: 44px !important;
-}
-
-/* Active Pill Style */
-.active-pill {
-  background-color: rgb(var(--v-theme-primary)) !important;
-  color: white !important;
-  box-shadow: 0 4px 10px rgba(var(--v-theme-primary), 0.3);
-}
-
-/* Ensure icons turn white in the active pill */
-.active-pill :deep(.v-icon) {
-  color: white !important;
-}
-
-/* Reduce the gap specifically between the prepend slot and content */
-:deep(.v-list-item__spacer) {
-  width: 12px !important; /* Adjust this value to bring icon/text closer */
 }
 
 .cursor-pointer {
