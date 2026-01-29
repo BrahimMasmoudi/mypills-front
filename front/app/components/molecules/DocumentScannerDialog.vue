@@ -155,6 +155,148 @@
     </v-card>
   </v-dialog>
 
+  <v-dialog
+      v-else-if="$device.isMobile"
+      v-model="isActive"
+      transition="dialog-bottom-transition"
+      scrollable
+  >
+    <v-card class="bg-surface d-flex flex-column rounded-xl">
+      <v-toolbar color="surface" density="compact" class="border-b pl-2 pr-2" flat>
+        <v-toolbar-title class="text-subtitle-1 font-weight-bold text-center">
+          {{ t('scanDocumentDialog.title') }}
+        </v-toolbar-title>
+        <v-btn icon="mdi-close" variant="text" @click="cancelAndClose" color="medium-emphasis" />
+      </v-toolbar>
+
+      <v-card-text class="pa-4 flex-grow-1 overflow-y-auto">
+        <v-form ref="form" v-model="isValid">
+          <div class="d-flex flex-column gap-4">
+
+            <v-btn-toggle
+                v-model="uploadMode"
+                mandatory
+                color="primary"
+                variant="outlined"
+                rounded="lg"
+                class="d-flex w-100 mb-2"
+                @update:model-value="handleModeChange"
+            >
+              <v-btn value="images" class="flex-grow-1 text-capitalize font-weight-bold" size="small">
+                <v-icon start icon="mdi-camera" size="18"/>
+                {{ t('scanDocumentDialog.modeImages') }}
+              </v-btn>
+              <v-btn value="pdf" class="flex-grow-1 text-capitalize font-weight-bold" size="small">
+                <v-icon start icon="mdi-file-pdf-box" size="18"/>
+                PDF
+              </v-btn>
+            </v-btn-toggle>
+
+            <v-combobox
+                v-model="scanData.folder"
+                :items="existingFolders"
+                :label="t('scanDocumentDialog.folderLabel')"
+                variant="outlined"
+                color="primary"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-folder-open"
+                class="font-weight-medium elegant-input"
+                :rules="[(v) => !!v || t('validation.required')]"
+            />
+
+            <v-text-field
+                v-model="scanData.name"
+                :label="isPdfMode && pages.length > 1 ? t('scanDocumentDialog.prefixLabel') : t('scanDocumentDialog.nameLabel')"
+                :hint="isPdfMode && pages.length > 1 ? t('scanDocumentDialog.multipleHint') : ''"
+                persistent-hint
+                variant="outlined"
+                color="primary"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-format-title"
+                class="font-weight-medium elegant-input"
+                :rules="!isPdfMode ? [(v) => !!v || t('validation.required')] : []"
+            />
+
+            <v-divider class="my-2"/>
+
+            <div v-if="pages.length > 0">
+              <div class="d-flex justify-space-between align-center mb-3">
+                <div class="text-subtitle-2 font-weight-bold text-medium-emphasis">
+                  {{ pages.length }} / 3 {{ isPdfMode ? 'PDFs' : t('scanDocumentDialog.pages') }}
+                </div>
+                <v-btn
+                    v-if="pages.length < 3"
+                    size="small"
+                    variant="tonal"
+                    color="primary"
+                    prepend-icon="mdi-plus"
+                    @click="triggerCamera"
+                >
+                  {{ t('add') }}
+                </v-btn>
+              </div>
+
+              <v-row dense>
+                <v-col v-for="(page, i) in pages" :key="i" cols="6">
+                  <v-card class="rounded-lg border position-relative" height="160" elevation="0" color="grey-lighten-5">
+                    <v-img v-if="!isPdfMode" :src="page.previewUrl" aspect-ratio="3/4" cover class="h-100 rounded-lg"/>
+                    <v-sheet v-else height="100%" class="d-flex flex-column align-center justify-center bg-transparent pa-2">
+                      <v-icon icon="mdi-file-pdf-box" color="error" size="48"/>
+                      <span class="text-caption text-truncate w-100 text-center mt-2 font-weight-medium">{{ page.file.name }}</span>
+                    </v-sheet>
+                    <v-btn
+                        icon="mdi-close"
+                        color="error"
+                        size="x-small"
+                        variant="flat"
+                        class="position-absolute top-0 right-0 ma-2 shadow-sm"
+                        @click="removePage(i)"
+                    />
+                  </v-card>
+                </v-col>
+              </v-row>
+            </div>
+
+            <v-card
+                v-else
+                variant="tonal"
+                class="border-dashed rounded-xl py-12 d-flex flex-column align-center justify-center cursor-pointer mt-2 bg-primary-lighten-5"
+                color="primary"
+                @click="triggerCamera"
+                elevation="0"
+            >
+              <v-avatar color="white" size="64" class="mb-3 elevation-1">
+                <v-icon :icon="isPdfMode ? 'mdi-file-upload-outline' : 'mdi-camera-iris'" size="32" color="primary"/>
+              </v-avatar>
+              <span class="text-subtitle-1 font-weight-bold text-primary">
+                {{ isPdfMode ? t('scanDocumentDialog.uploadPdf') : t('scanDocumentDialog.startScanning') }}
+              </span>
+            </v-card>
+
+          </div>
+        </v-form>
+      </v-card-text>
+
+      <div class="pa-4 bg-surface border-t">
+        <v-btn
+            block
+            color="primary"
+            size="x-large"
+            rounded="xl"
+            class="font-weight-bold shadow-lg"
+            :loading="isUploading"
+            :disabled="pages.length === 0 || !isValid"
+            @click="onConfirmClick"
+        >
+          {{ t('confirm') }} ({{ pages.length }})
+        </v-btn>
+      </div>
+    </v-card>
+  </v-dialog>
+
+
   <input
       ref="fileInput"
       type="file"
