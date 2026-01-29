@@ -122,7 +122,7 @@ const checkCountryStatus = async () => {
 }
 
 onMounted(async () => {
-  await medicationStore.initMedications()
+  medicationStore.initMedications()
   await reminderStore.initReminders()
   await checkCountryStatus()
   await notifications.registerNotificationToken()
