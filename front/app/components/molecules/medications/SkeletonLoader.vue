@@ -16,11 +16,11 @@
       />
     </v-sheet>
 
-    <v-row v-if="viewType === 'grid'">
+    <v-row>
       <v-col
           v-for="i in 8"
           :key="i"
-          cols="12"
+          cols="6"
           sm="6"
           md="4"
           lg="3"
@@ -28,27 +28,17 @@
         <v-skeleton-loader
             elevation="2"
             class="rounded-xl"
-            type="image, list-item-two-line, actions"
+            :type="$device.isDesktop ? 'image, list-item-two-line, actions' : 'card'"
         />
       </v-col>
     </v-row>
-
-    <v-sheet v-else class="rounded-xl border">
-      <v-skeleton-loader
-          type="table-heading, table-thead, table-tbody"
-          class="w-100"
-      />
-    </v-sheet>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  viewType: 'grid' | 'table'
-}>()
 </script>
 <style scoped>
-div:deep(.v-skeleton-loader__image){
-  border-radius : 25px 25px 0 0;
+div:deep(.v-skeleton-loader__image) {
+  border-radius: 25px 25px 0 0;
 }
 </style>

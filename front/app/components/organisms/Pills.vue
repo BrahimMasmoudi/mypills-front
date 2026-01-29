@@ -1,6 +1,6 @@
 <template>
   <v-sheet v-if="medicationLoading" width="100%" height="100%">
-    <MoleculesMedicationsSkeletonLoader :viewType="viewType"/>
+    <MoleculesMedicationsSkeletonLoader/>
   </v-sheet>
 
   <v-sheet v-else width="100%" height="calc(100vh - 64px)" class="d-flex flex-column align-start mb-2 overflow-hidden pa-4">
