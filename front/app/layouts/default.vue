@@ -140,7 +140,7 @@ import type {CreateReminderRequest} from "~/types/reminder";
 import {useReminderStore} from "~/store/reminder";
 import CountryDialog from "~/components/molecules/CountryDialog.vue";
 import {useLanguageStore} from "~/store/language";
-import DocumentScannerDialog from "~/components/molecules/DocumentScannerDialog.vue";
+import DocumentScannerDialog, {type UploadDocumentsData} from "~/components/molecules/DocumentScannerDialog.vue";
 import {useDocumentsStore} from "~/store/documents";
 
 const {t} = useI18n()
@@ -183,7 +183,7 @@ const userStore = useUserStore()
 const isDialOpen = ref(false)
 
 const drawer = ref(false)
-const { medications } = storeToRefs(medicationStore)
+const {medications} = storeToRefs(medicationStore)
 
 const validMedications = computed(() =>
     medications.value?.filter(m => !m.expired) ?? []
@@ -221,12 +221,25 @@ const openScanDocumentDialog = async () => {
     isPersistent: true,
     userFolders: docStore.existingFolders,
 
-    uploadAction: async ({ folder, name, files }) => {
-      // 1. Business Logic: PDF Generation
-      const pdfBlob = await pdfService.generatePdf(files)
+    uploadAction: async ({folder, name, files}: UploadDocumentsData) => {
+      const isPdfMode = files.every((f) => f.type === 'application/pdf')
 
-      // 2. Infrastructure: Upload via Store
-      await docStore.uploadDocument(folder, name, pdfBlob)
+      if (isPdfMode) {
+        for (let i = 0; i < files.length; i++) {
+          let finalName: string
+
+          if (name && name.trim() !== '') {
+            finalName = files.length > 1 ? `${name}_${i + 1}` : name
+          } else {
+            finalName = files[i].name.replace(/\.[^/.]+$/, "")
+          }
+
+          await docStore.uploadDocument(folder, finalName, files[i])
+        }
+      } else {
+        const finalBlob = await pdfService.generatePdf(files)
+        await docStore.uploadDocument(folder, name, finalBlob)
+      }
     }
   })
 

@@ -13,9 +13,9 @@
   "success": "Le medicament est ajouté avec succès",
   "error": "Une erreur est survenue",
   "dialogDelete": {
-    "title": "Es-tu sûr de supprimer ce médicament ?",
-    "message": "Attention, la suppression du médicament est irréversible",
-    "success": "Le médicament est supprimé avec succès",
+    "title": "Es-tu sûr de supprimer cet élement ?",
+    "message": "Attention, la suppression est irréversible",
+    "success": "La suppression est faite avec succès",
     "error": "Échec lors de la suppression."
   },
   "dialogRename": {
@@ -139,7 +139,7 @@
     "dateRange": "Durée",
     "reminderNameLabel": "Nom de la maladie",
     "reminderNamePlaceholder": "ex: Grippe, Hypertension...",
-    "sicknessNameLabel" : "Nom du traitement",
+    "sicknessNameLabel": "Nom du traitement",
     "toast": {
       "success": "Le rappel est crée avec succés",
       "error": "Échec lors de la creation d'un rappel"
@@ -177,24 +177,27 @@
     "add_new": "Ajouter",
     "addMedication": "Ajouter un médicament",
     "createReminder": "Créer un rappel",
-    "scanDocument" : "Scanner des documents"
+    "scanDocument": "Scanner des documents"
   },
   "scanDocumentDialog": {
-    "title": "Scanner un document",
-    "subtitle": "Numérisez vos ordonnances pour un accès facile",
-    "folderLabel": "Dossier (ex: Moi, Épouse)",
+    "title": "Ajouter un document",
+    "subtitle": "Numérisez un document papier ou importez un PDF existant",
+    "folderLabel": "Dossier / Nom du patient",
     "nameLabel": "Nom du document",
-    "pages": "Page(s)",
-    "documents": "{n} document | {n} Documents",
-    "scanFirst": "Scanner un document",
-    "scanNext": "Ajouter un autre document",
-    "startScanning": "Commencer le scan",
-    "limitReached": "Limite de 3 pages atteinte",
-    "limitAlert": "Maximum 3 pages autorisées",
+    "prefixLabel": "Préfixe du document",
+    "multipleHint": "Plusieurs fichiers détectés. Ils seront nommés Nom_1, Nom_2, etc.",
+    "pages": "Pages",
     "add": "Ajouter",
+    "limitReached": "Limite maximale de 3 fichiers atteinte",
+    "startScanning": "Commencer le scan",
+    "uploadPdf": "Importer un PDF",
+    "maxThreeFiles": "Maximum 3 fichiers autorisés",
+    "modeImages": "Photo",
+    "modePdf": "PDF",
+    "confirmReplace": "Changer de mode effacera votre sélection actuelle. Continuer ?",
     "toast": {
       "success": "Document enregistré avec succès",
-      "error": "Échec de l'enregistrement. Veuillez réessayer."
+      "error": "Une erreur est survenue lors de l'envoi"
     }
   },
   "notification": {
@@ -210,7 +213,7 @@
     "descending": "Décroissant",
     "clear": "Effacer le tri"
   },
-  "prescriptions" : {
+  "prescriptions": {
     "empty": "Vous n'avez pas des ordonnances en ce moment",
     "subtitle": "Gérer and avoir your vos prescriptions scannées",
     "search": "Chercher un document"

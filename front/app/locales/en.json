@@ -13,9 +13,9 @@
   "success": "The pills are added successfully",
   "error": "An error happened",
   "dialogDelete": {
-    "title": "Are you sure you want to delete this medication?",
-    "message": "Please note, the deletion of the medication is permanent and irreversible",
-    "success": "The medication has been deleted",
+    "title": "Are you sure you want to delete this element?",
+    "message": "Please note, the delete is permanent and irreversible",
+    "success": "The chosen element has been deleted",
     "error": "Deletion failed. Try again."
   },
   "dialogRename": {
@@ -180,21 +180,24 @@
     "scanDocument": "Scan documents"
   },
   "scanDocumentDialog": {
-    "title": "Scan Document",
-    "subtitle": "Digitize your prescriptions for easy access",
-    "folderLabel": "Folder (e.g., Me, Wife)",
+    "title": "Add a Document",
+    "subtitle": "Scan a physical document or upload an existing PDF",
+    "folderLabel": "Folder / Patient Name",
     "nameLabel": "Document Name",
-    "pages": "Page(s)",
-    "documents": "{n} document | {n} Documents",
-    "scanFirst": "Scan a document",
-    "scanNext": "Scan another document",
-    "startScanning": "Start Scanning",
-    "limitReached": "Maximum 3 pages reached",
-    "limitAlert": "Maximum 3 pages allowed",
+    "prefixLabel": "Document Prefix",
+    "multipleHint": "Multiple files detected. They will be saved as Name_1, Name_2, etc.",
+    "pages": "Pages",
     "add": "Add",
+    "limitReached": "Maximum limit of 3 files reached",
+    "startScanning": "Start Scanning",
+    "uploadPdf": "Upload PDF",
+    "maxThreeFiles": "Maximum 3 files allowed",
+    "modeImages": "Photo",
+    "modePdf": "PDF",
+    "confirmReplace": "Switching modes will clear your current selection. Continue?",
     "toast": {
       "success": "Document saved successfully",
-      "error": "Failed to save document. Please try again."
+      "error": "An error occurred during upload"
     }
   },
   "notification": {

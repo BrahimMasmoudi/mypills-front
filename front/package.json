@@ -2,7 +2,7 @@
   "name": "myefficiency-front",
   "private": true,
   "scripts": {
-    "lint": "eslint --ext .js,.ts .",
+    "lint": "eslint --ext .js,.ts,.vue .",
     "linter": "yarn lint --fix",
     "build": "nuxt build",
     "dev": "yarn --cwd ../back build & yarn firebase emulators:exec --import=./mydir --export-on-exit mydir --ui --only firestore,auth,functions,storage 'yarn --cwd ../back migrate && NODE_OPTIONS=--openssl-legacy-provider nuxi dev'",
