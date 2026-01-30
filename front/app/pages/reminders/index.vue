@@ -73,10 +73,9 @@ import {useI18n} from "vue-i18n";
 import {useReminderStore} from "~/store/reminder";
 
 const {t} = useI18n()
-const {$open, $device, $analytics} = useNuxtApp()
+const {$open, $device} = useNuxtApp()
 const reminderStore = useReminderStore()
 const {reminders, isLoading} = storeToRefs(reminderStore)
-const searchQuery = ref('')
 const viewType = ref<'grid' | 'table'>('grid')
 
 useSeoMeta({
