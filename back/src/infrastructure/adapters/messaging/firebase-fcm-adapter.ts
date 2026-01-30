@@ -12,13 +12,19 @@ export class FirebaseFcmAdapter implements NotificationGateway {
             android: {
                 priority: 'high',
                 notification: {
+                    channelId: 'medication_reminders',
                     sound: 'default',
                     priority: 'max',
+                    clickAction: 'OPEN_ACTIVITY__OR_PWA_URL'
                 },
             },
             webpush: {
                 headers: {
                     Urgency: 'high'
+                },
+                notification: {
+                    icon: '/icon_x192.png',
+                    tag: 'medication-notification'
                 }
             }
         })
