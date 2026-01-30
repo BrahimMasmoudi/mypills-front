@@ -4,13 +4,19 @@ import { FirestoreMedicationRepositoryAdapter } from '../../../adapters/persiste
 import { $firebaseConnector } from '../../../config/firebase'
 import { DecrementMedication } from '../../../../application/usecases/medication/decrement-medication/decrement-medication'
 
-export const decrementMedication = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const decrementMedication = onCall({ region: 'europe-west3' }, async ({ data, auth }) => {
+    if (!auth) {
+        throw new HttpsError(
+            'unauthenticated',
+            'The function decrement medication increment must be called while authenticated.'
+        )
+    }
     const medicationRepo = new FirestoreMedicationRepositoryAdapter($firebaseConnector)
     const decrementMedicationUseCase = new DecrementMedication(medicationRepo)
 
     const medication = data.medication as Medication
     try {
-        await decrementMedicationUseCase.execute(medication)
+        await decrementMedicationUseCase.execute(medication, auth)
         return { success: true }
     } catch (error) {
         throw new HttpsError('internal', 'Could not decrement medication')

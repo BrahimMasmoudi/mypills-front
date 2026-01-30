@@ -1,8 +1,17 @@
 import { CreateMedication } from './create-medication'
 import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { Medication } from '../../../../domain/entities/medication'
+import { AuthData } from 'firebase-functions/v2/tasks'
 
 describe('IncrementMedication Use Case', () => {
+    const mockAuth: AuthData = {
+        uid: 'user-123',
+        token: {
+            uid: 'user-123',
+            email: 'test@example.com',
+        },
+    } as any
+
     it('should execute the repository create method with the provided medication', async () => {
         // 1. Arrange: Create a "Mock" Repository
         // We don't need Firestore here, just a fake object that follows the interface
@@ -55,10 +64,10 @@ describe('IncrementMedication Use Case', () => {
         }
 
         // 2. Act
-        await useCase.execute(medication)
+        await useCase.execute(medication, mockAuth)
 
         // 3. Assert
-        expect(mockRepo.create).toHaveBeenCalledWith(medication)
+        expect(mockRepo.create).toHaveBeenCalledWith(medication, mockAuth)
         expect(mockRepo.create).toHaveBeenCalledTimes(1)
     })
 })

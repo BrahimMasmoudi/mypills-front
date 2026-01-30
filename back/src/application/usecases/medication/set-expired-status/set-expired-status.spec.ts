@@ -1,8 +1,16 @@
 import { SetExpiredStatus } from './set-expired-status'
 import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { Medication } from '../../../../domain/entities/medication'
+import { AuthData } from 'firebase-functions/v2/tasks'
 
 describe('SetExpiredStatus Use Case', () => {
+    const mockAuth: AuthData = {
+        uid: 'user-123',
+        token: {
+            uid: 'user-123',
+            email: 'test@example.com',
+        },
+    } as any
     it('should execute the repository update method with the provided medication', async () => {
         // 1. Arrange: Create a "Mock" Repository
         // We don't need Firestore here, just a fake object that follows the interface
@@ -93,10 +101,10 @@ describe('SetExpiredStatus Use Case', () => {
         const medicationIds = [medication1.medicationId, medication2.medicationId]
 
         // 2. Act
-        await useCase.execute(medicationIds)
+        await useCase.execute(medicationIds, mockAuth)
 
         // 3. Assert
-        expect(mockRepo.setExpiredStatus).toHaveBeenCalledWith(medicationIds)
+        expect(mockRepo.setExpiredStatus).toHaveBeenCalledWith(medicationIds, mockAuth)
         expect(mockRepo.setExpiredStatus).toHaveBeenCalledTimes(1)
     })
 })

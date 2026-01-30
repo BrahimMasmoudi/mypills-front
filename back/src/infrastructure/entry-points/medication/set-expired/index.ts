@@ -3,7 +3,13 @@ import { FirestoreMedicationRepositoryAdapter } from '../../../adapters/persiste
 import { $firebaseConnector } from '../../../config/firebase'
 import { SetExpiredStatus } from '../../../../application/usecases/medication/set-expired-status/set-expired-status'
 
-export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data }) => {
+export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data, auth }) => {
+    if (!auth) {
+        throw new HttpsError(
+            'unauthenticated',
+            'The function set expired status must be called while authenticated.'
+        )
+    }
     const medicationRepo = new FirestoreMedicationRepositoryAdapter($firebaseConnector)
     const setMedicationExpiredStatusUseCase = new SetExpiredStatus(medicationRepo)
 
@@ -14,7 +20,7 @@ export const setExpiredStatus = onCall({ region: 'europe-west3' }, async ({ data
     }
 
     try {
-        return await setMedicationExpiredStatusUseCase.execute(medicationIds)
+        return await setMedicationExpiredStatusUseCase.execute(medicationIds, auth)
     } catch (error) {
         // Here you handle mapping domain errors to HttpsErrors
         throw new HttpsError('internal', 'Could not set medication status expired')

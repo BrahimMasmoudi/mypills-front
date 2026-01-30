@@ -2,12 +2,21 @@ import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
 import * as functions from '../../https-functions'
 import { UpdateMedication } from '../../../../application/usecases/medication/update-medication/update-medication'
+import { AuthData } from 'firebase-functions/v2/tasks'
 
 const testEnv = firebaseFunctionsTest()
 
 if (admin.apps.length === 0) {
     admin.initializeApp()
 }
+
+const mockAuth: AuthData = {
+    uid: 'user-123',
+    token: {
+        uid: 'user-123',
+        email: 'test@example.com',
+    },
+} as any
 
 // Mock the Use Case class
 jest.mock('../../../../application/usecases/medication/update-medication/update-medication')
@@ -34,10 +43,11 @@ describe('HTTPS Functions Entry Point: updateMedication', () => {
                 key: 'name', // Match the variable name in your function
                 value: mockNewName, // Match the variable name in your function
             },
+            auth: mockAuth,
         } as any)
 
         // 3. Assert
-        expect(useCaseSpy).toHaveBeenCalledWith(mockMedication, 'name', mockNewName)
+        expect(useCaseSpy).toHaveBeenCalledWith(mockMedication, 'name', mockNewName, mockAuth)
         expect(result).toEqual({ success: true })
     })
 
@@ -51,6 +61,7 @@ describe('HTTPS Functions Entry Point: updateMedication', () => {
         // 2. Act & Assert
         await expect(wrapped({
             data: { medication: {}, newName: 'test' },
+            auth: mockAuth,
         } as any)).rejects.toThrow('Could not update medication')
     })
 })

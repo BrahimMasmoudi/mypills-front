@@ -4,8 +4,13 @@ import { $firebaseConnector } from '../../../config/firebase'
 import { GiygasApiAdapter } from '../../../adapters/external/giygas-api-adapter'
 import { GetMedicationDetails } from '../../../../application/usecases/medication/get-details/get-medication-details'
 
-export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data }) => {
-    // Dependencies
+export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data, auth }) => {
+    if (!auth) {
+        throw new HttpsError(
+            'unauthenticated',
+            'The function getMedicationDetails must be called while authenticated.'
+        )
+    }
     const cisRepo = new FirestoreCisLookupAdapter($firebaseConnector)
     const apiGateway = new GiygasApiAdapter()
     const useCase = new GetMedicationDetails(cisRepo, apiGateway)

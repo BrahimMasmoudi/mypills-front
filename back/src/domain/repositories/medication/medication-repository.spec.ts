@@ -6,10 +6,12 @@ import {
 import { FirestoreConnector } from '../../../infrastructure/adapters/connectors/firestore-connector'
 import { Medication } from '../../entities/medication'
 import { credential } from 'firebase-admin'
+import { AuthData } from 'firebase-functions/v2/tasks'
 
 describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
     let adapter: FirestoreMedicationRepositoryAdapter
     let firestore: any
+    const fakeAuth = { uid: 'user-456' } as AuthData
 
     beforeAll(() => {
         const app = initializeApp({
@@ -46,7 +48,7 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
         const testMedication = createTestMedication(uniqueId)
 
         it('should create and then retrieve the document from Firestore', async () => {
-            await adapter.create(testMedication)
+            await adapter.create(testMedication, fakeAuth)
             const doc = await firestore.collection('medications').doc(testMedication.medicationId).get()
 
             expect(doc.exists).toBe(true)
@@ -54,13 +56,13 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
         })
 
         it('should increment the quantity in the real database', async () => {
-            await adapter.increment(testMedication)
+            await adapter.increment(testMedication, fakeAuth)
             const doc = await firestore.collection('medications').doc(testMedication.medicationId).get()
             expect(doc.data().quantity).toBe(6)
         })
 
         it('should delete the document', async () => {
-            await adapter.delete(testMedication)
+            await adapter.delete(testMedication, fakeAuth)
             const doc = await firestore.collection('medications').doc(testMedication.medicationId).get()
             expect(doc.exists).toBe(false)
         })
@@ -75,13 +77,13 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
             const ids = [id1, id2, id3]
 
             await Promise.all([
-                adapter.create(createTestMedication(id1)),
-                adapter.create(createTestMedication(id2)),
-                adapter.create(createTestMedication(id3)),
+                adapter.create(createTestMedication(id1), fakeAuth),
+                adapter.create(createTestMedication(id2), fakeAuth),
+                adapter.create(createTestMedication(id3), fakeAuth),
             ])
 
             // 2. Act: Run the batch update
-            const result = await adapter.setExpiredStatus(ids)
+            const result = await adapter.setExpiredStatus(ids, fakeAuth)
 
             // 3. Assert
             expect(result.updated).toBe(3)
@@ -99,7 +101,7 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
         })
 
         it('should return updated: 0 when empty list provided', async () => {
-            const result = await adapter.setExpiredStatus([])
+            const result = await adapter.setExpiredStatus([], fakeAuth)
             expect(result.updated).toBe(0)
         })
     })
