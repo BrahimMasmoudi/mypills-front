@@ -4,7 +4,6 @@ import { FieldValue } from 'firebase-admin/firestore'
 import { FirestoreConnector } from '../connectors/firestore-connector'
 import { AuthData } from 'firebase-functions/v2/tasks'
 
-// 1. Mock FieldValue.increment
 jest.mock('firebase-admin/firestore', () => {
     const original = jest.requireActual('firebase-admin/firestore')
     return {
