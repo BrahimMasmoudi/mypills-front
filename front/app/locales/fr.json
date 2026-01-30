@@ -218,5 +218,14 @@
     "empty": "Vous n'avez pas des ordonnances en ce moment",
     "subtitle": "Gérer and avoir your vos prescriptions scannées",
     "search": "Chercher un document"
+  },
+  "guideDialog": {
+    "title": "Activer les alertes urgentes",
+    "subtitle": "Android désactive les alertes contextuelles par défaut. Pour recevoir vos rappels de médicaments sur votre écran :",
+    "step1": "Appui long sur l'icône de l'appli > Infos sur l'appli",
+    "step2": "Appuyez sur Notifications > Catégories de notifications",
+    "step3": "Réglez 'Médicaments' sur 'Urgent' ou 'Afficher sous forme de pop-up'",
+    "dontShowAgain": "Ne plus afficher ce guide",
+    "understand": "J'ai compris"
   }
 }

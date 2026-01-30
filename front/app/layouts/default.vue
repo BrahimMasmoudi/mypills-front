@@ -92,6 +92,7 @@ import CountryDialog from "~/components/molecules/CountryDialog.vue";
 import {useLanguageStore} from "~/store/language";
 import DocumentScannerDialog, {type UploadDocumentsData} from "~/components/molecules/DocumentScannerDialog.vue";
 import {useDocumentsStore} from "~/store/documents";
+import NotificationGuideDialog from "~/components/molecules/NotificationGuideDialog.vue";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
@@ -104,6 +105,7 @@ const langStore = useLanguageStore()
 langStore.initLocale()
 const docStore = useDocumentsStore()
 const pdfService = usePdfService()
+const guideSeen = useCookie('notification_guide_seen')
 
 
 const checkCountryStatus = async () => {
@@ -123,10 +125,23 @@ const checkCountryStatus = async () => {
 
 onMounted(async () => {
   medicationStore.initMedications()
-  await reminderStore.initReminders()
+  reminderStore.initReminders()
   await checkCountryStatus()
   await notifications.registerNotificationToken()
   notifications.listenForMessages()
+
+  if (!guideSeen.value) {
+    // Open using your pattern
+    const dontShow = await $open<boolean>(NotificationGuideDialog, {
+      scrim: true,
+      isPersistent: true
+    })
+
+    // If they checked the box, save the cookie for 1 year
+    if (dontShow) {
+      guideSeen.value = 'true'
+    }
+  }
 })
 
 const userStore = useUserStore()

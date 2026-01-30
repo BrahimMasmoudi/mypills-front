@@ -218,5 +218,14 @@
     "empty": "You dont have any prescriptions for the moment",
     "subtitle": "Manage and view your scanned medical notices and prescriptions.",
     "search": "Search a document"
+  },
+  "guideDialog": {
+    "title": "Enable Urgent Alerts",
+    "subtitle": "Android disables pop-up alerts by default. To receive medication reminders on your screen:",
+    "step1": "Long press the App Icon > App Info",
+    "step2": "Tap Notifications > Notification Categories",
+    "step3": "Set 'Medications' to 'Urgent' or 'Pop-up'",
+    "dontShowAgain": "Don't show this guide again",
+    "understand": "I understand"
   }
 }
