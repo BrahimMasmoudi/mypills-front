@@ -15,6 +15,7 @@ export class FirebaseFcmAdapter implements NotificationGateway {
                     channelId: 'medication_reminders',
                     sound: 'default',
                     priority: 'max',
+                    visibility: 'public'
                 },
             },
             webpush: {

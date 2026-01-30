@@ -61,7 +61,9 @@ onBackgroundMessage(messaging, (payload) => {
         data: payload.data,
         tag: 'medication-notification',
         renotify: true,
-        vibrate: [200, 100, 200]
+        vibrate: [200, 100, 200],
+        requireInteraction: true, // Keeps it on screen until user dismisses it
+        silent: false
     });
 });
 
