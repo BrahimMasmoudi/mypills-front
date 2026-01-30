@@ -3,6 +3,7 @@ import { FirestoreCisLookupAdapter } from '../../../adapters/persistence/firesto
 import { $firebaseConnector } from '../../../config/firebase'
 import { GiygasApiAdapter } from '../../../adapters/external/giygas-api-adapter'
 import { GetMedicationDetails } from '../../../../application/usecases/medication/get-details/get-medication-details'
+import {Cip13} from "../../../../types/cip13";
 
 export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ data, auth }) => {
     if (!auth) {
@@ -16,7 +17,7 @@ export const getMedicationDetails = onCall({ region: 'europe-west3' }, async ({ 
     const useCase = new GetMedicationDetails(cisRepo, apiGateway)
 
     try {
-        return await useCase.execute(data.cip13)
+        return await useCase.execute(Cip13.create(data.cip13))
     } catch (e: any) {
         if (e.message === 'NOT_FOUND_IN_DB') {
             throw new HttpsError('not-found', 'Medication not found in database')

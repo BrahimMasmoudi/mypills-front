@@ -1,7 +1,7 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
-import * as functions from '../../https-functions'
-import { GetMedicationDetails } from '../../../../application/usecases/medication/get-details/get-medication-details'
+import * as functions from '../../https-functions' // Adjust path to your entry point
+import { FetchTunisianMedication } from '../../../../application/usecases/medication/fetch-tunisian-medication/fetch-tunisian-medication'
 import { AuthData } from 'firebase-functions/v2/tasks'
 
 const testEnv = firebaseFunctionsTest()
@@ -19,65 +19,78 @@ const mockAuth: AuthData = {
 } as any
 
 // Mock the Use Case class
-jest.mock('../../../../application/usecases/medication/get-details/get-medication-details')
+jest.mock('../../../../application/usecases/medication/fetch-tunisian-medication/fetch-tunisian-medication')
 
-describe('HTTPS Functions Entry Point: getMedicationDetails', () => {
+describe('HTTPS Functions Entry Point: searchTunisianMeds', () => {
     afterAll(() => {
         testEnv.cleanup()
     })
 
-    it('should call the use case with cip13 and return the details', async () => {
+    beforeEach(() => {
+        jest.clearAllMocks()
+    })
+
+    it('should call the use case with uppercase searchTerm and return results', async () => {
         // 1. Arrange
-        const mockCip13 = '3400934913154'
-        const mockDetails = {
-            name: 'Doliprane 1000mg',
-            cis: '61234567',
-            details: { company: 'SANOFI' },
-        }
+        const mockResults = [
+            { id: '1', name: 'DOLIPRANE', dosage: '500mg' },
+            { id: '2', name: 'DOLIPRANE', dosage: '1000mg' }
+        ]
 
-        // Setup the mock to return specific data
-        const useCaseSpy = GetMedicationDetails.prototype.execute as jest.Mock
-        useCaseSpy.mockResolvedValue(mockDetails)
+        const useCaseSpy = FetchTunisianMedication.prototype.execute as jest.Mock
+        useCaseSpy.mockResolvedValue(mockResults)
 
-        const wrapped = testEnv.wrap(functions.getMedicationDetails)
+        const wrapped = testEnv.wrap(functions.searchTunisianMeds)
 
-        // 2. Act
+        // 2. Act - Passing lowercase to test the function's .toUpperCase() logic
         const result = await wrapped({
-            data: { cip13: mockCip13 },
+            data: { query: 'doli' },
             auth: mockAuth,
         } as any)
 
         // 3. Assert
-        expect(useCaseSpy).toHaveBeenCalledWith(mockCip13)
-        expect(result).toEqual(mockDetails) // The function returns the use case result directly
+        expect(useCaseSpy).toHaveBeenCalledWith('DOLI')
+        expect(result).toEqual(mockResults)
     })
 
-    it('should throw HttpsError not-found when use case throws NOT_FOUND_IN_DB', async () => {
+    it('should return an empty array if query length is less than 2', async () => {
         // 1. Arrange
-        const useCaseSpy = GetMedicationDetails.prototype.execute as jest.Mock
-        useCaseSpy.mockRejectedValue(new Error('NOT_FOUND_IN_DB'))
+        const wrapped = testEnv.wrap(functions.searchTunisianMeds)
+        const useCaseSpy = FetchTunisianMedication.prototype.execute as jest.Mock
 
-        const wrapped = testEnv.wrap(functions.getMedicationDetails)
-
-        // 2. Act & Assert
-        // The catch block in your function converts 'NOT_FOUND_IN_DB' to 'Medication not found in database'
-        await expect(wrapped({
-            data: { cip13: 'wrong-cip' },
+        // 2. Act
+        const result = await wrapped({
+            data: { query: 'd' },
             auth: mockAuth,
-        } as any)).rejects.toThrow(/Medication not found in database/)
+        } as any)
+
+        // 3. Assert
+        expect(result).toEqual([])
+        expect(useCaseSpy).not.toHaveBeenCalled()
     })
 
-    it('should throw internal error for other domain errors', async () => {
+    it('should throw unauthenticated error if auth is missing', async () => {
         // 1. Arrange
-        const useCaseSpy = GetMedicationDetails.prototype.execute as jest.Mock
-        useCaseSpy.mockRejectedValue(new Error('Random API Failure'))
-
-        const wrapped = testEnv.wrap(functions.getMedicationDetails)
+        const wrapped = testEnv.wrap(functions.searchTunisianMeds)
 
         // 2. Act & Assert
         await expect(wrapped({
-            data: { cip13: '3400934913154' },
+            data: { query: 'doliprane' },
+            auth: undefined, // Missing auth
+        } as any)).rejects.toThrow(/must be called while authenticated/)
+    })
+
+    it('should throw internal HttpsError if use case execution fails', async () => {
+        // 1. Arrange
+        const useCaseSpy = FetchTunisianMedication.prototype.execute as jest.Mock
+        useCaseSpy.mockRejectedValue(new Error('Database Connection Error'))
+
+        const wrapped = testEnv.wrap(functions.searchTunisianMeds)
+
+        // 2. Act & Assert
+        await expect(wrapped({
+            data: { query: 'doliprane' },
             auth: mockAuth,
-        } as any)).rejects.toThrow(/Search failed/)
+        } as any)).rejects.toThrow(/fetch tunisian-medication failed/)
     })
 })

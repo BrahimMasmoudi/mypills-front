@@ -30,9 +30,7 @@
         <div class="d-flex flex-column gap-4">
           <v-combobox
               v-model="form.sicknessName"
-              :items="reminders"
-              item-title="sicknessName"
-              item-value="sicknessName"
+              :items="uniqueSicknessNames"
               :label="t('reminderDialog.sicknessNameLabel')"
               variant="outlined"
               hide-details="auto"
@@ -154,7 +152,7 @@ const {t, locale} = useI18n()
 const locales: Record<string, any> = {en: enUS, fr: fr}
 
 // Props
-const {close, createReminder, validMedications} = defineProps<{
+const {close, createReminder, validMedications, reminders} = defineProps<{
   close: (value: string) => void
   isPersistent: boolean
   scrim: boolean
@@ -175,6 +173,14 @@ const form = ref({
     {time: '08:00', quantity: 1}
   ]
 })
+
+const uniqueSicknessNames = computed(() => {
+  const names = reminders
+      .map((r) => r.sicknessName)
+      .filter(Boolean)
+
+  return [...new Set(names)]
+});
 
 const rangeValue = ref<Date[]>([form.value.startDate, form.value.endDate])
 

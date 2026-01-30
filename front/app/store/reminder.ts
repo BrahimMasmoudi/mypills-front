@@ -8,27 +8,29 @@ import { logEvent } from '@firebase/analytics'
 export const useReminderStore = defineStore('reminder', () => {
     const { $functions, $firestore, $analytics } = useNuxtApp()
 
-    // 1. Set up a source ref that useCollection will populate
     const reminderSource = ref<any[]>([])
-    const loading = ref(false)
+    const sourceQuery = ref<any>(null)
+
+    const collectionData = useCollection(() => sourceQuery.value, {
+        target: reminderSource
+    })
+
+    const isLoading = computed(() => {
+        if (!sourceQuery.value) return true
+        return collectionData.pending.value
+    })
 
     const initReminders = async () => {
         const user = await getCurrentUser()
         if (!user) return
 
-        const q = query(
+        sourceQuery.value = query(
             collection($firestore, 'reminders'),
             where('userId', '==', user.uid),
             orderBy('scheduledTime', 'desc')
         )
-
-        // Bind the source directly to the collection
-        // VueFire will now update reminderSource automatically in real-time
-        useCollection(q, { target: reminderSource })
     }
 
-    // 2. Create a computed property to handle the Date conversion
-    // This ensures the rest of your app sees JS Dates, not Firestore Timestamps
     const reminders = computed(() => {
         return reminderSource.value.map((doc) => ({
             ...doc,
@@ -38,8 +40,6 @@ export const useReminderStore = defineStore('reminder', () => {
     })
 
     const createSchedule = async (payload: CreateReminderRequest) => {
-        loading.value = true
-        try {
             const callCreateSchedule = httpsCallable<CreateReminderRequest, {
                 success: boolean
             }>($functions, 'createReminder')
@@ -57,9 +57,6 @@ export const useReminderStore = defineStore('reminder', () => {
             }
 
             return result.data
-        } finally {
-            loading.value = false
-        }
     }
 
     const deleteReminders = async (reminderGroup: ReminderGroup) => {
@@ -77,8 +74,6 @@ export const useReminderStore = defineStore('reminder', () => {
     }
 
     const updateRemindersStatus = async (ids: string[], status: 'sent' | 'failed') => {
-        loading.value = true
-        try {
             const callUpdate = httpsCallable($functions, 'updateRemindersStatus')
             await callUpdate({ ids, status })
 
@@ -88,14 +83,11 @@ export const useReminderStore = defineStore('reminder', () => {
                     count: ids.length
                 })
             }
-        } finally {
-            loading.value = false
-        }
     }
 
     return {
         reminders, // This is now a computed reactive array
-        loading,
+        isLoading,
         initReminders,
         createSchedule,
         deleteReminders,
