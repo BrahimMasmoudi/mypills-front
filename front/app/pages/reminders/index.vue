@@ -1,41 +1,44 @@
 <template>
-  <v-sheet class="pa-4 h-100 overflow-hidden">
-    <v-sheet class="d-flex align-center justify-space-between">
-      <div class="mb-2">
-        <h1 class="text-h4 font-weight-bold text-primary mb-2">{{ t('reminders.title') }}</h1>
-        <p class="text-body-1 text-medium-emphasis">{{ t('reminders.subtitle') }}</p>
-      </div>
+  <v-sheet v-if="isLoading" width="100%" height="100%">
+    <MoleculesReminderSkeletonLoader />
+  </v-sheet>
 
-      <v-btn-toggle
-          v-if="!$device.isMobile"
-          v-model="viewType"
-          @update:model-value="handleViewTypeUpdate"
-          mandatory
-          color="primary"
-          variant="outlined"
-          density="comfortable"
-          rounded="pill"
-          class="ml-4 view-toggle"
-      >
-        <v-btn value="grid" icon="mdi-view-grid-outline"/>
-        <v-btn value="table" icon="mdi-view-list"/>
-      </v-btn-toggle>
-    </v-sheet>
+  <v-sheet v-else width="100%" height="calc(100vh - 64px)" class="d-flex flex-column align-start mb-2 overflow-hidden pa-4">
 
-    <v-sheet width="100%" height="100%" v-if="!reminderStore.loading && groupedReminders.length === 0"
-             class="d-flex flex-column align-center justify-center">
+    <div class="w-100 flex-shrink-0">
+      <v-sheet class="d-flex align-center justify-space-between mb-4">
+        <div>
+          <h1 class="text-h4 font-weight-bold text-primary mb-2">{{ t('reminders.title') }}</h1>
+          <p class="text-body-1 text-medium-emphasis">{{ t('reminders.subtitle') }}</p>
+        </div>
+
+        <v-btn-toggle
+            v-if="!$device.isMobile"
+            v-model="viewType"
+            mandatory
+            color="primary"
+            variant="outlined"
+            density="comfortable"
+            rounded="pill"
+        >
+          <v-btn value="grid" icon="mdi-view-grid-outline"/>
+          <v-btn value="table" icon="mdi-view-list"/>
+        </v-btn-toggle>
+      </v-sheet>
+    </div>
+
+    <v-sheet v-if="groupedReminders.length === 0"
+             class="w-100 flex-grow-1 d-flex flex-column align-center justify-center">
       <v-icon icon="mdi-calendar-blank" size="64" color="medium-emphasis" class="mb-4"/>
       <p class="text-h6 text-medium-emphasis">{{ t('reminders.empty') }}</p>
     </v-sheet>
 
-    <div v-else>
+    <div v-else class="w-100 flex-grow-1 overflow-y-auto">
       <v-row v-if="$device.isMobile || viewType === 'grid'" class="d-flex align-stretch justify-start mt-0 px-1">
         <v-col
             v-for="reminder in groupedReminders"
             :key="reminder.sicknessName"
-            cols="12"
-            sm="6"
-            md="3"
+            cols="12" sm="6" md="3"
         >
           <MoleculesReminderCard
               :item="reminder"
@@ -47,9 +50,9 @@
       </v-row>
 
       <MoleculesReminderDataTable
-          v-else-if="!$device.isMobile && viewType === 'table'"
+          v-else-if="viewType === 'table'"
           :items="groupedReminders"
-          :loading="reminderStore.loading"
+          :loading="isLoading"
           :headers="headers"
           :status-config="statusConfig"
           @delete="handleDelete"
@@ -72,19 +75,13 @@ import {useReminderStore} from "~/store/reminder";
 const {t} = useI18n()
 const {$open, $device, $analytics} = useNuxtApp()
 const reminderStore = useReminderStore()
-const {reminders} = storeToRefs(reminderStore)
-
+const {reminders, isLoading} = storeToRefs(reminderStore)
+const searchQuery = ref('')
 const viewType = ref<'grid' | 'table'>('grid')
 
 useSeoMeta({
   title: () => t('nav.reminders')
 })
-
-const handleViewTypeUpdate = (value: any) => {
-  if ($analytics && value) {
-    logEvent($analytics, 'change_view_type', {view_type: value})
-  }
-}
 
 const groupedReminders = computed((): ReminderGroup[] => {
   const rawReminders = reminders.value

@@ -513,7 +513,7 @@ const onBarcodeDetected = async (code: string) => {
         })
 
         if (result === 'increment') {
-          await medicationsStore.incrementPillsFromDuplicate(duplicate)
+          await medicationsStore.incrementPills(duplicate)
           openToast('success', t('success'))
           close('success')
         } else {
