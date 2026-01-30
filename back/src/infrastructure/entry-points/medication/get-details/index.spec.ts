@@ -3,6 +3,7 @@ import * as admin from 'firebase-admin'
 import * as functions from '../../https-functions'
 import { GetMedicationDetails } from '../../../../application/usecases/medication/get-details/get-medication-details'
 import { AuthData } from 'firebase-functions/v2/tasks'
+import {Cip13} from "../../../../types/cip13";
 
 const testEnv = firebaseFunctionsTest()
 
@@ -28,7 +29,7 @@ describe('HTTPS Functions Entry Point: getMedicationDetails', () => {
 
     it('should call the use case with cip13 and return the details', async () => {
         // 1. Arrange
-        const mockCip13 = '3400934913154'
+        const mockCip13 = Cip13.create('3400934913154')
         const mockDetails = {
             name: 'Doliprane 1000mg',
             cis: '61234567',
@@ -43,7 +44,7 @@ describe('HTTPS Functions Entry Point: getMedicationDetails', () => {
 
         // 2. Act
         const result = await wrapped({
-            data: { cip13: mockCip13 },
+            data: { cip13: mockCip13.getValue() },
             auth: mockAuth,
         } as any)
 
