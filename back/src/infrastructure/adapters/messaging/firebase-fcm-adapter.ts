@@ -9,6 +9,18 @@ export class FirebaseFcmAdapter implements NotificationGateway {
                 medName: medName,
                 quantity: String(quantity),
             },
+            android: {
+                priority: 'high',
+                notification: {
+                    sound: 'default',
+                    priority: 'max',
+                },
+            },
+            webpush: {
+                headers: {
+                    Urgency: 'high'
+                }
+            }
         })
     }
 }
