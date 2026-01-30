@@ -15,7 +15,6 @@ export class FirebaseFcmAdapter implements NotificationGateway {
                     channelId: 'medication_reminders',
                     sound: 'default',
                     priority: 'max',
-                    clickAction: 'OPEN_ACTIVITY__OR_PWA_URL'
                 },
             },
             webpush: {
@@ -25,6 +24,9 @@ export class FirebaseFcmAdapter implements NotificationGateway {
                 notification: {
                     icon: '/icon_x192.png',
                     tag: 'medication-notification'
+                },
+                fcmOptions: {
+                    link: '/reminders' // The URL to open on click
                 }
             }
         })

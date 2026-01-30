@@ -66,17 +66,18 @@ onBackgroundMessage(messaging, (payload) => {
 });
 
 self.addEventListener('notificationclick', function (event) {
-    console.log('[SW] Notification click received.');
     event.notification.close();
-
     event.waitUntil(
-        clients.matchAll({type: 'window', includeUncontrolled: true}).then(windowClients => {
-            // Check if there is already a window open and focus it
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
             for (let client of windowClients) {
-                if (client.url && 'focus' in client) return client.focus();
+                if ('focus' in client) {
+                    return client.focus();
+                }
             }
-            // If no window is open, open a new one
-            if (clients.openWindow) return clients.openWindow('/');
+
+            if (clients.openWindow) {
+                return clients.openWindow('/reminders');
+            }
         })
     );
 });
