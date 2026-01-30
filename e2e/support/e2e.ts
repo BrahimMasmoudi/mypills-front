@@ -71,6 +71,7 @@ Cypress.Commands.add('setupTestUser', () => {
         cy.visit('/')
     })
 
+    cy.setCookie('notification_guide_seen', 'true')
     cy.setCookie('user-country', 'FR')
 })
 
