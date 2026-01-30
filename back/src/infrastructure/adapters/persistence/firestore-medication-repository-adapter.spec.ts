@@ -41,7 +41,7 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
         // Mocking the .get() for the "ownership check" inside getSecureDocRef
         mockGet = jest.fn().mockResolvedValue({
             exists: true,
-            data: () => ({ userId: 'user-456' }), // Matches fakeAuth.uid
+            data: () => ({ uid: 'user-456' }), // Matches fakeAuth.uid
             ref: { update: mockUpdate, delete: mockDelete },
         })
 
@@ -99,7 +99,7 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
             await adapter.create(medication, fakeAuth)
             expect(mockDoc).toHaveBeenCalledWith(medication.medicationId)
             expect(mockSet).toHaveBeenCalledWith(
-                { ...medication, userId: fakeAuth.uid },
+                { ...medication, uid: fakeAuth.uid },
                 { merge: false }
             )
         })
@@ -117,7 +117,7 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
             // Change ownership to someone else
             mockGet.mockResolvedValueOnce({
                 exists: true,
-                data: () => ({ userId: 'wrong-user' }),
+                data: () => ({ uid: 'wrong-user' }),
             })
             const medication = createFakeMedication()
             await expect(adapter.increment(medication, fakeAuth))
@@ -141,7 +141,7 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
 
             const result = await adapter.setExpiredStatus(ids, fakeAuth)
 
-            expect(mockCollection.where).toHaveBeenCalledWith('userId', '==', fakeAuth.uid)
+            expect(mockCollection.where).toHaveBeenCalledWith('uid', '==', fakeAuth.uid)
             expect(mockBatch.update).toHaveBeenCalledTimes(2)
             expect(result.updated).toBe(2)
         })
