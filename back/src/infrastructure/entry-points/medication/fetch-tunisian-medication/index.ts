@@ -7,8 +7,14 @@ import {
     FetchTunisianMedication,
 } from '../../../../application/usecases/medication/fetch-tunisian-medication/fetch-tunisian-medication'
 
-export const searchTunisianMeds = onCall({ region: 'europe-west3' }, async (request) => {
-    const searchText = request.data.query || ''
+export const searchTunisianMeds = onCall({ region: 'europe-west3' }, async ({ data, auth }) => {
+    if (!auth) {
+        throw new HttpsError(
+            'unauthenticated',
+            'The function searchTunisianMeds must be called while authenticated.'
+        )
+    }
+    const searchText = data.query || ''
 
     if (!searchText || searchText.length < 2) {
         return []

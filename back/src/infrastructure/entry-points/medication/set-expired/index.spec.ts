@@ -2,12 +2,21 @@ import firebaseFunctionsTest from 'firebase-functions-test'
 import * as admin from 'firebase-admin'
 import * as functions from '../../https-functions'
 import { SetExpiredStatus } from '../../../../application/usecases/medication/set-expired-status/set-expired-status'
+import { AuthData } from 'firebase-functions/v2/tasks'
 
 const testEnv = firebaseFunctionsTest()
 
 if (admin.apps.length === 0) {
     admin.initializeApp()
 }
+
+const mockAuth: AuthData = {
+    uid: 'user-123',
+    token: {
+        uid: 'user-123',
+        email: 'test@example.com',
+    },
+} as any
 
 // Mock the Use Case class
 jest.mock('../../../../application/usecases/medication/set-expired-status/set-expired-status')
@@ -33,11 +42,12 @@ describe('HTTPS Functions Entry Point: setExpiredStatus', () => {
             data: {
                 medicationIds: mockMedicationIds, // Must match your Cloud Function 'data.medicationIds'
             },
+            auth: mockAuth,
         } as any)
 
         // 3. Assert
         // Verify the use case was called with the list of IDs
-        expect(useCaseSpy).toHaveBeenCalledWith(mockMedicationIds)
+        expect(useCaseSpy).toHaveBeenCalledWith(mockMedicationIds, mockAuth)
         // Verify the function returns what the use case returned
         expect(result).toEqual(expectedResponse)
     })
@@ -53,6 +63,7 @@ describe('HTTPS Functions Entry Point: setExpiredStatus', () => {
         // Ensure the error message matches the one thrown in your Cloud Function's catch block
         await expect(wrapped({
             data: { medicationIds: ['id-1'] },
+            auth: mockAuth,
         } as any)).rejects.toThrow('Could not set medication status expired')
     })
 })

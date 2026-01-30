@@ -44,18 +44,30 @@ export const testUid = 'test-user-123'
 export const medicationId = 'med-unique-123'
 
 Cypress.Commands.add('setupTestUser', () => {
-    // cy.session wraps the login logic
     cy.session(testUid, () => {
+        // 1. Clean up data first
         cy.task('resetUserMedications', testEmail)
-        cy.authDeleteUser(testUid)
-        cy.authCreateUser({
-            uid: testUid,
-            email: testEmail,
-            emailVerified: true,
-            displayName: 'Test User'
-        })
-        cy.login(testUid)
 
+        // 2. Check for the user
+        cy.authGetUsers([{ uid: testUid }]).then((result) => {
+            const userExists = result.users.length > 0
+
+            if (!userExists) {
+                // 3a. Create if missing
+                cy.authCreateUser({
+                    uid: testUid,
+                    email: testEmail,
+                    emailVerified: true,
+                    displayName: 'Test User'
+                })
+            } else {
+                // 3b. Optional: Update user or just log it
+                cy.log('User already exists, skipping creation')
+            }
+        })
+
+        // 4. Proceed with login
+        cy.login(testUid)
         cy.visit('/')
     })
 

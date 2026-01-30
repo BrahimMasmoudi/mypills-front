@@ -1,8 +1,17 @@
 import { DeleteMedication } from './delete-medication'
 import { MedicationRepository } from '../../../../domain/repositories/medication/medication-repository'
 import { Medication } from '../../../../domain/entities/medication'
+import { AuthData } from 'firebase-functions/v2/tasks'
 
 describe('DeleteMedication Use Case', () => {
+    const mockAuth: AuthData = {
+        uid: 'user-123',
+        token: {
+            uid: 'user-123',
+            email: 'test@example.com',
+        },
+    } as any
+
     it('should execute the repository delete method with the provided medication', async () => {
         // 1. Arrange: Create a "Mock" Repository
         // We don't need Firestore here, just a fake object that follows the interface
@@ -55,10 +64,10 @@ describe('DeleteMedication Use Case', () => {
         }
 
         // 2. Act
-        await useCase.execute(medication)
+        await useCase.execute(medication, mockAuth)
 
         // 3. Assert
-        expect(mockRepo.delete).toHaveBeenCalledWith(medication)
+        expect(mockRepo.delete).toHaveBeenCalledWith(medication, mockAuth)
         expect(mockRepo.delete).toHaveBeenCalledTimes(1)
     })
 })
