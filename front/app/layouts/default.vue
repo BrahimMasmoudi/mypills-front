@@ -130,7 +130,7 @@ onMounted(async () => {
   await notifications.registerNotificationToken()
   notifications.listenForMessages()
 
-  if (!guideSeen.value) {
+  if (!guideSeen.value && $device.isMobile) {
     // Open using your pattern
     const dontShow = await $open<boolean>(NotificationGuideDialog, {
       scrim: true,
