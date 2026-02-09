@@ -19,6 +19,7 @@ if (fs.existsSync(envPath)) {
 }
 
 // Special overrides for tests to ensure they point to emulator
-process.env.GCLOUD_PROJECT = process.env.FIREBASE_PROJECT_ID || 'my-pills-staging-460b5';
-process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
-process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
+if (!process.env.GITHUB_ACTIONS) {
+    process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
+    process.env.FIREBASE_AUTH_EMULATOR_HOST = 'localhost:9099';
+}
