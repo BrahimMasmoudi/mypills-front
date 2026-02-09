@@ -34,6 +34,8 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         await this.collection.doc(medication.medicationId).set({
             ...medication,
             uid: auth.uid,
+            createdAt: new Date(),
+            updatedAt: new Date(),
         }, { merge: false })
     }
 
@@ -41,6 +43,7 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         const docRef = await this.getSecureDocRef(medication.medicationId, auth)
         await docRef.update({
             quantity: FieldValue.increment(1),
+            updatedAt: new Date(),
         })
     }
 
@@ -48,6 +51,7 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         const docRef = await this.getSecureDocRef(medication.medicationId, auth)
         await docRef.update({
             quantity: FieldValue.increment(-1),
+            updatedAt: new Date(),
         })
     }
 
@@ -65,10 +69,11 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         const docRef = await this.getSecureDocRef(medication.medicationId, auth)
         await docRef.update({
             [key]: value,
+            updatedAt: new Date(),
         })
     }
 
-    async setExpiredStatus(medicationIds: Medication['medicationId'][], auth : AuthData): Promise<{ updated: number }> {
+    async setExpiredStatus(medicationIds: Medication['medicationId'][], auth: AuthData): Promise<{ updated: number }> {
         try {
             if (!medicationIds || medicationIds.length === 0) {
                 return { updated: 0 }
@@ -89,7 +94,7 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
                 if (snapshot.empty) continue
 
                 snapshot.docs.forEach((doc) => {
-                    batch.update(doc.ref, { expired: true })
+                    batch.update(doc.ref, { expired: true, updatedAt: new Date() })
                 })
 
                 await batch.commit()

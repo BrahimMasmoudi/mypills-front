@@ -36,6 +36,8 @@ describe('DecrementMedication Use Case', () => {
             quantity: 10,
             image: 'https://firebasestorage.googleapis.com/.../doliprane.png',
             email: 'user@example.com',
+            updatedAt: new Date(),
+            createdAt: new Date(),
             details: {
                 form: 'gélule',
                 administrationRoutes: ['orale'],

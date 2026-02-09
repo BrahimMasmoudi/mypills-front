@@ -89,6 +89,8 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
         quantity: 10,
         image: 'https://example.com/image.png',
         email: 'test@example.com',
+        updatedAt: new Date(),
+        createdAt: new Date(),
         ...overrides,
     })
 

@@ -10,5 +10,7 @@ export type Medication = {
     quantity: number
     image: string
     email: string
-    details? : MedicationDetails
+    details?: MedicationDetails
+    createdAt: Date
+    updatedAt: Date
 }

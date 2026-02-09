@@ -9,6 +9,8 @@ export type Medication = {
     image: string
     email: string
     details?: MedicationDetails
+    createdAt: Date
+    updatedAt: Date
 }
 
 type MedicationDetails = {

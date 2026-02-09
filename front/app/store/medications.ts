@@ -55,8 +55,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         // Just updating this ref triggers the useCollection above
         sourceQuery.value = query(
             collection($firestore, 'medications'),
-            where('email', '==', user.email),
-            orderBy('expiryDate', 'desc')
+            where('email', '==', user.email)
         )
     }
 

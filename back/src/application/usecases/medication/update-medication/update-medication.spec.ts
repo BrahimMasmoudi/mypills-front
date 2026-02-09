@@ -37,6 +37,8 @@ describe('UpdateMedication Use Case', () => {
             quantity: 10,
             image: 'https://example.com/doliprane.png',
             email: 'user@example.com',
+            updatedAt: new Date(),
+            createdAt: new Date(),
         }
 
         // 3. Act
