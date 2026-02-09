@@ -16,7 +16,7 @@
     "migrate:prod": "yarn fireway migrate --require=ts-node/register --path ./migrations"
   },
   "engines": {
-    "node": "20"
+    "node": "24"
   },
   "main": "lib/index.js",
   "dependencies": {

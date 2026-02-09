@@ -1,4 +1,4 @@
-import {medicationId, testEmail, testUid} from "../../support/e2e"
+import { medicationId, testEmail, testUid } from "../../support/e2e"
 
 describe('Medication Quantity Updates', () => {
     it('should decrement the quantity when the minus button is clicked', () => {
@@ -7,13 +7,15 @@ describe('Medication Quantity Updates', () => {
             uid: testUid,
             email: testEmail,
             name: 'Doliprane 1000mg',
+            createdAt: new Date(),
+            updatedAt: new Date(),
             quantity: 10, // Starting quantity
             expiryDate: new Date('2026-12-31').toISOString(),
         })
-        
+
         cy.visit('/medications')
 
-        cy.get('[data-cy="medication-card"]', {timeout: 10000})
+        cy.get('[data-cy="medication-card"]')
             .should('be.visible')
             .and('contain', '10')
 

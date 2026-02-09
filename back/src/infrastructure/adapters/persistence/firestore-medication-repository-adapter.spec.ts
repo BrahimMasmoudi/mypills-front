@@ -89,6 +89,8 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
         quantity: 10,
         image: 'https://example.com/image.png',
         email: 'test@example.com',
+        updatedAt: new Date(),
+        createdAt: new Date(),
         ...overrides,
     })
 
@@ -109,7 +111,9 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
             const medication = createFakeMedication()
             await adapter.increment(medication, fakeAuth)
             expect(mockGet).toHaveBeenCalled()
-            expect(mockUpdate).toHaveBeenCalledWith({ quantity: FieldValue.increment(1) })
+            expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+                quantity: FieldValue.increment(1)
+            }))
         })
 
         it('should throw error if user does not own document', async () => {

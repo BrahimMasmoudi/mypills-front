@@ -1,8 +1,8 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
-import { Medication } from '../../../../types/medication'
 import { FirestoreMedicationRepositoryAdapter } from '../../../adapters/persistence/firestore-medication-repository-adapter'
 import { IncrementMedication } from '../../../../application/usecases/medication/increment-medication/increment-medication'
 import { $firebaseConnector } from '../../../config/firebase'
+import { Medication } from '../../../../domain/entities/medication'
 
 export const incrementMedication = onCall({ region: 'europe-west3' }, async ({ data, auth }) => {
     if (!auth) {

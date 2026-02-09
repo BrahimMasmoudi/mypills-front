@@ -1,8 +1,8 @@
-import {attachCustomCommands} from 'cypress-firebase'
+import { attachCustomCommands } from 'cypress-firebase'
 import firebase from 'firebase/compat/app'
 import 'firebase/compat/auth'
 import 'firebase/compat/firestore'
-
+import 'firebase/compat/functions'
 declare global {
     namespace Cypress {
         interface Chainable {
@@ -31,12 +31,13 @@ const isLocal = window.location.hostname === 'localhost' || window.location.host
 if (isLocal) {
     app.auth().useEmulator('http://localhost:9099')
     app.firestore().useEmulator('localhost', 8080)
+    app.functions('europe-west3').useEmulator('localhost', 5001)
     console.log('Cypress is using Firebase Emulators')
 } else {
     console.log('Cypress is using Live Staging Firebase')
 }
 
-attachCustomCommands({Cypress, cy, firebase})
+attachCustomCommands({ Cypress, cy, firebase })
 
 
 export const testEmail = 'test.test@test.com'

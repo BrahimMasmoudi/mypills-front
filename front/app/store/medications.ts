@@ -56,7 +56,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         sourceQuery.value = query(
             collection($firestore, 'medications'),
             where('email', '==', user.email),
-            orderBy('expiryDate', 'desc')
+            orderBy('createdAt', 'desc')
         )
     }
 

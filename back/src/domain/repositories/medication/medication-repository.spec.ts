@@ -41,6 +41,8 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
         quantity: 5,
         image: '',
         email: 'test@test.com',
+        updatedAt: new Date(),
+        createdAt: new Date(),
     })
 
     describe('Single Document Operations', () => {
