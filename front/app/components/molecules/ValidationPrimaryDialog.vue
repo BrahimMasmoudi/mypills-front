@@ -8,8 +8,7 @@
       :width="width"
       data-cy="validation-primary-dialog"
       content-class="elevation-0"
-      @keydown.esc="cancelAndClose"
-  >
+      @keydown.esc="cancelAndClose">
     <v-card class="rounded-xl pa-6" elevation="24">
       <div class="d-flex flex-column align-center text-center">
         <!-- Icon -->
