@@ -34,6 +34,16 @@
         </template>
 
         <v-btn
+            icon="mdi-pencil-outline"
+            variant="tonal"
+            color="primary"
+            :loading="loadingAction === 'edit'"
+            :disabled="!!loadingAction"
+            size="small"
+            @click="handleAction('edit')"
+        />
+
+        <v-btn
             icon="mdi-delete-outline"
             variant="tonal"
             color="error"
@@ -114,14 +124,14 @@ const props = defineProps<{
   statusConfig: any
 }>()
 
-const emit = defineEmits(['delete', 'update-status'])
+const emit = defineEmits(['delete', 'update-status', 'edit'])
 
 const loadingAction = ref<string | null>(null)
 const {t} = useI18n()
 
 const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
 
-const handleAction = async (type: 'sent' | 'failed' | 'delete') => {
+const handleAction = async (type: 'sent' | 'failed' | 'delete' | 'edit') => {
   loadingAction.value = type
 
   // Parent must call this 'done' function to stop the loader
@@ -131,6 +141,8 @@ const handleAction = async (type: 'sent' | 'failed' | 'delete') => {
 
   if (type === 'delete') {
     emit('delete', props.item, done)
+  } else if (type === 'edit') {
+    emit('edit', props.item, done)
   } else {
     emit('update-status', props.item.ids, type, done)
   }

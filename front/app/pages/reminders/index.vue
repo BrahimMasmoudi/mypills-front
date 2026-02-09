@@ -44,6 +44,7 @@
               :item="reminder"
               :status-config="statusConfig"
               @delete="handleDelete"
+              @edit="handleEdit"
               @update-status="handleUpdateStatus"
           />
         </v-col>
@@ -56,6 +57,7 @@
           :headers="headers"
           :status-config="statusConfig"
           @delete="handleDelete"
+          @edit="handleEdit"
           @update-status="handleUpdateStatus"
       />
     </div>
@@ -71,16 +73,28 @@ import type {ToastType} from "~/composables/openToast"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
 import {useI18n} from "vue-i18n";
 import {useReminderStore} from "~/store/reminder";
+import {useMedicationsStore} from "~/store/medications";
+import EditReminderDialog from "~/components/molecules/reminder/EditDialog.vue";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
 const reminderStore = useReminderStore()
+const medicationStore = useMedicationsStore()
 const {reminders, isLoading} = storeToRefs(reminderStore)
+const {medications} = storeToRefs(medicationStore)
 const viewType = ref<'grid' | 'table'>('grid')
+
+onMounted(() => {
+  medicationStore.initMedications()
+})
 
 useSeoMeta({
   title: () => t('nav.reminders')
 })
+
+const validMedications = computed(() =>
+    medications.value?.filter(m => !m.expired) ?? []
+)
 
 const groupedReminders = computed((): ReminderGroup[] => {
   const rawReminders = reminders.value
@@ -162,6 +176,27 @@ const headers = computed(() => [
 const handleUpdateStatus = async (ids: string[], status: 'sent' | 'failed', done: () => void) => {
   try {
     await reminderStore.updateRemindersStatus(ids, status)
+  } finally {
+    done()
+  }
+}
+
+const handleEdit = async (item: ReminderGroup, done: () => void) => {
+  try {
+    const result = await $open<ToastType>(EditReminderDialog, {
+      scrim: true,
+      isPersistent: true,
+      item: item,
+      validMedications: validMedications.value,
+      reminders: reminders.value,
+      updateReminder: async (payload: any) => {
+        await reminderStore.updateReminder(payload)
+      }
+    })
+
+    if (result === 'success') {
+      // Success is handled by the store sync
+    }
   } finally {
     done()
   }

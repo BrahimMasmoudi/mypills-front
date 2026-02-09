@@ -16,3 +16,15 @@ export interface ScheduleRequestDto {
     doses: { time: string, quantity: string }[]
     timezone: string
 }
+export interface UpdateReminderRequestDto {
+    oldSicknessName: string
+    newSicknessName: string
+    remindersToDelete: string[]
+    medications: {
+        name: string
+        startDate: string
+        endDate: string
+        doses: { time: string, quantity: string | number }[]
+    }[]
+    timezone: string
+}

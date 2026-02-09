@@ -130,6 +130,8 @@
   "reminderDialog": {
     "createTitle": "Planifier les Rappels",
     "createSubtitle": "Configurez un plan de traitement pour recevoir des notifications",
+    "editTitle": "Modifier le Rappel",
+    "editSubtitle": "Modifiez les détails de votre plan de traitement.",
     "frequency": "Fréquence journalière",
     "addDose": "Ajouter une dose",
     "startDate": "Date de début",
