@@ -1,5 +1,5 @@
-import {defineConfig} from 'cypress'
-import {plugin as cypressFirebasePlugin} from 'cypress-firebase'
+import { defineConfig } from 'cypress'
+import { plugin as cypressFirebasePlugin } from 'cypress-firebase'
 import admin from 'firebase-admin'
 
 export default defineConfig({
@@ -11,7 +11,8 @@ export default defineConfig({
         experimentalFastVisibility: true,
         experimentalMemoryManagement: true,
         screenshotOnRunFailure: true,
-        video : true,
+        defaultCommandTimeout: 30000,
+        video: true,
         env: {
             GCLOUD_PROJECT: 'my-pills-staging-460b5'
         },
@@ -46,7 +47,7 @@ export default defineConfig({
                 admin.initializeApp({
                     projectId: projectId,
                     // Only include credential if it was successfully created
-                    ...(credential ? {credential} : {})
+                    ...(credential ? { credential } : {})
                 })
             }
 
