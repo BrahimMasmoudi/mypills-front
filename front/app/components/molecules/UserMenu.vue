@@ -1,115 +1,133 @@
 <template>
-  <v-menu location="bottom end" transition="slide-y-transition" :offset="8">
+  <v-menu
+      location="bottom end"
+      transition="slide-y-transition"
+      :offset="12"
+      content-class="user-menu-popover"
+  >
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" icon :ripple="false" height="48">
-        <v-avatar size="48" color="primary">
-          <v-img v-if="userStore.user?.photoURL" :src="userStore.user.photoURL" cover/>
-          <v-icon v-else icon="mdi-account" size="32" color="white"/>
-        </v-avatar>
-      </v-btn>
+      <div class="user-menu-activator" v-bind="props">
+        <div class="avatar-wrapper shadow-premium">
+          <v-avatar size="44" class="main-avatar">
+            <v-img v-if="userStore.user?.photoURL" :src="userStore.user.photoURL" cover/>
+            <v-icon v-else icon="mdi-account" size="28" color="white"/>
+          </v-avatar>
+        </div>
+      </div>
     </template>
 
-    <v-card min-width="280" rounded="lg" elevation="4" class="mt-2 overflow-hidden">
-      <div class="pa-4 d-flex align-center">
-        <v-avatar size="36" class="mr-4" color="primary">
-          <v-img v-if="userStore.user?.photoURL" :src="userStore.user.photoURL" cover/>
-          <v-icon v-else icon="mdi-account" color="white"/>
-        </v-avatar>
+    <v-card min-width="300" class="user-menu-card overflow-hidden">
+      <!-- Gradient Header -->
+      <div class="user-header pa-5 d-flex align-center">
         <div class="d-flex flex-column overflow-hidden">
-          <span class="text-subtitle-1 font-weight-bold text-truncate text-capitalize line-height-1">
-            {{ userStore.user?.displayName }}
+          <span class="text-h6 font-weight-bold text-truncate text-capitalize mb-n1">
+            {{ userStore.user?.displayName || t('user-menu.guest') }}
           </span>
-          <span class="text-caption text-medium-emphasis text-truncate">
+          <span class="text-truncate">
             {{ userStore.user?.email }}
           </span>
         </div>
       </div>
 
-      <v-divider/>
+      <v-divider class="border-opacity-25"/>
 
-      <v-list density="comfortable" nav class="pa-2">
+      <v-list density="comfortable" nav class="pa-3">
+        <!-- Theme Toggle -->
         <v-list-item
-            value="theme"
-            rounded="lg"
-            color="primary"
             @click="toggleColorMode"
-            class="mb-1"
+            class="menu-item-premium mb-2"
+            :ripple="{ class: 'text-primary' }"
         >
           <template #prepend>
-            <v-icon :color="colorMode.value === 'dark' ? 'amber' : 'black'">
-              {{ colorMode.value === 'dark' ? 'mdi-weather-night' : 'mdi-white-balance-sunny' }}
-            </v-icon>
+            <div class="icon-container mr-3" :class="colorMode.value === 'dark' ? 'icon-amber' : 'icon-blue'">
+              <v-icon size="20">
+                {{ colorMode.value === 'dark' ? 'mdi-weather-night' : 'mdi-white-balance-sunny' }}
+              </v-icon>
+            </div>
           </template>
-          <v-list-item-title class="font-weight-medium">
+          <v-list-item-title class="font-weight-bold text-body-2">
             {{ t('user-menu.change-theme') }}
           </v-list-item-title>
+          <template #append>
+            <span class="text-overline text-medium-emphasis text-uppercase fw-900">
+              {{ colorMode.value }}
+            </span>
+          </template>
         </v-list-item>
 
-        <v-menu location="bottom end" transition="slide-y-transition" :offset="8">
+        <!-- Language Switcher -->
+        <v-menu location="start top" transition="scale-transition" :offset="12">
           <template v-slot:activator="{ props }">
             <v-list-item
                 v-bind="props"
-                value="change-language"
-                rounded="lg"
-                color="error"
+                class="mb-2"
             >
               <template #prepend>
-                <v-icon icon="mdi-translate"/>
+                <div class="icon-container icon-indigo mr-3">
+                  <v-icon icon="mdi-translate" size="20"/>
+                </div>
               </template>
-              <v-list-item-title class="font-weight-medium">
+              <v-list-item-title class="font-weight-bold text-body-2">
                 {{ t('user-menu.change-language') }}
               </v-list-item-title>
+              <template #append>
+                <v-icon icon="mdi-chevron-right" size="18" class="text-medium-emphasis"/>
+              </template>
             </v-list-item>
           </template>
 
-          <v-list density="compact" rounded="lg" elevation="8" class="py-2" min-width="150">
+          <v-list density="compact" elevation="12" class=" py-2 pa-2" min-width="180">
             <v-list-item
                 v-for="lang in languages"
                 :key="lang.code"
-                :value="lang.code"
                 @click="switchLocale(lang.code)"
                 :active="locale === lang.code"
+                class="lang-item mb-1"
                 color="primary"
-                rounded="lg"
-                class="mb-1 mx-2"
             >
               <template #prepend>
-                <nuxt-icon :name="`flag-${lang.code}`" filled class="flag-icon mr-3"/>
+                <nuxt-icon :name="`flag-${lang.code}`" filled class="flag-icon-mini mr-3"/>
               </template>
-              <v-list-item-title class="font-weight-medium">
+              <v-list-item-title class="font-weight-bold text-body-2 text-capitalize">
                 {{ lang.name }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
-
         </v-menu>
 
-
+        <!-- Country Switcher -->
         <v-list-item
-            value="change-country"
-            rounded="lg"
-            color="error"
             @click="openCountryDialog"
+            class="menu-item-premium mb-2"
+            :ripple="{ class: 'text-primary' }"
         >
           <template #prepend>
-            <v-icon icon="mdi-earth"/>
+            <div class="icon-container icon-teal mr-3">
+              <v-icon icon="mdi-earth" size="20"/>
+            </div>
           </template>
-          <v-list-item-title class="font-weight-medium d-flex align-center justify-space-between">
+          <v-list-item-title class="font-weight-bold text-body-2">
             {{ t('user-menu.change-country') }}
-            <nuxt-icon v-if="selectedCountry === 'FR'" :name="`flag-${selectedCountry?.toLowerCase()}`" filled class="flag-icon-medium mr-3"/>
           </v-list-item-title>
+          <template #append>
+             <nuxt-icon v-if="selectedCountry" :name="`flag-${selectedCountry?.toLowerCase()}`" filled class="flag-icon-mini ml-2"/>
+          </template>
         </v-list-item>
 
+        <v-divider class="my-3 border-opacity-25 mx-4"/>
+
+        <!-- Disconnect -->
         <v-list-item
-            value="disconnect"
-            rounded="lg"
             @click="handleSignOut"
-            color="error"
+            class="menu-item-logout text-error"
+            :ripple="{ class: 'text-error' }"
         >
           <template #prepend>
-            <v-icon icon="mdi-logout" color="error"/>
+            <div class="icon-container icon-error mr-3">
+              <v-icon icon="mdi-power" size="20"/>
+            </div>
           </template>
-          <v-list-item-title>
+          <v-list-item-title class="font-weight-black text-body-2">
             {{ t('user-menu.disconnect') }}
           </v-list-item-title>
         </v-list-item>
@@ -175,21 +193,125 @@ const openCountryDialog = async () => {
 </script>
 
 <style scoped>
-.line-height-1 {
-  line-height: 1;
+/* Glassmorphism Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
-.flag-icon :deep(svg) {
-  width: 28px;
-  height: 28px;
-  margin-top: 2px;
-  color: currentColor;
+:deep(.v-theme--dark) .glass-effect {
+  background: rgba(23, 23, 23, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
-.flag-icon-medium :deep(svg) {
-  width: 24px;
-  height: 24px;
-  margin-top: 2px;
-  color: currentColor;
+/* User Header Gradient */
+.user-header {
+  background: linear-gradient(135deg, var(--v-primary-base) 0%, #6366f1 100%);
+  position: relative;
+}
+
+.text-white-opac {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Avatar Enhancements */
+.user-menu-activator {
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.user-menu-activator:hover {
+  transform: scale(1.08);
+}
+
+.avatar-wrapper {
+  position: relative;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+}
+
+.main-avatar {
+  background-color: #1e293b;
+  border: 2px solid white;
+}
+
+:deep(.v-theme--dark) .main-avatar {
+  border: 2px solid #0f172a;
+}
+
+.status-dot {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  background-color: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+:deep(.v-theme--dark) .status-dot {
+  border: 2px solid #0f172a;
+}
+
+.avatar-glow {
+  position: relative;
+}
+
+.avatar-glow::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+/* Menu Item Premium Styles */
+.menu-item-premium {
+  transition: all 0.2s ease;
+}
+
+.menu-item-premium:hover {
+  background-color: rgba(var(--v-theme-primary), 0.08) !important;
+  transform: translateX(4px);
+}
+
+.icon-container {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.icon-blue { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.icon-amber { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.icon-indigo { background-color: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.icon-teal { background-color: rgba(20, 184, 166, 0.1); color: #14b8a6; }
+.icon-error { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+.fw-900 { font-weight: 900; }
+
+.flag-icon-mini :deep(svg) {
+  width: 22px;
+  height: 22px;
+}
+
+.lang-item:hover {
+  background-color: rgba(var(--v-theme-primary), 0.05);
+}
+
+.shadow-premium {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 </style>
