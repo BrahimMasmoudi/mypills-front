@@ -1,4 +1,4 @@
-import { Reminder } from '../../entities/reminder'
+import { Reminder, ReminderStatus } from '../../entities/reminder'
 
 export type ReminderId = Reminder['reminderId']
 
@@ -7,7 +7,7 @@ export interface ReminderRepository {
 
     getById(id: string): Promise<Reminder | null>
 
-    updateRemindersStatus(id: string[], status: 'pending' | 'sent' | 'failed'): Promise<void>
+    updateRemindersStatus(id: string[], status: ReminderStatus): Promise<void>
 
     nextId(): string
 

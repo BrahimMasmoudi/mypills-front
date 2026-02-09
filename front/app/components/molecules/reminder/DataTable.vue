@@ -91,7 +91,7 @@
                 size="small"
                 :loading="getLoading(item, 'sent')"
                 :disabled="isAnyLoading(item)"
-                @click="handleAction(item, 'update-status', 'sent')"
+                @click="handleAction(item, 'finish-treatment', 'done')"
             />
           </template>
 
@@ -135,10 +135,10 @@ const props = defineProps<{
   statusConfig: any
 }>()
 
-const emit = defineEmits(['delete', 'update-status', 'edit'])
+const emit = defineEmits(['delete', 'finish-treatment', 'edit'])
 const { t } = useI18n()
 
-// Track loading per item group { "SicknessName": "sent" | "failed" | "delete" | "edit" | null }
+// Track loading per item group { "SicknessName": "done" | "failed" | "delete" | "edit" | null }
 const loadingStates = ref<Record<string, string | null>>({})
 
 /**
@@ -156,7 +156,7 @@ const isAnyLoading = (item: ReminderGroup) =>
 /**
  * Handles clicks by setting local state and calling parent emitters
  */
-const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'update-status' | 'edit', status?: string) => {
+const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'finish-treatment' | 'edit', status?: string) => {
   const actionKey = status || emitName
   loadingStates.value[item.sicknessName] = actionKey
 
@@ -170,7 +170,7 @@ const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'update-st
   } else if (emitName === 'edit') {
     emit('edit', item, done)
   } else {
-    emit('update-status', item.ids, status, done)
+    emit('finish-treatment', item.ids, status, done)
   }
 }
 

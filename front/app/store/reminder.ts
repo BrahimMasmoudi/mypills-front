@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { httpsCallable } from 'firebase/functions'
 import { collection, query, where, orderBy } from 'firebase/firestore'
 import { useCollection, getCurrentUser } from 'vuefire'
-import type { CreateReminderRequest, Reminder, ReminderGroup } from '~/types/reminder'
+import type { CreateReminderRequest, Reminder, ReminderGroup, ReminderStatus } from '~/types/reminder'
 import { logEvent } from '@firebase/analytics'
 
 export const useReminderStore = defineStore('reminder', () => {
@@ -73,7 +73,7 @@ export const useReminderStore = defineStore('reminder', () => {
         }
     }
 
-    const updateRemindersStatus = async (ids: string[], status: 'sent' | 'failed') => {
+    const updateRemindersStatus = async (ids: string[], status: ReminderStatus) => {
         const callUpdate = httpsCallable($functions, 'updateRemindersStatus')
         await callUpdate({ ids, status })
 

@@ -45,7 +45,7 @@
               :status-config="statusConfig"
               @delete="handleDelete"
               @edit="handleEdit"
-              @update-status="handleUpdateStatus"
+              @finish-treatment="finishTreatment"
           />
         </v-col>
       </v-row>
@@ -58,7 +58,7 @@
           :status-config="statusConfig"
           @delete="handleDelete"
           @edit="handleEdit"
-          @update-status="handleUpdateStatus"
+          @finish-treatment="finishTreatment"
       />
     </div>
   </v-sheet>
@@ -68,9 +68,10 @@
 import {storeToRefs} from 'pinia'
 import {logEvent} from "firebase/analytics";
 import {format} from 'date-fns'
-import type {ReminderGroup} from '~/types/reminder'
+import type {ReminderGroup, ReminderStatus} from '~/types/reminder'
 import type {ToastType} from "~/composables/openToast"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
+import ValidationPrimaryDialog from "~/components/molecules/ValidationPrimaryDialog.vue"
 import {useI18n} from "vue-i18n";
 import {useReminderStore} from "~/store/reminder";
 import {useMedicationsStore} from "~/store/medications";
@@ -132,6 +133,7 @@ const groupedReminders = computed((): ReminderGroup[] => {
 
     if (r.status === 'failed') group.status = 'failed'
     else if (group.status !== 'failed' && r.status === 'pending') group.status = 'pending'
+    else if (group.status !== 'failed' && group.status !== 'pending' && r.status === 'done') group.status = 'done'
   })
 
   return Array.from(groups.values()).map((g) => {
@@ -160,7 +162,7 @@ const groupedReminders = computed((): ReminderGroup[] => {
 
 const statusConfig = {
   pending: {color: 'warning', icon: 'mdi-timer-sand'},
-  sent: {color: 'success', icon: 'mdi-check-circle'},
+  done: {color: 'success', icon: 'mdi-check-circle'},
   failed: {color: 'error', icon: 'mdi-alert-circle'}
 }
 
@@ -173,7 +175,21 @@ const headers = computed(() => [
   {title: '', key: 'actions', align: 'end' as const, sortable: false},
 ])
 
-const handleUpdateStatus = async (ids: string[], status: 'sent' | 'failed', done: () => void) => {
+const finishTreatment = async (ids: string[], status: ReminderStatus, done: () => void) => {
+  if (status === 'done') {
+    const confirm = await $open<ToastType>(ValidationPrimaryDialog, {
+      scrim: true,
+      isPersistent: true,
+      title: t('confirm'),
+      message: t('reminderDialogValidate.message')
+    })
+
+    if (confirm !== 'success') {
+      done()
+      return
+    }
+  }
+
   try {
     await reminderStore.updateRemindersStatus(ids, status)
   } finally {

@@ -148,6 +148,9 @@
       "error": "An error happened while creating the reminder"
     }
   },
+  "reminderDialogValidate": {
+    "message": "Are you sure you took all your pills?"
+  },
   "reminders": {
     "title": "My Reminders",
     "subtitle": "Manage your intake schedules and track current treatments",
@@ -169,7 +172,7 @@
   },
   "status": {
     "pending": "Pending",
-    "sent": "Done",
+    "done": "Done",
     "failed": "Failed"
   },
   "validation": {

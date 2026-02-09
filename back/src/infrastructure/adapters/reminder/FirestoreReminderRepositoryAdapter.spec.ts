@@ -135,7 +135,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
         it('should update the status and updatedAt field via batch for all provided IDs', async () => {
             // Arrange
             const ids = ['id-1', 'id-2']
-            const status = 'sent'
+            const status = 'done'
 
             // Act
             await adapter.updateRemindersStatus(ids, status)
@@ -152,7 +152,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             // In your mock setup, mockCollection.doc returns mockDoc
             expect(mockBatch.update).toHaveBeenCalledTimes(2)
             expect(mockBatch.update).toHaveBeenCalledWith(mockDoc, {
-                status: 'sent',
+                status: 'done',
                 updatedAt: expect.any(Timestamp),
             })
 
@@ -161,7 +161,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
         })
 
         it('should return early and not create a batch if IDs array is empty', async () => {
-            await adapter.updateRemindersStatus([], 'sent')
+            await adapter.updateRemindersStatus([], 'done')
             expect(mockConnector.firestore.batch).not.toHaveBeenCalled()
         })
     })

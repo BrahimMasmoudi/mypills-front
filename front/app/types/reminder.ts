@@ -1,4 +1,4 @@
-import type {Medication} from '~/types/medication'
+import type { Medication } from '~/types/medication'
 
 export interface Dose {
     time: string
@@ -14,6 +14,8 @@ export interface CreateReminderRequest {
     timezone: string
 }
 
+export type ReminderStatus = 'pending' | 'done' | 'failed'
+
 export interface Reminder {
     sicknessName: string
     reminderId: string
@@ -21,7 +23,7 @@ export interface Reminder {
     medName: string
     quantity: string | number
     scheduledTime: Date
-    status: 'pending' | 'sent' | 'failed'
+    status: ReminderStatus
 }
 
 export interface MedicationInfo {
@@ -36,7 +38,7 @@ export interface ReminderGroup {
     startDate: Date
     endDate: Date
     ids: string[]
-    status: 'pending' | 'sent' | 'failed'
+    status: 'pending' | 'done' | 'failed'
     fullObject: Reminder
     doses: Dose[]
 }

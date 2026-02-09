@@ -24,10 +24,10 @@
               icon="mdi-check-circle-outline"
               variant="tonal"
               color="success"
-              :loading="loadingAction === 'sent'"
+              :loading="loadingAction === 'done'"
               :disabled="!!loadingAction"
               size="small"
-              @click="handleAction('sent')"
+              @click="handleAction('done')"
           />
 
           <v-divider vertical class="mx-1"/>
@@ -124,14 +124,14 @@ const props = defineProps<{
   statusConfig: any
 }>()
 
-const emit = defineEmits(['delete', 'update-status', 'edit'])
+const emit = defineEmits(['delete', 'edit', 'finish-treatment'])
 
 const loadingAction = ref<string | null>(null)
 const {t} = useI18n()
 
 const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
 
-const handleAction = async (type: 'sent' | 'failed' | 'delete' | 'edit') => {
+const handleAction = async (type: 'done' | 'failed' | 'delete' | 'edit') => {
   loadingAction.value = type
 
   // Parent must call this 'done' function to stop the loader
@@ -139,12 +139,12 @@ const handleAction = async (type: 'sent' | 'failed' | 'delete' | 'edit') => {
     loadingAction.value = null
   }
 
-  if (type === 'delete') {
-    emit('delete', props.item, done)
-  } else if (type === 'edit') {
-    emit('edit', props.item, done)
+  if (type === 'done' || type === 'finish-treatment') {
+    emit('finish-treatment', props.item.ids, 'done', () => loadingAction.value = null)
+  } else if (type === 'failed') {
+    emit('finish-treatment', props.item.ids, 'failed', () => loadingAction.value = null)
   } else {
-    emit('update-status', props.item.ids, type, done)
+    emit(type, props.item, () => loadingAction.value = null)
   }
 }
 </script>
@@ -153,6 +153,7 @@ const handleAction = async (type: 'sent' | 'failed' | 'delete' | 'edit') => {
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

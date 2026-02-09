@@ -27,7 +27,7 @@ describe('updateRemindersStatus onCall Function', () => {
         // 4. Create mock request data
         const mockData = {
             ids: ['rem-123', 'rem-456'],
-            status: 'sent',
+            status: 'done',
         }
 
         // 5. Execute the wrapped function
@@ -47,7 +47,7 @@ describe('updateRemindersStatus onCall Function', () => {
 
         const invalidData = {
             ids: 'not-an-array',
-            status: 'sent',
+            status: 'done',
         }
 
         // Act & Assert

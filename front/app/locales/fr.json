@@ -148,6 +148,9 @@
       "error": "Échec lors de la creation d'un rappel"
     }
   },
+  "reminderDialogValidate": {
+    "message": "Es-tu sûr d'avoir pris tous tes médicaments ?"
+  },
   "reminders": {
     "title": "Mes Rappels",
     "subtitle": "Gérez vos horaires de prise et suivez vos traitements en cours",
@@ -169,7 +172,7 @@
   },
   "status": {
     "pending": "En attente",
-    "sent": "validé",
+    "done": "validé",
     "failed": "Échoué"
   },
   "validation": {
