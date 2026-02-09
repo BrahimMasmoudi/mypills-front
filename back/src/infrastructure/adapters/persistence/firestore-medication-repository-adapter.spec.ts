@@ -111,9 +111,9 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
             const medication = createFakeMedication()
             await adapter.increment(medication, fakeAuth)
             expect(mockGet).toHaveBeenCalled()
-            expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ 
-            quantity: FieldValue.increment(1) 
-        }))
+            expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({
+                quantity: FieldValue.increment(1)
+            }))
         })
 
         it('should throw error if user does not own document', async () => {
