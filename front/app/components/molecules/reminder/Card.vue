@@ -34,7 +34,19 @@
         </template>
 
         <v-btn
+            v-if="item.status === 'pending'"
             icon="mdi-pencil-outline"
+            variant="tonal"
+            color="primary"
+            :loading="loadingAction === 'edit'"
+            :disabled="!!loadingAction"
+            size="small"
+            @click="handleAction('edit')"
+        />
+
+        <v-btn
+            v-else-if="item.status === 'done'"
+            icon="mdi-reload"
             variant="tonal"
             color="primary"
             :loading="loadingAction === 'edit'"
@@ -131,7 +143,7 @@ const {t} = useI18n()
 
 const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
 
-const handleAction = async (type: 'done' | 'failed' | 'delete' | 'edit') => {
+const handleAction = async (type: 'done' | 'failed' | 'delete' | 'edit' | 'finish-treatment') => {
   loadingAction.value = type
 
   // Parent must call this 'done' function to stop the loader
@@ -140,11 +152,11 @@ const handleAction = async (type: 'done' | 'failed' | 'delete' | 'edit') => {
   }
 
   if (type === 'done' || type === 'finish-treatment') {
-    emit('finish-treatment', props.item.ids, 'done', () => loadingAction.value = null)
+    emit('finish-treatment', props.item.ids, 'done', done)
   } else if (type === 'failed') {
-    emit('finish-treatment', props.item.ids, 'failed', () => loadingAction.value = null)
+    emit('finish-treatment', props.item.ids, 'failed', done)
   } else {
-    emit(type, props.item, () => loadingAction.value = null)
+    emit(type as 'delete' | 'edit', props.item, done)
   }
 }
 </script>

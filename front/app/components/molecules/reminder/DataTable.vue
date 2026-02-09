@@ -98,7 +98,19 @@
           <v-divider v-if="item.status === 'pending'" vertical class="mx-1" />
 
           <v-btn
+              v-if="item.status === 'pending'"
               icon="mdi-pencil-outline"
+              variant="tonal"
+              color="primary"
+              size="small"
+              :loading="getLoading(item, 'edit')"
+              :disabled="isAnyLoading(item)"
+              @click="handleAction(item, 'edit')"
+          />
+
+          <v-btn
+              v-else-if="item.status === 'done'"
+              icon="mdi-reload"
               variant="tonal"
               color="primary"
               size="small"
@@ -165,12 +177,10 @@ const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'finish-tr
     loadingStates.value[item.sicknessName] = null
   }
 
-  if (emitName === 'delete') {
-    emit('delete', item, done)
-  } else if (emitName === 'edit') {
-    emit('edit', item, done)
+  if (emitName === 'delete' || emitName === 'edit') {
+    emit(emitName, item, done)
   } else {
-    emit('finish-treatment', item.ids, status, done)
+    emit('finish-treatment', item.ids, (status || 'done') as any, done)
   }
 }
 
