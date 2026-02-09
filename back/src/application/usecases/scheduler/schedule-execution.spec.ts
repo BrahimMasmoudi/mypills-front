@@ -7,9 +7,9 @@ describe('ScheduleExecution Use Case', () => {
     let useCase: ScheduleExecution
 
     beforeEach(() => {
-        // 1. Arrange: Create a mock of the TaskSchedulerPort
         mockScheduler = {
             scheduleNotificationTask: jest.fn().mockResolvedValue('task-name-123'),
+            cancelNotificationTask: jest.fn().mockResolvedValue(undefined),
         }
 
         useCase = new ScheduleExecution(mockScheduler)

@@ -44,7 +44,8 @@
               :item="reminder"
               :status-config="statusConfig"
               @delete="handleDelete"
-              @update-status="handleUpdateStatus"
+              @edit="handleEdit"
+              @finish-treatment="finishTreatment"
           />
         </v-col>
       </v-row>
@@ -56,7 +57,8 @@
           :headers="headers"
           :status-config="statusConfig"
           @delete="handleDelete"
-          @update-status="handleUpdateStatus"
+          @edit="handleEdit"
+          @finish-treatment="finishTreatment"
       />
     </div>
   </v-sheet>
@@ -66,21 +68,34 @@
 import {storeToRefs} from 'pinia'
 import {logEvent} from "firebase/analytics";
 import {format} from 'date-fns'
-import type {ReminderGroup} from '~/types/reminder'
+import type {ReminderGroup, ReminderStatus} from '~/types/reminder'
 import type {ToastType} from "~/composables/openToast"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
+import ValidationPrimaryDialog from "~/components/molecules/ValidationPrimaryDialog.vue"
 import {useI18n} from "vue-i18n";
 import {useReminderStore} from "~/store/reminder";
+import {useMedicationsStore} from "~/store/medications";
+import EditReminderDialog from "~/components/molecules/reminder/EditDialog.vue";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
 const reminderStore = useReminderStore()
+const medicationStore = useMedicationsStore()
 const {reminders, isLoading} = storeToRefs(reminderStore)
+const {medications} = storeToRefs(medicationStore)
 const viewType = ref<'grid' | 'table'>('grid')
+
+onMounted(() => {
+  medicationStore.initMedications()
+})
 
 useSeoMeta({
   title: () => t('nav.reminders')
 })
+
+const validMedications = computed(() =>
+    medications.value?.filter(m => !m.expired) ?? []
+)
 
 const groupedReminders = computed((): ReminderGroup[] => {
   const rawReminders = reminders.value
@@ -118,6 +133,7 @@ const groupedReminders = computed((): ReminderGroup[] => {
 
     if (r.status === 'failed') group.status = 'failed'
     else if (group.status !== 'failed' && r.status === 'pending') group.status = 'pending'
+    else if (group.status !== 'failed' && group.status !== 'pending' && r.status === 'done') group.status = 'done'
   })
 
   return Array.from(groups.values()).map((g) => {
@@ -146,7 +162,7 @@ const groupedReminders = computed((): ReminderGroup[] => {
 
 const statusConfig = {
   pending: {color: 'warning', icon: 'mdi-timer-sand'},
-  sent: {color: 'success', icon: 'mdi-check-circle'},
+  done: {color: 'success', icon: 'mdi-check-circle'},
   failed: {color: 'error', icon: 'mdi-alert-circle'}
 }
 
@@ -159,9 +175,43 @@ const headers = computed(() => [
   {title: '', key: 'actions', align: 'end' as const, sortable: false},
 ])
 
-const handleUpdateStatus = async (ids: string[], status: 'sent' | 'failed', done: () => void) => {
+const finishTreatment = async (ids: string[], status: ReminderStatus, done: () => void) => {
+  if (status === 'done') {
+    const confirm = await $open<ToastType>(ValidationPrimaryDialog, {
+      scrim: true,
+      isPersistent: true,
+      message: t('reminderDialogValidate.message')
+    })
+
+    if (confirm !== 'success') {
+      done()
+      return
+    }
+  }
+
   try {
     await reminderStore.updateRemindersStatus(ids, status)
+  } finally {
+    done()
+  }
+}
+
+const handleEdit = async (item: ReminderGroup, done: () => void) => {
+  try {
+    const result = await $open<ToastType>(EditReminderDialog, {
+      scrim: true,
+      isPersistent: true,
+      item: item,
+      validMedications: validMedications.value,
+      reminders: reminders.value,
+      updateReminder: async (payload: any) => {
+        await reminderStore.updateReminder(payload)
+      }
+    })
+
+    if (result === 'success') {
+      // Success is handled by the store sync
+    }
   } finally {
     done()
   }

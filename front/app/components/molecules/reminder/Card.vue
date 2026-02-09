@@ -24,14 +24,36 @@
               icon="mdi-check-circle-outline"
               variant="tonal"
               color="success"
-              :loading="loadingAction === 'sent'"
+              :loading="loadingAction === 'done'"
               :disabled="!!loadingAction"
               size="small"
-              @click="handleAction('sent')"
+              @click="handleAction('done')"
           />
 
           <v-divider vertical class="mx-1"/>
         </template>
+
+        <v-btn
+            v-if="item.status === 'pending'"
+            icon="mdi-pencil-outline"
+            variant="tonal"
+            color="primary"
+            :loading="loadingAction === 'edit'"
+            :disabled="!!loadingAction"
+            size="small"
+            @click="handleAction('edit')"
+        />
+
+        <v-btn
+            v-else-if="item.status === 'done'"
+            icon="mdi-reload"
+            variant="tonal"
+            color="primary"
+            :loading="loadingAction === 'edit'"
+            :disabled="!!loadingAction"
+            size="small"
+            @click="handleAction('edit')"
+        />
 
         <v-btn
             icon="mdi-delete-outline"
@@ -114,14 +136,14 @@ const props = defineProps<{
   statusConfig: any
 }>()
 
-const emit = defineEmits(['delete', 'update-status'])
+const emit = defineEmits(['delete', 'edit', 'finish-treatment'])
 
 const loadingAction = ref<string | null>(null)
 const {t} = useI18n()
 
 const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
 
-const handleAction = async (type: 'sent' | 'failed' | 'delete') => {
+const handleAction = async (type: 'done' | 'failed' | 'delete' | 'edit' | 'finish-treatment') => {
   loadingAction.value = type
 
   // Parent must call this 'done' function to stop the loader
@@ -129,10 +151,12 @@ const handleAction = async (type: 'sent' | 'failed' | 'delete') => {
     loadingAction.value = null
   }
 
-  if (type === 'delete') {
-    emit('delete', props.item, done)
+  if (type === 'done' || type === 'finish-treatment') {
+    emit('finish-treatment', props.item.ids, 'done', done)
+  } else if (type === 'failed') {
+    emit('finish-treatment', props.item.ids, 'failed', done)
   } else {
-    emit('update-status', props.item.ids, type, done)
+    emit(type as 'delete' | 'edit', props.item, done)
   }
 }
 </script>
@@ -141,6 +165,7 @@ const handleAction = async (type: 'sent' | 'failed' | 'delete') => {
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

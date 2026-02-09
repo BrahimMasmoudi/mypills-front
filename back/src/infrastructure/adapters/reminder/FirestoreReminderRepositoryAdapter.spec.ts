@@ -7,6 +7,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
     let mockCollection: any
     let mockBatch: any
     let mockDoc: any
+    let mockScheduler: any
     let adapter: FirestoreReminderRepositoryAdapter
 
     beforeEach(() => {
@@ -37,7 +38,12 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             },
         }
 
-        adapter = new FirestoreReminderRepositoryAdapter(mockConnector)
+        mockScheduler = {
+            scheduleNotificationTask: jest.fn().mockResolvedValue('task-id'),
+            cancelNotificationTask: jest.fn().mockResolvedValue(undefined),
+        }
+
+        adapter = new FirestoreReminderRepositoryAdapter(mockConnector, mockScheduler)
     })
 
     describe('nextId', () => {
@@ -129,7 +135,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
         it('should update the status and updatedAt field via batch for all provided IDs', async () => {
             // Arrange
             const ids = ['id-1', 'id-2']
-            const status = 'sent'
+            const status = 'done'
 
             // Act
             await adapter.updateRemindersStatus(ids, status)
@@ -146,7 +152,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             // In your mock setup, mockCollection.doc returns mockDoc
             expect(mockBatch.update).toHaveBeenCalledTimes(2)
             expect(mockBatch.update).toHaveBeenCalledWith(mockDoc, {
-                status: 'sent',
+                status: 'done',
                 updatedAt: expect.any(Timestamp),
             })
 
@@ -155,7 +161,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
         })
 
         it('should return early and not create a batch if IDs array is empty', async () => {
-            await adapter.updateRemindersStatus([], 'sent')
+            await adapter.updateRemindersStatus([], 'done')
             expect(mockConnector.firestore.batch).not.toHaveBeenCalled()
         })
     })
@@ -169,19 +175,22 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             await adapter.delete(idsToDelete)
 
             // Assert
-            // 1. Verify batch was created
+            // 1. Verify scheduler.cancelNotificationTask was called for each ID
+            expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('id-1')
+            expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('id-2')
+
+            // 2. Verify batch was created
             expect(mockConnector.firestore.batch).toHaveBeenCalled()
 
-            // 2. Verify collection.doc was called for each ID
+            // 3. Verify collection.doc was called for each ID
             expect(mockCollection.doc).toHaveBeenCalledWith('id-1')
             expect(mockCollection.doc).toHaveBeenCalledWith('id-2')
 
-            // 3. Verify batch.delete was called with the docRefs
-            // Note: because mockCollection.doc returns mockDoc every time in this mock:
+            // 4. Verify batch.delete was called with the docRefs
             expect(mockBatch.delete).toHaveBeenCalledTimes(2)
             expect(mockBatch.delete).toHaveBeenCalledWith(mockDoc)
 
-            // 4. Verify batch was committed
+            // 5. Verify batch was committed
             expect(mockBatch.commit).toHaveBeenCalled()
         })
 

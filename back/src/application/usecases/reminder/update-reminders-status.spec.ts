@@ -1,12 +1,13 @@
 import { UpdateRemindersStatus } from './update-reminders-status'
 import { ReminderRepository } from '../../../domain/repositories/reminder/reminder-repository'
+import { TaskSchedulerPort } from '../../../domain/gateway/scheduler/task-scheduler-port'
 
 describe('UpdateRemindersStatus Use Case', () => {
     let mockRepo: jest.Mocked<ReminderRepository>
+    let mockScheduler: jest.Mocked<TaskSchedulerPort>
     let useCase: UpdateRemindersStatus
 
     beforeEach(() => {
-        // 1. Setup the mock repository with the updated batch method
         mockRepo = {
             nextId: jest.fn(),
             saveBatch: jest.fn(),
@@ -15,23 +16,37 @@ describe('UpdateRemindersStatus Use Case', () => {
             delete: jest.fn(),
         } as any
 
-        useCase = new UpdateRemindersStatus(mockRepo)
+        mockScheduler = {
+            scheduleNotificationTask: jest.fn(),
+            cancelNotificationTask: jest.fn().mockResolvedValue(undefined),
+        }
+
+        useCase = new UpdateRemindersStatus(mockRepo, mockScheduler)
     })
 
     it('should call the repository updateRemindersStatus method with correct IDs and status', async () => {
         // Arrange
         const mockIds = ['rem-1', 'rem-2']
-        const status = 'sent'
+        const status = 'done'
 
         // Act
         await useCase.execute(mockIds, status)
 
         // Assert
-        // 1. Verify that the repository method was called exactly once
-        expect(mockRepo.updateRemindersStatus).toHaveBeenCalledTimes(1)
-
-        // 2. Verify it was called with the exact arguments
         expect(mockRepo.updateRemindersStatus).toHaveBeenCalledWith(mockIds, status)
+    })
+
+    it('should cancel tasks when status is done', async () => {
+        // Arrange
+        const mockIds = ['rem-1', 'rem-2']
+
+        // Act
+        await useCase.execute(mockIds, 'done')
+
+        // Assert
+        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledTimes(2)
+        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('rem-1')
+        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('rem-2')
     })
 
     it('should propagate errors if the repository update fails', async () => {

@@ -91,11 +91,33 @@
                 size="small"
                 :loading="getLoading(item, 'sent')"
                 :disabled="isAnyLoading(item)"
-                @click="handleAction(item, 'update-status', 'sent')"
+                @click="handleAction(item, 'finish-treatment', 'done')"
             />
           </template>
 
           <v-divider v-if="item.status === 'pending'" vertical class="mx-1" />
+
+          <v-btn
+              v-if="item.status === 'pending'"
+              icon="mdi-pencil-outline"
+              variant="tonal"
+              color="primary"
+              size="small"
+              :loading="getLoading(item, 'edit')"
+              :disabled="isAnyLoading(item)"
+              @click="handleAction(item, 'edit')"
+          />
+
+          <v-btn
+              v-else-if="item.status === 'done'"
+              icon="mdi-reload"
+              variant="tonal"
+              color="primary"
+              size="small"
+              :loading="getLoading(item, 'edit')"
+              :disabled="isAnyLoading(item)"
+              @click="handleAction(item, 'edit')"
+          />
 
           <v-btn
               icon="mdi-delete-outline"
@@ -125,10 +147,10 @@ const props = defineProps<{
   statusConfig: any
 }>()
 
-const emit = defineEmits(['delete', 'update-status'])
+const emit = defineEmits(['delete', 'finish-treatment', 'edit'])
 const { t } = useI18n()
 
-// Track loading per item group { "SicknessName": "sent" | "failed" | "delete" | null }
+// Track loading per item group { "SicknessName": "done" | "failed" | "delete" | "edit" | null }
 const loadingStates = ref<Record<string, string | null>>({})
 
 /**
@@ -146,8 +168,8 @@ const isAnyLoading = (item: ReminderGroup) =>
 /**
  * Handles clicks by setting local state and calling parent emitters
  */
-const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'update-status', status?: string) => {
-  const actionKey = status || 'delete'
+const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'finish-treatment' | 'edit', status?: string) => {
+  const actionKey = status || emitName
   loadingStates.value[item.sicknessName] = actionKey
 
   // This callback is passed to the parent to reset the button spinner
@@ -155,10 +177,10 @@ const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'update-st
     loadingStates.value[item.sicknessName] = null
   }
 
-  if (emitName === 'delete') {
-    emit('delete', item, done)
+  if (emitName === 'delete' || emitName === 'edit') {
+    emit(emitName, item, done)
   } else {
-    emit('update-status', item.ids, status, done)
+    emit('finish-treatment', item.ids, (status || 'done') as any, done)
   }
 }
 

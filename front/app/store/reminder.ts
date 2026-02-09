@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { httpsCallable } from 'firebase/functions'
 import { collection, query, where, orderBy } from 'firebase/firestore'
 import { useCollection, getCurrentUser } from 'vuefire'
-import type { CreateReminderRequest, Reminder, ReminderGroup } from '~/types/reminder'
+import type { CreateReminderRequest, Reminder, ReminderGroup, ReminderStatus } from '~/types/reminder'
 import { logEvent } from '@firebase/analytics'
 
 export const useReminderStore = defineStore('reminder', () => {
@@ -40,23 +40,23 @@ export const useReminderStore = defineStore('reminder', () => {
     })
 
     const createSchedule = async (payload: CreateReminderRequest) => {
-            const callCreateSchedule = httpsCallable<CreateReminderRequest, {
-                success: boolean
-            }>($functions, 'createReminder')
-            const result = await callCreateSchedule(payload)
+        const callCreateSchedule = httpsCallable<CreateReminderRequest, {
+            success: boolean
+        }>($functions, 'createReminder')
+        const result = await callCreateSchedule(payload)
 
-            // Analytics for creating a schedule
-            if ($analytics) {
-                logEvent($analytics, 'create_schedule', {
-                    sickness_name: payload.sicknessName,
-                    medication_name: payload.medication.name,
-                    start_date: payload.startDate,
-                    end_date: payload.endDate,
-                    dose_count: payload.doses.length,
-                })
-            }
+        // Analytics for creating a schedule
+        if ($analytics) {
+            logEvent($analytics, 'create_schedule', {
+                sickness_name: payload.sicknessName,
+                medication_name: payload.medication.name,
+                start_date: payload.startDate,
+                end_date: payload.endDate,
+                dose_count: payload.doses.length,
+            })
+        }
 
-            return result.data
+        return result.data
     }
 
     const deleteReminders = async (reminderGroup: ReminderGroup) => {
@@ -73,16 +73,31 @@ export const useReminderStore = defineStore('reminder', () => {
         }
     }
 
-    const updateRemindersStatus = async (ids: string[], status: 'sent' | 'failed') => {
-            const callUpdate = httpsCallable($functions, 'updateRemindersStatus')
-            await callUpdate({ ids, status })
+    const updateRemindersStatus = async (ids: string[], status: ReminderStatus) => {
+        const callUpdate = httpsCallable($functions, 'updateRemindersStatus')
+        await callUpdate({ ids, status })
 
-            if ($analytics) {
-                logEvent($analytics, 'update_reminder_status', {
-                    status,
-                    count: ids.length
-                })
-            }
+        if ($analytics) {
+            logEvent($analytics, 'update_reminder_status', {
+                status,
+                count: ids.length
+            })
+        }
+    }
+
+    const updateReminder = async (payload: any) => {
+        const callUpdate = httpsCallable($functions, 'updateReminder')
+        const result = await callUpdate(payload)
+
+        if ($analytics) {
+            logEvent($analytics, 'update_reminder', {
+                old_sickness_name: payload.oldSicknessName,
+                new_sickness_name: payload.newSicknessName,
+                med_count: payload.medications.length
+            })
+        }
+
+        return result.data
     }
 
     return {
@@ -91,6 +106,7 @@ export const useReminderStore = defineStore('reminder', () => {
         initReminders,
         createSchedule,
         deleteReminders,
-        updateRemindersStatus
+        updateRemindersStatus,
+        updateReminder
     }
 })

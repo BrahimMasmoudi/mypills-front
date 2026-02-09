@@ -1,3 +1,5 @@
+export type ReminderStatus = 'pending' | 'done' | 'failed'
+
 export interface Reminder {
     sicknessName: string
     reminderId: string
@@ -5,7 +7,7 @@ export interface Reminder {
     medName: string
     quantity: string | number
     scheduledTime: Date
-    status: 'pending' | 'sent' | 'failed'
+    status: ReminderStatus
 }
 
 export interface ScheduleRequestDto {
@@ -14,5 +16,17 @@ export interface ScheduleRequestDto {
     startDate: string
     endDate: string
     doses: { time: string, quantity: string }[]
+    timezone: string
+}
+export interface UpdateReminderRequestDto {
+    oldSicknessName: string
+    newSicknessName: string
+    remindersToDelete: string[]
+    medications: {
+        name: string
+        startDate: string
+        endDate: string
+        doses: { time: string, quantity: string | number }[]
+    }[]
     timezone: string
 }

@@ -130,6 +130,8 @@
   "reminderDialog": {
     "createTitle": "Schedule Reminders",
     "createSubtitle": "Set up a treatment plan to receive notifications for each dose.",
+    "editTitle": "Edit Reminder",
+    "editSubtitle": "Modify your treatment plan details.",
     "frequency": "Daily Frequency",
     "addDose": "Add Another Dose",
     "startDate": "Start Date",
@@ -145,6 +147,9 @@
       "success": "The reminder is created successfully",
       "error": "An error happened while creating the reminder"
     }
+  },
+  "reminderDialogValidate": {
+    "message": "Are you sure you took all your pills?"
   },
   "reminders": {
     "title": "My Reminders",
@@ -166,9 +171,9 @@
     }
   },
   "status": {
-    "pending": "Pending",
-    "sent": "Done",
-    "failed": "Failed"
+    "pending": "Treatment pending",
+    "done": "Treatment completed",
+    "failed": "Treatment failed"
   },
   "validation": {
     "required": "This field is required"

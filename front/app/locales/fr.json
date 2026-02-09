@@ -130,6 +130,8 @@
   "reminderDialog": {
     "createTitle": "Planifier les Rappels",
     "createSubtitle": "Configurez un plan de traitement pour recevoir des notifications",
+    "editTitle": "Modifier le Rappel",
+    "editSubtitle": "Modifiez les détails de votre plan de traitement.",
     "frequency": "Fréquence journalière",
     "addDose": "Ajouter une dose",
     "startDate": "Date de début",
@@ -145,6 +147,9 @@
       "success": "Le rappel est crée avec succés",
       "error": "Échec lors de la creation d'un rappel"
     }
+  },
+  "reminderDialogValidate": {
+    "message": "Es-tu sûr d'avoir pris tous tes médicaments ?"
   },
   "reminders": {
     "title": "Mes Rappels",
@@ -166,9 +171,9 @@
     }
   },
   "status": {
-    "pending": "En attente",
-    "sent": "validé",
-    "failed": "Échoué"
+    "pending": "Traitement en cours",
+    "done": "Traitement terminé",
+    "failed": "traitement Échoué"
   },
   "validation": {
     "required": "Ce champ est obligatoire"
