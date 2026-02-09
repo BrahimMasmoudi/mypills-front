@@ -2,6 +2,7 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { $firebaseConnector } from '../../config/firebase'
 import { FirestoreReminderRepositoryAdapter } from '../../adapters/reminder/FirestoreReminderRepositoryAdapter'
 import { UpdateRemindersStatus } from '../../../application/usecases/reminder/update-reminders-status'
+import { createSchedulerAdapter } from '../../config/scheduler'
 
 export const updateRemindersStatus = onCall({ region: 'europe-west3' }, async (request) => {
     const { ids, status } = request.data
@@ -16,7 +17,8 @@ export const updateRemindersStatus = onCall({ region: 'europe-west3' }, async (r
         throw new HttpsError('invalid-argument', 'Invalid status provided.')
     }
 
-    const reminderRepo = new FirestoreReminderRepositoryAdapter($firebaseConnector)
+    const scheduler = createSchedulerAdapter()
+    const reminderRepo = new FirestoreReminderRepositoryAdapter($firebaseConnector, scheduler)
     const useCase = new UpdateRemindersStatus(reminderRepo)
 
     await useCase.execute(ids, status)

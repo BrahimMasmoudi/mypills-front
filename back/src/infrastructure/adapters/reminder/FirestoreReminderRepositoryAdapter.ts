@@ -2,11 +2,15 @@ import { Reminder } from '../../../domain/entities/reminder'
 import { FirestoreConnector } from '../connectors/firestore-connector'
 import { CollectionReference, Timestamp } from 'firebase-admin/firestore'
 import { ReminderId, ReminderRepository } from '../../../domain/repositories/reminder/reminder-repository'
+import { TaskSchedulerPort } from '../../../domain/gateway/scheduler/task-scheduler-port'
 
 export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
     private readonly collection: CollectionReference
 
-    constructor(private readonly connector: FirestoreConnector) {
+    constructor(
+        private readonly connector: FirestoreConnector,
+        private readonly scheduler: TaskSchedulerPort
+    ) {
         this.collection = this.connector.collection('reminders')
     }
 
@@ -72,8 +76,14 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
 
     async delete(reminderIds: ReminderId[]): Promise<void> {
         if (reminderIds.length === 0) return
-        const batch = this.connector.firestore.batch()
 
+        // 1. Cancel Cloud Tasks
+        await Promise.allSettled(
+            reminderIds.map((id) => this.scheduler.cancelNotificationTask(id))
+        )
+
+        // 2. Delete from Firestore
+        const batch = this.connector.firestore.batch()
         reminderIds.forEach((id) => {
             const docRef = this.collection.doc(id)
             batch.delete(docRef)

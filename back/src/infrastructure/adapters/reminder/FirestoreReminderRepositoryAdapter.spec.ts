@@ -7,6 +7,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
     let mockCollection: any
     let mockBatch: any
     let mockDoc: any
+    let mockScheduler: any
     let adapter: FirestoreReminderRepositoryAdapter
 
     beforeEach(() => {
@@ -37,7 +38,12 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             },
         }
 
-        adapter = new FirestoreReminderRepositoryAdapter(mockConnector)
+        mockScheduler = {
+            scheduleNotificationTask: jest.fn().mockResolvedValue('task-id'),
+            cancelNotificationTask: jest.fn().mockResolvedValue(undefined),
+        }
+
+        adapter = new FirestoreReminderRepositoryAdapter(mockConnector, mockScheduler)
     })
 
     describe('nextId', () => {
@@ -169,19 +175,22 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             await adapter.delete(idsToDelete)
 
             // Assert
-            // 1. Verify batch was created
+            // 1. Verify scheduler.cancelNotificationTask was called for each ID
+            expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('id-1')
+            expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('id-2')
+
+            // 2. Verify batch was created
             expect(mockConnector.firestore.batch).toHaveBeenCalled()
 
-            // 2. Verify collection.doc was called for each ID
+            // 3. Verify collection.doc was called for each ID
             expect(mockCollection.doc).toHaveBeenCalledWith('id-1')
             expect(mockCollection.doc).toHaveBeenCalledWith('id-2')
 
-            // 3. Verify batch.delete was called with the docRefs
-            // Note: because mockCollection.doc returns mockDoc every time in this mock:
+            // 4. Verify batch.delete was called with the docRefs
             expect(mockBatch.delete).toHaveBeenCalledTimes(2)
             expect(mockBatch.delete).toHaveBeenCalledWith(mockDoc)
 
-            // 4. Verify batch was committed
+            // 5. Verify batch was committed
             expect(mockBatch.commit).toHaveBeenCalled()
         })
 
