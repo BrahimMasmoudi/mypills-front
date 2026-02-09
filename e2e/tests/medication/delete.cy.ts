@@ -9,6 +9,8 @@ describe('Medication Deletion Flow', () => {
             name: 'Doliprane 1000mg',
             quantity: 10,
             expired: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
             expiryDate: new Date('2026-12-31T23:59:59Z').toISOString(),
             details: {
                 company: 'SANOFI AVENTIS FRANCE',

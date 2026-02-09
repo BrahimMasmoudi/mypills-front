@@ -9,6 +9,8 @@ describe('Medication Quantity Updates', () => {
             name: 'Doliprane 1000mg',
             quantity: 10, // Starting quantity
             expiryDate: new Date('2026-12-31').toISOString(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
         })
 
         cy.visit('/medications')

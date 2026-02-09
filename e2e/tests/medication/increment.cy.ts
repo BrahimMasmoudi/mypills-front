@@ -7,6 +7,8 @@ describe('Medication Quantity Updates', () => {
             uid: testUid,
             email: testEmail,
             name: 'Doliprane 1000mg',
+            createdAt: new Date(),
+            updatedAt: new Date(),
             quantity: 10, // Starting quantity
             expiryDate: new Date('2026-12-31').toISOString(),
         })
