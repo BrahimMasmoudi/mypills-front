@@ -482,8 +482,6 @@ const onBarcodeDetected = async (code: string) => {
       return
     }
 
-    medication.value.bareCode = cip13
-
     // 2. Call Backend via Store
     const medicationsStore = useMedicationsStore()
     const data = await medicationsStore.getMedicationDetails(cip13)
@@ -493,6 +491,7 @@ const onBarcodeDetected = async (code: string) => {
       console.warn('Backend lookup failed: No data returned')
       openToast('error', t('scanner.not_found_message'))
     } else {
+      medication.value.bareCode = cip13
       medication.value.name = data.name
       medication.value.details = data.details
 

@@ -180,7 +180,6 @@ const finishTreatment = async (ids: string[], status: ReminderStatus, done: () =
     const confirm = await $open<ToastType>(ValidationPrimaryDialog, {
       scrim: true,
       isPersistent: true,
-      title: t('confirm'),
       message: t('reminderDialogValidate.message')
     })
 

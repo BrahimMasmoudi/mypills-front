@@ -171,9 +171,9 @@
     }
   },
   "status": {
-    "pending": "Pending",
-    "done": "Done",
-    "failed": "Failed"
+    "pending": "Treatment pending",
+    "done": "Treatment completed",
+    "failed": "Treatment failed"
   },
   "validation": {
     "required": "This field is required"

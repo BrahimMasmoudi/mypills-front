@@ -13,14 +13,9 @@
     <v-card class="rounded-xl pa-6" elevation="24">
       <div class="d-flex flex-column align-center text-center">
         <!-- Icon -->
-        <v-avatar color="primary-lighten-5" size="80" class="mb-4">
+        <v-avatar color="primary-lighten-5" size="80">
           <v-icon icon="mdi-check-circle-outline" color="primary" size="48" />
         </v-avatar>
-
-        <!-- Title -->
-        <v-card-title class="text-h5 font-weight-bold pt-0 pb-2">
-          {{ title }}
-        </v-card-title>
 
         <!-- Dynamic Content/Message -->
         <v-card-text class="text-body-1 text-medium-emphasis py-2 px-6">

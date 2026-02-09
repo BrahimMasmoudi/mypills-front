@@ -171,9 +171,9 @@
     }
   },
   "status": {
-    "pending": "En attente",
-    "done": "validé",
-    "failed": "Échoué"
+    "pending": "Traitement en cours",
+    "done": "Traitement terminé",
+    "failed": "traitement Échoué"
   },
   "validation": {
     "required": "Ce champ est obligatoire"
