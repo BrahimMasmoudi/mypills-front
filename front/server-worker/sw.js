@@ -54,67 +54,66 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 onBackgroundMessage(messaging, (payload) => {
-    const medName = payload.data?.medName || 'Medication';
-    const quantity = payload.data?.quantity || '1';
+    const data = payload.data || {}
 
-    const browserLang = (navigator.language || 'en').split('-')[0];
-    const lang = dictionary[browserLang] ? browserLang : 'en';
+    const medName = data.medName || 'Medication'
+    const quantity = data.quantity || '1'
+    const reminderId = data.reminderId
 
-    const title = dictionary[lang].title;
-    const body = dictionary[lang].body(quantity, medName);
+    const browserLang = (self.navigator.language || 'en').split('-')[0]
+    const lang = dictionary[browserLang] ? browserLang : 'en'
+
+    const title = dictionary[lang].title
+    const body = dictionary[lang].body(quantity, medName)
 
     return self.registration.showNotification(title, {
-        body: body,
+        body,
         icon: '/icon_x192.png',
-        data: payload.data,
         tag: 'medication-notification',
         renotify: true,
         vibrate: [200, 100, 200],
         requireInteraction: true,
         silent: false,
+
+        // 🔥 CRITICAL PART: action === URL
         actions: [
             {
-                action: 'postpone-later',
-                title: dictionary[lang].postponeLater,
-                icon: '/icons/calendar.png'
+                action: `/reminders?action=postpone-1h&reminderId=${reminderId}`,
+                title: dictionary[lang].postpone1h,
+                icon: '/icons/clock.png',
             },
             {
-                action: 'postpone-1h',
-                title: dictionary[lang].postpone1h,
-                icon: '/icons/clock.png'
-            }
-        ]
-    });
-});
+                action: `/reminders?action=postpone-later&reminderId=${reminderId}`,
+                title: dictionary[lang].postponeLater,
+                icon: '/icons/calendar.png',
+            },
+        ],
 
-self.addEventListener('notificationclick', function (event) {
-    event.notification.close();
+        data,
+    })
+})
 
-    const reminderId = event.notification.data?.reminderId;
-    const medName = event.notification.data?.medName;
-    let url = '/reminders';
+// ------------------------------
+// 7. Notification click handling
+// ------------------------------
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close()
 
-    if (event.action === 'postpone-1h') {
-        url = `/reminders?action=postpone-1h&reminderId=${reminderId}`;
-    } else if (event.action === 'postpone-later') {
-        url = `/reminders?action=postpone-later&reminderId=${reminderId}`;
-    } else if (!event.action && reminderId) {
-        // Android PWA: action buttons don't work, just open the app
-        // User will see the reminder and can use the in-app actions
-        url = `/reminders`;
-    }
+    // Android bug-proof:
+    // event.action IS the URL
+    const url = event.action || '/reminders'
 
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-            for (let client of windowClients) {
-                if ('focus' in client && 'navigate' in client) {
-                    return client.navigate(url).then(client => client.focus());
+        clients
+            .matchAll({ type: 'window', includeUncontrolled: true })
+            .then((windowClients) => {
+                for (const client of windowClients) {
+                    if ('navigate' in client && 'focus' in client) {
+                        return client.navigate(url).then(() => client.focus())
+                    }
                 }
-            }
-
-            if (clients.openWindow) {
-                return clients.openWindow(url);
-            }
-        })
-    );
+                return clients.openWindow(url)
+            })
+    )
+})
 });
