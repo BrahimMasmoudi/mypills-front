@@ -85,8 +85,44 @@ const {reminders, isLoading} = storeToRefs(reminderStore)
 const {medications} = storeToRefs(medicationStore)
 const viewType = ref<'grid' | 'table'>('grid')
 
+const route = useRoute()
+
+const handlePostponeActions = async () => {
+  const { action, reminderId } = route.query
+  if (!action || !reminderId) return
+
+  // Wait for reminders to load
+  if (isLoading.value) {
+    const unwatch = watch(isLoading, (val) => {
+      if (!val) {
+        unwatch()
+        handlePostponeActions()
+      }
+    })
+    return
+  }
+
+  if (action === 'postpone-1h') {
+    await reminderStore.postponeReminderBy1h(reminderId as string)
+    // Clear query params
+    await useRouter().replace({ query: {} })
+  } else if (action === 'postpone-later') {
+    const reminder = reminders.value.find(r => r.reminderId === reminderId)
+    if (!reminder) return
+
+    // Find the group this reminder belongs to
+    const group = groupedReminders.value.find(g => g.ids.includes(reminderId as string))
+    if (group) {
+      handleEdit(group, () => {})
+    }
+    // Clear query params
+    await useRouter().replace({ query: {} })
+  }
+}
+
 onMounted(() => {
   medicationStore.initMedications()
+  handlePostponeActions()
 })
 
 useSeoMeta({

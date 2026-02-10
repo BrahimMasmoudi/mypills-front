@@ -22,11 +22,15 @@ try {
 const dictionary = {
     en: {
         title: "Medication Time 💊",
-        body: (q, name) => `Take ${q}x ${name}`
+        body: (q, name) => `Take ${q}x ${name}`,
+        postpone1h: "Postpone 1h ⏳",
+        postponeLater: "Postpone later 📅"
     },
     fr: {
         title: "L'heure de prendre vos médicaments 💊",
-        body: (q, name) => `Prenez ${q}x ${name}`
+        body: (q, name) => `Prenez ${q}x ${name}`,
+        postpone1h: "Repousser d'1h ⏳",
+        postponeLater: "Repousser plus tard 📅"
     }
 };
 
@@ -62,23 +66,45 @@ onBackgroundMessage(messaging, (payload) => {
         tag: 'medication-notification',
         renotify: true,
         vibrate: [200, 100, 200],
-        requireInteraction: true, // Keeps it on screen until user dismisses it
-        silent: false
+        requireInteraction: true,
+        silent: false,
+        actions: [
+            {
+                action: 'postpone-1h',
+                title: dictionary[lang].postpone1h,
+                icon: '/icons/clock.png'
+            },
+            {
+                action: 'postpone-later',
+                title: dictionary[lang].postponeLater,
+                icon: '/icons/calendar.png'
+            }
+        ]
     });
 });
 
 self.addEventListener('notificationclick', function (event) {
     event.notification.close();
+
+    const reminderId = event.notification.data?.reminderId;
+    let url = '/reminders';
+
+    if (event.action === 'postpone-1h') {
+        url = `/reminders?action=postpone-1h&reminderId=${reminderId}`;
+    } else if (event.action === 'postpone-later') {
+        url = `/reminders?action=postpone-later&reminderId=${reminderId}`;
+    }
+
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
             for (let client of windowClients) {
-                if ('focus' in client) {
-                    return client.focus();
+                if ('focus' in client && 'navigate' in client) {
+                    return client.navigate(url).then(client => client.focus());
                 }
             }
 
             if (clients.openWindow) {
-                return clients.openWindow('/reminders');
+                return clients.openWindow(url);
             }
         })
     );

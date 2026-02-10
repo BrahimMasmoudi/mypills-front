@@ -9,6 +9,8 @@ export interface ReminderRepository {
 
     updateRemindersStatus(id: string[], status: ReminderStatus): Promise<void>
 
+    updateReminderTime(id: string, newTime: Date): Promise<void>
+
     nextId(): string
 
     delete(reminderIds: ReminderId[]): Promise<void>

@@ -74,6 +74,14 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
         await batch.commit()
     }
 
+    async updateReminderTime(id: string, newTime: Date): Promise<void> {
+        const docRef = this.collection.doc(id)
+        await docRef.update({
+            scheduledTime: Timestamp.fromDate(newTime),
+            updatedAt: Timestamp.now(),
+        })
+    }
+
     async delete(reminderIds: ReminderId[]): Promise<void> {
         if (reminderIds.length === 0) return
 
