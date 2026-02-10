@@ -103,8 +103,6 @@ const handlePostponeActions = async () => {
 
   if (action === 'postpone-1h') {
     await reminderStore.postponeReminderBy1h(reminderId as string)
-    // Clear query params
-    await useRouter().replace({ query: {} })
     openToast('success', t('reminderDialog.toast.successUpdate'))
 
   } else if (action === 'postpone-later') {
