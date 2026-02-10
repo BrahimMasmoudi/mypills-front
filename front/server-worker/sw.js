@@ -54,66 +54,55 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 onBackgroundMessage(messaging, (payload) => {
-    const data = payload.data || {}
+    const medName = payload.data?.medName || 'Medication';
+    const quantity = payload.data?.quantity || '1';
 
-    const medName = data.medName || 'Medication'
-    const quantity = data.quantity || '1'
-    const reminderId = data.reminderId
+    const browserLang = (navigator.language || 'en').split('-')[0];
+    const lang = dictionary[browserLang] ? browserLang : 'en';
 
-    const browserLang = (self.navigator.language || 'en').split('-')[0]
-    const lang = dictionary[browserLang] ? browserLang : 'en'
-
-    const title = dictionary[lang].title
-    const body = dictionary[lang].body(quantity, medName)
+    const title = dictionary[lang].title;
+    const body = dictionary[lang].body(quantity, medName);
 
     return self.registration.showNotification(title, {
-        body,
+        body: body,
         icon: '/icon_x192.png',
+        data: payload.data,
         tag: 'medication-notification',
         renotify: true,
         vibrate: [200, 100, 200],
         requireInteraction: true,
         silent: false,
-
-        // 🔥 CRITICAL PART: action === URL
         actions: [
             {
-                action: `/reminders?action=postpone-1h&reminderId=${reminderId}`,
+                action: 'postpone-1h',
                 title: dictionary[lang].postpone1h,
-                icon: '/icons/clock.png',
-            },
-            {
-                action: `/reminders?action=postpone-later&reminderId=${reminderId}`,
-                title: dictionary[lang].postponeLater,
-                icon: '/icons/calendar.png',
-            },
-        ],
+                icon: '/icons/clock.png'
+            }
+        ]
+    });
+});
 
-        data,
-    })
-})
+self.addEventListener('notificationclick', function (event) {
+    event.notification.close();
 
-// ------------------------------
-// 7. Notification click handling
-// ------------------------------
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close()
+    const reminderId = event.notification.data?.reminderId;
+    let url = '/reminders';
 
-    // Android bug-proof:
-    // event.action IS the URL
-    const url = event.action || '/reminders'
+    if (event.action === 'postpone-1h') {
+        url = `/reminders?action=postpone-1h&reminderId=${reminderId}`;
+    }
 
     event.waitUntil(
-        clients
-            .matchAll({ type: 'window', includeUncontrolled: true })
-            .then((windowClients) => {
-                for (const client of windowClients) {
-                    if ('navigate' in client && 'focus' in client) {
-                        return client.navigate(url).then(() => client.focus())
-                    }
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+            for (let client of windowClients) {
+                if ('focus' in client && 'navigate' in client) {
+                    return client.navigate(url).then(client => client.focus());
                 }
-                return clients.openWindow(url)
-            })
-    )
-})
+            }
 
+            if (clients.openWindow) {
+                return clients.openWindow(url);
+            }
+        })
+    );
+});
