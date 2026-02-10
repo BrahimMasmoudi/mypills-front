@@ -105,6 +105,8 @@ const handlePostponeActions = async () => {
     await reminderStore.postponeReminderBy1h(reminderId as string)
     // Clear query params
     await useRouter().replace({ query: {} })
+    openToast('success', t('reminderDialog.toast.successUpdate'))
+
   } else if (action === 'postpone-later') {
     const reminder = reminders.value.find(r => r.reminderId === reminderId)
     if (!reminder) return
@@ -249,9 +251,9 @@ const handleEdit = async (item: ReminderGroup, done: () => void) => {
     })
 
     if (result === 'success') {
-      openToast('success', t('reminderDialog.successUpdate'))
+      openToast('success', t('reminderDialog.toast.successUpdate'))
     } else if(result === 'error') {
-      openToast('error', t('reminderDialog.errorUpdate'))
+      openToast('error', t('reminderDialog.toast.errorUpdate'))
     }
   } finally {
     done()
