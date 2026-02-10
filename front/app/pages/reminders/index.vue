@@ -65,6 +65,7 @@
 </template>
 
 <script setup lang="ts">
+import type { LocationQueryValue } from 'vue-router'
 import {storeToRefs} from 'pinia'
 import {format} from 'date-fns'
 import type {ReminderGroup, ReminderStatus} from '~/types/reminder'
@@ -86,8 +87,7 @@ const viewType = ref<'grid' | 'table'>('grid')
 
 const route = useRoute()
 
-const handlePostponeActions = async () => {
-  const { action, reminderId } = route.query
+const handlePostponeActions = async (action: 'postpone-1h' | 'postpone-later' | undefined, reminderId: string | undefined) => {
   if (!action || !reminderId) return
 
   // Wait for reminders to load
@@ -95,7 +95,7 @@ const handlePostponeActions = async () => {
     const unwatch = watch(isLoading, (val) => {
       if (!val) {
         unwatch()
-        handlePostponeActions()
+        handlePostponeActions(action, reminderId)
       }
     })
     return
@@ -114,19 +114,19 @@ const handlePostponeActions = async () => {
     if (group) {
       handleEdit(group, () => {})
     }
-    // Clear query params
-    await useRouter().replace({ query: {} })
   }
 }
 
 onMounted(async () => {
   medicationStore.initMedications()
   await nextTick()
-  handlePostponeActions()
+  const { action, reminderId } = route.query
+  handlePostponeActions(action as 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
 })
 
-watch(() => route.query, () => {
-    handlePostponeActions()
+watch(() => route.query, (newQuery) => {
+  const { action, reminderId } = newQuery
+  handlePostponeActions(action as 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
 })
 
 useSeoMeta({

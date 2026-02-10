@@ -13,8 +13,12 @@ cleanupOutdatedCaches()
 
 try {
     const handler = createHandlerBoundToURL('/')
-    const route = new NavigationRoute(handler)
-    registerRoute(route)
+
+    registerRoute(
+        new NavigationRoute(handler, {
+            denylist: [/^\/reminders/],
+        })
+    )
 } catch (error) {
     console.warn('Error while registering cache route', { error })
 }
