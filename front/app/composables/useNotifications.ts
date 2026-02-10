@@ -5,7 +5,7 @@ import { useReminderStore } from '~/store/reminder'
 
 export const useNotifications = () => {
     const { $functions, $config, $messaging, $i18n } = useNuxtApp()
-    const { addToast } = useQueueToast()
+    const { addToast, removeToast } = useQueueToast()
     const registerNotificationToken = async () => {
         try {
             const permission = await Notification.requestPermission()
@@ -32,13 +32,17 @@ export const useNotifications = () => {
             const title = $i18n.t('notification.title')
             const body = $i18n.t('notification.body', { quantity, medName })
 
-            addToast('success', `${title} ${body}`, [
+            let toastId: number
+
+            const actions: { label: string, onClick: () => void }[] = [
                 {
                     label: 'Postpone 1h',
                     onClick: () => {
                         if (reminderId) {
-                            const router = useRouter()
-                            router.push(`/reminders?action=postpone-1h&reminderId=${reminderId}`)
+                            navigateTo(`/reminders?action=postpone-1h&reminderId=${reminderId}`)
+                            if (toastId !== undefined) {
+                                removeToast(toastId)
+                            }
                         }
                     }
                 },
@@ -46,12 +50,16 @@ export const useNotifications = () => {
                     label: 'Later',
                     onClick: () => {
                         if (reminderId) {
-                            const router = useRouter()
-                            router.push(`/reminders?action=postpone-later&reminderId=${reminderId}`)
+                            navigateTo(`/reminders?action=postpone-later&reminderId=${reminderId}`)
+                            if (toastId !== undefined) {
+                                removeToast(toastId)
+                            }
                         }
                     }
                 }
-            ])
+            ]
+
+            toastId = addToast('success', `${title} ${body}`, actions)
         })
     }
 

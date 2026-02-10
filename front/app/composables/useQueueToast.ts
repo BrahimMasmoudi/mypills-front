@@ -24,6 +24,8 @@ export const useQueueToast = () => {
         setTimeout(() => {
             removeToast(id)
         }, 10000)
+
+        return id
     }
 
     return {
