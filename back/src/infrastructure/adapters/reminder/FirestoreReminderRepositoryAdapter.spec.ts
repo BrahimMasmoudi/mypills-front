@@ -170,14 +170,27 @@ describe('FirestoreReminderRepositoryAdapter', () => {
         it('should execute a batch delete for all provided IDs', async () => {
             // Arrange
             const idsToDelete = ['id-1', 'id-2']
+            const mockScheduledTime = new Date('2026-02-10T10:00:00Z')
+
+            // Mock doc.get() to return reminder data with scheduledTime
+            mockDoc.get = jest.fn().mockResolvedValue({
+                exists: true,
+                data: () => ({
+                    scheduledTime: { toDate: () => mockScheduledTime },
+                    userId: 'user-1',
+                    medName: 'Med',
+                    quantity: 1,
+                    status: 'pending'
+                })
+            })
 
             // Act
             await adapter.delete(idsToDelete)
 
             // Assert
-            // 1. Verify scheduler.cancelNotificationTask was called for each ID
-            expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('id-1')
-            expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('id-2')
+            // 1. Verify scheduler.cancelNotificationTask was called for each ID with scheduledTime
+            expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('id-1', mockScheduledTime)
+            expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('id-2', mockScheduledTime)
 
             // 2. Verify batch was created
             expect(mockConnector.firestore.batch).toHaveBeenCalled()

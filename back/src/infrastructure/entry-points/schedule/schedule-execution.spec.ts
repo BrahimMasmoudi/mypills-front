@@ -90,7 +90,7 @@ describe('updateReminderTask Trigger', () => {
         } as any)
 
         expect(createSchedulerAdapter).toHaveBeenCalled()
-        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('reminder-1')
+        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('reminder-1', beforeTime)
         expect(useCaseSpy).toHaveBeenCalled()
 
         // Comparision fails in test env (returns now), so we check it exists and is Date

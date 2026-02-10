@@ -45,7 +45,7 @@ export const updateReminderTask = onDocumentUpdated({
     const schedulerAdapter = createSchedulerAdapter()
 
     // 1. Cancel the existing task
-    await schedulerAdapter.cancelNotificationTask(event.params.id)
+    await schedulerAdapter.cancelNotificationTask(event.params.id, beforeData.scheduledTime.toDate())
 
     // 2. Schedule a new task
     const reminder: Reminder = {

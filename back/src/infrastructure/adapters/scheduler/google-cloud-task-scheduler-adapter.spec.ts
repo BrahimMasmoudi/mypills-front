@@ -58,7 +58,7 @@ describe('GoogleCloudTaskSchedulerAdapter', () => {
         expect(mockClientInstance.createTask).toHaveBeenCalledWith({
             parent: 'projects/test/locations/loc/queues/q',
             task: expect.objectContaining({
-                name: 'projects/test/locations/loc/queues/q/tasks/rem-123',
+                name: `projects/test/locations/loc/queues/q/tasks/rem-123-${scheduledTime.getTime()}`,
                 httpRequest: expect.objectContaining({
                     url: config.targetUrl,
                     httpMethod: 'POST',
@@ -81,9 +81,10 @@ describe('GoogleCloudTaskSchedulerAdapter', () => {
     it('should ignore ALREADY_EXISTS error and return task name during scheduling', async () => {
         mockClientInstance.createTask.mockRejectedValue({ code: 6 }) // ALREADY_EXISTS
 
-        const taskName = await adapter.scheduleNotificationTask('id-1', new Date(), {})
+        const scheduledTime = new Date('2026-01-20T14:00:00Z')
+        const taskName = await adapter.scheduleNotificationTask('id-1', scheduledTime, {})
 
-        expect(taskName).toBe('projects/test/locations/loc/queues/q/tasks/id-1')
+        expect(taskName).toBe(`projects/test/locations/loc/queues/q/tasks/id-1-${scheduledTime.getTime()}`)
     })
 
     it('should return empty string if response has no name', async () => {
@@ -98,24 +99,25 @@ describe('GoogleCloudTaskSchedulerAdapter', () => {
         it('should call deleteTask with the deterministic task name', async () => {
             mockClientInstance.deleteTask = jest.fn().mockResolvedValue(undefined)
 
-            await adapter.cancelNotificationTask('rem-123')
+            const scheduledTime = new Date('2026-01-20T14:00:00Z')
+            await adapter.cancelNotificationTask('rem-123', scheduledTime)
 
             expect(mockClientInstance.deleteTask).toHaveBeenCalledWith({
-                name: 'projects/test/locations/loc/queues/q/tasks/rem-123'
+                name: `projects/test/locations/loc/queues/q/tasks/rem-123-${scheduledTime.getTime()}`
             })
         })
 
         it('should ignore NOT_FOUND error during cancellation', async () => {
             mockClientInstance.deleteTask = jest.fn().mockRejectedValue({ code: 5 }) // NOT_FOUND
 
-            await expect(adapter.cancelNotificationTask('rem-123')).resolves.not.toThrow()
+            await expect(adapter.cancelNotificationTask('rem-123', new Date())).resolves.not.toThrow()
         })
 
         it('should throw other errors during cancellation', async () => {
             const error = new Error('Other error')
             mockClientInstance.deleteTask = jest.fn().mockRejectedValue(error)
 
-            await expect(adapter.cancelNotificationTask('rem-123')).rejects.toThrow('Other error')
+            await expect(adapter.cancelNotificationTask('rem-123', new Date())).rejects.toThrow('Other error')
         })
     })
 })

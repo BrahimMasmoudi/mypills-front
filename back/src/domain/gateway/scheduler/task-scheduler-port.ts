@@ -4,5 +4,5 @@ export interface TaskSchedulerPort {
         scheduledTime: Date,
         payload: { userId: string, medName: string, quantity: string, reminderId: string }
     ): Promise<string>
-    cancelNotificationTask(reminderId: string): Promise<void>
+    cancelNotificationTask(reminderId: string, scheduledTime: Date): Promise<void>
 }

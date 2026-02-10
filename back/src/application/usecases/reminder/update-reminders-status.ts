@@ -14,7 +14,12 @@ export class UpdateRemindersStatus implements UpdateRemindersStatusUseCase {
         await this.reminderRepo.updateRemindersStatus(ids, status)
 
         if (status === 'done') {
-            await Promise.all(ids.map(id => this.taskScheduler.cancelNotificationTask(id)))
+            await Promise.all(ids.map(async (id) => {
+                const reminder = await this.reminderRepo.getById(id)
+                if (reminder) {
+                    await this.taskScheduler.cancelNotificationTask(id, reminder.scheduledTime)
+                }
+            }))
         }
     }
 }
