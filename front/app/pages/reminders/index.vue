@@ -121,14 +121,15 @@ const handlePostponeActions = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   medicationStore.initMedications()
+  await nextTick()
   handlePostponeActions()
 })
 
 watch(() => route.query, () => {
     handlePostponeActions()
-}, {immediate: true})
+})
 
 useSeoMeta({
   title: () => t('nav.reminders')
