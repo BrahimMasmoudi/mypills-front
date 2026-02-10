@@ -74,14 +74,14 @@ onBackgroundMessage(messaging, (payload) => {
         silent: false,
         actions: [
             {
-                action: 'postpone-1h',
-                title: dictionary[lang].postpone1h,
-                icon: '/icons/clock.png'
-            },
-            {
                 action: 'postpone-later',
                 title: dictionary[lang].postponeLater,
                 icon: '/icons/calendar.png'
+            },
+            {
+                action: 'postpone-1h',
+                title: dictionary[lang].postpone1h,
+                icon: '/icons/clock.png'
             }
         ]
     });
@@ -91,12 +91,17 @@ self.addEventListener('notificationclick', function (event) {
     event.notification.close();
 
     const reminderId = event.notification.data?.reminderId;
+    const medName = event.notification.data?.medName;
     let url = '/reminders';
 
     if (event.action === 'postpone-1h') {
         url = `/reminders?action=postpone-1h&reminderId=${reminderId}`;
     } else if (event.action === 'postpone-later') {
         url = `/reminders?action=postpone-later&reminderId=${reminderId}`;
+    } else if (!event.action && reminderId) {
+        // Android PWA: action buttons don't work, just open the app
+        // User will see the reminder and can use the in-app actions
+        url = `/reminders`;
     }
 
     event.waitUntil(
