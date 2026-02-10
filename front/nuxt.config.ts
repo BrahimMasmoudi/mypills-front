@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vueI18n from '@intlify/unplugin-vue-i18n/vite'
-import {fileURLToPath} from "node:url";
+import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 export default defineNuxtConfig({
@@ -18,9 +18,9 @@ export default defineNuxtConfig({
         head: {
             title: 'MyPills',
         },
-        pageTransition: {name: 'page', mode: 'default'}
+        pageTransition: { name: 'page', mode: 'default' }
     },
-    typescript: {strict: true},
+    typescript: { strict: true },
     ssr: false,
     spaLoadingTemplate: fileURLToPath(new URL('./spa-loading-template.html', import.meta.url)),
     modules: [
@@ -102,7 +102,7 @@ export default defineNuxtConfig({
                     vapidKey: process.env.FIREBASE_VAPID_KEY || 'BL1Qie0a3DP7WoWK4V_M7guQ0dE6JtQHIHwOqS5r7YO6NWd9SYgL8DHvmr8jP3i6GsD3A1TGZJCjHRAKW0nyP80'
                 },
                 storage: {
-                    enable : true,
+                    enable: true,
                     location: 'europe-west3',
                     enableEmulator: process.env.NODE_ENV !== 'production',
                     emulatorPort: 9199,
@@ -126,7 +126,7 @@ export default defineNuxtConfig({
                 propsDestructure: true,
             },
         },
-        plugins: [vueI18n({defaultSFCLang: 'yaml'}),]
+        plugins: [vueI18n({ defaultSFCLang: 'yaml' }),]
     },
     vuetify: {
         vuetifyOptions: {
@@ -218,7 +218,7 @@ export default defineNuxtConfig({
             installPrompt: true,
         },
         devOptions: {
-            enabled: false,
+            enabled: true,
             type: 'module'
         }
     }

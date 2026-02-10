@@ -38,6 +38,7 @@ describe('ScheduleExecution Use Case', () => {
                 userId: 'user-123',
                 medName: 'Doliprane',
                 quantity: '2', // Verify it was converted to a string
+                reminderId: 'rem-abc',
             }
         )
         expect(mockScheduler.scheduleNotificationTask).toHaveBeenCalledTimes(1)

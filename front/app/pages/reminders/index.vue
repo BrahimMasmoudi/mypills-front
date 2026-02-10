@@ -124,6 +124,10 @@ onMounted(() => {
   handlePostponeActions()
 })
 
+watch(() => route.query, () => {
+    handlePostponeActions()
+})
+
 useSeoMeta({
   title: () => t('nav.reminders')
 })

@@ -31,6 +31,7 @@ describe('SendReminderNotification Use Case', () => {
             userId: 'user-123',
             medName: 'Doliprane',
             quantity: '1',
+            reminderId: 'reminder-123',
         }
         mockUserRepo.getDeviceToken.mockResolvedValue('fcm-token-xyz')
 
@@ -42,7 +43,8 @@ describe('SendReminderNotification Use Case', () => {
         expect(mockNotificationGateway.sendMedicationReminder).toHaveBeenCalledWith(
             'fcm-token-xyz',
             'Doliprane',
-            '1'
+            '1',
+            'reminder-123'
         )
     })
 
@@ -52,6 +54,7 @@ describe('SendReminderNotification Use Case', () => {
             userId: 'user-no-token',
             medName: 'Doliprane',
             quantity: '1',
+            reminderId: 'reminder-123',
         }
         mockUserRepo.getDeviceToken.mockResolvedValue(null)
         const warnSpy = jest.spyOn(console, 'warn')
@@ -70,7 +73,7 @@ describe('SendReminderNotification Use Case', () => {
         mockNotificationGateway.sendMedicationReminder.mockRejectedValue(new Error('FCM Error'))
 
         // Act & Assert
-        await expect(useCase.execute({ userId: 'u1', medName: 'm1', quantity: '1' }))
+        await expect(useCase.execute({ userId: 'u1', medName: 'm1', quantity: '1', reminderId: 'r1' }))
             .rejects
             .toThrow('FCM Error')
     })
