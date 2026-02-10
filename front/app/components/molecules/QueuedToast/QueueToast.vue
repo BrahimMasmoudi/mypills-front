@@ -18,10 +18,10 @@
           <v-btn
               v-for="(action, index) in actions"
               :key="index"
-              size="x-small"
+              size="small"
               variant="tonal"
               color="white"
-              class="text-capitalize font-weight-bold"
+              class="text-capitalize font-weight-bold mr-3"
               @click="action.onClick"
           >
             {{ action.label }}

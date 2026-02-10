@@ -202,4 +202,22 @@ describe('FirestoreReminderRepositoryAdapter', () => {
             expect(mockConnector.firestore.batch).not.toHaveBeenCalled()
         })
     })
+
+    describe('updateReminderTime', () => {
+        it('should update the scheduledTime and updatedAt field', async () => {
+            // Arrange
+            const id = 'id-1'
+            const newTime = new Date()
+
+            // Act
+            await adapter.updateReminderTime(id, newTime)
+
+            // Assert
+            expect(mockCollection.doc).toHaveBeenCalledWith(id)
+            expect(mockDoc.update).toHaveBeenCalledWith({
+                scheduledTime: Timestamp.fromDate(newTime),
+                updatedAt: expect.any(Timestamp),
+            })
+        })
+    })
 })

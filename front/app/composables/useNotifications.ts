@@ -37,8 +37,8 @@ export const useNotifications = () => {
                     label: 'Postpone 1h',
                     onClick: () => {
                         if (reminderId) {
-                            const reminderStore = useReminderStore()
-                            reminderStore.postponeReminderBy1h(reminderId)
+                            const router = useRouter()
+                            router.push(`/reminders?action=postpone-1h&reminderId=${reminderId}`)
                         }
                     }
                 },

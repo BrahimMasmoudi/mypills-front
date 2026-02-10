@@ -66,7 +66,6 @@
 
 <script setup lang="ts">
 import {storeToRefs} from 'pinia'
-import {logEvent} from "firebase/analytics";
 import {format} from 'date-fns'
 import type {ReminderGroup, ReminderStatus} from '~/types/reminder'
 import type {ToastType} from "~/composables/openToast"
@@ -246,7 +245,9 @@ const handleEdit = async (item: ReminderGroup, done: () => void) => {
     })
 
     if (result === 'success') {
-      // Success is handled by the store sync
+      openToast('success', t('reminderDialog.successUpdate'))
+    } else if(result === 'error') {
+      openToast('error', t('reminderDialog.errorUpdate'))
     }
   } finally {
     done()

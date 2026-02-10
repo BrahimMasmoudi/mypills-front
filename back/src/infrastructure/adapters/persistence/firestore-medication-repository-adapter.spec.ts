@@ -100,7 +100,12 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
             await adapter.create(medication, fakeAuth)
             expect(mockDoc).toHaveBeenCalledWith(medication.medicationId)
             expect(mockSet).toHaveBeenCalledWith(
-                { ...medication, uid: fakeAuth.uid },
+                {
+                    ...medication,
+                    uid: fakeAuth.uid,
+                    createdAt: expect.any(Date),
+                    updatedAt: expect.any(Date),
+                },
                 { merge: false }
             )
         })
