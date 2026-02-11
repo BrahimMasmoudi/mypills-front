@@ -86,6 +86,7 @@ onBackgroundMessage(messaging, (payload) => {
 });
 
 self.addEventListener('notificationclick', (event) => {
+    // 1. Close the notification immediately
     event.notification.close();
 
     const reminderId = event.notification?.data?.reminderId || null;
@@ -93,24 +94,51 @@ self.addEventListener('notificationclick', (event) => {
 
     console.log('Notification clicked. Action:', action);
 
-    let url = '/reminders';
+    // 2. Determine the target URL
+    let targetUrl = '/reminders';
+    
+    // Ensure we handle the base URL correctly for the PWA scope
+    const urlBase = self.registration.scope.replace(/\/$/, '');
 
     switch (action) {
         case 'postpone-1h':
-            url = `/reminders?action=postpone-1h&reminderId=${reminderId}`;
+            targetUrl = `${urlBase}/reminders?action=postpone-1h&reminderId=${reminderId}&t=${Date.now()}`;
             break;
 
         case 'postpone-later':
-            url = `/reminders?action=postpone-later&reminderId=${reminderId}`;
+            targetUrl = `${urlBase}/reminders?action=postpone-later&reminderId=${reminderId}&t=${Date.now()}`;
             break;
 
         default:
             // User clicked the body of the notification
-            url = '/reminders';
+            targetUrl = `${urlBase}/reminders`;
             break;
     }
 
-    event.waitUntil(
-        clients.openWindow(url)
-    );
+    // 3. The "Focus or Open" Pattern
+    const promiseChain = clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true
+    }).then((windowClients) => {
+        // A. If there is already a window open, focus it and navigate
+        for (let i = 0; i < windowClients.length; i++) {
+            const client = windowClients[i];
+            // Check if the client is valid and focusable
+            if (client.url.startsWith(urlBase) && 'focus' in client) {
+                return client.focus().then((focusedClient) => {
+                    // CRITICAL: Explicitly navigate the focused client to the new URL
+                    if ('navigate' in focusedClient) {
+                        return focusedClient.navigate(targetUrl);
+                    }
+                });
+            }
+        }
+
+        // B. If no window is open, open a new one
+        if (clients.openWindow) {
+            return clients.openWindow(targetUrl);
+        }
+    });
+
+    event.waitUntil(promiseChain);
 });
