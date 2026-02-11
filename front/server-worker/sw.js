@@ -67,8 +67,6 @@ onBackgroundMessage(messaging, (payload) => {
         body: body,
         icon: '/icon_x192.png',
         data: payload.data,
-        tag: 'medication-notification',
-        renotify: true,
         vibrate: [200, 100, 200],
         requireInteraction: true,
         silent: false,
