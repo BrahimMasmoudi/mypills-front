@@ -87,7 +87,7 @@ const viewType = ref<'grid' | 'table'>('grid')
 
 const route = useRoute()
 
-const handlePostponeActions = async (action: 'postpone-1h' | 'postpone-later' | undefined, reminderId: string | undefined) => {
+const handlePostponeActions = async (action: 'postpone-later' | undefined, reminderId: string | undefined) => {
   if (!action || !reminderId) return
 
   // Wait for reminders to load
@@ -101,11 +101,7 @@ const handlePostponeActions = async (action: 'postpone-1h' | 'postpone-later' | 
     return
   }
 
-  if (action === 'postpone-1h') {
-    await reminderStore.postponeReminderBy1h(reminderId as string)
-    openToast('success', t('reminderDialog.toast.successUpdate'))
-
-  } else if (action === 'postpone-later') {
+  if (action === 'postpone-later') {
     const reminder = reminders.value.find(r => r.reminderId === reminderId)
     if (!reminder) return
 
@@ -121,12 +117,12 @@ onMounted(async () => {
   medicationStore.initMedications()
   await nextTick()
   const { action, reminderId } = route.query
-  handlePostponeActions(action as 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
+  handlePostponeActions(action as 'postpone-later' | undefined, reminderId as string | undefined)
 })
 
 watch(() => route.query, (newQuery) => {
   const { action, reminderId } = newQuery
-  handlePostponeActions(action as 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
+  handlePostponeActions(action as 'postpone-later' | undefined, reminderId as string | undefined)
 })
 
 useSeoMeta({

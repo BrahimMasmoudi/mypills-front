@@ -72,11 +72,6 @@ onBackgroundMessage(messaging, (payload) => {
         silent: false,
         actions: [
             {
-                action: 'postpone-1h',
-                title: dictionary[lang].postpone1h,
-                icon: '/icons/clock.png'
-            },
-            {
                 action: 'postpone-later',
                 title: dictionary[lang].postponeLater,
                 icon: '/icons/calendar.png'
@@ -96,15 +91,11 @@ self.addEventListener('notificationclick', (event) => {
 
     // 2. Determine the target URL
     let targetUrl = '/reminders';
-    
+
     // Ensure we handle the base URL correctly for the PWA scope
     const urlBase = self.registration.scope.replace(/\/$/, '');
 
     switch (action) {
-        case 'postpone-1h':
-            targetUrl = `${urlBase}/reminders?action=postpone-1h&reminderId=${reminderId}&t=${Date.now()}`;
-            break;
-
         case 'postpone-later':
             targetUrl = `${urlBase}/reminders?action=postpone-later&reminderId=${reminderId}&t=${Date.now()}`;
             break;
