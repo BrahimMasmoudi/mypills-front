@@ -5,13 +5,14 @@ export interface SendNotificationCommand {
     userId: string
     medName: string
     quantity: string
+    reminderId: string
 }
 
 export class SendReminderNotification {
     constructor(
         private userRepo: UserRepository,
         private notificationGateway: NotificationGateway
-    ) {}
+    ) { }
 
     async execute(command: SendNotificationCommand): Promise<void> {
         const token = await this.userRepo.getDeviceToken(command.userId)
@@ -24,7 +25,8 @@ export class SendReminderNotification {
         await this.notificationGateway.sendMedicationReminder(
             token,
             command.medName,
-            command.quantity
+            command.quantity,
+            command.reminderId
         )
     }
 }

@@ -100,6 +100,26 @@ export const useReminderStore = defineStore('reminder', () => {
         return result.data
     }
 
+    const updateReminderTime = async (id: string, newTime: Date) => {
+        const callUpdate = httpsCallable($functions, 'updateReminderTime')
+        await callUpdate({ id, newTime: newTime.toISOString() })
+
+        if ($analytics) {
+            logEvent($analytics, 'update_reminder_time', {
+                reminder_id: id,
+                new_time: newTime.toISOString()
+            })
+        }
+    }
+
+    const postponeReminderBy1h = async (id: string) => {
+        const reminder = reminders.value.find(r => r.reminderId === id)
+        if (!reminder) return
+
+        const newTime = new Date(reminder.scheduledTime.getTime() + 60 * 60 * 1000)
+        await updateReminderTime(id, newTime)
+    }
+
     return {
         reminders, // This is now a computed reactive array
         isLoading,
@@ -107,6 +127,8 @@ export const useReminderStore = defineStore('reminder', () => {
         createSchedule,
         deleteReminders,
         updateRemindersStatus,
-        updateReminder
+        updateReminder,
+        updateReminderTime,
+        postponeReminderBy1h
     }
 })

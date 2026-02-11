@@ -74,12 +74,31 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
         await batch.commit()
     }
 
+    async updateReminderTime(id: string, newTime: Date): Promise<void> {
+        const docRef = this.collection.doc(id)
+        await docRef.update({
+            scheduledTime: Timestamp.fromDate(newTime),
+            updatedAt: Timestamp.now(),
+        })
+    }
+
     async delete(reminderIds: ReminderId[]): Promise<void> {
         if (reminderIds.length === 0) return
 
         // 1. Cancel Cloud Tasks
+        // 1. Cancel Cloud Tasks
+        // We need the scheduledTime to construct the task name.
         await Promise.allSettled(
-            reminderIds.map((id) => this.scheduler.cancelNotificationTask(id))
+            reminderIds.map(async (id) => {
+                const doc = await this.collection.doc(id).get()
+                if (doc.exists) {
+                    const data = doc.data() as Reminder
+                    if (data && data.scheduledTime) {
+                        const scheduledTime = (data.scheduledTime as unknown as Timestamp).toDate()
+                        await this.scheduler.cancelNotificationTask(id, scheduledTime)
+                    }
+                }
+            })
         )
 
         // 2. Delete from Firestore

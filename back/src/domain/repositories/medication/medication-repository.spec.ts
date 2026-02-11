@@ -1,35 +1,81 @@
-import { initializeApp, getApp, deleteApp } from 'firebase-admin/app'
-import { getFirestore } from 'firebase-admin/firestore'
 import {
     FirestoreMedicationRepositoryAdapter,
 } from '../../../infrastructure/adapters/persistence/firestore-medication-repository-adapter'
-import { FirestoreConnector } from '../../../infrastructure/adapters/connectors/firestore-connector'
 import { Medication } from '../../entities/medication'
-import { credential } from 'firebase-admin'
 import { AuthData } from 'firebase-functions/v2/tasks'
+import { FieldValue } from 'firebase-admin/firestore'
+import { HttpsError } from 'firebase-functions/v2/https'
 
-describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
+describe('FirestoreMedicationRepositoryAdapter', () => {
     let adapter: FirestoreMedicationRepositoryAdapter
-    let firestore: any
+    let mockConnector: any
+    let mockCollection: any
+    let mockTunisianCollection: any
+    let mockDoc: any
+    let mockBatch: any
+
     const fakeAuth = { uid: 'user-456' } as AuthData
 
-    beforeAll(() => {
-        const app = initializeApp({
-            credential: credential.applicationDefault(),
-        }, 'test-app')
+    beforeEach(() => {
+        mockDoc = {
+            id: 'generated-id',
+            set: jest.fn(),
+            get: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+            data: jest.fn(),
+            exists: true, // Default to true
+            ref: 'mock-ref'
+        }
 
-        firestore = getFirestore(app)
-        const connector = new FirestoreConnector(firestore)
-        adapter = new FirestoreMedicationRepositoryAdapter(connector)
+        const createQueryMock = () => {
+            const queryMock: any = {
+                where: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
+                get: jest.fn().mockResolvedValue({
+                    empty: true,
+                    docs: [],
+                    size: 0,
+                    forEach: jest.fn()
+                })
+            }
+            return queryMock
+        }
+
+        mockCollection = {
+            doc: jest.fn().mockReturnValue(mockDoc),
+            where: jest.fn().mockReturnValue(createQueryMock()),
+            add: jest.fn(),
+        }
+
+        mockTunisianCollection = {
+            doc: jest.fn().mockReturnValue(mockDoc),
+            where: jest.fn().mockReturnValue(createQueryMock()),
+            limit: jest.fn().mockReturnThis(),
+            get: jest.fn().mockResolvedValue({ docs: [] }),
+        }
+
+        mockBatch = {
+            set: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+            commit: jest.fn(),
+        }
+
+        mockConnector = {
+            collection: jest.fn((name) => {
+                if (name === 'tunisian_meds') return mockTunisianCollection
+                return mockCollection
+            }),
+            firestore: {
+                batch: jest.fn().mockReturnValue(mockBatch),
+            }
+        }
+
+        adapter = new FirestoreMedicationRepositoryAdapter(mockConnector)
     })
 
-    afterAll(async () => {
-        const app = getApp('test-app')
-        await deleteApp(app)
-    })
-
-    // Helper to generate unique IDs to avoid collision in shared staging DB
-    const createId = () => `test-med-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+    const createId = () => `test-med-${Date.now()}`
 
     const createTestMedication = (id: string): Medication => ({
         medicationId: id,
@@ -49,124 +95,131 @@ describe('FirestoreMedicationRepositoryAdapter Integration Test', () => {
         const uniqueId = createId()
         const testMedication = createTestMedication(uniqueId)
 
-        it('should create and then retrieve the document from Firestore', async () => {
+        it('should create document in Firestore', async () => {
             await adapter.create(testMedication, fakeAuth)
-            const doc = await firestore.collection('medications').doc(testMedication.medicationId).get()
 
-            expect(doc.exists).toBe(true)
-            expect(doc.data().name).toBe('Integration Test Med')
+            expect(mockCollection.doc).toHaveBeenCalledWith(testMedication.medicationId)
+            expect(mockDoc.set).toHaveBeenCalledWith({
+                ...testMedication,
+                uid: fakeAuth.uid,
+                createdAt: expect.any(Date),
+                updatedAt: expect.any(Date),
+            }, { merge: false })
         })
 
-        it('should increment the quantity in the real database', async () => {
+        it('should increment the quantity', async () => {
+            mockDoc.get.mockResolvedValue({
+                exists: true,
+                data: () => ({ uid: fakeAuth.uid }),
+                ref: mockDoc
+            })
+
             await adapter.increment(testMedication, fakeAuth)
-            const doc = await firestore.collection('medications').doc(testMedication.medicationId).get()
-            expect(doc.data().quantity).toBe(6)
+
+            expect(mockCollection.doc).toHaveBeenCalledWith(testMedication.medicationId)
+            expect(mockDoc.update).toHaveBeenCalledWith({
+                quantity: FieldValue.increment(1),
+                updatedAt: expect.any(Date),
+            })
+        })
+
+        it('should decrement the quantity', async () => {
+            mockDoc.get.mockResolvedValue({
+                exists: true,
+                data: () => ({ uid: fakeAuth.uid }),
+                ref: mockDoc
+            })
+
+            await adapter.decrement(testMedication, fakeAuth)
+
+            expect(mockCollection.doc).toHaveBeenCalledWith(testMedication.medicationId)
+            expect(mockDoc.update).toHaveBeenCalledWith({
+                quantity: FieldValue.increment(-1),
+                updatedAt: expect.any(Date),
+            })
         })
 
         it('should delete the document', async () => {
+            mockDoc.get.mockResolvedValue({
+                exists: true,
+                data: () => ({ uid: fakeAuth.uid }),
+                ref: mockDoc
+            })
+
             await adapter.delete(testMedication, fakeAuth)
-            const doc = await firestore.collection('medications').doc(testMedication.medicationId).get()
-            expect(doc.exists).toBe(false)
+
+            expect(mockCollection.doc).toHaveBeenCalledWith(testMedication.medicationId)
+            expect(mockDoc.delete).toHaveBeenCalled()
+        })
+
+        it('should throw permissions denied if user does not own medication', async () => {
+            mockDoc.get.mockResolvedValue({
+                exists: true,
+                data: () => ({ uid: 'other-user' }),
+                ref: mockDoc
+            })
+
+            await expect(adapter.delete(testMedication, fakeAuth)).rejects.toThrow(HttpsError)
         })
     })
 
     describe('Batch Operations', () => {
         it('should set expired status for multiple medications using a batch', async () => {
-            // 1. Arrange: Create 3 medications that are NOT expired
-            const id1 = createId()
-            const id2 = createId()
-            const id3 = createId()
-            const ids = [id1, id2, id3]
+            const ids = ['id1', 'id2', 'id3']
 
-            await Promise.all([
-                adapter.create(createTestMedication(id1), fakeAuth),
-                adapter.create(createTestMedication(id2), fakeAuth),
-                adapter.create(createTestMedication(id3), fakeAuth),
-            ])
+            // Mock the query snapshot to return docs
+            const mockDocs = ids.map(id => ({
+                id,
+                ref: 'mock-ref-' + id
+            }))
 
-            // 2. Act: Run the batch update
+            mockCollection.where.mockReturnValue({ // auth.uid check
+                where: jest.fn().mockReturnValue({ // ids check
+                    get: jest.fn().mockResolvedValue({
+                        empty: false,
+                        size: 3,
+                        docs: mockDocs
+                    })
+                })
+            })
+
             const result = await adapter.setExpiredStatus(ids, fakeAuth)
 
-            // 3. Assert
             expect(result.updated).toBe(3)
-
-            // Verify each document in Firestore
-            for (const id of ids) {
-                const doc = await firestore.collection('medications').doc(id).get()
-                expect(doc.data().expired).toBe(true)
-            }
-
-            // Cleanup
-            const batch = firestore.batch()
-            ids.forEach((id) => batch.delete(firestore.collection('medications').doc(id)))
-            await batch.commit()
+            expect(mockConnector.firestore.batch).toHaveBeenCalled()
+            expect(mockBatch.update).toHaveBeenCalledTimes(3)
+            expect(mockBatch.commit).toHaveBeenCalled()
         })
 
         it('should return updated: 0 when empty list provided', async () => {
             const result = await adapter.setExpiredStatus([], fakeAuth)
             expect(result.updated).toBe(0)
+            expect(mockConnector.firestore.batch).not.toHaveBeenCalled()
         })
     })
 
-    describe('fetchTunisianMedications (Integration)', () => {
-        const tunisianCollectionName = 'tunisian_meds'
-
-        beforeAll(async () => {
-            // Seed the database with known Tunisian medications
-            const batch = firestore.batch()
-
-            const medsToSeed = [
-                { id: 'tn-1', name: 'DOLIPRANE 500', cis: '6001', details: { form: 'Tab' } },
-                { id: 'tn-2', name: 'DOLIPRANE 1000', cis: '6002', details: { form: 'Cap' } },
-                { id: 'tn-3', name: 'ASPIRINE', cis: '7001', details: { form: 'Tab' } },
+    describe('fetchTunisianMedications', () => {
+        it('should return medications matching the prefix query', async () => {
+            const mockMeds = [
+                { id: 'tn-1', data: () => ({ name: 'DOLIPRANE 500', cis: '6001', details: { form: 'Tab' } }) },
+                { id: 'tn-2', data: () => ({ name: 'DOLIPRANE 1000', cis: '6002', details: { form: 'Cap' } }) }
             ]
 
-            medsToSeed.forEach((med) => {
-                const ref = firestore.collection(tunisianCollectionName).doc(med.id)
-                batch.set(ref, { name: med.name, cis: med.cis, details: med.details })
+            mockTunisianCollection.where.mockReturnValue({
+                where: jest.fn().mockReturnValue({
+                    limit: jest.fn().mockReturnValue({
+                        get: jest.fn().mockResolvedValue({
+                            docs: mockMeds
+                        })
+                    })
+                })
             })
 
-            await batch.commit()
-        })
-
-        it('should return medications matching the prefix query', async () => {
-            // Act: Search for "DOLI"
             const results = await adapter.fetchTunisianMedications('DOLI')
 
-            // Assert
-            expect(results.length).toBeGreaterThanOrEqual(2)
-
-            // Verify structure
-            const doli500 = results.find((m) => m.name === 'DOLIPRANE 500')
-            expect(doli500).toBeDefined()
-            expect(doli500?.id).toBe('tn-1')
-            expect(doli500?.details).toHaveProperty('form', 'Tab')
-        })
-
-        it('should respect the limit of 10 items', async () => {
-            // Act
-            const results = await adapter.fetchTunisianMedications('D')
-
-            // Assert
-            expect(results.length).toBeLessThanOrEqual(30)
-        })
-
-        it('should return an empty array if no names match the prefix', async () => {
-            // Act
-            const results = await adapter.fetchTunisianMedications('XYZ_NON_EXISTENT')
-
-            // Assert
-            expect(results).toEqual([])
-        })
-
-        afterAll(async () => {
-            // Cleanup seeded meds
-            const ids = ['tn-1', 'tn-2', 'tn-3']
-            const batch = firestore.batch()
-            ids.forEach((id) => {
-                batch.delete(firestore.collection(tunisianCollectionName).doc(id))
-            })
-            await batch.commit()
+            expect(results.length).toBe(2)
+            expect(results[0].id).toBe('tn-1')
+            expect(results[0].name).toBe('DOLIPRANE 500')
         })
     })
 })

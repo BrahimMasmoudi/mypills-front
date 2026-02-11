@@ -11,7 +11,14 @@ describe('UpdateRemindersStatus Use Case', () => {
         mockRepo = {
             nextId: jest.fn(),
             saveBatch: jest.fn(),
-            getById: jest.fn(),
+            getById: jest.fn().mockResolvedValue({
+                reminderId: 'rem-1',
+                scheduledTime: new Date('2026-02-10T10:00:00Z'),
+                userId: 'u1',
+                medName: 'm1',
+                quantity: 1,
+                status: 'pending'
+            }),
             updateRemindersStatus: jest.fn().mockResolvedValue(undefined),
             delete: jest.fn(),
         } as any
@@ -45,8 +52,8 @@ describe('UpdateRemindersStatus Use Case', () => {
 
         // Assert
         expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledTimes(2)
-        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('rem-1')
-        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('rem-2')
+        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('rem-1', new Date('2026-02-10T10:00:00Z'))
+        expect(mockScheduler.cancelNotificationTask).toHaveBeenCalledWith('rem-2', new Date('2026-02-10T10:00:00Z'))
     })
 
     it('should propagate errors if the repository update fails', async () => {

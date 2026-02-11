@@ -16,7 +16,7 @@ export class GoogleCloudTaskSchedulerAdapter implements TaskSchedulerPort {
         const queuePath = this.client.queuePath(this.project, this.location, this.queue)
 
         const task = {
-            name: `${queuePath}/tasks/${reminderId}`,
+            name: `${queuePath}/tasks/${reminderId}-${scheduledTime.getTime()}`,
             httpRequest: {
                 httpMethod: 'POST' as const,
                 url: this.targetUrl,
@@ -35,15 +35,15 @@ export class GoogleCloudTaskSchedulerAdapter implements TaskSchedulerPort {
         } catch (error: any) {
             // If task already exists, we ignore it as we use deterministic IDs
             if (error.code === 6) { // ALREADY_EXISTS
-                return `${queuePath}/tasks/${reminderId}`
+                return `${queuePath}/tasks/${reminderId}-${scheduledTime.getTime()}`
             }
             throw error
         }
     }
 
-    async cancelNotificationTask(reminderId: string): Promise<void> {
+    async cancelNotificationTask(reminderId: string, scheduledTime: Date): Promise<void> {
         const queuePath = this.client.queuePath(this.project, this.location, this.queue)
-        const taskName = `${queuePath}/tasks/${reminderId}`
+        const taskName = `${queuePath}/tasks/${reminderId}-${scheduledTime.getTime()}`
 
         try {
             await this.client.deleteTask({ name: taskName })

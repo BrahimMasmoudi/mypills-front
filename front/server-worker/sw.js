@@ -13,8 +13,12 @@ cleanupOutdatedCaches()
 
 try {
     const handler = createHandlerBoundToURL('/')
-    const route = new NavigationRoute(handler)
-    registerRoute(route)
+
+    registerRoute(
+        new NavigationRoute(handler, {
+            denylist: [/^\/reminders/],
+        })
+    )
 } catch (error) {
     console.warn('Error while registering cache route', { error })
 }
@@ -22,11 +26,15 @@ try {
 const dictionary = {
     en: {
         title: "Medication Time 💊",
-        body: (q, name) => `Take ${q}x ${name}`
+        body: (q, name) => `Take ${q}x ${name}`,
+        postpone1h: "Postpone 1h ⏳",
+        postponeLater: "Postpone later 📅"
     },
     fr: {
         title: "L'heure de prendre vos médicaments 💊",
-        body: (q, name) => `Prenez ${q}x ${name}`
+        body: (q, name) => `Prenez ${q}x ${name}`,
+        postpone1h: "Repousser d'1h ⏳",
+        postponeLater: "Repousser plus tard 📅"
     }
 };
 
@@ -59,27 +67,69 @@ onBackgroundMessage(messaging, (payload) => {
         body: body,
         icon: '/icon_x192.png',
         data: payload.data,
-        tag: 'medication-notification',
-        renotify: true,
         vibrate: [200, 100, 200],
-        requireInteraction: true, // Keeps it on screen until user dismisses it
-        silent: false
+        requireInteraction: true,
+        silent: false,
+        actions: [
+            {
+                action: 'postpone-later',
+                title: dictionary[lang].postponeLater,
+                icon: '/icons/calendar.png'
+            }
+        ]
     });
 });
 
-self.addEventListener('notificationclick', function (event) {
+self.addEventListener('notificationclick', (event) => {
+    // 1. Close the notification immediately
     event.notification.close();
-    event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-            for (let client of windowClients) {
-                if ('focus' in client) {
-                    return client.focus();
-                }
-            }
 
-            if (clients.openWindow) {
-                return clients.openWindow('/reminders');
+    const reminderId = event.notification?.data?.reminderId || null;
+    const action = event.action;
+
+    console.log('Notification clicked. Action:', action);
+
+    // 2. Determine the target URL
+    let targetUrl = '/reminders';
+
+    // Ensure we handle the base URL correctly for the PWA scope
+    const urlBase = self.registration.scope.replace(/\/$/, '');
+
+    switch (action) {
+        case 'postpone-later':
+            targetUrl = `${urlBase}/reminders?action=postpone-later&reminderId=${reminderId}&t=${Date.now()}`;
+            break;
+
+        default:
+            // User clicked the body of the notification
+            targetUrl = `${urlBase}/reminders`;
+            break;
+    }
+
+    // 3. The "Focus or Open" Pattern
+    const promiseChain = clients.matchAll({
+        type: 'window',
+        includeUncontrolled: true
+    }).then((windowClients) => {
+        // A. If there is already a window open, focus it and navigate
+        for (let i = 0; i < windowClients.length; i++) {
+            const client = windowClients[i];
+            // Check if the client is valid and focusable
+            if (client.url.startsWith(urlBase) && 'focus' in client) {
+                return client.focus().then((focusedClient) => {
+                    // CRITICAL: Explicitly navigate the focused client to the new URL
+                    if ('navigate' in focusedClient) {
+                        return focusedClient.navigate(targetUrl);
+                    }
+                });
             }
-        })
-    );
+        }
+
+        // B. If no window is open, open a new one
+        if (clients.openWindow) {
+            return clients.openWindow(targetUrl);
+        }
+    });
+
+    event.waitUntil(promiseChain);
 });

@@ -9,11 +9,27 @@
         variant="flat"
     >
       <v-icon :icon="icon" color="white" class="mr-3"></v-icon>
-      <div class="text-body-2 text-white font-weight-bold">
-        {{ message }}
+      <div class="d-flex flex-column flex-grow-1">
+        <div class="text-body-2 text-white font-weight-bold">
+          {{ message }}
+        </div>
+        
+        <div v-if="actions && actions.length > 0" class="d-flex gap-2 mt-2">
+          <v-btn
+              v-for="(action, index) in actions"
+              :key="index"
+              size="small"
+              variant="tonal"
+              color="white"
+              class="text-capitalize font-weight-bold mr-3"
+              @click="action.onClick"
+          >
+            {{ action.label }}
+          </v-btn>
+        </div>
       </div>
 
-      <v-btn icon="mdi-close" size="x-small" variant="text" color="white" class="ml-auto"
+      <v-btn icon="mdi-close" size="x-small" variant="text" color="white" class="ml-auto align-self-start"
              @click="$emit('close')"></v-btn>
     </v-card>
   </div>
@@ -22,9 +38,10 @@
 <script lang="ts" setup>
 import type {QueueToastType} from "~/composables/useQueueToast";
 
-const {type} = defineProps<{
+const {type, actions} = defineProps<{
   type: QueueToastType,
-  message: string
+  message: string,
+  actions?: { label: string, onClick: () => void }[]
 }>()
 
 defineEmits(['close'])

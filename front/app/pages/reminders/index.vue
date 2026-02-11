@@ -65,8 +65,8 @@
 </template>
 
 <script setup lang="ts">
+import type { LocationQueryValue } from 'vue-router'
 import {storeToRefs} from 'pinia'
-import {logEvent} from "firebase/analytics";
 import {format} from 'date-fns'
 import type {ReminderGroup, ReminderStatus} from '~/types/reminder'
 import type {ToastType} from "~/composables/openToast"
@@ -85,8 +85,47 @@ const {reminders, isLoading} = storeToRefs(reminderStore)
 const {medications} = storeToRefs(medicationStore)
 const viewType = ref<'grid' | 'table'>('grid')
 
-onMounted(() => {
+const route = useRoute()
+
+const handlePostponeActions = async (action: 'postpone-1h' | 'postpone-later' | undefined, reminderId: string | undefined) => {
+  if (!action || !reminderId) return
+
+  // Wait for reminders to load
+  if (isLoading.value) {
+    const unwatch = watch(isLoading, (val) => {
+      if (!val) {
+        unwatch()
+        handlePostponeActions(action, reminderId)
+      }
+    })
+    return
+  }
+
+  if (action === 'postpone-1h') {
+    await reminderStore.postponeReminderBy1h(reminderId as string)
+    openToast('success', t('reminderDialog.toast.successUpdate'))
+
+  } else if (action === 'postpone-later') {
+    const reminder = reminders.value.find(r => r.reminderId === reminderId)
+    if (!reminder) return
+
+    // Find the group this reminder belongs to
+    const group = groupedReminders.value.find(g => g.ids.includes(reminderId as string))
+    if (group) {
+      handleEdit(group, () => {})
+    }
+  }
+}
+
+onMounted(async () => {
   medicationStore.initMedications()
+  const { action, reminderId } = route.query
+  handlePostponeActions(action as 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
+})
+
+watch(() => route.query, (newQuery) => {
+  const { action, reminderId } = newQuery
+  handlePostponeActions(action as 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
 })
 
 useSeoMeta({
@@ -210,7 +249,9 @@ const handleEdit = async (item: ReminderGroup, done: () => void) => {
     })
 
     if (result === 'success') {
-      // Success is handled by the store sync
+      openToast('success', t('reminderDialog.toast.successUpdate'))
+    } else if(result === 'error') {
+      openToast('error', t('reminderDialog.toast.errorUpdate'))
     }
   } finally {
     done()

@@ -6,6 +6,7 @@
           :key="item.id"
           :message="item.message"
           :type="item.type"
+          :actions="item.actions"
           @close="removeToast(item.id)"
       />
     </TransitionGroup>

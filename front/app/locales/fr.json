@@ -145,7 +145,9 @@
     "sicknessNameLabel": "Nom du traitement",
     "toast": {
       "success": "Le rappel est crée avec succés",
-      "error": "Échec lors de la creation d'un rappel"
+      "error": "Échec lors de la creation d'un rappel",
+      "successUpdate": "Le rappel a été mis à jour avec succès",
+      "errorUpdate": "Échec lors de la mise à jour du rappel"
     }
   },
   "reminderDialogValidate": {
