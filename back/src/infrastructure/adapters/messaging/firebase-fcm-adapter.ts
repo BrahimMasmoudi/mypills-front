@@ -22,13 +22,6 @@ export class FirebaseFcmAdapter implements NotificationGateway {
             webpush: {
                 headers: {
                     Urgency: 'high'
-                },
-                notification: {
-                    icon: '/icon_x192.png',
-                    tag: 'medication-notification'
-                },
-                fcmOptions: {
-                    link: '/reminders' // The URL to open on click
                 }
             }
         })
