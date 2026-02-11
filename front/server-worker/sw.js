@@ -77,32 +77,42 @@ onBackgroundMessage(messaging, (payload) => {
                 action: 'postpone-1h',
                 title: dictionary[lang].postpone1h,
                 icon: '/icons/clock.png'
+            },
+            {
+                action: 'postpone-later',
+                title: dictionary[lang].postponeLater,
+                icon: '/icons/calendar.png'
             }
         ]
     });
 });
 
-self.addEventListener('notificationclick', function (event) {
+self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
-    const reminderId = event.notification.data?.reminderId;
+    const reminderId = event.notification?.data?.reminderId || null;
+    const action = event.action;
+
+    console.log('Notification clicked. Action:', action);
+
     let url = '/reminders';
 
-    if (event.action === 'postpone-1h') {
-        url = `/reminders?action=postpone-1h&reminderId=${reminderId}`;
+    switch (action) {
+        case 'postpone-1h':
+            url = `/reminders?action=postpone-1h&reminderId=${reminderId}`;
+            break;
+
+        case 'postpone-later':
+            url = `/reminders?action=postpone-later&reminderId=${reminderId}`;
+            break;
+
+        default:
+            // User clicked the body of the notification
+            url = '/reminders';
+            break;
     }
 
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
-            for (let client of windowClients) {
-                if ('focus' in client && 'navigate' in client) {
-                    return client.navigate(url).then(client => client.focus());
-                }
-            }
-
-            if (clients.openWindow) {
-                return clients.openWindow(url);
-            }
-        })
+        clients.openWindow(url)
     );
 });
