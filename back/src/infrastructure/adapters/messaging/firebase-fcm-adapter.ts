@@ -7,8 +7,8 @@ export class FirebaseFcmAdapter implements NotificationGateway {
             token,
             data: {
                 medName: medName,
-                quantity: String(quantity),
-                reminderId: String(reminderId)
+                quantity: quantity,
+                reminderId: reminderId
             },
             android: {
                 priority: 'high',

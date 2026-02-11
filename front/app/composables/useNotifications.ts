@@ -16,7 +16,6 @@ export const useNotifications = () => {
                 vapidKey: $config.public.firebase.cloudMessaging.vapidKey,
                 serviceWorkerRegistration: registration,
             })
-            console.log('Current token:', currentToken)
             if (currentToken) {
                 const saveToken = httpsCallable($functions, 'saveUserToken')
                 await saveToken({ fcmToken: currentToken })
