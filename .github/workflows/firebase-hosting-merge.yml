@@ -34,6 +34,7 @@ jobs:
         env:
           NODE_ENV: production
           ENVIRONMENT: production
+          FUNCTIONS_URL: ${{ secrets.FUNCTIONS_URL }}
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
@@ -58,7 +59,6 @@ jobs:
 
       - name: Cleanup SA Key
         run: rm $HOME/gcloud.json
-
 
       - name: '🚀 Deploy to Firebase'
         uses: w9jds/firebase-action@v15.3.1
