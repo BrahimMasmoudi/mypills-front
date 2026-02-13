@@ -46,6 +46,7 @@ export default defineConfig({
 
                 admin.initializeApp({
                     projectId: projectId,
+                    storageBucket: 'my-pills-staging-460b5.firebasestorage.app',
                     // Only include credential if it was successfully created
                     ...(credential ? { credential } : {})
                 })
@@ -76,6 +77,21 @@ export default defineConfig({
                     const batch = db.batch()
                     snapshot.docs.forEach((doc) => batch.delete(doc.ref))
                     await batch.commit()
+                    return null
+                },
+
+                async deleteUserFolder({ uid, folderName }: { uid: string, folderName: string }) {
+                    const bucket = admin.storage().bucket()
+                    const prefix = `users/${uid}/${folderName}/`
+
+                    try {
+                        const [files] = await bucket.getFiles({ prefix })
+                        if (files.length > 0) {
+                            await Promise.all(files.map(file => file.delete()))
+                        }
+                    } catch (error) {
+                        console.error('Error deleting folder:', error)
+                    }
                     return null
                 }
             })
