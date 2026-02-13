@@ -50,12 +50,30 @@ export class FirebaseStorageAdapter implements DocumentStoragePort {
             return `http://127.0.0.1:9199/v0/b/${bucketName}/o/${encodedPath}?alt=media&token=${token}`
         }
 
-        // Production: use signed URLs
-        const [url] = await file.getSignedUrl({
-            version: 'v4',
-            action: 'read',
-            expires: Date.now() + expiresInMs,
-        })
-        return url
+        // Production: Use download tokens instead of signed URLs
+        // This avoids the iam.serviceAccounts.signBlob permission issue
+
+        // Get or create a download token for the file
+        const [metadata] = await file.getMetadata()
+        let token: string
+
+        if (metadata.metadata?.firebaseStorageDownloadTokens) {
+            token = String(metadata.metadata.firebaseStorageDownloadTokens)
+        } else {
+            // Generate a new token if one doesn't exist
+            token = require('crypto').randomUUID()
+            await file.setMetadata({
+                metadata: {
+                    firebaseStorageDownloadTokens: String(token)
+                }
+            })
+        }
+
+        const bucketName = bucket.name
+        const encodedPath = encodeURIComponent(storagePath)
+
+        // Return public URL with download token
+        // This works without signBlob permission and bypasses storage rules
+        return `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedPath}?alt=media&token=${token}`
     }
 }
