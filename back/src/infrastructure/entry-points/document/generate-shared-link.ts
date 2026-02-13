@@ -22,12 +22,17 @@ export const generateSharedLink = onCall({ region: 'europe-west3' }, async ({ da
         return result
     } catch (error: any) {
         console.error('Error generating signed URL:', error)
+        console.error('Error stack:', error.stack)
+        console.error('Error details:', JSON.stringify(error, null, 2))
+
         if (error.message === 'Document not found.') {
             throw new HttpsError('not-found', error.message)
         }
         if (error.message.includes('Permission denied')) {
             throw new HttpsError('permission-denied', error.message)
         }
-        throw new HttpsError('internal', 'Unable to generate link.')
+
+        // Include actual error message for debugging
+        throw new HttpsError('internal', `Unable to generate link: ${error.message}`)
     }
 })
