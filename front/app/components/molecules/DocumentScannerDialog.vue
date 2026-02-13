@@ -8,7 +8,7 @@
       width="650"
       content-class="elevation-0"
   >
-    <v-card class="rounded-xl pa-6" elevation="24">
+    <v-card class="rounded-xl pa-6" elevation="24" data-cy="document-scanner-dialog">
       <div class="d-flex flex-column align-center text-center mb-6">
         <v-avatar color="primary-lighten-5" size="64" class="mb-2">
           <v-icon :icon="isPdfMode ? 'mdi-file-pdf-box' : 'mdi-camera-outline'" color="primary" size="36"/>
@@ -30,12 +30,13 @@
             rounded="pill"
             class="mode-toggle"
             @update:model-value="handleModeChange"
+            data-cy="mode-toggle"
         >
-          <v-btn value="images" class="px-8 text-capitalize font-weight-bold">
+          <v-btn value="images" class="px-8 text-capitalize font-weight-bold" data-cy="mode-images-btn">
             <v-icon start icon="mdi-camera"/>
             {{ t('scanDocumentDialog.modeImages') }}
           </v-btn>
-          <v-btn value="pdf" class="px-8 text-capitalize font-weight-bold">
+          <v-btn value="pdf" class="px-8 text-capitalize font-weight-bold" data-cy="mode-pdf-btn">
             <v-icon start icon="mdi-file-pdf-box"/>
             {{ t('scanDocumentDialog.modePdf') }}
           </v-btn>
@@ -56,6 +57,7 @@
                 prepend-inner-icon="mdi-folder-open"
                 class="font-weight-medium elegant-input"
                 :rules="[(v) => !!v || t('validation.required')]"
+                data-cy="folder-input"
             />
 
             <v-text-field
@@ -70,6 +72,7 @@
                 prepend-inner-icon="mdi-format-title"
                 class="font-weight-medium elegant-input"
                 :rules="!isPdfMode ? [(v) => !!v || t('validation.required')] : []"
+                data-cy="document-name-input"
             />
 
             <div v-if="pages.length > 0" class="mt-2">
@@ -138,7 +141,7 @@
       </v-card-text>
 
       <v-card-actions class="justify-center pt-8 gap-3 px-0">
-        <v-btn variant="outlined" class="text-capitalize font-weight-bold" size="large" @click="cancelAndClose">
+        <v-btn variant="outlined" class="text-capitalize font-weight-bold" size="large" @click="cancelAndClose" data-cy="cancel-btn">
           {{ t('cancel') }}
         </v-btn>
         <v-btn
@@ -148,6 +151,7 @@
             :loading="isUploading"
             :disabled="pages.length === 0 || !isValid"
             @click="onConfirmClick"
+            data-cy="confirm-upload-btn"
         >
           {{ t('confirm') }}
         </v-btn>

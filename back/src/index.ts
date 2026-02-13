@@ -1,5 +1,3 @@
-import { initializeApp } from 'firebase-admin/app'
+import './infrastructure/config/firebase'
 
-initializeApp()
 export * from './infrastructure/entry-points/https-functions'
-export * from './infrastructure/config/firebase'

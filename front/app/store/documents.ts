@@ -1,11 +1,12 @@
-import {defineStore} from 'pinia'
-import {ref as storageRef, uploadBytes, getDownloadURL, deleteObject, getBytes} from 'firebase/storage'
-import {useCollection, useCurrentUser} from 'vuefire'
-import {collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, writeBatch} from 'firebase/firestore'
-import {computed, ref} from 'vue'
+import { defineStore } from 'pinia'
+import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject, getBytes } from 'firebase/storage'
+import { httpsCallable } from 'firebase/functions'
+import { useCollection, useCurrentUser } from 'vuefire'
+import { collection, addDoc, serverTimestamp, doc, deleteDoc, updateDoc, writeBatch } from 'firebase/firestore'
+import { computed, ref } from 'vue'
 
 export const useDocumentsStore = defineStore('documents', () => {
-    const {$firestore, $storage} = useNuxtApp()
+    const { $firestore, $storage, $functions } = useNuxtApp()
     const user = useCurrentUser()
 
     const activeFolder = ref()
@@ -136,12 +137,19 @@ export const useDocumentsStore = defineStore('documents', () => {
         await Promise.all(deletionPromises)
     }
 
+    const getShareableLink = async (documentItem: any) => {
+        const generateLink = httpsCallable($functions, 'generateSharedLink')
+        const result = await generateLink({ storagePath: documentItem.storagePath })
+        return result.data as { url: string, expires: string }
+    }
+
     return {
         uploadDocument,
         renameDocument,
         renameFolder,
         deleteDocument,
         deleteFolder,
+        getShareableLink,
         allDocuments,
         existingFolders,
         activeFolder,
