@@ -38,22 +38,16 @@ export class CreateSharedLink implements CreateSharedLinkUseCase {
         )
 
         await this.sharedLinkRepository.save(sharedLink)
-
-        // Determine base URL based on environment
         let baseUrl: string
         const isEmulator = process.env.FUNCTIONS_EMULATOR || process.env.FIRESTORE_EMULATOR_HOST
 
         if (isEmulator) {
-            // Local emulator - use Functions emulator URL
-            // Default Functions emulator runs on port 5001
             const projectId = process.env.GCLOUD_PROJECT || 'demo-project'
             const region = 'europe-west3'
             baseUrl = `http://127.0.0.1:5001/${projectId}/${region}`
         } else {
-            // Production/Staging - derive from project ID
             const projectId = process.env.GCLOUD_PROJECT
             const region = 'europe-west3'
-
             baseUrl = `https://${region}-${projectId}.cloudfunctions.net`
         }
 
