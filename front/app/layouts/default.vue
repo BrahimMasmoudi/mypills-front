@@ -105,7 +105,7 @@ const langStore = useLanguageStore()
 langStore.initLocale()
 const docStore = useDocumentsStore()
 const pdfService = usePdfService()
-const guideSeen = useCookie('notification_guide_seen')
+const guideSeen = useCookie('notification_guide_seen', { maxAge: 60 * 60 * 24 * 365 })
 
 
 const checkCountryStatus = async () => {
