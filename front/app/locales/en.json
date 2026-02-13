@@ -239,6 +239,7 @@
     "title": "Share Document",
     "description": "Here is the sharing link (valid for 1 hour):",
     "emailAction": "By Email",
+    "shareAction": "Share",
     "close": "Close",
     "emailSubject": "Shared Document: {docName}",
     "emailBody": "Hello,\n\nHere is a link to the document \"{docName}\" (valid for 1 hour):\n\n{link}\n\nRegards.",

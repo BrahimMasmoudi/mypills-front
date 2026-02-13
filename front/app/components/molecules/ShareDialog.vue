@@ -66,10 +66,10 @@
               class="flex-grow-1 text-capitalize font-weight-bold"
               height="48"
               :disabled="loading"
-              prepend-icon="mdi-email"
-              @click="shareEmail"
+              prepend-icon="mdi-share-variant"
+              @click="handleShare"
           >
-            {{ t('shareDialog.emailAction') }}
+            {{ t('shareDialog.shareAction') }}
           </v-btn>
 
           <v-btn
@@ -156,10 +156,10 @@
               size="x-large"
               class="text-capitalize font-weight-bold rounded-lg"
               :disabled="loading"
-              prepend-icon="mdi-email"
-              @click="shareEmail"
+              prepend-icon="mdi-share-variant"
+              @click="handleShare"
           >
-            {{ t('shareDialog.emailAction') }}
+            {{ t('shareDialog.shareAction') }}
           </v-btn>
 
           <v-btn
@@ -214,28 +214,18 @@ const copyLink = async () => {
   }
 }
 
-const shareEmail = () => {
+const handleShare = async () => {
   if (loading.value) return
-  
-  // Check if mobile and native share is available
-  if ($device.isMobile && navigator.share) {
-    // Mobile: use native share menu
-    navigator.share({
-      title: doc.name,
-      text: t('shareDialog.emailBody', { docName: doc.name, link: linkValue.value }),
-      url: linkValue.value
-    }).catch(err => {
+   try {
+      await navigator.share({
+        title: doc.name,
+        text: t('shareDialog.emailBody', { docName: doc.name, link: linkValue.value }),
+        url: linkValue.value
+      })
+    } catch (err) {
+      // User cancelled or share failed
       console.error('Share failed:', err)
-    })
-  } else {
-    // Desktop: open mailto in new tab
-    const subject = encodeURIComponent(t('shareDialog.emailSubject', { docName: doc.name }))
-    const body = encodeURIComponent(t('shareDialog.emailBody', { docName: doc.name, link: linkValue.value }))
-    const mailtoLink = `mailto:?subject=${subject}&body=${body}`
-    
-    // Open in new tab/window instead of replacing current page
-    window.open(mailtoLink, '_blank')
-  }
+    }
 }
 
 // Fetch shareable link on mount

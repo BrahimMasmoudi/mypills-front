@@ -239,6 +239,7 @@
     "title": "Partager le document",
     "description": "Voici le lien de partage (valide 1 heure) :",
     "emailAction": "Par Email",
+    "shareAction": "Partager",
     "close": "Fermer",
     "emailSubject": "Document partagé : {docName}",
     "emailBody": "Bonjour,\n\nVoici un lien vers le document \"{docName}\" (valide pendant 1 heure) :\n\n{link}\n\nCordialement.",
