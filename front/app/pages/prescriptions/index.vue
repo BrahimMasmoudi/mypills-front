@@ -35,6 +35,7 @@
         @deleteFolder="openDeleteFolderDialog"
         @renameDoc="handleRenameDoc"
         @deleteDoc="confirmDelete"
+        @shareDoc="handleShare"
     />
   </v-sheet>
 </template>
@@ -46,6 +47,7 @@ import {fr, enUS} from 'date-fns/locale'
 import {useDocumentsStore} from "~/store/documents";
 import type {ToastType} from "~/composables/openToast";
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue";
+import MoleculesShareDialog from "~/components/molecules/ShareDialog.vue";
 
 const {t, locale} = useI18n()
 const docStore = useDocumentsStore()
@@ -111,6 +113,16 @@ const handleRenameFolder = async (oldName: string, newName: string, done: () => 
     console.error(e)
   } finally {
     done()
+  }
+}
+
+const handleShare = async (doc: any) => {
+  try {
+    await $open(MoleculesShareDialog, {
+      doc
+    })
+  } catch (e) {
+    console.error('Error opening share dialog:', e)
   }
 }
 </script>

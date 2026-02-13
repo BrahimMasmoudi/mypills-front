@@ -18,6 +18,7 @@
                 @view="(url) => $emit('view', url)"
                 @delete="(d) => $emit('deleteDoc', d)"
                 @rename="(d, newN, done) => $emit('renameDoc', d, newN, done)"
+                @share="(d) => $emit('shareDoc', d)"
             />
           </v-col>
         </v-row>
@@ -34,7 +35,7 @@ defineProps<{
   getDocs: (f: string) => any[];
   formatDate: (t: any) => string;
 }>()
-const emit = defineEmits(['renameFolder', 'deleteFolder', 'renameDoc', 'deleteDoc', 'view'])
+const emit = defineEmits(['renameFolder', 'deleteFolder', 'renameDoc', 'deleteDoc', 'view', 'shareDoc'])
 const internalPanels = defineModel<string[]>('openedPanels')
 const {t} = useI18n()
 </script>

@@ -234,5 +234,15 @@
     "step3": "Set 'Medications' to 'Urgent' or 'Pop-up'",
     "dontShowAgain": "Don't show this guide again",
     "understand": "I understand"
+  },
+  "shareDialog": {
+    "title": "Share Document",
+    "description": "Here is the sharing link (valid for 1 hour):",
+    "emailAction": "By Email",
+    "close": "Close",
+    "emailSubject": "Shared Document: {docName}",
+    "emailBody": "Hello,\n\nHere is a link to the document \"{docName}\" (valid for 1 hour):\n\n{link}\n\nRegards.",
+    "copied": "Copied!",
+    "loading": "Generating link..."
   }
 }

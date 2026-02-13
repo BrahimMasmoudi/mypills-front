@@ -28,6 +28,7 @@
     <v-divider/>
 
     <v-card-actions class="justify-end px-2 py-1">
+      <v-btn icon="mdi-share-variant-outline" variant="text" color="primary" size="small" @click="$emit('share', doc)"/>
       <v-btn icon="mdi-eye-outline" variant="text" color="primary" size="small" @click="$emit('view', doc.fileUrl)"/>
       <v-btn icon="mdi-pencil-outline" variant="text" color="grey-darken-1" size="small" @click="toggleEdit"/>
       <v-btn icon="mdi-delete-outline" variant="text" color="error" size="small" @click="$emit('delete', doc)"/>
@@ -37,7 +38,7 @@
 
 <script setup lang="ts">
 const props = defineProps<{ doc: any; formattedDate: string }>()
-const emit = defineEmits(['view', 'delete', 'rename'])
+const emit = defineEmits(['view', 'delete', 'rename', 'share'])
 
 const isEditing = ref(false)
 const isLoading = ref(false)

@@ -234,5 +234,15 @@
     "step3": "Réglez 'Médicaments' sur 'Urgent' ou 'Afficher sous forme de pop-up'",
     "dontShowAgain": "Ne plus afficher ce guide",
     "understand": "J'ai compris"
+  },
+  "shareDialog": {
+    "title": "Partager le document",
+    "description": "Voici le lien de partage (valide 1 heure) :",
+    "emailAction": "Par Email",
+    "close": "Fermer",
+    "emailSubject": "Document partagé : {docName}",
+    "emailBody": "Bonjour,\n\nVoici un lien vers le document \"{docName}\" (valide pendant 1 heure) :\n\n{link}\n\nCordialement.",
+    "copied": "Copié !",
+    "loading": "Génération du lien..."
   }
 }
