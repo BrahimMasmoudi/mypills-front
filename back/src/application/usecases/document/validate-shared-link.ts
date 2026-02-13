@@ -1,6 +1,7 @@
 import { ValidateSharedLinkUseCase } from '../../ports/input/document/validate-shared-link-use-case'
 import { SharedLinkRepositoryPort } from '../../../domain/gateway/document/shared-link-repository-port'
 import { DocumentStoragePort } from '../../../domain/gateway/document/document-storage-port'
+import { SharedLinkValidationResult } from '../../../domain/entities/document/shared-link-validation-result'
 
 export class ValidateSharedLink implements ValidateSharedLinkUseCase {
     constructor(
@@ -8,7 +9,7 @@ export class ValidateSharedLink implements ValidateSharedLinkUseCase {
         private readonly documentStorage: DocumentStoragePort
     ) { }
 
-    async execute(tokenId: string): Promise<{ valid: boolean, url?: string, error?: string }> {
+    async execute(tokenId: string): Promise<SharedLinkValidationResult> {
         // Find the shared link by token
         const sharedLink = await this.sharedLinkRepository.findByToken(tokenId)
 

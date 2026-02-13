@@ -2,6 +2,7 @@ import { CreateSharedLinkUseCase } from '../../ports/input/document/create-share
 import { DocumentStoragePort } from '../../../domain/gateway/document/document-storage-port'
 import { SharedLinkRepositoryPort } from '../../../domain/gateway/document/shared-link-repository-port'
 import { SharedLink } from '../../../domain/entities/document/shared-link'
+import { SharedLinkResponse } from '../../../domain/entities/document/shared-link-response'
 import { randomUUID } from 'crypto'
 
 export class CreateSharedLink implements CreateSharedLinkUseCase {
@@ -10,7 +11,7 @@ export class CreateSharedLink implements CreateSharedLinkUseCase {
         private readonly sharedLinkRepository: SharedLinkRepositoryPort
     ) { }
 
-    async execute(userId: string, storagePath: string): Promise<{ url: string, expires: string }> {
+    async execute(userId: string, storagePath: string): Promise<SharedLinkResponse> {
         const expectedPrefix = `users/${userId}/`
         if (!storagePath.startsWith(expectedPrefix)) {
             throw new Error('Permission denied: You can only share your own documents.')

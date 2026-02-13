@@ -1,23 +1,16 @@
-import { Storage } from 'firebase-admin/storage'
 import { DocumentStoragePort } from '../../../domain/gateway/document/document-storage-port'
 import { $storage } from '../../config/firebase'
 
 export class FirebaseStorageAdapter implements DocumentStoragePort {
-    private storage: Storage
-
-    constructor() {
-        this.storage = $storage
-    }
-
     async exists(storagePath: string): Promise<boolean> {
-        const bucket = this.storage.bucket()
+        const bucket = $storage.bucket()
         const file = bucket.file(storagePath)
         const [exists] = await file.exists()
         return exists
     }
 
     async generateTemporaryUrl(storagePath: string): Promise<string> {
-        const bucket = this.storage.bucket()
+        const bucket = $storage.bucket()
         const file = bucket.file(storagePath)
 
         const isEmulator = process.env.FIRESTORE_EMULATOR_HOST || process.env.FIREBASE_STORAGE_EMULATOR_HOST

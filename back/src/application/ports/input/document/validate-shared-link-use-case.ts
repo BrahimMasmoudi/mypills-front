@@ -1,3 +1,5 @@
+import { SharedLinkValidationResult } from '../../../domain/entities/document/shared-link-validation-result'
+
 export interface ValidateSharedLinkUseCase {
-    execute(tokenId: string): Promise<{ valid: boolean, url?: string, error?: string }>
+    execute(tokenId: string): Promise<SharedLinkValidationResult>
 }
