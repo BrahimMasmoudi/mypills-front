@@ -50,8 +50,11 @@ export class CreateSharedLink implements CreateSharedLinkUseCase {
             const region = 'europe-west3'
             baseUrl = `http://127.0.0.1:5001/${projectId}/${region}`
         } else {
-            // Production/Staging
-            baseUrl = process.env.FUNCTIONS_URL || 'https://europe-west3-my-pills-staging-460b5.cloudfunctions.net'
+            // Production/Staging - derive from project ID
+            const projectId = process.env.GCLOUD_PROJECT
+            const region = 'europe-west3'
+
+            baseUrl = `https://${region}-${projectId}.cloudfunctions.net`
         }
 
         const url = `${baseUrl}/validateSharedLink?token=${tokenId}`
