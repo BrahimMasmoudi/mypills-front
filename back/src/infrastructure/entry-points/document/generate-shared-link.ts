@@ -1,5 +1,6 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { FirebaseStorageAdapter } from '../../adapters/document/firebase-storage-adapter'
+import { FirestoreSharedLinkRepository } from '../../adapters/document/firestore-shared-link-repository'
 import { CreateSharedLink } from '../../../application/usecases/document/create-shared-link'
 
 export const generateSharedLink = onCall({ region: 'europe-west3' }, async ({ data, auth }) => {
@@ -16,7 +17,8 @@ export const generateSharedLink = onCall({ region: 'europe-west3' }, async ({ da
 
     try {
         const storageAdapter = new FirebaseStorageAdapter()
-        const createSharedLinkUseCase = new CreateSharedLink(storageAdapter)
+        const sharedLinkRepository = new FirestoreSharedLinkRepository()
+        const createSharedLinkUseCase = new CreateSharedLink(storageAdapter, sharedLinkRepository)
 
         const result = await createSharedLinkUseCase.execute(auth.uid, storagePath)
         return result

@@ -1,4 +1,4 @@
 export interface DocumentStoragePort {
-    generateSignedUrl(storagePath: string, expiresInMs: number): Promise<string>
     exists(storagePath: string): Promise<boolean>
+    generateTemporaryUrl(storagePath: string): Promise<string>
 }
