@@ -165,7 +165,7 @@
 import type {Medication} from "~/types/medication"
 import {parseDate} from "~/composables/parseDate"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
-import MedicationInfoDialog from "~/components/molecules/MedicationInfoDialog.vue"
+import InfoDialog from "~/components/molecules/medications/InfoDialog.vue"
 import {useI18n} from "vue-i18n"
 import type {ToastType} from "~/composables/openToast";
 
@@ -253,7 +253,7 @@ const handleDecrement = () => {
 }
 
 const showMedicationDetails = async () => {
-  await $open(MedicationInfoDialog, {
+  await $open(InfoDialog, {
     scrim: true,
     isPersistent: false,
     data: medication

@@ -67,7 +67,7 @@
                   @delete-pills="(med, done) => $emit('delete-pills', med, done)"
                   @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
               />
-              <MoleculesMedicationTable
+              <MoleculesMedicationsTable
                   v-else-if="viewType === 'table' && !$device.isMobile"
                   :medications="getMedicationList(tabType)"
                   @decrement-pills="(med, done) => $emit('decrement-pills', med, done)"

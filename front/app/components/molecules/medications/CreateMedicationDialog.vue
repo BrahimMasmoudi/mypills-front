@@ -63,7 +63,7 @@
                   size="small"
                   class="font-weight-bold"
                   closable
-                  @click:close="medication.name = null"
+                  @click:close="medication.name = null as any"
               >
                 <v-icon icon="mdi-pill" class="mr-2" size="14"></v-icon>
                 {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
@@ -114,9 +114,9 @@
                   data-cy="expiry-date-input"
                   class="font-weight-medium cursor-pointer elegant-input"
               >
-                <template v-slot:loader>
+                <template #loader>
                   <v-progress-linear
-                      :active="scannerIsLoading"
+                      :active="searchLoading"
                       color="primary"
                       height="2"
                       indeterminate
@@ -310,7 +310,7 @@
             >
               <template v-slot:loader>
                 <v-progress-linear
-                    :active="scannerIsLoading"
+                    :active="searchLoading"
                     color="primary"
                     height="2"
                     indeterminate
@@ -401,7 +401,7 @@ const locales: Record<string, any> = {en: enUS, fr: fr}
 
 const isActive = ref(true)
 const loading = ref(false)
-const scannerIsLoading = ref(false)
+
 const dateMenuIsOpen = ref(false)
 const isScannerOpen = ref(false)
 
@@ -432,7 +432,9 @@ const medication = ref<Medication>({
   bareCode: '',
   medicationId: crypto.randomUUID(),
   image: "pill-1",
-  email
+  email,
+  createdAt: new Date(),
+  updatedAt: new Date(),
 })
 
 const viewMode = ref<"month" | "months" | "year">('year')
@@ -460,7 +462,7 @@ const formatDate = (date: Date | string) => {
 
 // Barcode Handling
 const onBarcodeDetected = async (code: string) => {
-  scannerIsLoading.value = true
+  searchLoading.value = true
   try {
     // 1. Parse Code
     const {parseBarcode} = useBarcodeParser()
@@ -478,7 +480,7 @@ const onBarcodeDetected = async (code: string) => {
 
     if (!cip13) {
       console.warn('No valid CIP13 found in code:', code)
-      scannerIsLoading.value = false
+      searchLoading.value = false
       return
     }
 
@@ -516,7 +518,7 @@ const onBarcodeDetected = async (code: string) => {
           openToast('success', t('success'))
           close('success')
         } else {
-          medication.value.name = ''
+          medication.value.name = null
           medication.value.expiryDate = new Date()
         }
       } else {
@@ -528,7 +530,7 @@ const onBarcodeDetected = async (code: string) => {
     console.error('Barcode lookup error:', e)
     openToast('error', t('scanner.not_found_message'))
   } finally {
-    scannerIsLoading.value = false
+    searchLoading.value = false
     isScannerOpen.value = false
   }
 }
@@ -559,7 +561,7 @@ const debouncer = useDebounceFn(async (query: string) => {
     return
   }
   tunisianMeds.value = await tunisianMedicationStore.searchTunisianMedications(query)
-}, 500)
+}, 200)
 
 const onSearchChange = (query: string) => {
   if (query) {

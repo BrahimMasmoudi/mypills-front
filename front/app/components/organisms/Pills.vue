@@ -5,7 +5,7 @@
 
   <v-sheet v-else width="100%" height="calc(100vh - 64px)" class="d-flex flex-column align-start mb-2 overflow-hidden pa-4">
     <div class="w-100 flex-shrink-0">
-      <MoleculesMedicationSearchSort
+      <MoleculesMedicationsSearchSort
           v-model:search-query="searchQuery"
           v-model:sort-by="sortBy"
           v-model:view-type="viewType"
@@ -17,7 +17,7 @@
     </div>
 
     <div class="w-100 flex-grow-1 overflow-hidden d-flex flex-column">
-      <MoleculesMedicationTabs
+      <MoleculesMedicationsTabs
           v-model="tab"
           :view-type="viewType"
           :all-medication="allMedication"

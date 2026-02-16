@@ -8,11 +8,31 @@
       hide-default-footer
       :items-per-page="-1"
   >
+    <template #[`item.details`]="{ item }">
+      <div v-if="item.bareCode">
+        <v-btn
+            icon="mdi-barcode-scan"
+            variant="text"
+            size="small"
+            color="primary"
+            density="comfortable"
+            @click.stop="showMedicationDetails(item)"
+        />
+      </div>
+      <div v-else-if="item.details">
+        <v-btn
+            icon="mdi-information-outline"
+            variant="text"
+            size="small"
+            color="primary"
+            density="comfortable"
+            @click.stop="showMedicationDetails(item)"
+        />
+      </div>
+    </template>
+
     <template #[`item.name`]="{ item }">
       <div class="d-flex align-center">
-        <v-avatar size="32" class="mr-3">
-          <nuxt-icon filled :name="item.image" class="table-pill-icon"/>
-        </v-avatar>
         <span class="font-weight-bold">{{ item.name }}</span>
       </div>
     </template>
@@ -121,6 +141,7 @@ import { useI18n } from 'vue-i18n'
 import type { Medication } from '~/types/medication'
 import { parseDate } from "~/composables/parseDate"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
+import InfoDialog from "~/components/molecules/medications/InfoDialog.vue"
 import type {ToastType} from "~/composables/openToast";
 
 const { t } = useI18n()
@@ -138,6 +159,7 @@ const emit = defineEmits<{
 }>()
 
 const headers = computed(() => [
+  { title: '', key: 'details', align: 'start' as const, sortable: false, width: '50px' },
   { title: t('meds.name'), key: 'name', align: 'start' as const },
   { title: t('meds.quantity'), key: 'quantity', align: 'center' as const },
   { title: t('meds.expiryDate'), key: 'expiryDate', align: 'center' as const },
@@ -203,6 +225,14 @@ const saveRename = () => {
   emit('update-medication-name', med, editedName.value.trim(), () => {
     stopLoading(med.medicationId, 'rename')
     renameDialog.value = false
+  })
+}
+
+const showMedicationDetails = async (medication: Medication) => {
+  await $open(InfoDialog, {
+    scrim: true,
+    isPersistent: false,
+    data: medication
   })
 }
 </script>

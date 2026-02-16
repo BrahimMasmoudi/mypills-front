@@ -78,7 +78,6 @@
 import {useI18n} from "vue-i18n";
 import {useUserStore} from "~/store/userStore";
 import MoleculesUserMenu from "~/components/molecules/UserMenu.vue";
-import CreateMedicationDialog from "~/components/molecules/createMedicationDialog.vue"
 import ReminderCreationDialog from "~/components/molecules/ReminderCreationDialog.vue"
 import {openToast, type ToastType} from "~/composables/openToast"
 import {getCurrentUser} from "vuefire"
@@ -93,6 +92,7 @@ import {useLanguageStore} from "~/store/language";
 import DocumentScannerDialog, {type UploadDocumentsData} from "~/components/molecules/DocumentScannerDialog.vue";
 import {useDocumentsStore} from "~/store/documents";
 import NotificationGuideDialog from "~/components/molecules/NotificationGuideDialog.vue";
+import CreateMedicationDialog from "~/components/molecules/medications/CreateMedicationDialog.vue";
 
 const {t} = useI18n()
 const {$open, $device} = useNuxtApp()
