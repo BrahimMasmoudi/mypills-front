@@ -33,7 +33,7 @@ export interface MedicamentResponse {
     etatComercialisation: string
     dateAMM: string
     titulaire: string
-    surveillanceRenforce: string
+    surveillanceRenforcee: string
     composition: APIComposition[]
     generiques: any[] | null
     presentation: APIPresentation[]

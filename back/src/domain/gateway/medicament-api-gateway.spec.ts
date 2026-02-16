@@ -1,6 +1,5 @@
 import { GiygasApiAdapter } from '../../infrastructure/adapters/external/giygas-api-adapter'
 import { Cis } from '../../types/cis'
-// 1. Import these tools from undici
 import { setGlobalDispatcher, Agent } from 'undici'
 
 describe('GiygasApiAdapter Integration Test', () => {
@@ -49,10 +48,10 @@ describe('GiygasApiAdapter Integration Test', () => {
                     'cip7': 3595583,
                     'cis': 60234100,
                     'dateDeclaration': '02/01/2003',
-                    'etatComercialisation': 'DÃ©claration de commercialisation',
-                    'libelle': 'plaquette(s) thermoformÃ©e(s) PVC-aluminium de 8  comprimÃ©(s)',
+                    'etatComercialisation': 'Déclaration de commercialisation',
+                    'libelle': 'plaquette(s) thermoformée(s) PVC-aluminium de 8  comprimé(s)',
                     'prix': 1.07,
-                    'statusAdministratif': 'PrÃ©sentation active',
+                    'statusAdministratif': 'Présentation active',
                     'tauxRemboursement': '65%',
                 }, {
                     'agreement': 'oui',
@@ -60,14 +59,14 @@ describe('GiygasApiAdapter Integration Test', () => {
                     'cip7': 5636955,
                     'cis': 60234100,
                     'dateDeclaration': '17/03/2003',
-                    'etatComercialisation': 'DÃ©claration de commercialisation',
-                    'libelle': 'plaquette(s) thermoformÃ©e(s) PVC-aluminium de 100  comprimÃ©(s)',
+                    'etatComercialisation': 'Déclaration de commercialisation',
+                    'libelle': 'plaquette(s) thermoformée(s) PVC-aluminium de 100  comprimé(s)',
                     'prix': 0,
-                    'statusAdministratif': 'PrÃ©sentation active',
+                    'statusAdministratif': 'Présentation active',
                     'tauxRemboursement': '',
                 }],
                 'statusAutorisation': 'Autorisation active',
-                'surveillanceRenforce': 'Non',
+                'surveillanceRenforcee': 'Non',
                 'titulaire': 'OPELLA HEALTHCARE FRANCE',
                 'typeProcedure': 'Procédure nationale',
                 'voiesAdministration': ['orale'],

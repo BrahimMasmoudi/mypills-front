@@ -10,7 +10,7 @@ export const toMedicationDto = (data: MedicamentResponse): MedicationDetailDto =
         marketingStatus: data.etatComercialisation,
         approvalDate: data.dateAMM,
         company: data.titulaire,
-        enhancedSurveillance: data.surveillanceRenforce?.toLowerCase() === 'oui',
+        enhancedSurveillance: data.surveillanceRenforcee?.toLowerCase() === 'oui',
 
         ingredients: (data.composition || []).map((c) => ({
             substance: c.denominationSubstance,
