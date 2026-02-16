@@ -57,6 +57,9 @@
     "quantity": "Quantity",
     "expiryDate": "Expiry Date",
     "actions": "Actions",
+    "addBox": "Add a Box (+{count})",
+    "removeBox": "Remove a Box (-{count})",
+    "delete": "Delete",
     "boxes": "Box | Boxes",
     "pills": "Pills"
   },

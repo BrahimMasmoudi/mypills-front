@@ -160,8 +160,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'increment-pills', medication: Medication, done: () => void): void
-  (e: 'decrement-pills', medication: Medication, done: () => void): void
+  (e: 'increment-pills', medication: Medication, amount: number, done: () => void): void
+  (e: 'decrement-pills', medication: Medication, amount: number, done: () => void): void
   (e: 'delete-pills', medication: Medication, done: () => void): void
   (e: 'update-medication-name', medication: Medication, newName: string, done: () => void): void
 }>()
@@ -189,12 +189,12 @@ const stopLoading = (id: string, action: 'increment' | 'decrement' | 'delete' | 
 
 const handleIncrement = (item: Medication) => {
   startLoading(item.medicationId, 'increment')
-  emit('increment-pills', item, () => stopLoading(item.medicationId, 'increment'))
+  emit('increment-pills', item, 1, () => stopLoading(item.medicationId, 'increment'))
 }
 
 const handleDecrement = (item: Medication) => {
   startLoading(item.medicationId, 'decrement')
-  emit('decrement-pills', item, () => stopLoading(item.medicationId, 'decrement'))
+  emit('decrement-pills', item, 1, () => stopLoading(item.medicationId, 'decrement'))
 }
 
 const confirmDelete = async (item: Medication) => {

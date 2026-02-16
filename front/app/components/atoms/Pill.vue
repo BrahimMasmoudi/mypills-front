@@ -7,19 +7,12 @@
       class="d-flex flex-column fill-height position-relative feature-card"
       @click="handleCardClick"
   >
-    <div class="position-absolute top-0 right-0 ma-1 z-index-1">
-      <v-btn
-          icon="mdi-delete-outline"
-          variant="text"
-          color="error"
-          size="small"
-          density="comfortable"
-          data-cy="delete-pill-button"
-          :loading="loadingAction === 'delete'"
-          :disabled="loadingAction !== null"
-          @click.stop="confirmDelete"
-      />
-    </div>
+    <MoleculesPillMenu
+        :medication="medication"
+        @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
+        @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
+        @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+    />
 
     <div v-if="medication.bareCode" class="position-absolute top-0 left-0 ma-1 z-index-1">
       <v-btn
@@ -184,7 +177,6 @@
 <script setup lang="ts">
 import type {Medication} from "~/types/medication"
 import {parseDate} from "~/composables/parseDate"
-import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
 import InfoDialog from "~/components/molecules/medications/InfoDialog.vue"
 import {useI18n} from "vue-i18n"
 import type {ToastType} from "~/composables/openToast";
@@ -197,8 +189,8 @@ const {medication} = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'increment-pills', medication: Medication, done: () => void): void
-  (e: 'decrement-pills', medication: Medication, done: () => void): void
+  (e: 'increment-pills', medication: Medication, amount: number, done: () => void): void
+  (e: 'decrement-pills', medication: Medication, amount: number, done: () => void): void
   (e: 'delete-pills', medication: Medication, done: () => void): void
   (e: 'update-medication-name', medication: Medication, newName: string, done: () => void): void
 }>()
@@ -242,32 +234,18 @@ const toggleEdit = () => {
   }
 }
 
-const confirmDelete = async () => {
-  const result = await $open<ToastType>(ValidationWithWarningDialog, {
-    scrim: true,
-    isPersistent: true,
-    title: t('dialogDelete.title'),
-    message: t('dialogDelete.message')
-  })
 
-  if (result === 'success') {
-    loadingAction.value = 'delete'
-    emit('delete-pills', medication, () => {
-      loadingAction.value = null
-    })
-  }
-}
 
-const handleIncrement = () => {
+const handleIncrement = (amount = 1) => {
   loadingAction.value = 'increment'
-  emit('increment-pills', medication, () => {
+  emit('increment-pills', medication, amount, () => {
     loadingAction.value = null
   })
 }
 
-const handleDecrement = () => {
+const handleDecrement = (amount = 1) => {
   loadingAction.value = 'decrement'
-  emit('decrement-pills', medication, () => {
+  emit('decrement-pills', medication, amount, () => {
     loadingAction.value = null
   })
 }

@@ -23,7 +23,8 @@ describe('Medication Deletion Flow', () => {
         cy.visit('/medications')
         cy.get('[data-cy="medication-card"]').should('be.visible')
 
-        cy.get(`[data-cy="delete-pill-button"]`).first().click()
+        cy.get(`[data-cy="pill-menu-button"]`).first().click()
+        cy.get(`[data-cy="menu-delete-button"]`).click()
         cy.get('[data-cy="confirm-deletion-button"]').click()
 
         // FIX 1: Wait for UI to sync (card disappears)
