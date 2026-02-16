@@ -63,7 +63,7 @@
                   size="small"
                   class="font-weight-bold"
                   closable
-                  @click:close="medication.name = null"
+                  @click:close="medication.name = null as any"
               >
                 <v-icon icon="mdi-pill" class="mr-2" size="14"></v-icon>
                 {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
@@ -90,6 +90,15 @@
                 </template>
               </v-tooltip>
             </template>
+
+            <template #loader>
+                  <v-progress-linear
+                      :active="scannerIsLoading"
+                      color="primary"
+                      height="2"
+                      indeterminate
+                  ></v-progress-linear>
+                </template>
           </v-combobox>
 
           <v-menu
@@ -114,7 +123,7 @@
                   data-cy="expiry-date-input"
                   class="font-weight-medium cursor-pointer elegant-input"
               >
-                <template v-slot:loader>
+                <template #loader>
                   <v-progress-linear
                       :active="scannerIsLoading"
                       color="primary"
@@ -432,7 +441,9 @@ const medication = ref<Medication>({
   bareCode: '',
   medicationId: crypto.randomUUID(),
   image: "pill-1",
-  email
+  email,
+  createdAt: new Date(),
+  updatedAt: new Date(),
 })
 
 const viewMode = ref<"month" | "months" | "year">('year')
@@ -516,7 +527,7 @@ const onBarcodeDetected = async (code: string) => {
           openToast('success', t('success'))
           close('success')
         } else {
-          medication.value.name = ''
+          medication.value.name = null
           medication.value.expiryDate = new Date()
         }
       } else {
