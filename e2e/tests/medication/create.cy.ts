@@ -5,7 +5,8 @@ describe('Medication Management', () => {
         cy.get('[data-cy="add-medication-button"]').click()
 
         cy.get('[data-cy="medication-name-input"] input').type('Doliprane 1000mg{enter}')
-        cy.get('[data-cy="quantity-input"] input').clear().type('3')
+        cy.get('[data-cy="packages-input"] input').clear().type('2')
+        cy.get('[data-cy="pills-per-box-input"] input').clear().type('4')
 
         cy.get('[data-cy="confirm-create-button"]').click()
 
@@ -14,6 +15,6 @@ describe('Medication Management', () => {
         cy.get('[data-cy="create-medication-dialog"]', { timeout: 10000 }).should('not.exist')
 
         cy.contains('Doliprane 1000mg').should('be.visible')
-        cy.contains('3').should('be.visible')
+        cy.contains('8').should('be.visible')
     })
 })

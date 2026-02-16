@@ -38,7 +38,7 @@
     </template>
 
     <template #[`item.quantity`]="{ item }">
-      <div class="d-flex flex-column align-center">
+      <div class="d-flex flex-column align-start">
         <v-chip
             size="small"
             class="font-weight-bold"
@@ -47,12 +47,6 @@
         >
           {{ item.quantity }}
         </v-chip>
-        <span v-if="item.details?.form" class="text-caption text-medium-emphasis mt-1 text-center" style="font-size: 0.7rem; line-height: 1;">
-          {{ getTranslatedForm(item.details.form) }}
-        </span>
-        <span v-else class="text-caption text-medium-emphasis mt-1 text-center" style="font-size: 0.7rem; line-height: 1;">
-          {{ t('meds.quantity') }}
-        </span>
       </div>
     </template>
 
@@ -169,8 +163,8 @@ const emit = defineEmits<{
 const headers = computed(() => [
   { title: '', key: 'details', align: 'start' as const, sortable: false, width: '50px' },
   { title: t('meds.name'), key: 'name', align: 'start' as const },
-  { title: t('meds.quantity'), key: 'quantity', align: 'center' as const },
-  { title: t('meds.expiryDate'), key: 'expiryDate', align: 'center' as const },
+  { title: t('meds.quantity'), key: 'quantity', align: 'start' as const },
+  { title: t('meds.expiryDate'), key: 'expiryDate', align: 'start' as const },
   { title: t('meds.actions'), key: 'actions', align: 'end' as const, sortable: false },
 ])
 

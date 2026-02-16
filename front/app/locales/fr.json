@@ -43,7 +43,9 @@
     "cancel": "Annuler",
     "confirm": "Valider",
     "choose-date-title": "Choisir une date",
-    "quantity": "Quantité"
+    "quantity": "Quantité",
+    "packages": "Boîtes",
+    "pillsPerBox": "Comprimés par boîte"
   },
   "meds": {
     "all": "Tous",
@@ -60,8 +62,9 @@
     "addBox": "Ajouter une Boîte (+{count})",
     "removeBox": "Retirer une Boîte (-{count})",
     "delete": "Supprimer",
+    "numberOfBoxes": "Boîtes",
     "boxes": "Boite | Boites",
-    "pills": "Comprimés"
+    "pills": "Comprimé | Comprimés"
   },
   "forms": {
     "comprimé": "Comprimé | Comprimés",

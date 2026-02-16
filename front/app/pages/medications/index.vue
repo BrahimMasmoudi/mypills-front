@@ -28,6 +28,7 @@ const createMedication = async (medication: Medication) => {
 }
 
 const incrementPills = async (medication: Medication, amount: number, done: () => void) => {
+  console.log('incrementPills', medication, amount)
   try {
     await medicationStore.incrementPills(medication, amount)
   } finally {

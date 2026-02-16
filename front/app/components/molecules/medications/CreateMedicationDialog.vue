@@ -140,19 +140,41 @@
           </v-menu>
 
           <!-- Quantity -->
-          <v-text-field
-              v-model.number="medication.quantity"
-              :label="t('dialogCreate.quantity')"
-              type="number"
-              variant="outlined"
-              color="primary"
-              hide-details="auto"
-              rounded="lg"
-              prepend-inner-icon="mdi-pill"
-              min="1"
-              data-cy="quantity-input"
-              class="font-weight-medium elegant-input"
-          />
+          <v-row>
+            <v-col cols="6">
+              <v-text-field
+                  v-model.number="medication.numberOfBoxes"
+                  :label="t('dialogCreate.packages')"
+                  type="number"
+                  min="1"
+                  variant="outlined"
+                  color="primary"
+                  hide-details="auto"
+                  rounded="lg"
+                  prepend-inner-icon="mdi-package-variant-closed"
+                  data-cy="packages-input"
+                  class="font-weight-medium elegant-input"
+              />
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                  v-model.number="medication.unitsPerBox"
+                  :label="t('dialogCreate.pillsPerBox')"
+                  type="number"
+                  min="1"
+                  variant="outlined"
+                  color="primary"
+                  hide-details="auto"
+                  rounded="lg"
+                  prepend-inner-icon="mdi-pill"
+                  data-cy="pills-per-box-input"
+                  class="font-weight-medium elegant-input"
+              />
+            </v-col>
+          </v-row>
+          <div class="text-caption text-medium-emphasis text-center">
+            Total: <strong>{{ medication.quantity }}</strong> {{ t('meds.pills') }}
+          </div>
         </div>
       </v-card-text>
 
@@ -334,7 +356,6 @@
         </v-menu>
 
         <!-- Quantity -->
-        <!-- Quantity -->
         <v-row>
           <v-col cols="6">
             <v-text-field
@@ -347,6 +368,7 @@
                 hide-details="auto"
                 rounded="lg"
                 prepend-inner-icon="mdi-package-variant-closed"
+                data-cy="packages-input-mobile"
                 class="font-weight-medium elegant-input"
             />
           </v-col>
@@ -361,12 +383,13 @@
                 hide-details="auto"
                 rounded="lg"
                 prepend-inner-icon="mdi-pill"
+                data-cy="pills-per-box-input-mobile"
                 class="font-weight-medium elegant-input"
             />
           </v-col>
         </v-row>
         <div class="text-caption text-medium-emphasis text-center">
-          Total: <strong>{{ medication.quantity }}</strong> {{ t('meds.pills') }}
+          Total: <strong>{{ medication.quantity }}</strong> {{ t('meds.pills',  medication.quantity) }}
         </div>
       </div>
 
@@ -473,6 +496,7 @@ watch(
 
 const selectedYear = ref()
 const selectedMonth = ref()
+const viewMode = ref<"month" | "months" | "year">('year')
 
 const updateViewMode = (mode: 'year' | 'months') => {
   viewMode.value = mode === 'year' ? 'year' : 'months'

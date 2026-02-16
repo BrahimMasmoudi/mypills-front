@@ -37,7 +37,7 @@
 
     <div
         class="d-flex flex-column align-center flex-grow-1 px-2"
-        :class="$device.isMobile ? 'pt-4 pb-2' : 'pt-6 pb-2'"
+        :class="$device.isMobile ? 'pt-4' : 'pt-6 pb-2'"
     >
       <div class="pill-image-container" :class="{'mobile-image': $device.isMobile}">
         <v-avatar
@@ -104,14 +104,15 @@
         </v-text-field>
       </div>
 
-      <div class="d-flex flex-wrap justify-center gap-2 mb-2 w-100">
+      <div class="d-flex flex-wrap justify-center align-center gap-1 mb-2 w-100 px-1">
         <v-chip
             :color="medication.expired ? 'error' : 'success'"
             :variant="medication.expired ? 'flat' : 'tonal'"
             :size="$device.isMobile ? 'x-small' : 'small'"
-            class="font-weight-medium"
+            class="font-weight-medium flex-shrink-0"
+            :class="$device.isMobile ? 'px-2' : ''"
         >
-          <v-icon start icon="mdi-calendar-clock" size="x-small"/>
+          <v-icon start icon="mdi-calendar-clock" size="x-small" class="me-1"/>
           {{ parseDate(medication.expiryDate) }}
         </v-chip>
 
@@ -120,9 +121,10 @@
             :color="medication.expired ? 'error' : 'primary'"
             variant="tonal"
             :size="$device.isMobile ? 'x-small' : 'small'"
-            class="font-weight-medium ml-2"
+            class="font-weight-medium flex-shrink-0"
+            :class="$device.isMobile ? 'px-2' : 'ml-2'"
         >
-          <v-icon start icon="mdi-package-variant" size="small"/>
+          <v-icon start icon="mdi-package-variant" size="small" class="me-1"/>
           {{ boxCount }}
         </v-chip>
       </div>
@@ -144,13 +146,16 @@
 
       <div class="d-flex flex-column align-center mx-2">
           <div v-if="medication.details?.form"
-               class="d-flex align-center text-caption text-medium-emphasis text-uppercase font-weight-bold"
-               :style="{ fontSize: $device.isMobile ? '0.6rem !important' : '0.8rem !important' }">
+               class="d-inline-block text-caption text-medium-emphasis text-uppercase font-weight-bold text-center text-truncate"
+               :style="$device.isMobile ? 'max-width: 65px;' : ''"
+               :class="$device.isMobile ? 'text-xs' : ''"
+          >
             {{ getTranslatedForm(medication.details.form) }}
           </div>
           <div v-else
-               class="d-flex align-center text-caption text-medium-emphasis text-uppercase font-weight-bold"
-               :style="{ fontSize: $device.isMobile ? '0.6rem !important' : '0.8rem !important' }">
+               class="d-flex align-center text-caption text-medium-emphasis text-uppercase font-weight-bold text-center"
+               :class="$device.isMobile ? 'text-xs' : ''"
+          >
             {{ t('meds.quantity') }}
           </div>
         <span
@@ -236,16 +241,16 @@ const toggleEdit = () => {
 
 
 
-const handleIncrement = (amount = 1) => {
+const handleIncrement = () => {
   loadingAction.value = 'increment'
-  emit('increment-pills', medication, amount, () => {
+  emit('increment-pills', medication, 1, () => {
     loadingAction.value = null
   })
 }
 
-const handleDecrement = (amount = 1) => {
+const handleDecrement = () => {
   loadingAction.value = 'decrement'
-  emit('decrement-pills', medication, amount, () => {
+  emit('decrement-pills', medication, 1, () => {
     loadingAction.value = null
   })
 }
@@ -352,5 +357,14 @@ const boxCount = computed(() => {
 
 .lh-1 {
   line-height: 1;
+}
+
+.text-xs {
+  font-size: 0.65rem !important;
+  line-height: 1.1;
+}
+
+.gap-1 {
+  gap: 4px;
 }
 </style>

@@ -43,7 +43,9 @@
     "confirm": "Confirm",
     "medicationLabel": "Medication Name",
     "choose-date-title": "Choose a date",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "packages": "Packages",
+    "pillsPerBox": "Pills/Box"
   },
   "meds": {
     "all": "All",
@@ -61,7 +63,7 @@
     "removeBox": "Remove a Box (-{count})",
     "delete": "Delete",
     "boxes": "Box | Boxes",
-    "pills": "Pills"
+    "pills": "Pill | Pills"
   },
   "forms": {
     "comprimé": "Tablet | Tablets",
