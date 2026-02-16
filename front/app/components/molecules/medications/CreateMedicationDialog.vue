@@ -559,7 +559,7 @@ const debouncer = useDebounceFn(async (query: string) => {
     return
   }
   tunisianMeds.value = await tunisianMedicationStore.searchTunisianMedications(query)
-}, 500)
+}, 200)
 
 const onSearchChange = (query: string) => {
   if (query) {
