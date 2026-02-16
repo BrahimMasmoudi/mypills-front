@@ -90,15 +90,6 @@
                 </template>
               </v-tooltip>
             </template>
-
-            <template #loader>
-                  <v-progress-linear
-                      :active="scannerIsLoading"
-                      color="primary"
-                      height="2"
-                      indeterminate
-                  ></v-progress-linear>
-                </template>
           </v-combobox>
 
           <v-menu
@@ -125,7 +116,7 @@
               >
                 <template #loader>
                   <v-progress-linear
-                      :active="scannerIsLoading"
+                      :active="searchLoading"
                       color="primary"
                       height="2"
                       indeterminate
@@ -319,7 +310,7 @@
             >
               <template v-slot:loader>
                 <v-progress-linear
-                    :active="scannerIsLoading"
+                    :active="searchLoading"
                     color="primary"
                     height="2"
                     indeterminate
@@ -410,7 +401,7 @@ const locales: Record<string, any> = {en: enUS, fr: fr}
 
 const isActive = ref(true)
 const loading = ref(false)
-const scannerIsLoading = ref(false)
+
 const dateMenuIsOpen = ref(false)
 const isScannerOpen = ref(false)
 
@@ -471,7 +462,7 @@ const formatDate = (date: Date | string) => {
 
 // Barcode Handling
 const onBarcodeDetected = async (code: string) => {
-  scannerIsLoading.value = true
+  searchLoading.value = true
   try {
     // 1. Parse Code
     const {parseBarcode} = useBarcodeParser()
@@ -489,7 +480,7 @@ const onBarcodeDetected = async (code: string) => {
 
     if (!cip13) {
       console.warn('No valid CIP13 found in code:', code)
-      scannerIsLoading.value = false
+      searchLoading.value = false
       return
     }
 
@@ -539,7 +530,7 @@ const onBarcodeDetected = async (code: string) => {
     console.error('Barcode lookup error:', e)
     openToast('error', t('scanner.not_found_message'))
   } finally {
-    scannerIsLoading.value = false
+    searchLoading.value = false
     isScannerOpen.value = false
   }
 }
