@@ -61,15 +61,15 @@
     "pills": "Pills"
   },
   "forms": {
-    "comprimé": "Tablet",
-    "gélule": "Capsule",
-    "sachet": "Sachet",
-    "dose": "Dose",
-    "pastille": "Lozenge",
-    "pilule": "Pill",
-    "ampoule": "Ampoule",
-    "suspension": "Oral Suspension",
-    "unidose": "Single Dose"
+    "comprimé": "Tablet | Tablets",
+    "gélule": "Capsule | Capsules",
+    "sachet": "Sachet | Sachets",
+    "dose": "Dose | Doses",
+    "pastille": "Lozenge | Lozenges",
+    "pilule": "Pill | Pills",
+    "ampoule": "Ampoule | Ampoules",
+    "suspension": "Oral Suspension | Oral Suspensions",
+    "unidose": "Single Dose | multiple Doses"
   },
   "home": {
     "title": "Welcome to MY PILLS"

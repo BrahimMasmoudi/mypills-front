@@ -24,6 +24,7 @@ describe('UpdateMedication Use Case', () => {
             update: jest.fn().mockResolvedValue(undefined),
             setExpiredStatus: jest.fn().mockResolvedValue(undefined),
             fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
+            get: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new UpdateMedication(mockRepo)
@@ -40,6 +41,8 @@ describe('UpdateMedication Use Case', () => {
             email: 'user@example.com',
             updatedAt: new Date(),
             createdAt: new Date(),
+            unitsPerBox: 10,
+            numberOfBoxes: 1,
         }
 
         // 3. Act

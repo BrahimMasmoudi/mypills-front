@@ -179,7 +179,6 @@ const login = async () => {
     await navigateTo('/medications')
   } catch (e) {
     console.error('Login failed', e)
-  } finally {
     isLoading.value = false
   }
 }

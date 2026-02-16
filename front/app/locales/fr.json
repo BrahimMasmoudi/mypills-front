@@ -61,15 +61,15 @@
     "pills": "Comprimés"
   },
   "forms": {
-    "comprimé": "Comprimé",
-    "gélule": "Gélule",
-    "sachet": "Sachet",
-    "dose": "Dose",
-    "pastille": "Pastille",
-    "pilule": "Pilule",
-    "ampoule": "Ampoule",
-    "suspension": "Suspension buvable",
-    "unidose": "Unidose"
+    "comprimé": "Comprimé | Comprimés",
+    "gélule": "Gélule | Gélules",
+    "sachet": "Sachet | Sachets",
+    "dose": "Dose | Doses",
+    "pastille": "Pastille | Pastilles",
+    "pilule": "Pilule | Pilules",
+    "ampoule": "Ampoule | Ampoules",
+    "suspension": "Suspension buvable | Suspensions buvables",
+    "unidose": "Unidose | Multidoses"
   },
   "home": {
     "title": "Bienvenu à MY PILLS"

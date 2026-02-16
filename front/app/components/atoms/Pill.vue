@@ -26,7 +26,7 @@
           icon="mdi-barcode-scan"
           variant="text"
           size="small"
-          color="primary"
+      :color="medication.expired ? 'error' : 'primary'"
           density="comfortable"
           @click.stop="showMedicationDetails"
       />
@@ -36,7 +36,7 @@
           icon="mdi-information-outline"
           variant="text"
           size="small"
-          color="primary"
+          :color="medication.expired ? 'error' : 'primary'"
           density="comfortable"
           @click.stop="showMedicationDetails"
       />
@@ -124,7 +124,7 @@
 
         <v-chip
             v-if="boxCount > 0"
-            color="primary"
+            :color="medication.expired ? 'error' : 'primary'"
             variant="tonal"
             :size="$device.isMobile ? 'x-small' : 'small'"
             class="font-weight-medium ml-2"
@@ -141,7 +141,7 @@
       <v-btn
           icon="mdi-minus"
           variant="tonal"
-          color="primary"
+          :color="medication.expired ? 'error' : 'primary'"
           size="x-small"
           data-cy="decrement-button"
           :loading="loadingAction === 'decrement'"
@@ -170,7 +170,7 @@
       <v-btn
           icon="mdi-plus"
           variant="flat"
-          color="primary"
+          :color="medication.expired ? 'error' : 'primary'"
           data-cy="increment-button"
           size="x-small"
           :loading="loadingAction === 'increment'"
@@ -289,8 +289,9 @@ const getTranslatedForm = (form: string) => {
 }
 
 const boxCount = computed(() => {
-  if (!medication.details?.quantity) return 0
-  return Math.ceil(medication.quantity / medication.details.quantity)
+  const units = medication.unitsPerBox || medication.details?.quantity
+  if (!units) return 0
+  return Math.ceil(medication.quantity / units)
 })
 </script>
 

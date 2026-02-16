@@ -91,6 +91,8 @@ describe('FirestoreMedicationRepositoryAdapter', () => {
         email: 'test@example.com',
         updatedAt: new Date(),
         createdAt: new Date(),
+        unitsPerBox: 10,
+        numberOfBoxes: 1,
         ...overrides,
     })
 

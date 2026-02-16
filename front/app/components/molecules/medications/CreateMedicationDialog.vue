@@ -334,18 +334,40 @@
         </v-menu>
 
         <!-- Quantity -->
-        <v-text-field
-            v-model.number="medication.quantity"
-            :label="t('dialogCreate.quantity')"
-            type="number"
-            variant="outlined"
-            color="primary"
-            hide-details="auto"
-            rounded="lg"
-            prepend-inner-icon="mdi-counter"
-            min="1"
-            class="font-weight-medium"
-        />
+        <!-- Quantity -->
+        <v-row>
+          <v-col cols="6">
+            <v-text-field
+                v-model.number="medication.numberOfBoxes"
+                label="Packages"
+                type="number"
+                min="1"
+                variant="outlined"
+                color="primary"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-package-variant-closed"
+                class="font-weight-medium elegant-input"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+                v-model.number="medication.unitsPerBox"
+                label="Pills/Box"
+                type="number"
+                min="1"
+                variant="outlined"
+                color="primary"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-pill"
+                class="font-weight-medium elegant-input"
+            />
+          </v-col>
+        </v-row>
+        <div class="text-caption text-medium-emphasis text-center">
+          Total: <strong>{{ medication.quantity }}</strong> {{ t('meds.pills') }}
+        </div>
       </div>
 
       <!-- Mobile Actions -->
@@ -428,6 +450,8 @@ const medication = ref<Medication>({
   uid: userUid,
   expired: false,
   quantity: 1,
+  unitsPerBox: 1,
+  numberOfBoxes: 1,
   name: null as any,
   bareCode: '',
   medicationId: crypto.randomUUID(),
@@ -437,7 +461,16 @@ const medication = ref<Medication>({
   updatedAt: new Date(),
 })
 
-const viewMode = ref<"month" | "months" | "year">('year')
+// Update quantity whenever boxes or units change
+watch(
+  () => [medication.value.numberOfBoxes, medication.value.unitsPerBox],
+  ([boxes, units]) => {
+    if (boxes && units) {
+       medication.value.quantity = (boxes as number) * (units as number)
+    }
+  }
+)
+
 const selectedYear = ref()
 const selectedMonth = ref()
 
@@ -497,7 +530,16 @@ const onBarcodeDetected = async (code: string) => {
       medication.value.name = data.name
       medication.value.details = data.details
 
-      // 3. Check for duplicate medication
+      // 3. Set quantity details FIRST so they are available for duplicate check/increment
+      if (data.details?.quantity) {
+        medication.value.unitsPerBox = data.details.quantity
+      } else {
+        medication.value.unitsPerBox = 1
+      }
+      medication.value.numberOfBoxes = 1
+      medication.value.quantity = medication.value.unitsPerBox * medication.value.numberOfBoxes
+
+      // 4. Check for duplicate medication
       const duplicate = medicationsStore.findDuplicateMedication(
           medications,
           data.name,
@@ -521,9 +563,9 @@ const onBarcodeDetected = async (code: string) => {
         } else {
           medication.value.name = null
           medication.value.expiryDate = new Date()
+          // Reset quantity fields if canceled? Or leave them as is since name is cleared
         }
       } else {
-        medication.value.quantity = data.details.quantity || 1
         await performCreation()
       }
     }
@@ -585,7 +627,15 @@ const onMedicationSelect = (val: any) => {
     medication.value.name = val.name
     medication.value.details = val.details
 
-    medication.value.quantity = val.details?.quantity || 1
+    medication.value.details = val.details
+
+    if (val.details?.quantity) {
+      medication.value.unitsPerBox = val.details.quantity
+    } else {
+      medication.value.unitsPerBox = 1
+    }
+    medication.value.numberOfBoxes = 1
+    // Quantity update handled by watcher
   } else if (typeof val === 'string') {
     medication.value.name = val
     medication.value.details = undefined

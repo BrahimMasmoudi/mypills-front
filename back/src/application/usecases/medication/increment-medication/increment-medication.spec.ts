@@ -22,6 +22,7 @@ describe('IncrementMedication Use Case', () => {
             update: jest.fn().mockResolvedValue(undefined),
             setExpiredStatus: jest.fn().mockResolvedValue(undefined),
             fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
+            get: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new IncrementMedication(mockRepo)
@@ -33,6 +34,8 @@ describe('IncrementMedication Use Case', () => {
             expiryDate: new Date('2026-12-31T23:59:59Z'),
             expired: false,
             quantity: 10,
+            unitsPerBox: 10,
+            numberOfBoxes: 1,
             image: 'https://firebasestorage.googleapis.com/.../doliprane.png',
             email: 'user@example.com',
             updatedAt: new Date(),
@@ -61,6 +64,7 @@ describe('IncrementMedication Use Case', () => {
                         price: 2.18,
                     },
                 ],
+                quantity: 8
             },
         }
 

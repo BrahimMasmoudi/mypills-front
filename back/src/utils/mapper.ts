@@ -31,9 +31,9 @@ export const toMedicationDto = (data: MedicamentResponse): MedicationDetailDto =
 const parseMedicationUnit = (label?: string): number => {
     if (!label) return 1
 
-    // Try to extract the number of units from the label (e.g., "Boîte de 30 comprimés")
-    // Matches: 30 followed by unit name (comprimé, gélule, etc.)
-    const match = label.match(/(\d+)\s+(?:comprimé|gélule|sachet|dose|pastille|pilule|tablette|tablet|capsule|pill|ampoule|unidose)/i)
+    // Try to extract the number of units from the label (e.g., "Boîte de 30 comprimés", "B/24 sachets")
+    // Use optional space and 's' for plural
+    const match = label.match(/(\d+)\s*(?:comprimé|gélule|sachet|dose|pastille|pilule|tablette|tablet|capsule|pill|ampoule|unidose)s?/i)
 
     if (match && match[1]) {
         return parseInt(match[1])
