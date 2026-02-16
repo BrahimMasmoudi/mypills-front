@@ -56,7 +56,20 @@
     "name": "Name",
     "quantity": "Quantity",
     "expiryDate": "Expiry Date",
-    "actions": "Actions"
+    "actions": "Actions",
+    "boxes": "Box | Boxes",
+    "pills": "Pills"
+  },
+  "forms": {
+    "comprimé": "Tablet",
+    "gélule": "Capsule",
+    "sachet": "Sachet",
+    "dose": "Dose",
+    "pastille": "Lozenge",
+    "pilule": "Pill",
+    "ampoule": "Ampoule",
+    "suspension": "Oral Suspension",
+    "unidose": "Single Dose"
   },
   "home": {
     "title": "Welcome to MY PILLS"

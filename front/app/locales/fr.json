@@ -56,7 +56,20 @@
     "name": "Nom",
     "quantity": "Quantité",
     "expiryDate": "Date d'expiration",
-    "actions": "Actions"
+    "actions": "Actions",
+    "boxes": "Boite | Boites",
+    "pills": "Comprimés"
+  },
+  "forms": {
+    "comprimé": "Comprimé",
+    "gélule": "Gélule",
+    "sachet": "Sachet",
+    "dose": "Dose",
+    "pastille": "Pastille",
+    "pilule": "Pilule",
+    "ampoule": "Ampoule",
+    "suspension": "Suspension buvable",
+    "unidose": "Unidose"
   },
   "home": {
     "title": "Bienvenu à MY PILLS"

@@ -7,7 +7,7 @@ export class DecrementMedication implements DecrementMedicationUseCase {
     constructor(private medicationRepo: MedicationRepository) {
     }
 
-    async execute(medication: Medication, auth : AuthData): Promise<void> {
-        return await this.medicationRepo.decrement(medication, auth)
+    async execute(medication: Medication, auth: AuthData, amount?: number): Promise<void> {
+        return await this.medicationRepo.decrement(medication, auth, amount)
     }
 }

@@ -15,8 +15,9 @@ export const incrementMedication = onCall({ region: 'europe-west3' }, async ({ d
     const incrementMedicationUseCase = new IncrementMedication(medicationRepo)
 
     const medication = data.medication as Medication
+    const amount = data.amount as number || 1
     try {
-        await incrementMedicationUseCase.execute(medication, auth)
+        await incrementMedicationUseCase.execute(medication, auth, amount)
         return { success: true }
     } catch (error) {
         throw new HttpsError('internal', 'Could not increment medication')

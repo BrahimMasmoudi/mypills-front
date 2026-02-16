@@ -514,7 +514,8 @@ const onBarcodeDetected = async (code: string) => {
         })
 
         if (result === 'increment') {
-          await medicationsStore.incrementPills(duplicate)
+          // Increment by the quantity of the scanned/selected medication (e.g., 30)
+          await medicationsStore.incrementPills(duplicate, medication.value.quantity)
           openToast('success', t('success'))
           close('success')
         } else {
@@ -522,7 +523,7 @@ const onBarcodeDetected = async (code: string) => {
           medication.value.expiryDate = new Date()
         }
       } else {
-        medication.value.quantity = 1
+        medication.value.quantity = data.details.quantity || 1
         await performCreation()
       }
     }
@@ -583,6 +584,8 @@ const onMedicationSelect = (val: any) => {
   if (typeof val === 'object' && val.name) {
     medication.value.name = val.name
     medication.value.details = val.details
+
+    medication.value.quantity = val.details?.quantity || 1
   } else if (typeof val === 'string') {
     medication.value.name = val
     medication.value.details = undefined

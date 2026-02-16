@@ -111,15 +111,28 @@
         </v-text-field>
       </div>
 
-      <v-chip
-          :color="medication.expired ? 'error' : 'success'"
-          :variant="medication.expired ? 'flat' : 'tonal'"
-          :size="$device.isMobile ? 'x-small' : 'small'"
-          class="mb-2 font-weight-medium"
-      >
-        <v-icon start icon="mdi-calendar-clock" size="x-small"/>
-        {{ parseDate(medication.expiryDate) }}
-      </v-chip>
+      <div class="d-flex flex-wrap justify-center gap-2 mb-2 w-100">
+        <v-chip
+            :color="medication.expired ? 'error' : 'success'"
+            :variant="medication.expired ? 'flat' : 'tonal'"
+            :size="$device.isMobile ? 'x-small' : 'small'"
+            class="font-weight-medium"
+        >
+          <v-icon start icon="mdi-calendar-clock" size="x-small"/>
+          {{ parseDate(medication.expiryDate) }}
+        </v-chip>
+
+        <v-chip
+            v-if="boxCount > 0"
+            color="primary"
+            variant="tonal"
+            :size="$device.isMobile ? 'x-small' : 'small'"
+            class="font-weight-medium ml-2"
+        >
+          <v-icon start icon="mdi-package-variant" size="small"/>
+          {{ boxCount }}
+        </v-chip>
+      </div>
     </div>
 
     <v-divider/>
@@ -137,14 +150,21 @@
       />
 
       <div class="d-flex flex-column align-center mx-2">
-          <span
-              class="text-caption text-medium-emphasis text-uppercase font-weight-bold"
-              :style="{ fontSize: $device.isMobile ? '0.6rem !important' : '0.8rem !important' }"
-          >{{ t('qty') }}</span>
+          <div v-if="medication.details?.form"
+               class="d-flex align-center text-caption text-medium-emphasis text-uppercase font-weight-bold"
+               :style="{ fontSize: $device.isMobile ? '0.6rem !important' : '0.8rem !important' }">
+            {{ getTranslatedForm(medication.details.form) }}
+          </div>
+          <div v-else
+               class="d-flex align-center text-caption text-medium-emphasis text-uppercase font-weight-bold"
+               :style="{ fontSize: $device.isMobile ? '0.6rem !important' : '0.8rem !important' }">
+            {{ t('meds.quantity') }}
+          </div>
         <span
             class="font-weight-bold primary--text line-height-1"
             :class="$device.isMobile ? 'text-subtitle-2' : 'text-subtitle-1'"
         >{{ medication.quantity }}</span>
+
       </div>
 
       <v-btn
@@ -259,6 +279,19 @@ const showMedicationDetails = async () => {
     data: medication
   })
 }
+
+const getTranslatedForm = (form: string) => {
+  if (!form) return ''
+  // Try to find translation for first word if full form not found (e.g. "Comprimé pelliculé" -> "Tablet")
+  const key = form.toLowerCase().split(' ')[0]
+  // Check if translation exists, otherwise return original
+  return t(`forms.${key}`, form) !== `forms.${key}` ? t(`forms.${key}`) : form
+}
+
+const boxCount = computed(() => {
+  if (!medication.details?.quantity) return 0
+  return Math.ceil(medication.quantity / medication.details.quantity)
+})
 </script>
 
 <style scoped>
@@ -336,5 +369,9 @@ const showMedicationDetails = async () => {
 
 .feature-card {
   background: var(--card-bg);
+}
+
+.lh-1 {
+  line-height: 1;
 }
 </style>

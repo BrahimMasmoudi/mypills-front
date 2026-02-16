@@ -15,8 +15,9 @@ export const decrementMedication = onCall({ region: 'europe-west3' }, async ({ d
     const decrementMedicationUseCase = new DecrementMedication(medicationRepo)
 
     const medication = data.medication as Medication
+    const amount = data.amount as number || 1
     try {
-        await decrementMedicationUseCase.execute(medication, auth)
+        await decrementMedicationUseCase.execute(medication, auth, amount)
         return { success: true }
     } catch (error) {
         throw new HttpsError('internal', 'Could not decrement medication')

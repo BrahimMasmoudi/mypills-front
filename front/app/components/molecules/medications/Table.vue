@@ -38,14 +38,22 @@
     </template>
 
     <template #[`item.quantity`]="{ item }">
-      <v-chip
-          size="small"
-          class="font-weight-bold"
-          :color="item.expired ? 'error' : 'primary'"
-          variant="flat"
-      >
-        {{ item.quantity }}
-      </v-chip>
+      <div class="d-flex flex-column align-center">
+        <v-chip
+            size="small"
+            class="font-weight-bold"
+            :color="item.expired ? 'error' : 'primary'"
+            variant="flat"
+        >
+          {{ item.quantity }}
+        </v-chip>
+        <span v-if="item.details?.form" class="text-caption text-medium-emphasis mt-1 text-center" style="font-size: 0.7rem; line-height: 1;">
+          {{ getTranslatedForm(item.details.form) }}
+        </span>
+        <span v-else class="text-caption text-medium-emphasis mt-1 text-center" style="font-size: 0.7rem; line-height: 1;">
+          {{ t('meds.quantity') }}
+        </span>
+      </div>
     </template>
 
     <template #[`item.expiryDate`]="{ item }">
@@ -234,6 +242,11 @@ const showMedicationDetails = async (medication: Medication) => {
     isPersistent: false,
     data: medication
   })
+}
+const getTranslatedForm = (form: string) => {
+  if (!form) return ''
+  const key = form.toLowerCase().split(' ')[0]
+  return t(`forms.${key}`, form) !== `forms.${key}` ? t(`forms.${key}`) : form
 }
 </script>
 

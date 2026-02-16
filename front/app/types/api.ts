@@ -18,6 +18,7 @@ export interface MedicationDetails {
         refundRate: string
         price: number
     }[]
+    quantity: number
 }
 
 export interface GetMedicationDetailsResponse {
