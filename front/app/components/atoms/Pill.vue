@@ -116,16 +116,9 @@
           {{ parseDate(medication.expiryDate) }}
         </v-chip>
 
-        <v-chip
-            v-if="boxCount > 0"
-            :color="medication.expired ? 'error' : 'primary'"
-            variant="tonal"
-            :size="$device.isMobile ? 'x-small' : 'small'"
-            class="font-weight-medium flex-shrink-0"
-            :class="$device.isMobile ? 'px-2' : 'ml-2'"
-        >
+        <v-chip :color="medication.expired ? 'error' : 'primary'" variant="tonal" :size="$device.isMobile ? 'x-small' : 'small'" class="font-weight-medium flex-shrink-0" :class="$device.isMobile ? 'px-2' : 'ml-2'">
           <v-icon start icon="mdi-package-variant" size="small" class="me-1"/>
-          {{ boxCount }}
+          {{ medication.numberOfBoxes }}
         </v-chip>
       </div>
     </div>
@@ -271,11 +264,6 @@ const getTranslatedForm = (form: string) => {
   return t(`forms.${key}`, form) !== `forms.${key}` ? t(`forms.${key}`) : form
 }
 
-const boxCount = computed(() => {
-  const units = medication.unitsPerBox || medication.details?.quantity
-  if (!units) return 0
-  return Math.ceil(medication.quantity / units)
-})
 </script>
 
 <style scoped>

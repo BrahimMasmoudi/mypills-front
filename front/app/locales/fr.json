@@ -62,8 +62,7 @@
     "addBox": "Ajouter une Boîte (+{count})",
     "removeBox": "Retirer une Boîte (-{count})",
     "delete": "Supprimer",
-    "numberOfBoxes": "Boîtes",
-    "boxes": "Boite | Boites",
+    "numberOfBoxes": "Boite | Boites",
     "pills": "Comprimé | Comprimés"
   },
   "forms": {

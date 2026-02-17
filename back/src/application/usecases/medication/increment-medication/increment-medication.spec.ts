@@ -72,7 +72,7 @@ describe('IncrementMedication Use Case', () => {
         await useCase.execute(medication, mockAuth)
 
         // 3. Assert
-        expect(mockRepo.increment).toHaveBeenCalledWith(medication, mockAuth)
+        expect(mockRepo.increment).toHaveBeenCalledWith(medication, mockAuth, undefined)
         expect(mockRepo.increment).toHaveBeenCalledTimes(1)
     })
 })

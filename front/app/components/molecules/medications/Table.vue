@@ -37,6 +37,19 @@
       </div>
     </template>
 
+    <template #[`item.numberOfBoxes`]="{ item }">
+      <div class="d-flex flex-column align-start">
+        <v-chip
+            size="small"
+            class="font-weight-bold"
+            color="secondary"
+            variant="flat"
+        >
+          {{ item.numberOfBoxes }}
+        </v-chip>
+      </div>
+    </template>
+
     <template #[`item.quantity`]="{ item }">
       <div class="d-flex flex-column align-start">
         <v-chip
@@ -163,6 +176,7 @@ const emit = defineEmits<{
 const headers = computed(() => [
   { title: '', key: 'details', align: 'start' as const, sortable: false, width: '50px' },
   { title: t('meds.name'), key: 'name', align: 'start' as const },
+  { title: t('meds.numberOfBoxes'), key: 'numberOfBoxes', align: 'start' as const },
   { title: t('meds.quantity'), key: 'quantity', align: 'start' as const },
   { title: t('meds.expiryDate'), key: 'expiryDate', align: 'start' as const },
   { title: t('meds.actions'), key: 'actions', align: 'end' as const, sortable: false },

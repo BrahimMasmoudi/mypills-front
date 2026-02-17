@@ -62,7 +62,7 @@
     "addBox": "Add a Box (+{count})",
     "removeBox": "Remove a Box (-{count})",
     "delete": "Delete",
-    "boxes": "Box | Boxes",
+    "numberOfBoxes": "Box | Boxes",
     "pills": "Pill | Pills"
   },
   "forms": {
