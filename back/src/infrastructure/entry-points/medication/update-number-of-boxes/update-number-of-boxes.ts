@@ -1,7 +1,10 @@
 import { onDocumentWritten } from 'firebase-functions/v2/firestore'
 import { Medication } from '../../../../domain/entities/medication'
 
-export const onMedicationUpdate = onDocumentWritten('medications/{medicationId}', async (event) => {
+export const onMedicationUpdate = onDocumentWritten({
+    document: 'medications/{medicationId}',
+    region: 'europe-west3'
+}, async (event) => {
     if (!event.data) return
 
     const after = event.data.after.data() as Medication | undefined
