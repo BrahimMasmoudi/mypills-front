@@ -47,6 +47,11 @@
     "packages": "Packages",
     "pillsPerBox": "Pills/Box"
   },
+  "dialogUpdateUnits": {
+    "title": "Box Size",
+    "subtitle": "Update the number of pills per box",
+    "label": "Pills per box"
+  },
   "meds": {
     "all": "All",
     "all_long": "All medications",
@@ -60,10 +65,15 @@
     "expiryDate": "Expiry Date",
     "actions": "Actions",
     "addBox": "Add a Box (+{count})",
+    "updateBox": "Edit Box Size",
     "removeBox": "Remove a Box (-{count})",
     "delete": "Delete",
     "numberOfBoxes": "Box | Boxes",
-    "pills": "Pill | Pills"
+    "pills": "Pill | Pills",
+    "toast": {
+      "updated": "Box size updated successfully",
+      "error": "Failed to update box size"
+    }
   },
   "forms": {
     "comprimé": "Tablet | Tablets",

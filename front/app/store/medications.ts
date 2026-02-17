@@ -106,16 +106,20 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     }
 
     const updateMedicationName = async (medication: Medication, newName: string) => {
+        return updateMedication(medication, 'name', newName)
+    }
+
+    const updateMedication = async (medication: Medication, key: string, value: any) => {
         const update = httpsCallable($functions, 'updateMedication')
         const result = await update({
             medication,
-            key: 'name',
-            value: newName,
+            key,
+            value,
         })
-        $analytics && logEvent($analytics, 'update_medication_name', {
-            old_name: medication.name,
-            new_name: newName,
+        $analytics && logEvent($analytics, 'update_medication', {
             medication_id: medication.medicationId,
+            key,
+            value,
         })
         return result
     }
@@ -162,6 +166,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         decrementPills,
         deletePills,
         updateMedicationName,
+        updateMedication,
         checkAndUpdateExpiredMedications,
         getMedicationDetails,
         findDuplicateMedication,

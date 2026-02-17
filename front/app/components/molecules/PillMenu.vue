@@ -46,6 +46,21 @@
 
         <v-divider v-if="(medication.unitsPerBox || 1) > 1" class="my-1"/>
 
+        <!-- Update Box -->
+        <v-list-item
+            @click="openUpdateUnitsDialog"
+            class="menu-item"
+        >
+          <template v-slot:prepend>
+            <v-icon icon="mdi-package-variant-closed" color="primary" size="small"/>
+          </template>
+          <v-list-item-title class="text-body-2">
+            {{ t('meds.updateBox') || 'Edit Box Size' }}
+          </v-list-item-title>
+        </v-list-item>
+
+        <v-divider class="my-1"/>
+
         <!-- Delete -->
         <v-list-item
             @click="confirmDelete"
@@ -68,6 +83,8 @@
 <script setup lang="ts">
 import type {Medication} from "~/types/medication"
 import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
+import UpdateUnitsDialog from "~/components/molecules/medications/UpdateUnitsDialog.vue"
+import Toast from "~/components/molecules/Toast.vue"
 import {useI18n} from "vue-i18n"
 import type {ToastType} from "~/composables/openToast"
 
@@ -113,6 +130,20 @@ const confirmDelete = async () => {
     emit('delete-pills', medication, () => {
       loadingAction.value = null
     })
+  }
+}
+
+const openUpdateUnitsDialog = async () => {
+  const result = await $open(UpdateUnitsDialog, {
+    scrim: true,
+    isPersistent: false,
+    medication: medication
+  })
+
+  if (result === 'success') {
+    openToast('success', t('meds.toast.updated'))
+  } else if (result === 'error') {
+    openToast('error', t('meds.toast.error'))
   }
 }
 </script>
