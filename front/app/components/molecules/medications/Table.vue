@@ -37,15 +37,30 @@
       </div>
     </template>
 
+    <template #[`item.numberOfBoxes`]="{ item }">
+      <div class="d-flex flex-column align-start">
+        <v-chip
+            size="small"
+            class="font-weight-bold"
+            color="secondary"
+            variant="flat"
+        >
+          {{ item.numberOfBoxes }}
+        </v-chip>
+      </div>
+    </template>
+
     <template #[`item.quantity`]="{ item }">
-      <v-chip
-          size="small"
-          class="font-weight-bold"
-          :color="item.expired ? 'error' : 'primary'"
-          variant="flat"
-      >
-        {{ item.quantity }}
-      </v-chip>
+      <div class="d-flex flex-column align-start">
+        <v-chip
+            size="small"
+            class="font-weight-bold"
+            :color="item.expired ? 'error' : 'primary'"
+            variant="flat"
+        >
+          {{ item.quantity }}
+        </v-chip>
+      </div>
     </template>
 
     <template #[`item.expiryDate`]="{ item }">
@@ -152,8 +167,8 @@ defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'increment-pills', medication: Medication, done: () => void): void
-  (e: 'decrement-pills', medication: Medication, done: () => void): void
+  (e: 'increment-pills', medication: Medication, amount: number, done: () => void): void
+  (e: 'decrement-pills', medication: Medication, amount: number, done: () => void): void
   (e: 'delete-pills', medication: Medication, done: () => void): void
   (e: 'update-medication-name', medication: Medication, newName: string, done: () => void): void
 }>()
@@ -161,8 +176,9 @@ const emit = defineEmits<{
 const headers = computed(() => [
   { title: '', key: 'details', align: 'start' as const, sortable: false, width: '50px' },
   { title: t('meds.name'), key: 'name', align: 'start' as const },
-  { title: t('meds.quantity'), key: 'quantity', align: 'center' as const },
-  { title: t('meds.expiryDate'), key: 'expiryDate', align: 'center' as const },
+  { title: t('meds.numberOfBoxes'), key: 'numberOfBoxes', align: 'start' as const },
+  { title: t('meds.quantity'), key: 'quantity', align: 'start' as const },
+  { title: t('meds.expiryDate'), key: 'expiryDate', align: 'start' as const },
   { title: t('meds.actions'), key: 'actions', align: 'end' as const, sortable: false },
 ])
 
@@ -181,12 +197,12 @@ const stopLoading = (id: string, action: 'increment' | 'decrement' | 'delete' | 
 
 const handleIncrement = (item: Medication) => {
   startLoading(item.medicationId, 'increment')
-  emit('increment-pills', item, () => stopLoading(item.medicationId, 'increment'))
+  emit('increment-pills', item, 1, () => stopLoading(item.medicationId, 'increment'))
 }
 
 const handleDecrement = (item: Medication) => {
   startLoading(item.medicationId, 'decrement')
-  emit('decrement-pills', item, () => stopLoading(item.medicationId, 'decrement'))
+  emit('decrement-pills', item, 1, () => stopLoading(item.medicationId, 'decrement'))
 }
 
 const confirmDelete = async (item: Medication) => {
@@ -234,6 +250,11 @@ const showMedicationDetails = async (medication: Medication) => {
     isPersistent: false,
     data: medication
   })
+}
+const getTranslatedForm = (form: string) => {
+  if (!form) return ''
+  const key = form.toLowerCase().split(' ')[0]
+  return t(`forms.${key}`, form) !== `forms.${key}` ? t(`forms.${key}`) : form
 }
 </script>
 

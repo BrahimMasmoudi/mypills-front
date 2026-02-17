@@ -43,7 +43,14 @@
     "confirm": "Confirm",
     "medicationLabel": "Medication Name",
     "choose-date-title": "Choose a date",
-    "quantity": "Quantity"
+    "quantity": "Quantity",
+    "packages": "Packages",
+    "pillsPerBox": "Pills/Box"
+  },
+  "dialogUpdateUnits": {
+    "title": "Box Size",
+    "subtitle": "Update the number of pills per box",
+    "label": "Pills per box"
   },
   "meds": {
     "all": "All",
@@ -56,7 +63,28 @@
     "name": "Name",
     "quantity": "Quantity",
     "expiryDate": "Expiry Date",
-    "actions": "Actions"
+    "actions": "Actions",
+    "addBox": "Add a Box (+{count})",
+    "updateBox": "Edit Box Size",
+    "removeBox": "Remove a Box (-{count})",
+    "delete": "Delete",
+    "numberOfBoxes": "Box | Boxes",
+    "pills": "Pill | Pills",
+    "toast": {
+      "updated": "Box size updated successfully",
+      "error": "Failed to update box size"
+    }
+  },
+  "forms": {
+    "comprimé": "Tablet | Tablets",
+    "gélule": "Capsule | Capsules",
+    "sachet": "Sachet | Sachets",
+    "dose": "Dose | Doses",
+    "pastille": "Lozenge | Lozenges",
+    "pilule": "Pill | Pills",
+    "ampoule": "Ampoule | Ampoules",
+    "suspension": "Oral Suspension | Oral Suspensions",
+    "unidose": "Single Dose | multiple Doses"
   },
   "home": {
     "title": "Welcome to MY PILLS"

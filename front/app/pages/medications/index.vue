@@ -2,8 +2,8 @@
   <TemplatesPills
       :medications="medications ?? []"
       :medication-loading="isLoading"
-      @decrement-pills="(med, done) => decrementPills(med, done)"
-      @increment-pills="(med, done) => incrementPills(med, done)"
+      @decrement-pills="(med, amount, done) => decrementPills(med, amount, done)"
+      @increment-pills="(med, amount, done) => incrementPills(med, amount, done)"
       @delete-pills="(med, done) => deletePills(med, done)"
       @update-medication-name="(med, name, done) => updateMedicationName(med, name, done)"
       @create-medication="createMedication"
@@ -27,17 +27,18 @@ const createMedication = async (medication: Medication) => {
   await medicationStore.createMedication(medication)
 }
 
-const incrementPills = async (medication: Medication, done: () => void) => {
+const incrementPills = async (medication: Medication, amount: number, done: () => void) => {
+  console.log('incrementPills', medication, amount)
   try {
-    await medicationStore.incrementPills(medication)
+    await medicationStore.incrementPills(medication, amount)
   } finally {
     done()
   }
 }
 
-const decrementPills = async (medication: Medication, done: () => void) => {
+const decrementPills = async (medication: Medication, amount: number, done: () => void) => {
   try {
-    await medicationStore.decrementPills(medication)
+    await medicationStore.decrementPills(medication, amount)
   } finally {
     done()
   }

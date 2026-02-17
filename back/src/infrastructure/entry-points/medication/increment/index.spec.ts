@@ -44,7 +44,7 @@ describe('incrementPills HTTPS Function', () => {
         } as any)
 
         // 3. Assert
-        expect(useCaseSpy).toHaveBeenCalledWith(mockMedication, mockAuth)
+        expect(useCaseSpy).toHaveBeenCalledWith(mockMedication, mockAuth, 1)
         expect(result).toEqual({ success: true })
     })
 

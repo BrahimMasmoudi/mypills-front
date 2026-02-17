@@ -99,6 +99,7 @@
                   hide-header
                   rounded="lg"
                   color="primary"
+                  :min="minDate"
                   @update:model-value="(val) => handleDateChange(med, val)"
               />
             </v-menu>
@@ -205,6 +206,7 @@ const {close, updateReminder, validMedications, reminders, item} = defineProps<{
 
 const isActive = ref(true)
 const loading = ref(false)
+const minDate = new Date()
 
 const form = ref({
   sicknessName: item.sicknessName,

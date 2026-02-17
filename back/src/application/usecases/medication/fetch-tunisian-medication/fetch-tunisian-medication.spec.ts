@@ -24,6 +24,7 @@ describe('FetchTunisianMedication Use Case', () => {
             delete: jest.fn(),
             update: jest.fn(),
             setExpiredStatus: jest.fn(),
+            get: jest.fn(),
         }
 
         const useCase = new FetchTunisianMedication(mockRepo)

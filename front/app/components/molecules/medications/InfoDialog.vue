@@ -56,6 +56,22 @@
           </v-col>
         </v-row>
 
+        <v-row dense class="mb-6">
+          <v-col cols="12">
+            <v-card variant="outlined" class="pa-4 rounded-lg bg-surface border-light">
+              <div class="d-flex align-center">
+                <v-icon icon="mdi-pill" color="medium-emphasis" size="24" class="mr-3"/>
+                <div>
+                  <div class="text-caption text-medium-emphasis">{{ t('meds.quantity') }}</div>
+                  <div class="text-body-2 font-weight-bold">
+                    {{ displayQuantity }} {{ getTranslatedForm(displayQuantity, details?.form) || t('meds.pills', displayQuantity) }}
+                  </div>
+                </div>
+              </div>
+            </v-card>
+          </v-col>
+        </v-row>
+
         <div class="rounded-lg pa-4 d-flex align-center justify-space-between mb-6 info-banner bg-surface"
              v-if="mainPresentation">
           <div class="d-flex align-center">
@@ -103,6 +119,15 @@ const mainPresentation = computed(() => details.value?.presentations?.[0])
 const handleClose = () => {
   isActive.value = false
   props.close()
+}
+
+const displayQuantity = computed(() => props.data.unitsPerBox || props.data.quantity)
+
+const getTranslatedForm = (count: number, form?: string) => {
+  if (!form) return ''
+  const key = form.toLowerCase().split(' ')[0]
+  const text = t(`forms.${key}`, count)
+  return text === `forms.${key}` ? form : text
 }
 </script>
 

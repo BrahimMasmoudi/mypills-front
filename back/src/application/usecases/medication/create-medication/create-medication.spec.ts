@@ -23,6 +23,7 @@ describe('IncrementMedication Use Case', () => {
             update: jest.fn().mockResolvedValue(undefined),
             setExpiredStatus: jest.fn().mockResolvedValue(undefined),
             fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
+            get: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new CreateMedication(mockRepo)
@@ -38,6 +39,8 @@ describe('IncrementMedication Use Case', () => {
             email: 'user@example.com',
             updatedAt: new Date(),
             createdAt: new Date(),
+            unitsPerBox: 10,
+            numberOfBoxes: 1,
             details: {
                 form: 'gélule',
                 administrationRoutes: ['orale'],
@@ -62,6 +65,7 @@ describe('IncrementMedication Use Case', () => {
                         price: 2.18,
                     },
                 ],
+                quantity: 8
             },
         }
 
@@ -71,5 +75,111 @@ describe('IncrementMedication Use Case', () => {
         // 3. Assert
         expect(mockRepo.create).toHaveBeenCalledWith(medication, mockAuth)
         expect(mockRepo.create).toHaveBeenCalledTimes(1)
+    })
+
+    it('should increment quantity if medication already exists', async () => {
+        // 1. Arrange
+        const existingMedication: Medication = {
+            medicationId: 'med-unique-123',
+            uid: 'user-auth-001',
+            bareCode: '3400934913154',
+            name: 'Doliprane 1000mg',
+            expiryDate: new Date('2026-12-31T23:59:59Z'),
+            expired: false,
+            quantity: 10,
+            unitsPerBox: 10,
+            numberOfBoxes: 1,
+            image: 'image.png',
+            email: 'test@example.com',
+            updatedAt: new Date(),
+            createdAt: new Date(),
+        }
+
+        const mockRepo: jest.Mocked<MedicationRepository> = {
+            create: jest.fn().mockResolvedValue(undefined),
+            increment: jest.fn().mockResolvedValue(undefined),
+            decrement: jest.fn().mockResolvedValue(undefined),
+            delete: jest.fn().mockResolvedValue(undefined),
+            update: jest.fn().mockResolvedValue(undefined),
+            setExpiredStatus: jest.fn().mockResolvedValue(undefined),
+            fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
+            get: jest.fn().mockResolvedValue(existingMedication),
+        }
+
+        const useCase = new CreateMedication(mockRepo)
+        const newMedicationInput: Medication = {
+            ...existingMedication,
+            quantity: 10,
+            numberOfBoxes: 1,
+            unitsPerBox: 10
+        }
+
+        // 2. Act
+        await useCase.execute(newMedicationInput, mockAuth)
+
+        // 3. Assert
+        expect(mockRepo.update).toHaveBeenCalledWith(
+            expect.objectContaining({ medicationId: 'med-unique-123' }),
+            mockAuth,
+            'numberOfBoxes',
+            2
+        )
+        expect(mockRepo.update).toHaveBeenCalledWith(
+            expect.objectContaining({ medicationId: 'med-unique-123' }),
+            mockAuth,
+            'quantity',
+            20
+        )
+        expect(mockRepo.create).not.toHaveBeenCalled()
+    })
+
+    it('should handle missing unitsPerBox by only updating numberOfBoxes if exists', async () => {
+        // 1. Arrange
+        const existingMedication: Medication = {
+            medicationId: 'med-unique-123',
+            uid: 'user-auth-001',
+            bareCode: '3400934913154',
+            name: 'Unknown Med',
+            expiryDate: new Date(),
+            expired: false,
+            quantity: 5,
+            // unitsPerBox undefined
+            numberOfBoxes: 5,
+            image: 'image.png',
+            email: 'test@example.com',
+            updatedAt: new Date(),
+            createdAt: new Date(),
+        }
+
+        const mockRepo: jest.Mocked<MedicationRepository> = {
+            create: jest.fn().mockResolvedValue(undefined),
+            increment: jest.fn().mockResolvedValue(undefined),
+            decrement: jest.fn().mockResolvedValue(undefined),
+            delete: jest.fn().mockResolvedValue(undefined),
+            update: jest.fn().mockResolvedValue(undefined),
+            setExpiredStatus: jest.fn().mockResolvedValue(undefined),
+            fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
+            get: jest.fn().mockResolvedValue(existingMedication),
+        }
+
+        const useCase = new CreateMedication(mockRepo)
+        const newMedicationInput: Medication = {
+            ...existingMedication,
+            quantity: 1,
+            numberOfBoxes: 2,
+            unitsPerBox: undefined
+        }
+
+        // 2. Act
+        await useCase.execute(newMedicationInput, mockAuth)
+
+        // 3. Assert
+        expect(mockRepo.update).toHaveBeenCalledWith(
+            expect.objectContaining({ medicationId: 'med-unique-123' }),
+            mockAuth,
+            'numberOfBoxes',
+            7
+        )
+        expect(mockRepo.create).not.toHaveBeenCalled()
     })
 })

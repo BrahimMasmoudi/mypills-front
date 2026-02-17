@@ -7,7 +7,7 @@ export class IncrementMedication implements IncrementMedicationUseCase {
     constructor(private medicationRepo: MedicationRepository) {
     }
 
-    async execute(medication: Medication, auth: AuthData): Promise<void> {
-        return await this.medicationRepo.increment(medication, auth)
+    async execute(medication: Medication, auth: AuthData, amount?: number): Promise<void> {
+        return await this.medicationRepo.increment(medication, auth, amount)
     }
 }

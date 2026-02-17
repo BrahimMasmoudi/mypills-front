@@ -39,18 +39,34 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         }, { merge: false })
     }
 
-    async increment(medication: Medication, auth: AuthData): Promise<void> {
+    async get(medicationId: string, auth: AuthData): Promise<Medication | null> {
+        const docRef = this.collection.doc(medicationId)
+        const doc = await docRef.get()
+
+        if (!doc.exists) {
+            return null
+        }
+
+        const data = doc.data() as Medication
+        if (data.uid !== auth.uid) {
+            return null
+        }
+
+        return data
+    }
+
+    async increment(medication: Medication, auth: AuthData, amount: number = 1): Promise<void> {
         const docRef = await this.getSecureDocRef(medication.medicationId, auth)
         await docRef.update({
-            quantity: FieldValue.increment(1),
+            quantity: FieldValue.increment(amount),
             updatedAt: new Date(),
         })
     }
 
-    async decrement(medication: Medication, auth: AuthData): Promise<void> {
+    async decrement(medication: Medication, auth: AuthData, amount: number = 1): Promise<void> {
         const docRef = await this.getSecureDocRef(medication.medicationId, auth)
         await docRef.update({
-            quantity: FieldValue.increment(-1),
+            quantity: FieldValue.increment(-amount),
             updatedAt: new Date(),
         })
     }

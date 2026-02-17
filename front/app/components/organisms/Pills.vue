@@ -23,8 +23,8 @@
           :all-medication="allMedication"
           :valid-medication="validMedication"
           :expired-medication="expiredMedication"
-          @increment-pills="(med, done) => $emit('increment-pills', med, done)"
-          @decrement-pills="(med, done) => $emit('decrement-pills', med, done)"
+          @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
+          @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
           @delete-pills="(med, done) => $emit('delete-pills', med, done)"
           @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
       />
@@ -42,8 +42,8 @@ const {medications} = defineProps<{
 
 defineEmits<{
   (e: 'create-medication', medication: Medication): void
-  (e: 'increment-pills', medication: Medication, done: () => void): void
-  (e: 'decrement-pills', medication: Medication, done: () => void): void
+  (e: 'increment-pills', medication: Medication, amount: number, done: () => void): void
+  (e: 'decrement-pills', medication: Medication, amount: number, done: () => void): void
   (e: 'delete-pills', medication: Medication, done: () => void): void
   (e: 'update-medication-name', medication: Medication, newName: string, done: () => void): void
 }>()

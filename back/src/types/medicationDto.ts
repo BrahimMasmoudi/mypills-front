@@ -18,4 +18,5 @@ export interface MedicationDetailDto {
         refundRate: string
         price: number
     }[]
+    quantity: number
 }

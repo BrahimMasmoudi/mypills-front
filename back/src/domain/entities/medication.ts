@@ -6,6 +6,8 @@ export type Medication = {
     expiryDate: Date
     expired: boolean
     quantity: number
+    unitsPerBox?: number
+    numberOfBoxes: number
     image: string
     email: string
     details?: MedicationDetails
@@ -13,7 +15,7 @@ export type Medication = {
     updatedAt: Date
 }
 
-type MedicationDetails = {
+export type MedicationDetails = {
     form: string
     administrationRoutes: string[]
     authStatus: string
@@ -32,5 +34,6 @@ type MedicationDetails = {
         barcode13: number
         refundRate: string
         price: number
-    }[]
+    }[],
+    quantity: number
 }

@@ -73,22 +73,24 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         return result
     }
 
-    const incrementPills = async (medication: Medication) => {
+    const incrementPills = async (medication: Medication, amount: number = 1) => {
         const increase = httpsCallable($functions, 'incrementMedication')
-        const result = await increase({ medication })
+        const result = await increase({ medication, amount })
         $analytics && logEvent($analytics, 'increment_pills', {
             medication_name: medication.name,
             medication_id: medication.medicationId,
+            amount
         })
         return result
     }
 
-    const decrementPills = async (medication: Medication) => {
+    const decrementPills = async (medication: Medication, amount: number = 1) => {
         const decrease = httpsCallable($functions, 'decrementMedication')
-        const result = await decrease({ medication })
+        const result = await decrease({ medication, amount })
         $analytics && logEvent($analytics, 'decrement_pills', {
             medication_name: medication.name,
             medication_id: medication.medicationId,
+            amount
         })
         return result
     }
@@ -104,16 +106,20 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     }
 
     const updateMedicationName = async (medication: Medication, newName: string) => {
+        return updateMedication(medication, 'name', newName)
+    }
+
+    const updateMedication = async (medication: Medication, key: string, value: any) => {
         const update = httpsCallable($functions, 'updateMedication')
         const result = await update({
             medication,
-            key: 'name',
-            value: newName,
+            key,
+            value,
         })
-        $analytics && logEvent($analytics, 'update_medication_name', {
-            old_name: medication.name,
-            new_name: newName,
+        $analytics && logEvent($analytics, 'update_medication', {
             medication_id: medication.medicationId,
+            key,
+            value,
         })
         return result
     }
@@ -160,6 +166,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         decrementPills,
         deletePills,
         updateMedicationName,
+        updateMedication,
         checkAndUpdateExpiredMedications,
         getMedicationDetails,
         findDuplicateMedication,
