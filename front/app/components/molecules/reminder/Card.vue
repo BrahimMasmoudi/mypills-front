@@ -127,10 +127,7 @@
 
     <!-- Progress Bar -->
     <div class="mt-4">
-       <div class="d-flex justify-space-between text-caption mb-1">
-          <span class="text-medium-emphasis font-weight-medium">
-             {{ progress >= 100 ? t('status.done') : t('reminders.progress') }}
-          </span>
+       <div class="d-flex justify-end text-caption mb-1">
           <span class="font-weight-bold" :class="progress < 100 ? 'text-warning' : 'text-primary'">
              {{ progress >= 100 ? '100%' : t('reminders.daysLeft', { count: daysLeft }) }}
           </span>
