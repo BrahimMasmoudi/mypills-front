@@ -122,6 +122,27 @@
         </v-col>
       </v-row>
     </div>
+
+    <v-spacer />
+
+    <!-- Progress Bar -->
+    <div class="mt-4">
+       <div class="d-flex justify-space-between text-caption mb-1">
+          <span class="text-medium-emphasis font-weight-medium">
+             {{ progress >= 100 ? t('status.done') : t('reminders.progress') }}
+          </span>
+          <span class="font-weight-bold" :class="progress < 100 ? 'text-warning' : 'text-primary'">
+             {{ progress >= 100 ? '100%' : t('reminders.daysLeft', { count: daysLeft }) }}
+          </span>
+       </div>
+       <v-progress-linear
+         :model-value="progress"
+         color="primary"
+         height="6"
+         rounded
+         bg-color="surface-variant"
+       ></v-progress-linear>
+    </div>
   </v-card>
 </template>
 
@@ -159,6 +180,31 @@ const handleAction = async (type: 'done' | 'failed' | 'delete' | 'edit' | 'finis
     emit(type as 'delete' | 'edit', props.item, done)
   }
 }
+
+const progress = computed(() => {
+  if (props.item.status === 'done') return 100
+
+  const start = new Date(props.item.startDate).getTime()
+  const end = new Date(props.item.endDate).getTime()
+  const now = new Date().getTime()
+
+  if (now < start) return 0
+  if (now > end) return 100
+
+  const total = end - start
+  const elapsed = now - start
+  return Math.min(100, Math.max(0, (elapsed / total) * 100))
+})
+
+const daysLeft = computed(() => {
+  const end = new Date(props.item.endDate).getTime()
+  const now = new Date().getTime()
+  
+  if (now > end) return 0
+  
+  const diff = end - now
+  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+})
 </script>
 
 <style scoped>
