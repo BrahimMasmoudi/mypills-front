@@ -204,6 +204,8 @@
       "status": "Status"
     },
     "medsCount": "{n} medication | {n} medications",
+    "progress": "Treatment Progress",
+    "daysLeft": "{count} day left | {count} days left",
     "dialogDelete": {
       "title": "Are you sure you want to delete this reminder?",
       "message": "Please note, the deletion of the reminder is permanent and irreversible",

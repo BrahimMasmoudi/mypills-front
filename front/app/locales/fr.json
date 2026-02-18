@@ -192,6 +192,8 @@
       "status": "Statut"
     },
     "medsCount": "{n} médicament | {n} médicaments",
+    "progress": "Progression du traitement",
+    "daysLeft": "{count} jour restant | {count} jours restants",
     "dialogDelete": {
       "title": "Es-tu sûr de supprimer ce rappel ?",
       "message": "Attention, la suppression du rappel est irréversible",
