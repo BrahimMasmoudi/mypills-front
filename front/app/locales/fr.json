@@ -102,39 +102,38 @@
     "change-language": "Changer le langage"
   },
   "login": {
-    "google": "se connecter avec google",
-    "completing": "Connexion en cours..."
+    "welcome": "Bienvenue sur MyPills",
+    "subtitle": "Gérez vos médicaments et ordonnances en toute sécurité",
+    "google": "Continuer avec Google",
+    "completing": "Connexion en cours...",
+    "privacy": "Vos données sont chiffrées et stockées en toute sécurité",
+    "badges": {
+      "encrypted": "Chiffré",
+      "cloud": "Cloud Sécurisé"
+    }
   },
   "landing": {
-    "welcome": "Votre Pharmacien Personnel Intelligent",
-    "subtitle": "Suivez, organisez et assurez la sécurité de votre pharmacie à domicile en toute simplicité.",
+    "welcome": "MyPills",
+    "catchphrase": "Votre Compagnon Médical Intelligent & Sécurisé",
     "features": {
       "track": {
-        "title": "Suivi des Stocks",
-        "desc": "Ajoutez vos médicaments avec quantité et date de péremption"
-      },
-      "organize": {
-        "title": "Restez Organisé",
-        "desc": "Recherchez, filtrez et triez vos médicaments rapidement"
-      },
-      "bilingual": {
-        "title": "Expérience Bilingue",
-        "desc": "Interface fluide en Anglais et Français"
-      },
-      "scan": {
-        "title": "Scan Intelligent",
-        "desc": "Scannez le code GS1 DataMatrix pour ajouter les médicaments automatiquement"
-      },
-      "duplicate": {
-        "title": "Alerte Doublons",
-        "desc": "Détecte intelligemment si vous avez déjà un médicament identique"
+        "title": "Suivez vos Médicaments",
+        "desc": "Gérez votre pharmacie personnelle en un seul endroit"
       },
       "reminders": {
-        "title": "Rappels",
-        "desc": "Gérez vos horaires de prise et suivez vos traitements en cours"
+        "title": "Ne manquez jamais une prise",
+        "desc": "Rappels intelligents avec notifications instantanées"
+      },
+      "scan": {
+        "title": "Scannez & Ajoutez en secondes",
+        "desc": "Ajoutez des médicaments via code-barres"
+      },
+      "prescriptions": {
+        "title": "Stocker en Lieu Sûr",
+        "desc": "Conservez vos ordonnances dans un endroit sécurisé"
       }
     },
-    "cta": "Se connecter avec Google"
+    "cta": "Continuer avec Google"
   },
   "countryDialog": {
     "title": "Confirmation de région",

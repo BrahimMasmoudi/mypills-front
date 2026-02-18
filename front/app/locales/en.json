@@ -102,8 +102,15 @@
     "change-language": "Change language"
   },
   "login": {
-    "google": "Login with Google",
-    "completing": "Completing login..."
+    "welcome": "Welcome to MyPills",
+    "subtitle": "Manage your medications and prescriptions securely",
+    "google": "Continue with Google",
+    "completing": "Completing login...",
+    "privacy": "Your data is encrypted and stored securely",
+    "badges": {
+      "encrypted": "Encrypted",
+      "cloud": "Secure Cloud"
+    }
   },
   "landing": {
     "welcome": "Your Smart Personal Pharmacy Manager",
@@ -124,6 +131,10 @@
       "scan": {
         "title": "Smart Scanning",
         "desc": "Scan GS1 DataMatrix on boxes to add medicines automatically"
+      },
+      "prescriptions": {
+        "title": "Stock in Safe Place",
+        "desc": "Keep your prescriptions securely stored in a safe place"
       },
       "duplicate": {
         "title": "Duplicate Guard",
@@ -152,14 +163,14 @@
     "ammDate": "Authorization Date",
     "notRefunded": "Not reimbursed",
     "scanner": {
-      "not_found_message": "Medication not found in the database."
+      "not_found_message": "Medication not found in the database"
     }
   },
   "reminderDialog": {
     "createTitle": "Schedule Reminders",
-    "createSubtitle": "Set up a treatment plan to receive notifications for each dose.",
+    "createSubtitle": "Set up a treatment plan to receive notifications for each dose",
     "editTitle": "Edit Reminder",
-    "editSubtitle": "Modify your treatment plan details.",
+    "editSubtitle": "Modify your treatment plan details",
     "frequency": "Daily Frequency",
     "addDose": "Add Another Dose",
     "startDate": "Start Date",
