@@ -12,20 +12,31 @@ declare module 'vue' {
     }
 }
 
-export default defineNuxtPlugin((nuxtApp) => {
-    // @ts-ignore: Patching private method foreverScan to support inverted codes
-    Html5Qrcode.prototype.foreverScan = function (internalConfig, qrCodeSuccessCallback, qrCodeErrorCallback) {
+class PatchedHtml5Qrcode extends Html5Qrcode {
+
+    constructor(elementId: string, configOrVerbosityFlag?: boolean | any) {
+        super(elementId, configOrVerbosityFlag);
+
+        // @ts-ignore
+        this.foreverScan = this.patchedForeverScan.bind(this);
+    }
+
+    // @ts-ignore
+    patchedForeverScan(internalConfig: any, qrCodeSuccessCallback: any, qrCodeErrorCallback: any) {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const _this = this as any;
 
         if (!_this.shouldScan) {
             return;
         }
-        if (!_this.localMediaStream) {
+        if (!_this.renderedCamera) {
+            setTimeout(() => {
+                _this.foreverScan(internalConfig, qrCodeSuccessCallback, qrCodeErrorCallback);
+            }, 100);
             return;
         }
 
-        const videoElement = _this.videoElement;
+        const videoElement = _this.renderedCamera.getSurface();
         const widthRatio = videoElement.videoWidth / videoElement.clientWidth;
         const heightRatio = videoElement.videoHeight / videoElement.clientHeight;
 
@@ -38,7 +49,8 @@ export default defineNuxtPlugin((nuxtApp) => {
         const sxOffset = _this.qrRegion.x * widthRatio;
         const syOffset = _this.qrRegion.y * heightRatio;
 
-        // Draw original frame
+        _this.context.filter = 'none';
+        _this.context.globalCompositeOperation = 'source-over';
         _this.context.drawImage(
             videoElement,
             sxOffset,
@@ -51,134 +63,68 @@ export default defineNuxtPlugin((nuxtApp) => {
             _this.qrRegion.height
         );
 
-        // Try to invert
-        if (_this.context.filter) {
-            _this.context.filter = 'invert(1)';
-            _this.context.drawImage(
-                videoElement,
-                sxOffset,
-                syOffset,
-                sWidthOffset,
-                sHeightOffset,
-                0,
-                0,
-                _this.qrRegion.width,
-                _this.qrRegion.height
-            );
-        } else {
-            // Fallback for no filter support
-            _this.context.drawImage(
-                videoElement,
-                sxOffset,
-                syOffset,
-                sWidthOffset,
-                sHeightOffset,
-                0,
-                0,
-                _this.qrRegion.width,
-                _this.qrRegion.height
-            );
-
-            // Try difference composite operation
-            _this.context.globalCompositeOperation = 'difference';
-
-            if (_this.context.globalCompositeOperation === 'difference') {
-                _this.context.fillStyle = 'white';
-                _this.context.fillRect(0, 0, _this.qrRegion.width, _this.qrRegion.height);
-
-                const canvas2 = document.createElement('canvas');
-                const ctx2 = canvas2.getContext('2d');
-                if (ctx2) {
-                    canvas2.width = _this.qrRegion.width;
-                    canvas2.height = _this.qrRegion.height;
-
-                    ctx2.drawImage(
-                        videoElement,
-                        sxOffset,
-                        syOffset,
-                        sWidthOffset,
-                        sHeightOffset,
-                        0,
-                        0,
-                        _this.qrRegion.width,
-                        _this.qrRegion.height
-                    );
-
-                    ctx2.globalCompositeOperation = 'source-in';
-                    ctx2.fillStyle = 'black';
-                    ctx2.fillRect(0, 0, _this.qrRegion.width, _this.qrRegion.height);
-
-                    ctx2.globalCompositeOperation = 'destination-in';
-                    _this.context.drawImage(
-                        canvas2,
-                        sxOffset,
-                        syOffset,
-                        sWidthOffset,
-                        sHeightOffset,
-                        0,
-                        0,
-                        _this.qrRegion.width,
-                        _this.qrRegion.height
-                    );
-                }
-            } else {
-                // Last resort: manual pixel inversion
-                try {
-                    const imgData = _this.context.getImageData(0, 0, _this.qrRegion.width, _this.qrRegion.height);
-                    const data = imgData.data;
-                    for (let i = 0; i < data.length; i += 4) {
-                        data[i] = 255 - data[i];     // R
-                        data[i + 1] = 255 - data[i + 1]; // G
-                        data[i + 2] = 255 - data[i + 2]; // B
-                    }
-                    _this.context.putImageData(imgData, 0, 0);
-                } catch (e) {
-                    // console.error("Manual inversion failed", e);
-                }
-            }
-        }
-
         const triggerNextScan = () => {
             _this.foreverScanTimeout = setTimeout(() => {
+                // @ts-ignore
                 _this.foreverScan(internalConfig, qrCodeSuccessCallback, qrCodeErrorCallback);
             }, _this.getTimeoutFps(internalConfig.fps));
         };
 
-        // Scan the inverted context
+        const scanInverted = () => {
+            if (_this.context.filter) {
+                _this.context.filter = 'invert(1)';
+                _this.context.drawImage(
+                    videoElement,
+                    sxOffset,
+                    syOffset,
+                    sWidthOffset,
+                    sHeightOffset,
+                    0,
+                    0,
+                    _this.qrRegion.width,
+                    _this.qrRegion.height
+                );
+            } else {
+                _this.context.drawImage(
+                    videoElement,
+                    sxOffset,
+                    syOffset,
+                    sWidthOffset,
+                    sHeightOffset,
+                    0,
+                    0,
+                    _this.qrRegion.width,
+                    _this.qrRegion.height
+                );
+
+                _this.context.globalCompositeOperation = 'difference';
+                _this.context.fillStyle = 'white';
+                _this.context.fillRect(0, 0, _this.qrRegion.width, _this.qrRegion.height);
+            }
+
+            return _this.scanContext(qrCodeSuccessCallback, qrCodeErrorCallback)
+                .then((isSuccess: boolean) => {
+                    // void
+                })
+                .catch((err: any) => {
+                    // void
+                });
+        };
+
         _this.scanContext(qrCodeSuccessCallback, qrCodeErrorCallback)
-            .then((isSuccessful: boolean) => {
-                if (!isSuccessful) {
-                    // If inverted scan failed, restore original and scan again
-                    // Reset filter/composite
-                    _this.context.filter = 'none';
-                    _this.context.globalCompositeOperation = 'source-over';
-
-                    _this.context.drawImage(
-                        videoElement,
-                        sxOffset,
-                        syOffset,
-                        sWidthOffset,
-                        sHeightOffset,
-                        0,
-                        0,
-                        _this.qrRegion.width,
-                        _this.qrRegion.height
-                    );
-
-                    _this.scanContext(qrCodeSuccessCallback, qrCodeErrorCallback)
-                        .finally(() => {
-                            triggerNextScan();
-                        });
-                } else {
-                    // Inverted scan successful
+            .then((isSuccess: boolean) => {
+                if (isSuccess) {
                     triggerNextScan();
+                } else {
+                    scanInverted().finally(() => triggerNextScan());
                 }
             })
-            .catch((error: any) => {
-                // _this.logger.logError("Error happened while scanning context", error);
-                triggerNextScan();
+            .catch((err: any) => {
+                scanInverted().finally(() => triggerNextScan());
             });
-    };
+    }
+}
 
-    nuxtApp.provide('html5QrCode', Html5Qrcode)
+export default defineNuxtPlugin((nuxtApp) => {
+    nuxtApp.provide('html5QrCode', PatchedHtml5Qrcode)
 });
