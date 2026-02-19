@@ -37,10 +37,13 @@
 </template>
 
 <script setup lang="ts">
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+// Removal of direct import
+import { Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { type Html5Qrcode } from "html5-qrcode"; // Type only import if needed for variable typing, or use inferred type
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+const { $html5QrCode } = useNuxtApp();
 
 const modelValue = defineModel()
 
@@ -68,7 +71,7 @@ const startScanning = async () => {
     try {
         // Ensure cleanup if previous instance hung around
         if (!html5QrCode) {
-             html5QrCode = new Html5Qrcode("reader")
+             html5QrCode = new $html5QrCode("reader")
         }
 
         const config = { 
