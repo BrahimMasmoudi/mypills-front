@@ -182,6 +182,7 @@
     "reminderNameLabel": "Sickness name",
     "reminderNamePlaceholder": "e.g., Flu, Hypertension...",
     "sicknessNameLabel": "Treatment",
+    "maxDurationHint": "Maximum treatment duration is {days} days",
     "toast": {
       "success": "The reminder is created successfully",
       "error": "An error happened while creating the reminder",

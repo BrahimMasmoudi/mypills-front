@@ -136,6 +136,7 @@
 
 <script setup lang="ts">
 import { format } from 'date-fns'
+import { enUS, fr } from 'date-fns/locale'
 import type { ReminderGroup } from '~/types/reminder'
 import { useI18n } from "vue-i18n"
 import { ref } from 'vue'
@@ -148,7 +149,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['delete', 'finish-treatment', 'edit'])
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 // Track loading per item group { "SicknessName": "done" | "failed" | "delete" | "edit" | null }
 const loadingStates = ref<Record<string, string | null>>({})
@@ -184,7 +185,11 @@ const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'finish-tr
   }
 }
 
-const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
+const locales: Record<string, any> = {en: enUS, fr: fr}
+const formatDate = (date: Date | string) => {
+  if (!date) return ''
+  return format(new Date(date), 'dd MMM', {locale: locales[locale.value] || enUS})
+}
 </script>
 
 <style scoped>

@@ -79,30 +79,10 @@
                 hide-details="auto"
             />
 
-            <v-menu v-model="med.dateMenu" :close-on-content-click="false" location="center">
-              <template v-slot:activator="{ props }">
-                <v-text-field
-                    v-bind="props"
-                    :model-value="getDateRangeText(med)"
-                    :label="t('reminderDialog.dateRange')"
-                    variant="outlined"
-                    readonly
-                    rounded="lg"
-                    prepend-inner-icon="mdi-calendar-range"
-                    class="font-weight-medium cursor-pointer mb-4"
-                    hide-details="auto"
-                />
-              </template>
-              <v-date-picker
-                  v-model="med.rangeValue"
-                  multiple="range"
-                  hide-header
-                  rounded="lg"
-                  color="primary"
-                  :min="minDate"
-                  @update:model-value="(val) => handleDateChange(med, val)"
-              />
-            </v-menu>
+            <MoleculesReminderDatePicker
+                v-model:startDate="med.startDate"
+                v-model:endDate="med.endDate"
+            />
 
             <div class="text-subtitle-2 font-weight-bold mb-3">{{ t('reminderDialog.frequency') }}</div>
             <div
@@ -183,7 +163,7 @@
 
 <script setup lang="ts">
 import {useI18n} from "vue-i18n"
-import {isSameDay, isAfter, format} from "date-fns"
+import {isSameDay, isAfter} from "date-fns"
 import type {Medication} from "~/types/medication"
 import type {Reminder, ReminderGroup} from "~/types/reminder"
 import {enUS, fr} from "date-fns/locale"
@@ -206,7 +186,6 @@ const {close, updateReminder, validMedications, reminders, item} = defineProps<{
 
 const isActive = ref(true)
 const loading = ref(false)
-const minDate = new Date()
 
 const form = ref({
   sicknessName: item.sicknessName,
@@ -220,7 +199,6 @@ const form = ref({
       endDate: new Date(item.endDate),
       doses: [...med.doses.map(d => ({ ...d }))],
       dateMenu: false,
-      rangeValue: [new Date(item.startDate), new Date(item.endDate)]
     }
   })
 })
@@ -232,38 +210,6 @@ const uniqueSicknessNames = computed(() => {
 
   return [...new Set(names)]
 });
-
-const formatDate = (date: Date | string) => {
-  if (!date) return ''
-  return format(new Date(date), 'dd MMM yyyy', {locale: locales[locale.value] || enUS})
-}
-
-const getDateRangeText = (med: any) => {
-  if (!med.rangeValue || med.rangeValue.length === 0) return ''
-
-  const start = med.startDate
-  const end = med.endDate
-
-  if (isSameDay(start, end)) {
-    return formatDate(start)
-  }
-
-  return `${formatDate(start)} - ${formatDate(end)}`
-}
-
-const handleDateChange = (med: any, val: Date[]) => {
-  if (!val || val.length === 0) return
-
-  if (val.length === 1) {
-    med.startDate = val[0]
-    med.endDate = val[0]
-  } else if (val.length >= 2) {
-    const sorted = [...val].sort((a, b) => a.getTime() - b.getTime())
-    med.startDate = sorted[0]
-    med.endDate = sorted[sorted.length - 1]
-    med.dateMenu = false
-  }
-}
 
 const isFormInvalid = computed(() => {
   const hasName = !!form.value.sicknessName?.trim()
@@ -297,7 +243,6 @@ const addMedication = () => {
     endDate: new Date(item.endDate),
     doses: [{time: '08:00', quantity: 1}],
     dateMenu: false,
-    rangeValue: [new Date(item.startDate), new Date(item.endDate)]
   })
 }
 
