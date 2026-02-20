@@ -12,7 +12,7 @@
     <v-card
         class="rounded-xl pa-0 d-flex flex-column"
         elevation="24"
-        :max-height="$device.isMobile ? '90vh' : '80vh'"
+        :max-height="$device.isMobile ? '90vh' : '85vh'"
     >
       <div class="pa-6 pb-0">
         <v-sheet
@@ -121,10 +121,14 @@
                 prepend-icon="mdi-plus"
                 size="small"
                 class="rounded-lg text-capitalize font-weight-bold"
+                :disabled="med.doses.length >= MAX_DOSES"
                 @click="addDose(med)"
             >
               {{ t('reminderDialog.addDose') }}
             </v-btn>
+            <div v-if="med.doses.length >= MAX_DOSES" class="text-caption text-error text-center mt-1">
+              {{ t('reminderDialog.maxDosesHint', { count: MAX_DOSES }) }}
+            </div>
           </div>
 
           <v-btn
@@ -172,6 +176,7 @@ const {$device} = useNuxtApp()
 const {t, locale} = useI18n()
 
 const locales: Record<string, any> = {en: enUS, fr: fr}
+const MAX_DOSES = 3
 
 // Props
 const {close, updateReminder, validMedications, reminders, item} = defineProps<{

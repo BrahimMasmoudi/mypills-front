@@ -78,7 +78,7 @@
 import {useI18n} from "vue-i18n";
 import {useUserStore} from "~/store/userStore";
 import MoleculesUserMenu from "~/components/molecules/UserMenu.vue";
-import ReminderCreationDialog from "~/components/molecules/ReminderCreationDialog.vue"
+import ReminderCreationDialog from "~/components/molecules/reminder/ReminderCreationDialog.vue"
 import {openToast, type ToastType} from "~/composables/openToast"
 import {getCurrentUser} from "vuefire"
 import {storeToRefs} from "pinia"
