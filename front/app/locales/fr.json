@@ -171,6 +171,7 @@
     "reminderNamePlaceholder": "ex: Grippe, Hypertension...",
     "sicknessNameLabel": "Nom du traitement",
     "maxDurationHint": "La durée maximale du traitement est de {days} jours",
+    "maxDosesHint": "Maximum {count} doses atteint",
     "toast": {
       "success": "Le rappel est crée avec succés",
       "error": "Échec lors de la creation d'un rappel",

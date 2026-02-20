@@ -6,28 +6,33 @@
       :class="$device.isMobile ? 'align-end ma-0' : ''"
       @keydown.esc="cancelAndClose"
   >
-    <v-card class="rounded-xl pa-6" elevation="24">
-      <v-sheet
-          v-if="$device.isMobile"
-          color="grey-lighten-2 mx-auto"
-          height="4"
-          width="40"
-          class="rounded-pill mb-6"
-      />
+    <v-card class="rounded-xl pa-0 d-flex flex-column" elevation="24" :max-height="$device.isMobile ? '90vh' : '85vh'">
+      <!-- Fixed Header -->
+      <div class="pa-6 pb-0 flex-shrink-0">
+        <v-sheet
+            v-if="$device.isMobile"
+            color="grey-lighten-2 mx-auto"
+            height="4"
+            width="40"
+            class="rounded-pill mb-6"
+        />
 
-      <div class="d-flex flex-column align-center text-center mb-6">
-        <v-avatar color="primary-lighten-5" size="64">
-          <v-icon icon="mdi-alarm-plus" color="primary" size="46"/>
-        </v-avatar>
-        <v-card-title class="text-h5 font-weight-bold pt-0">
-          {{ t('reminderDialog.createTitle') }}
-        </v-card-title>
-        <div class="text-body-2 text-medium-emphasis">
-          {{ t('reminderDialog.createSubtitle') }}
+        <div class="d-flex flex-column align-center text-center">
+          <v-avatar color="primary-lighten-5" size="64">
+            <v-icon icon="mdi-alarm-plus" color="primary" size="46"/>
+          </v-avatar>
+          <v-card-title class="text-h5 font-weight-bold pt-0">
+            {{ t('reminderDialog.createTitle') }}
+          </v-card-title>
+          <div class="text-body-2 text-medium-emphasis">
+            {{ t('reminderDialog.createSubtitle') }}
+          </div>
         </div>
       </div>
-      <v-card-text class="pa-0">
-        <div class="d-flex flex-column gap-4">
+
+      <!-- Scrollable Content -->
+      <v-card-text class="pa-6 pt-0 overflow-y-auto flex-grow-1">
+        <div class="d-flex flex-column">
           <v-combobox
               v-model="form.sicknessName"
               :items="uniqueSicknessNames"
@@ -35,7 +40,7 @@
               variant="outlined"
               hide-details="auto"
               rounded="lg"
-              class="font-weight-medium"
+              class="font-weight-medium my-4"
               :return-object="false"
           />
           <v-select
@@ -56,13 +61,11 @@
               v-model:endDate="form.endDate"
           />
 
-          <v-divider/>
-
-          <div class="text-subtitle-2 font-weight-bold my-3">{{ t('reminderDialog.frequency') }}</div>
+          <div class="text-subtitle-2 font-weight-bold my-4">{{ t('reminderDialog.frequency') }}</div>
           <div
               v-for="(item, index) in form.doses"
               :key="index"
-              class="d-flex align-center justify-space-between mb-3"
+              class="d-flex align-center justify-space-between mb-4"
           >
             <MoleculesTimePicker
                 v-model="item.time"
@@ -94,14 +97,21 @@
               color="primary"
               prepend-icon="mdi-plus"
               class="rounded-lg text-capitalize font-weight-bold"
+              :disabled="form.doses.length >= MAX_DOSES"
               @click="addDose"
           >
             {{ t('reminderDialog.addDose') }}
           </v-btn>
+          <div v-if="form.doses.length >= MAX_DOSES" class="text-caption text-error text-center mt-1">
+            {{ t('reminderDialog.maxDosesHint', { count: MAX_DOSES }) }}
+          </div>
         </div>
       </v-card-text>
 
-      <v-card-actions class="w-100 justify-center pt-8 gap-3 px-0">
+      <v-divider v-if="!$device.isMobile" />
+
+      <!-- Fixed Footer -->
+      <v-card-actions class="w-100 justify-center pa-6 gap-3 flex-shrink-0">
         <v-btn variant="outlined" size="large" color="grey-darken-1"
                class="flex-grow-1 text-capitalize font-weight-bold" height="48" @click="cancelAndClose">
           {{ t('cancel') }}
@@ -133,6 +143,7 @@ const {t, locale} = useI18n()
 
 const locales: Record<string, any> = {en: enUS, fr: fr}
 const MAX_DURATION_DAYS = 15
+const MAX_DOSES = 3
 
 // Props
 const {close, createReminder, validMedications, reminders} = defineProps<{
