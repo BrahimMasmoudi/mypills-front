@@ -127,7 +127,7 @@ import type {ToastType} from "~/composables/openToast";
 const {t} = useI18n()
 const isActive = ref(true)
 const loading = ref(false)
-const {close, width = 550} = defineProps<{
+const {close, width = 600} = defineProps<{
   close: (toastType: ToastType) => void
   isPersistent: boolean
   scrim: boolean

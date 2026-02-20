@@ -51,32 +51,10 @@
               class="font-weight-medium"
           />
 
-          <v-menu v-model="dateMenu" :close-on-content-click="false" location="center">
-            <template v-slot:activator="{ props }">
-              <v-text-field
-                  v-bind="props"
-                  :model-value="dateRangeText"
-                  :label="t('reminderDialog.dateRange')"
-                  variant="outlined"
-                  readonly
-                  rounded="lg"
-                  prepend-inner-icon="mdi-calendar-range"
-                  class="font-weight-medium cursor-pointer"
-                  persistent-hint
-                  :hint="t('reminderDialog.maxDurationHint', { days: 15 })"
-              />
-            </template>
-            <v-date-picker
-                v-model="rangeValue"
-                multiple="range"
-                hide-header
-                rounded="lg"
-                color="primary"
-                :min="minDate"
-                :max="maxDate"
-                @update:model-value="handleDateChange"
-            />
-          </v-menu>
+          <MoleculesReminderDatePicker
+              v-model:startDate="form.startDate"
+              v-model:endDate="form.endDate"
+          />
 
           <v-divider/>
 
@@ -145,7 +123,7 @@
 
 <script setup lang="ts">
 import {useI18n} from "vue-i18n"
-import {isSameDay, isAfter, format, addDays, differenceInDays} from "date-fns"
+import {isSameDay, isAfter} from "date-fns"
 import type {Medication} from "~/types/medication"
 import type {CreateReminderRequest, Reminder} from "~/types/reminder"
 import {enUS, fr} from "date-fns/locale"
@@ -168,9 +146,6 @@ const {close, createReminder, validMedications, reminders} = defineProps<{
 
 const isActive = ref(true)
 const loading = ref(false)
-const dateMenu = ref(false)
-const minDate = new Date()
-const maxDate = addDays(minDate, MAX_DURATION_DAYS - 1)
 const form = ref({
   sicknessName: null as any,
   medication: null as unknown as Medication,
@@ -189,48 +164,6 @@ const uniqueSicknessNames = computed(() => {
   return [...new Set(names)]
 });
 
-const rangeValue = ref<Date[]>([form.value.startDate, form.value.endDate])
-
-const formatDate = (date: Date | string) => {
-  if (!date) return ''
-  return format(new Date(date), 'dd MMM yyyy', {locale: locales[locale.value] || enUS})
-}
-
-const dateRangeText = computed(() => {
-  if (!rangeValue.value || rangeValue.value.length === 0) return ''
-
-  const start = form.value.startDate
-  const end = form.value.endDate
-
-  if (isSameDay(start, end)) {
-    return formatDate(start)
-  }
-
-  return `${formatDate(start)} - ${formatDate(end)}`
-})
-
-const handleDateChange = (val: Date[]) => {
-  if (!val || val.length === 0) return
-
-  if (val.length === 1) {
-    form.value.startDate = val[0]
-    form.value.endDate = val[0]
-  } else if (val.length >= 2) {
-    const sorted = [...val].sort((a, b) => a.getTime() - b.getTime())
-    let start = sorted[0]!
-    let end = sorted[sorted.length - 1]!
-
-    if (differenceInDays(end, start) >= MAX_DURATION_DAYS) {
-      end = addDays(start, MAX_DURATION_DAYS - 1)
-    }
-
-    form.value.startDate = start
-    form.value.endDate = end
-
-    dateMenu.value = false
-  }
-}
-
 const isFormInvalid = computed(() => {
   const hasName = !!form.value.sicknessName?.trim()
   const hasMed = !!form.value.medication
@@ -240,9 +173,8 @@ const isFormInvalid = computed(() => {
   const validDoses =
       form.value.doses.length > 0 &&
       form.value.doses.every(d => d.time && d.quantity > 0)
-  const validDuration = differenceInDays(form.value.endDate, form.value.startDate) < MAX_DURATION_DAYS
 
-  return !hasMed || !validDate || !validDoses || !hasName || !validDuration
+  return !hasMed || !validDate || !validDoses || !hasName
 })
 
 const addDose = () => {

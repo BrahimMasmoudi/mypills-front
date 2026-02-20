@@ -145,6 +145,7 @@
 
 <script setup lang="ts">
 import {format} from 'date-fns'
+import {enUS, fr} from 'date-fns/locale'
 import type {ReminderGroup} from '~/types/reminder'
 import {useI18n} from "vue-i18n";
 import {ref} from 'vue' // Added missing ref import
@@ -157,9 +158,13 @@ const props = defineProps<{
 const emit = defineEmits(['delete', 'edit', 'finish-treatment'])
 
 const loadingAction = ref<string | null>(null)
-const {t} = useI18n()
+const {t, locale} = useI18n()
 
-const formatDate = (date: Date) => date ? format(new Date(date), 'dd MMM') : ''
+const locales: Record<string, any> = {en: enUS, fr: fr}
+const formatDate = (date: Date | string) => {
+  if (!date) return ''
+  return format(new Date(date), 'dd MMM', {locale: locales[locale.value] || enUS})
+}
 
 const handleAction = async (type: 'done' | 'failed' | 'delete' | 'edit' | 'finish-treatment') => {
   loadingAction.value = type
