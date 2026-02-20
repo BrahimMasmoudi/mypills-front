@@ -62,6 +62,8 @@
                   rounded="lg"
                   prepend-inner-icon="mdi-calendar-range"
                   class="font-weight-medium cursor-pointer"
+                  persistent-hint
+                  :hint="t('reminderDialog.maxDurationHint', { days: 15 })"
               />
             </template>
             <v-date-picker
@@ -70,6 +72,8 @@
                 hide-header
                 rounded="lg"
                 color="primary"
+                :min="minDate"
+                :max="maxDate"
                 @update:model-value="handleDateChange"
             />
           </v-menu>
@@ -141,7 +145,7 @@
 
 <script setup lang="ts">
 import {useI18n} from "vue-i18n"
-import {isSameDay, isAfter, format} from "date-fns"
+import {isSameDay, isAfter, format, addDays, differenceInDays} from "date-fns"
 import type {Medication} from "~/types/medication"
 import type {CreateReminderRequest, Reminder} from "~/types/reminder"
 import {enUS, fr} from "date-fns/locale"
@@ -150,6 +154,7 @@ const {$device} = useNuxtApp()
 const {t, locale} = useI18n()
 
 const locales: Record<string, any> = {en: enUS, fr: fr}
+const MAX_DURATION_DAYS = 15
 
 // Props
 const {close, createReminder, validMedications, reminders} = defineProps<{
@@ -164,6 +169,8 @@ const {close, createReminder, validMedications, reminders} = defineProps<{
 const isActive = ref(true)
 const loading = ref(false)
 const dateMenu = ref(false)
+const minDate = new Date()
+const maxDate = addDays(minDate, MAX_DURATION_DAYS - 1)
 const form = ref({
   sicknessName: null as any,
   medication: null as unknown as Medication,
@@ -210,8 +217,15 @@ const handleDateChange = (val: Date[]) => {
     form.value.endDate = val[0]
   } else if (val.length >= 2) {
     const sorted = [...val].sort((a, b) => a.getTime() - b.getTime())
-    form.value.startDate = sorted[0]
-    form.value.endDate = sorted[sorted.length - 1]
+    let start = sorted[0]!
+    let end = sorted[sorted.length - 1]!
+
+    if (differenceInDays(end, start) >= MAX_DURATION_DAYS) {
+      end = addDays(start, MAX_DURATION_DAYS - 1)
+    }
+
+    form.value.startDate = start
+    form.value.endDate = end
 
     dateMenu.value = false
   }
@@ -226,8 +240,9 @@ const isFormInvalid = computed(() => {
   const validDoses =
       form.value.doses.length > 0 &&
       form.value.doses.every(d => d.time && d.quantity > 0)
+  const validDuration = differenceInDays(form.value.endDate, form.value.startDate) < MAX_DURATION_DAYS
 
-  return !hasMed || !validDate || !validDoses || !hasName
+  return !hasMed || !validDate || !validDoses || !hasName || !validDuration
 })
 
 const addDose = () => {
