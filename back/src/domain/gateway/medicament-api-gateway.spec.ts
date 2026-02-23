@@ -50,7 +50,7 @@ describe('GiygasApiAdapter Integration Test', () => {
                     'dateDeclaration': '02/01/2003',
                     'etatComercialisation': 'Déclaration de commercialisation',
                     'libelle': 'plaquette(s) thermoformée(s) PVC-aluminium de 8  comprimé(s)',
-                    'prix': 1.07,
+                    'prix': 1.15,
                     'statusAdministratif': 'Présentation active',
                     'tauxRemboursement': '65%',
                 }, {

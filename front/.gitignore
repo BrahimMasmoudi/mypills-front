@@ -24,3 +24,6 @@ logs
 !.env.example
 !.env.staging
 !.env.production
+
+*storybook.log
+storybook-static
