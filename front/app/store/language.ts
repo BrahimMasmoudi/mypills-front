@@ -1,8 +1,8 @@
-import {defineStore} from 'pinia'
-import {useI18n} from 'vue-i18n'
+import { defineStore } from 'pinia'
+import { useI18n } from 'vue-i18n'
 
 export const useLanguageStore = defineStore('language', () => {
-    const {locale} = useI18n()
+    const { locale } = useI18n()
 
     // Create a cookie that lasts 30 days
     const savedLocale = useCookie<string>('user-locale', {

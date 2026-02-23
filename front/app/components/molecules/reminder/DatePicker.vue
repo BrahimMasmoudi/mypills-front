@@ -1,36 +1,36 @@
 <template>
   <v-menu v-model="dateMenu" :close-on-content-click="false" location="center">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-text-field
-          v-bind="{ ...props, ...$attrs }"
-          :model-value="dateRangeText"
-          :label="t('reminderDialog.dateRange')"
-          variant="outlined"
-          readonly
-          rounded="lg"
-          prepend-inner-icon="mdi-calendar-range"
-          class="font-weight-medium cursor-pointer"
-          persistent-hint
-          :hint="t('reminderDialog.maxDurationHint', { days: MAX_DURATION_DAYS })"
+        v-bind="{ ...props, ...$attrs }"
+        :model-value="dateRangeText"
+        :label="t('reminderDialog.dateRange')"
+        variant="outlined"
+        readonly
+        rounded="lg"
+        prepend-inner-icon="mdi-calendar-range"
+        class="font-weight-medium cursor-pointer"
+        persistent-hint
+        :hint="t('reminderDialog.maxDurationHint', { days: MAX_DURATION_DAYS })"
       />
     </template>
     <v-date-picker
-        v-model="rangeValue"
-        multiple="range"
-        hide-header
-        rounded="lg"
-        color="primary"
-        :min="minDate"
-        :max="maxDate"
-        @update:model-value="handleDateChange"
+      v-model="rangeValue"
+      multiple="range"
+      hide-header
+      rounded="lg"
+      color="primary"
+      :min="minDate"
+      :max="maxDate"
+      @update:model-value="handleDateChange"
     />
   </v-menu>
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n"
-import { isSameDay, format, addDays, differenceInDays } from "date-fns"
-import { enUS, fr } from "date-fns/locale"
+import { useI18n } from 'vue-i18n'
+import { isSameDay, format, addDays, differenceInDays } from 'date-fns'
+import { enUS, fr } from 'date-fns/locale'
 
 const { t, locale } = useI18n()
 const locales: Record<string, any> = { en: enUS, fr: fr }
@@ -66,7 +66,7 @@ const handleDateChange = (val: Date[]) => {
     endDate.value = val[0]!
   } else if (val.length >= 2) {
     const sorted = [...val].sort((a, b) => a.getTime() - b.getTime())
-    let start = sorted[0]!
+    const start = sorted[0]!
     let end = sorted[sorted.length - 1]!
 
     if (differenceInDays(end, start) >= MAX_DURATION_DAYS) {

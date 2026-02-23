@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vueI18n from '@intlify/unplugin-vue-i18n/vite'
-import { fileURLToPath } from "node:url";
-import path from "node:path";
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 export default defineNuxtConfig({
     experimental: {
@@ -24,17 +24,18 @@ export default defineNuxtConfig({
     ssr: false,
     spaLoadingTemplate: fileURLToPath(new URL('./spa-loading-template.html', import.meta.url)),
     modules: [
-      'vuetify-nuxt-module',
-      'nuxt-icons',
-      '@pinia/nuxt',
-      '@pinia-plugin-persistedstate/nuxt',
-      '@nuxtjs/device',
-      'nuxt-vuefire',
-      '@nuxt/ui',
-      '@vite-pwa/nuxt',
-      '@nuxtjs/color-mode',
-      '@vueuse/nuxt',
-      '@nuxtjs/storybook',
+        'vuetify-nuxt-module',
+        'nuxt-icons',
+        '@pinia/nuxt',
+        '@pinia-plugin-persistedstate/nuxt',
+        '@nuxtjs/device',
+        'nuxt-vuefire',
+        '@nuxt/ui',
+        '@vite-pwa/nuxt',
+        '@nuxtjs/color-mode',
+        '@vueuse/nuxt',
+        '@nuxtjs/storybook',
+        '@nuxt/eslint',
     ],
     colorMode: {
         preference: 'system', // default value of $colorMode.preference
@@ -136,11 +137,11 @@ export default defineNuxtConfig({
                     light: {
                         colors: {
                             primary: '#3643BA',
-                            "dark-primary": '#2E399E',
+                            'dark-primary': '#2E399E',
                             gray: '#a0a0a0',
                             'dark-gray': '#4E5D6BCC',
-                            "primary-light": '#D9ECF5',
-                            "light-blue": '#9ADDFF',
+                            'primary-light': '#D9ECF5',
+                            'light-blue': '#9ADDFF',
                             'completed': '#149B65',
                             'in_progress': '#0113B6FF',
                             'to_be_processed': '#EC6607',

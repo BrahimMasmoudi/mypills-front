@@ -1,18 +1,18 @@
 <template>
   <OrganismsPills
-      :medications="medications ?? []"
-      :medication-loading="medicationLoading"
-      @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
-      @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
-      @delete-pills="(med, done) => $emit('delete-pills', med, done)"
-      @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
+    :medications="medications ?? []"
+    :medication-loading="medicationLoading"
+    @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
+    @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
+    @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+    @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
 
-      @create-medication="$emit('create-medication', $event)"
+    @create-medication="$emit('create-medication', $event)"
   />
 </template>
 
 <script setup lang="ts">
-import type {Medication} from "~/types/medication"
+import type { Medication } from '~/types/medication'
 
 defineProps<{
   medications: Medication[] | undefined

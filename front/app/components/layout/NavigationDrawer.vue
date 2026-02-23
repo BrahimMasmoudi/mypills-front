@@ -1,18 +1,18 @@
 <template>
   <v-navigation-drawer
-      v-model="drawer"
-      temporary
-      close-delay="0"
-      elevation="0"
-      border="e"
+    v-model="drawer"
+    temporary
+    close-delay="0"
+    elevation="0"
+    border="e"
   >
     <v-list nav class="pa-4">
       <v-list-item
-          to="/medications"
-          rounded="pill"
-          class="mb-2 nav-pill"
-          active-class="active-pill"
-          link
+        to="/medications"
+        rounded="pill"
+        class="mb-2 nav-pill"
+        active-class="active-pill"
+        link
       >
         <template #prepend>
           <v-icon icon="mdi-pill" size="20" class="ml-2 mr-n3"/>
@@ -24,11 +24,11 @@
       </v-list-item>
 
       <v-list-item
-          to="/reminders"
-          rounded="pill"
-          class="mb-2 nav-pill"
-          active-class="active-pill"
-          link
+        to="/reminders"
+        rounded="pill"
+        class="mb-2 nav-pill"
+        active-class="active-pill"
+        link
       >
         <template #prepend>
           <v-icon icon="mdi-calendar-clock" size="20" class="ml-2 mr-n3"/>
@@ -40,11 +40,11 @@
       </v-list-item>
 
       <v-list-item
-          to="/prescriptions"
-          rounded="pill"
-          class="mb-2 nav-pill"
-          active-class="active-pill"
-          link
+        to="/prescriptions"
+        rounded="pill"
+        class="mb-2 nav-pill"
+        active-class="active-pill"
+        link
       >
         <template #prepend>
           <v-icon icon="mdi-folder-upload-outline" size="20" class="ml-2 mr-n3"/>
@@ -58,10 +58,10 @@
   </v-navigation-drawer>
 </template>
 <script setup lang="ts">
-import {useI18n} from "vue-i18n"
+import { useI18n } from 'vue-i18n'
 
 const drawer = defineModel<boolean>()
-const {t} = useI18n()
+const { t } = useI18n()
 </script>
 <style scoped>
 /* Base Pill Style */

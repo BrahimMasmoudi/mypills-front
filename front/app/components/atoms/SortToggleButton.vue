@@ -1,13 +1,13 @@
 <template>
   <v-btn
-      icon
-      :variant="variant"
-      :size="size"
-      :color="color"
-      @click="$emit('toggle')"
-      :title="title"
-      v-bind="$attrs"
-      class="sort-toggle-btn"
+    icon
+    :variant="variant"
+    :size="size"
+    :color="color"
+    :title="title"
+    v-bind="$attrs"
+    class="sort-toggle-btn"
+    @click="$emit('toggle')"
   >
     <v-icon :icon="sortOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending'"/>
   </v-btn>
@@ -22,7 +22,9 @@ withDefaults(defineProps<{
   color?: string
 }>(), {
   variant: 'outlined',
-  color: 'primary'
+  color: 'primary',
+  title: '',
+  size: 'small'
 })
 
 defineEmits<{

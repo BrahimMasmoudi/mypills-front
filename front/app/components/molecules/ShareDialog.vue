@@ -1,11 +1,11 @@
 <template>
   <!-- Desktop Layout -->
   <v-dialog
-      v-if="$device.isDesktop"
-      v-model="isActive"
-      :width="550"
-      content-class="elevation-0"
-      @keydown.esc="handleClose"
+    v-if="$device.isDesktop"
+    v-model="isActive"
+    :width="550"
+    content-class="elevation-0"
+    @keydown.esc="handleClose"
   >
     <v-card class="rounded-xl pa-6" elevation="24">
       <div class="d-flex flex-column align-center text-center">
@@ -27,28 +27,30 @@
         <!-- Link Field with Loading State -->
         <v-card-text class="w-100 px-6 py-4">
           <v-text-field
-              v-model="linkValue"
-              readonly
-              variant="outlined"
-              :loading="loading"
-              :disabled="loading"
-              :placeholder="loading ? t('shareDialog.loading') : ''"
-              density="comfortable"
-              hide-details
+            v-model="linkValue"
+            readonly
+            variant="outlined"
+            :loading="loading"
+            :disabled="loading"
+            :placeholder="loading ? t('shareDialog.loading') : ''"
+            density="comfortable"
+            hide-details
           >
             <template #append-inner>
-              <v-tooltip v-model="showCopiedTooltip" 
+              <v-tooltip
+                v-model="showCopiedTooltip" 
                 :open-on-hover="false"
                 :open-on-focus="false"
-                location="top">
+                location="top"
+              >
                 <template #activator="{props }">
                   <v-btn
-                      v-bind="props"
-                      icon="mdi-content-copy"
-                      variant="text"
-                      size="small"
-                      :disabled="loading"
-                      @click="copyLink"
+                    v-bind="props"
+                    icon="mdi-content-copy"
+                    variant="text"
+                    size="small"
+                    :disabled="loading"
+                    @click="copyLink"
                   />
                 </template>
                 <span>{{ t('shareDialog.copied') }}</span>
@@ -60,25 +62,25 @@
         <!-- Actions -->
         <v-card-actions class="w-100 justify-center pt-4 gap-4">
           <v-btn
-              color="primary"
-              variant="flat"
-              size="large"
-              class="flex-grow-1 text-capitalize font-weight-bold"
-              height="48"
-              :disabled="loading"
-              prepend-icon="mdi-share-variant"
-              @click="handleShare"
+            color="primary"
+            variant="flat"
+            size="large"
+            class="flex-grow-1 text-capitalize font-weight-bold"
+            height="48"
+            :disabled="loading"
+            prepend-icon="mdi-share-variant"
+            @click="handleShare"
           >
             {{ t('shareDialog.shareAction') }}
           </v-btn>
 
           <v-btn
-              variant="outlined"
-              size="large"
-              color="grey-darken-1"
-              class="flex-grow-1 text-capitalize font-weight-bold"
-              height="48"
-              @click="handleClose"
+            variant="outlined"
+            size="large"
+            color="grey-darken-1"
+            class="flex-grow-1 text-capitalize font-weight-bold"
+            height="48"
+            @click="handleClose"
           >
             {{ t('shareDialog.close') }}
           </v-btn>
@@ -89,21 +91,21 @@
 
   <!-- Mobile Layout (Bottom Sheet Style) -->
   <v-dialog
-      v-else
-      v-model="isActive"
-      color="transparent"
-      width="100%"
-      class="align-end ma-0"
-      @keydown.esc="handleClose"
+    v-else
+    v-model="isActive"
+    color="transparent"
+    width="100%"
+    class="align-end ma-0"
+    @keydown.esc="handleClose"
   >
     <v-card class="rounded-t-xl pa-5 pb-8" elevation="0">
       <div class="d-flex flex-column align-center text-center">
         <!-- Drag Handle Indicator -->
         <v-sheet
-            color="grey-lighten-2"
-            height="4"
-            width="40"
-            class="rounded-pill mb-6"
+          color="grey-lighten-2"
+          height="4"
+          width="40"
+          class="rounded-pill mb-6"
         />
 
         <v-avatar color="primary-lighten-5" size="72" class="mb-4">
@@ -121,25 +123,25 @@
         <!-- Link Field with Loading State -->
         <div class="w-100 px-2 mb-6">
           <v-text-field
-              v-model="linkValue"
-              readonly
-              variant="outlined"
-              :loading="loading"
-              :disabled="loading"
-              :placeholder="loading ? t('shareDialog.loading') : ''"
-              density="comfortable"
-              hide-details
+            v-model="linkValue"
+            readonly
+            variant="outlined"
+            :loading="loading"
+            :disabled="loading"
+            :placeholder="loading ? t('shareDialog.loading') : ''"
+            density="comfortable"
+            hide-details
           >
             <template #append-inner>
               <v-tooltip v-model="showCopiedTooltip" location="top">
                 <template #activator="{ props }">
                   <v-btn
-                      v-bind="props"
-                      icon="mdi-content-copy"
-                      variant="text"
-                      size="small"
-                      :disabled="loading"
-                      @click="copyLink"
+                    v-bind="props"
+                    icon="mdi-content-copy"
+                    variant="text"
+                    size="small"
+                    :disabled="loading"
+                    @click="copyLink"
                   />
                 </template>
                 <span>{{ t('shareDialog.copied') }}</span>
@@ -150,25 +152,25 @@
 
         <div class="d-flex flex-column w-100 gap-3">
           <v-btn
-              block
-              color="primary"
-              variant="flat"
-              size="x-large"
-              class="text-capitalize font-weight-bold rounded-lg"
-              :disabled="loading"
-              prepend-icon="mdi-share-variant"
-              @click="handleShare"
+            block
+            color="primary"
+            variant="flat"
+            size="x-large"
+            class="text-capitalize font-weight-bold rounded-lg"
+            :disabled="loading"
+            prepend-icon="mdi-share-variant"
+            @click="handleShare"
           >
             {{ t('shareDialog.shareAction') }}
           </v-btn>
 
           <v-btn
-              block
-              variant="text"
-              size="large"
-              color="grey-darken-1"
-              class="text-capitalize font-weight-bold mt-2"
-              @click="handleClose"
+            block
+            variant="text"
+            size="large"
+            color="grey-darken-1"
+            class="text-capitalize font-weight-bold mt-2"
+            @click="handleClose"
           >
             {{ t('shareDialog.close') }}
           </v-btn>

@@ -5,10 +5,10 @@
       
       <v-list>
         <v-list-item
-            v-for="option in sortOptions"
-            :key="option.value"
-            @click="handleSortSelect(option.value)"
-            :active="sortBy === option.value"
+          v-for="option in sortOptions"
+          :key="option.value"
+          :active="sortBy === option.value"
+          @click="handleSortSelect(option.value)"
         >
           <template #prepend>
             <v-icon :icon="option.icon" class="mr-3"/>

@@ -3,33 +3,38 @@
     <v-card class="rounded-xl">
       <v-card-title class="d-flex justify-space-between align-center pa-4">
         <span class="text-h6 mx-auto font-weight-bold">{{ t('scanner.title') }}</span>
-        <v-btn icon="mdi-close" variant="text" @click="close"></v-btn>
+        <v-btn icon="mdi-close" variant="text" @click="close"/>
       </v-card-title>
       
       <v-card-text class="pa-0 position-relative">
-        <div id="reader" class="scanner-container"></div>
+        <div id="reader" class="scanner-container"/>
         
         <v-overlay
           v-model="isLoading"
           contained
           class="align-center justify-center"
         >
-          <v-progress-circular indeterminate color="white"></v-progress-circular>
+          <v-progress-circular indeterminate color="white"/>
         </v-overlay>
       </v-card-text>
 
       <v-card-text class="pa-4 text-center text-caption text-medium-emphasis">
         <div class="d-flex flex-column align-center gap-2">
-            <div class="d-flex align-center text-body-2 font-weight-medium mb-2">
-                <v-icon icon="mdi-information" color="primary" class="mr-2" size="small"></v-icon>
-                {{ t('scanner.gs1_only') }}
-            </div>
+          <div class="d-flex align-center text-body-2 font-weight-medium mb-2">
+            <v-icon
+              icon="mdi-information"
+              color="primary"
+              class="mr-2"
+              size="small"
+            />
+            {{ t('scanner.gs1_only') }}
+          </div>
             
-            <v-sheet>
-              <suspense>
+          <v-sheet>
+            <suspense>
               <nuxt-icon name="gs1-datamatrix" filled class="gs1-icon" />
-              </suspense>
-            </v-sheet>
+            </suspense>
+          </v-sheet>
         </div>
       </v-card-text>
     </v-card>
@@ -38,14 +43,14 @@
 
 <script setup lang="ts">
 // Removal of direct import
-import { Html5QrcodeSupportedFormats } from "html5-qrcode";
-import { type Html5Qrcode } from "html5-qrcode"; // Type only import if needed for variable typing, or use inferred type
-import { useI18n } from "vue-i18n";
+import { Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import type { Html5Qrcode } from 'html5-qrcode'; // Type only import if needed for variable typing, or use inferred type
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const { $html5QrCode } = useNuxtApp();
 
-const modelValue = defineModel()
+const modelValue = defineModel<boolean>()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
@@ -71,7 +76,7 @@ const startScanning = async () => {
     try {
         // Ensure cleanup if previous instance hung around
         if (!html5QrCode) {
-             html5QrCode = new $html5QrCode("reader")
+             html5QrCode = new $html5QrCode('reader')
         }
 
         const config = { 
@@ -84,7 +89,7 @@ const startScanning = async () => {
         }
         
         await html5QrCode.start(
-            { facingMode: "environment" },
+            { facingMode: 'environment' },
             config,
             (decodedText) => {
                 emit('detect', decodedText)
@@ -95,7 +100,7 @@ const startScanning = async () => {
             }
         )
     } catch (err) {
-        console.error("Error starting scanner", err)
+        console.error('Error starting scanner', err)
     } finally {
         isLoading.value = false
         isOpInProgress.value = false
@@ -117,7 +122,7 @@ const stopScanning = async () => {
             html5QrCode.clear()
             html5QrCode = null // Thorough cleanup
         } catch (err) {
-            console.error("Failed to stop scanner", err)
+            console.error('Failed to stop scanner', err)
         } finally {
             isOpInProgress.value = false
         }

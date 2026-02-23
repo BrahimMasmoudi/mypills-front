@@ -2,21 +2,21 @@
   <div class="d-flex flex-column h-100">
     <v-sheet class="w-100 flex-shrink-0" min-height="60">
       <v-tabs
-          v-model="modelValue"
-          align-tabs="center"
-          class="mt-2 w-100"
-          hide-slider
-          height="48"
-          :selected-class="modelValue === 'valid' ? 'bg-green-lighten' : (modelValue === 'expired' ? 'bg-error' : 'bg-primary')"
+        v-model="modelValue"
+        align-tabs="center"
+        class="mt-2 w-100"
+        hide-slider
+        height="48"
+        :selected-class="modelValue === 'valid' ? 'bg-green-lighten' : (modelValue === 'expired' ? 'bg-error' : 'bg-primary')"
       >
         <v-tab
-            value="all"
-            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-primary"
-            :class="{'bg-primary-lighten': modelValue === 'all'}"
-            color="primary"
-            variant="text"
+          value="all"
+          class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-primary"
+          :class="{'bg-primary-lighten': modelValue === 'all'}"
+          color="primary"
+          variant="text"
         >
-          <template #prepend v-if="!$device.isMobile">
+          <template v-if="!$device.isMobile" #prepend>
             <v-icon icon="mdi-earth" color="primary"/>
           </template>
           {{ $device.isMobile ? t('meds.all') : t('meds.all_long') }}
@@ -24,13 +24,13 @@
         </v-tab>
 
         <v-tab
-            value="valid"
-            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-green"
-            :class="{'bg-green-lighten': modelValue === 'valid'}"
-            color="green"
-            variant="text"
+          value="valid"
+          class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-green"
+          :class="{'bg-green-lighten': modelValue === 'valid'}"
+          color="green"
+          variant="text"
         >
-          <template #prepend v-if="!$device.isMobile">
+          <template v-if="!$device.isMobile" #prepend>
             <nuxt-icon name="validate-edit-action"/>
           </template>
           {{ $device.isMobile ? t('meds.valid') : t('meds.valid_long') }}
@@ -38,13 +38,13 @@
         </v-tab>
 
         <v-tab
-            value="expired"
-            class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-error"
-            :class="{'bg-error-lighten': modelValue === 'expired'}"
-            color="error"
-            variant="text"
+          value="expired"
+          class="text-capitalize font-weight-bold text-subtitle-1 rounded-pill text-error"
+          :class="{'bg-error-lighten': modelValue === 'expired'}"
+          color="error"
+          variant="text"
         >
-          <template #prepend v-if="!$device.isMobile">
+          <template v-if="!$device.isMobile" #prepend>
             <nuxt-icon name="error-warning"/>
           </template>
           {{ $device.isMobile ? t('meds.expired') : t('meds.expired_long') }}
@@ -55,31 +55,44 @@
 
     <v-sheet class="flex-grow-1 overflow-hidden position-relative rounded-lg">
       <v-window v-model="modelValue" class="h-100">
-        <v-window-item v-for="tabType in ['all', 'valid', 'expired']" :key="tabType" :value="tabType" class="h-100">
+        <v-window-item
+          v-for="tabType in ['all', 'valid', 'expired']"
+          :key="tabType"
+          :value="tabType"
+          class="h-100"
+        >
           <div
-              :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']">
+            :class="['h-100 px-1 pt-2', viewType === 'grid' ? 'overflow-y-auto overflow-x-hidden' : 'overflow-hidden']"
+          >
             <template v-if="getMedicationList(tabType).length > 0">
               <MoleculesPills
-                  v-if="viewType === 'grid'"
-                  :medications="getMedicationList(tabType)"
-                  @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
-                  @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
-                  @delete-pills="(med, done) => $emit('delete-pills', med, done)"
-                  @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
+                v-if="viewType === 'grid'"
+                :medications="getMedicationList(tabType)"
+                @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
+                @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
+                @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+                @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
               />
               <MoleculesMedicationsTable
-                  v-else-if="viewType === 'table' && !$device.isMobile"
-                  :medications="getMedicationList(tabType)"
-                  @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
-                  @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
-                  @delete-pills="(med, done) => $emit('delete-pills', med, done)"
-                  @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
+                v-else-if="viewType === 'table' && !$device.isMobile"
+                :medications="getMedicationList(tabType)"
+                @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
+                @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
+                @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+                @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
               />
             </template>
-            <v-sheet v-else width="100%" height="100%" class="d-flex flex-column align-center font-weight-bold">
+            <v-sheet
+              v-else
+              width="100%"
+              height="100%"
+              class="d-flex flex-column align-center font-weight-bold"
+            >
               <v-img
-                  :src="useAsset(colorMode.value === 'dark' ? '/assets/img/no-result-dark.png' : '/assets/img/no-result.png')"
-                  max-height="400" width="400"/>
+                :src="useAsset(colorMode.value === 'dark' ? '/assets/img/no-result-dark.png' : '/assets/img/no-result.png')"
+                max-height="400"
+                width="400"
+              />
               {{ t('meds.no-result') }}
             </v-sheet>
           </div>
@@ -90,18 +103,18 @@
 </template>
 
 <script setup lang="ts">
-import type {Medication} from "~/types/medication";
-import {useI18n} from "vue-i18n";
-import MoleculesPills from "~/components/molecules/Pills.vue";
-import {useAsset} from "#imports";
+import type { Medication } from '~/types/medication';
+import { useI18n } from 'vue-i18n';
+import MoleculesPills from '~/components/molecules/Pills.vue';
+import { useAsset } from '#imports';
 
-const {t} = useI18n()
-const {$device} = useNuxtApp()
+const { t } = useI18n()
+const { $device } = useNuxtApp()
 const colorMode = useColorMode()
 
-const modelValue = defineModel()
+const modelValue = defineModel<string>()
 
-const {allMedication, validMedication, expiredMedication} = defineProps<{
+const { allMedication, validMedication, expiredMedication } = defineProps<{
   viewType: 'grid' | 'table'
   allMedication: Medication[]
   validMedication: Medication[]

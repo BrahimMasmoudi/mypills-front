@@ -1,14 +1,20 @@
 <template>
   <v-dialog
-      v-model="isActive"
-      :persistent="isPersistent"
-      :scrim="scrim"
-      :width="$device.isDesktop ? 450 : '100%'"
-      :class="!$device.isDesktop ? 'align-end ma-0' : ''"
-      content-class="elevation-0"
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    :width="$device.isDesktop ? 450 : '100%'"
+    :class="!$device.isDesktop ? 'align-end ma-0' : ''"
+    content-class="elevation-0"
   >
     <v-card :class="[$device.isDesktop ? 'rounded-xl' : 'rounded-t-xl', 'pa-6 pb-8']">
-      <v-sheet v-if="!$device.isDesktop" color="grey-lighten-2" height="4" width="40" class="rounded-pill mx-auto mb-6"/>
+      <v-sheet
+        v-if="!$device.isDesktop"
+        color="grey-lighten-2"
+        height="4"
+        width="40"
+        class="rounded-pill mx-auto mb-6"
+      />
 
       <div class="d-flex flex-column align-center text-center">
         <v-avatar color="warning-lighten-5" size="64" class="mb-4">
@@ -37,22 +43,22 @@
         </div>
 
         <v-checkbox
-            v-model="dontShowAgain"
-            :label="t('guideDialog.dontShowAgain')"
-            color="primary"
-            hide-details
-            density="comfortable"
-            class="mb-4"
+          v-model="dontShowAgain"
+          :label="t('guideDialog.dontShowAgain')"
+          color="primary"
+          hide-details
+          density="comfortable"
+          class="mb-4"
         />
 
         <v-btn
-            block
-            color="primary"
-            variant="flat"
-            size="large"
-            height="52"
-            class="text-none font-weight-bold rounded-lg"
-            @click="confirm"
+          block
+          color="primary"
+          variant="flat"
+          size="large"
+          height="52"
+          class="text-none font-weight-bold rounded-lg"
+          @click="confirm"
         >
           {{ t('guideDialog.understand') }}
         </v-btn>
@@ -62,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from "vue-i18n";
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n()
 const { $device } = useNuxtApp()

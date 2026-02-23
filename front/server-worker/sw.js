@@ -25,29 +25,29 @@ try {
 
 const dictionary = {
     en: {
-        title: "Medication Time 💊",
+        title: 'Medication Time 💊',
         body: (q, name) => `Take ${q}x ${name}`,
-        postpone1h: "Postpone 1h ⏳",
-        postponeLater: "Postpone later 📅"
+        postpone1h: 'Postpone 1h ⏳',
+        postponeLater: 'Postpone later 📅'
     },
     fr: {
-        title: "L'heure de prendre vos médicaments 💊",
+        title: 'L\'heure de prendre vos médicaments 💊',
         body: (q, name) => `Prenez ${q}x ${name}`,
-        postpone1h: "Repousser d'1h ⏳",
-        postponeLater: "Repousser plus tard 📅"
+        postpone1h: 'Repousser d\'1h ⏳',
+        postponeLater: 'Repousser plus tard 📅'
     }
 };
 
 // --- 4. Synchronous Firebase Initialization ---
 // CRITICAL: Do NOT use fetch() here. The SW must init instantly to catch the push event.
 const firebaseConfig = {
-    "apiKey": "AIzaSyD8L9ygNvkH0FO46dceDGmneRwQ7WuaFBk",
-    "authDomain": "my-pills-staging-460b5.firebaseapp.com",
-    "projectId": "my-pills-staging-460b5",
-    "storageBucket": "my-pills-staging-460b5.firebasestorage.app",
-    "messagingSenderId": "824429090964",
-    "appId": "1:824429090964:web:7e0cb8ae45c2424b8afc81",
-    "measurementId": "G-SBR5TS02DD"
+    'apiKey': 'AIzaSyD8L9ygNvkH0FO46dceDGmneRwQ7WuaFBk',
+    'authDomain': 'my-pills-staging-460b5.firebaseapp.com',
+    'projectId': 'my-pills-staging-460b5',
+    'storageBucket': 'my-pills-staging-460b5.firebasestorage.app',
+    'messagingSenderId': '824429090964',
+    'appId': '1:824429090964:web:7e0cb8ae45c2424b8afc81',
+    'measurementId': 'G-SBR5TS02DD'
 };
 
 const app = initializeApp(firebaseConfig);

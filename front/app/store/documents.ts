@@ -115,7 +115,7 @@ export const useDocumentsStore = defineStore('documents', () => {
         try {
             await deleteObject(fileRef)
         } catch (e) {
-            console.warn("Storage delete failed, proceeding with Firestore cleanup", e)
+            console.warn('Storage delete failed, proceeding with Firestore cleanup', e)
         }
         const docRef = doc($firestore, `users/${user.value.uid}/documents`, documentItem.id)
         await deleteDoc(docRef)

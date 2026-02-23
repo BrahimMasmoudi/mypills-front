@@ -3,11 +3,11 @@
     <v-app-bar elevation="0" border="b">
       <div class="d-flex align-center w-100 px-4">
         <v-btn
-            v-if="$device.isDesktop"
-            icon
-            variant="text"
-            class="mr-2"
-            @click.stop="drawer = !drawer"
+          v-if="$device.isDesktop"
+          icon
+          variant="text"
+          class="mr-2"
+          @click.stop="drawer = !drawer"
         >
           <v-icon :icon="drawer ? 'mdi-close' : 'mdi-menu'"/>
         </v-btn>
@@ -30,38 +30,59 @@
     <LayoutBottomDrawer v-if="$device.isMobile"/>
 
     <v-speed-dial
-        v-model="isDialOpen"
-        location="bottom end"
-        transition="slide-y-reverse-transition"
+      v-model="isDialOpen"
+      location="bottom end"
+      transition="slide-y-reverse-transition"
     >
-      <template v-slot:activator="{ props: activatorProps }">
+      <template #activator="{ props: activatorProps }">
         <v-fab
-            v-bind="activatorProps"
-            color="primary"
-            size="x-large"
-            app
-            data-cy="fab-button"
-            :icon="isDialOpen ? 'mdi-close' : 'mdi-plus'"
-            location="bottom end"
-            :extended="!$device.isMobile"
-            :text="!$device.isMobile ? t('add-pill') : ''"
-            class="mr-4 mb-4"
+          v-bind="activatorProps"
+          color="primary"
+          size="x-large"
+          app
+          data-cy="fab-button"
+          :icon="isDialOpen ? 'mdi-close' : 'mdi-plus'"
+          location="bottom end"
+          :extended="!$device.isMobile"
+          :text="!$device.isMobile ? t('add-pill') : ''"
+          class="mr-4 mb-4"
         />
       </template>
 
-      <v-btn data-cy="add-medication-button" key="1" color="secondary" prepend-icon="mdi-pill"
-             class="text-capitalize font-weight-bold" rounded="lg" size="large"
-             @click="openAddMedicationDialog">
+      <v-btn
+        key="1"
+        data-cy="add-medication-button"
+        color="secondary"
+        prepend-icon="mdi-pill"
+        class="text-capitalize font-weight-bold"
+        rounded="lg"
+        size="large"
+        @click="openAddMedicationDialog"
+      >
         {{ t('actions.addMedication') }}
       </v-btn>
-      <v-btn data-cy="create-reminder-button" key="2" color="primary" prepend-icon="mdi-alarm-plus"
-             class="text-capitalize font-weight-bold d-flex align-center justify-start" rounded="lg" size="large"
-             @click="openReminderDialog">
+      <v-btn
+        key="2"
+        data-cy="create-reminder-button"
+        color="primary"
+        prepend-icon="mdi-alarm-plus"
+        class="text-capitalize font-weight-bold d-flex align-center justify-start"
+        rounded="lg"
+        size="large"
+        @click="openReminderDialog"
+      >
         {{ t('actions.createReminder') }}
       </v-btn>
-      <v-btn data-cy="scan-document-button" key="3" color="error" prepend-icon="mdi-folder-upload-outline"
-             class="text-capitalize font-weight-bold" rounded="lg" size="large"
-             @click="openScanDocumentDialog">
+      <v-btn
+        key="3"
+        data-cy="scan-document-button"
+        color="error"
+        prepend-icon="mdi-folder-upload-outline"
+        class="text-capitalize font-weight-bold"
+        rounded="lg"
+        size="large"
+        @click="openScanDocumentDialog"
+      >
         {{ t('actions.scanDocument') }}
       </v-btn>
     </v-speed-dial>
@@ -75,28 +96,28 @@
 </template>
 
 <script lang="ts" setup>
-import {useI18n} from "vue-i18n";
-import {useUserStore} from "~/store/userStore";
-import MoleculesUserMenu from "~/components/molecules/UserMenu.vue";
-import ReminderCreationDialog from "~/components/molecules/reminder/ReminderCreationDialog.vue"
-import {openToast, type ToastType} from "~/composables/openToast"
-import {getCurrentUser} from "vuefire"
-import {storeToRefs} from "pinia"
-import {useCountryStore} from "~/store/country"
-import type {Medication} from "~/types/medication";
-import {useMedicationsStore} from "~/store/medications";
-import type {CreateReminderRequest} from "~/types/reminder";
-import {useReminderStore} from "~/store/reminder";
-import CountryDialog from "~/components/molecules/CountryDialog.vue";
-import {useLanguageStore} from "~/store/language";
-import DocumentScannerDialog, {type UploadDocumentsData} from "~/components/molecules/DocumentScannerDialog.vue";
-import {useDocumentsStore} from "~/store/documents";
-import NotificationGuideDialog from "~/components/molecules/NotificationGuideDialog.vue";
-import CreateMedicationDialog from "~/components/molecules/medications/CreateMedicationDialog.vue";
+import { useI18n } from 'vue-i18n';
+import { useUserStore } from '~/store/userStore';
+import MoleculesUserMenu from '~/components/molecules/UserMenu.vue';
+import ReminderCreationDialog from '~/components/molecules/reminder/ReminderCreationDialog.vue'
+import { openToast, type ToastType } from '~/composables/openToast'
+import { getCurrentUser } from 'vuefire'
+import { storeToRefs } from 'pinia'
+import { useCountryStore } from '~/store/country'
+import type { Medication } from '~/types/medication';
+import { useMedicationsStore } from '~/store/medications';
+import type { CreateReminderRequest } from '~/types/reminder';
+import { useReminderStore } from '~/store/reminder';
+import CountryDialog from '~/components/molecules/CountryDialog.vue';
+import { useLanguageStore } from '~/store/language';
+import DocumentScannerDialog, { type UploadDocumentsData } from '~/components/molecules/DocumentScannerDialog.vue';
+import { useDocumentsStore } from '~/store/documents';
+import NotificationGuideDialog from '~/components/molecules/NotificationGuideDialog.vue';
+import CreateMedicationDialog from '~/components/molecules/medications/CreateMedicationDialog.vue';
 
-const {t} = useI18n()
-const {$open, $device} = useNuxtApp()
-const {selectedCountry} = storeToRefs(useCountryStore())
+const { t } = useI18n()
+const { $open, $device } = useNuxtApp()
+const { selectedCountry } = storeToRefs(useCountryStore())
 const medicationStore = useMedicationsStore()
 const reminderStore = useReminderStore()
 const countryStore = useCountryStore()
@@ -148,7 +169,7 @@ const userStore = useUserStore()
 const isDialOpen = ref(false)
 
 const drawer = ref(false)
-const {medications} = storeToRefs(medicationStore)
+const { medications } = storeToRefs(medicationStore)
 
 const validMedications = computed(() =>
     medications.value?.filter(m => !m.expired) ?? []
@@ -186,7 +207,7 @@ const openScanDocumentDialog = async () => {
     isPersistent: true,
     userFolders: docStore.existingFolders,
 
-    uploadAction: async ({folder, name, files}: UploadDocumentsData) => {
+    uploadAction: async ({ folder, name, files }: UploadDocumentsData) => {
       const isPdfMode = files.every((f) => f.type === 'application/pdf')
 
       if (isPdfMode) {
@@ -196,7 +217,7 @@ const openScanDocumentDialog = async () => {
           if (name && name.trim() !== '') {
             finalName = files.length > 1 ? `${name}_${i + 1}` : name
           } else {
-            finalName = files[i].name.replace(/\.[^/.]+$/, "")
+            finalName = files[i].name.replace(/\.[^/.]+$/, '')
           }
 
           await docStore.uploadDocument(folder, finalName, files[i])

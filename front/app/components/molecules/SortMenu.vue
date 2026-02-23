@@ -1,21 +1,21 @@
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <AtomsSortButton
-          v-bind="props"
-          :sort-label="currentSortLabel"
-          :sort-icon="currentSortIcon"
-          :is-active="!!sortBy"
-          :sort-order="sortOrder"
+        v-bind="props"
+        :sort-label="currentSortLabel"
+        :sort-icon="currentSortIcon"
+        :is-active="!!sortBy"
+        :sort-order="sortOrder"
       />
     </template>
     
     <v-list density="compact">
       <v-list-item
-          v-for="option in sortOptions"
-          :key="option.value"
-          @click="$emit('update:sortBy', option.value)"
-          :active="sortBy === option.value"
+        v-for="option in sortOptions"
+        :key="option.value"
+        :active="sortBy === option.value"
+        @click="$emit('update:sortBy', option.value)"
       >
         <v-list-item-title>
           <v-icon :icon="option.icon" size="small" class="mr-2"/>
@@ -40,7 +40,7 @@ import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 
-const {sortBy, sortOptions} = defineProps<{
+const { sortBy, sortOptions } = defineProps<{
   sortBy: string | null
   sortOrder: 'asc' | 'desc'
   sortOptions: Array<{ value: string; label: string; icon: string }>

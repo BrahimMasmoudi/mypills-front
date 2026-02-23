@@ -1,4 +1,4 @@
-import { Html5Qrcode } from "html5-qrcode";
+import { Html5Qrcode } from 'html5-qrcode';
 
 declare module '#app' {
     interface NuxtApp {
@@ -23,7 +23,7 @@ class PatchedHtml5Qrcode extends Html5Qrcode {
 
     // @ts-ignore
     patchedForeverScan(internalConfig: any, qrCodeSuccessCallback: any, qrCodeErrorCallback: any) {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
+         
         const _this = this as any;
 
         if (!_this.shouldScan) {
@@ -41,7 +41,7 @@ class PatchedHtml5Qrcode extends Html5Qrcode {
         const heightRatio = videoElement.videoHeight / videoElement.clientHeight;
 
         if (!_this.qrRegion) {
-            throw "qrRegion undefined when localMediaStream is ready.";
+            throw 'qrRegion undefined when localMediaStream is ready.';
         }
 
         const sWidthOffset = _this.qrRegion.width * widthRatio;

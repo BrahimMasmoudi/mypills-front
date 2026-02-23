@@ -1,14 +1,14 @@
 <template>
   <!-- Desktop Layout -->
   <v-dialog
-      v-if="$device.isDesktop"
-      v-model="isActive"
-      :persistent="isPersistent"
-      :scrim="scrim"
-      @keydown.esc="cancelAndClose"
-      width="550"
-      content-class="elevation-0"
-      data-cy="create-medication-dialog"
+    v-if="$device.isDesktop"
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    width="550"
+    content-class="elevation-0"
+    data-cy="create-medication-dialog"
+    @keydown.esc="cancelAndClose"
   >
     <v-card class="rounded-xl pa-6" elevation="24">
       <!-- Header -->
@@ -28,64 +28,63 @@
         <div class="d-flex flex-column gap-4">
           <!-- Medication Name with Scan -->
           <v-combobox
-              v-model="medication.name"
-              :items="tunisianMeds"
-              :loading="searchLoading"
-              v-model:search="searchQuery"
-              @update:search="onSearchChange"
-              @update:model-value="onMedicationSelect"
-              item-title="name"
-              item-value="id"
-              :label="t('dialogCreate.medicationLabel')"
-              variant="outlined"
-              hide-details="auto"
-              rounded="lg"
-              class="font-weight-medium"
-              data-cy="medication-name-input"
-              no-filter
-              return-object
+            v-model="medication.name"
+            v-model:search="searchQuery"
+            :items="tunisianMeds"
+            :loading="searchLoading"
+            item-title="name"
+            item-value="id"
+            :label="t('dialogCreate.medicationLabel')"
+            variant="outlined"
+            hide-details="auto"
+            rounded="lg"
+            class="font-weight-medium"
+            data-cy="medication-name-input"
+            no-filter
+            return-object
+            @update:search="onSearchChange"
+            @update:model-value="onMedicationSelect"
           >
-            <template v-slot:no-data>
+            <template #no-data>
               <v-list-item @click="handleCustomName">
                 <v-list-item-title>
                   {{ t('dialogCreate.noResults') }} "<strong>{{ searchQuery }}</strong>"
                 </v-list-item-title>
-                <template v-slot:append>
+                <template #append>
                   <v-icon icon="mdi-plus" color="primary"/>
                 </template>
               </v-list-item>
             </template>
 
-            <template v-slot:selection="{ item }">
+            <template #selection="{ item }">
               <v-chip
-                  v-if="item"
-                  color="primary"
-                  size="small"
-                  class="font-weight-bold"
-                  closable
-                  @click:close="medication.name = null as any"
+                v-if="item"
+                color="primary"
+                size="small"
+                class="font-weight-bold"
+                closable
+                @click:close="medication.name = null as any"
               >
-                <v-icon icon="mdi-pill" class="mr-2" size="14"></v-icon>
+                <v-icon icon="mdi-pill" class="mr-2" size="14"/>
                 {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
               </v-chip>
             </template>
 
-            <template v-slot:item="{ props, item }">
-              <v-list-item v-bind="props" :subtitle="item.raw.details?.form">
-              </v-list-item>
+            <template #item="{ props, item }">
+              <v-list-item v-bind="props" :subtitle="item.raw.details?.form"/>
             </template>
 
-            <template v-slot:append-inner>
+            <template #append-inner>
               <v-tooltip v-if="selectedCountry === 'FR'" location="top" text="Scan Barcode">
-                <template v-slot:activator="{ props }">
+                <template #activator="{ props }">
                   <v-btn
-                      v-bind="props"
-                      icon="mdi-barcode-scan"
-                      variant="tonal"
-                      color="primary"
-                      size="small"
-                      class="ms-1"
-                      @click="isScannerOpen = true"
+                    v-bind="props"
+                    icon="mdi-barcode-scan"
+                    variant="tonal"
+                    color="primary"
+                    size="small"
+                    class="ms-1"
+                    @click="isScannerOpen = true"
                   />
                 </template>
               </v-tooltip>
@@ -93,82 +92,83 @@
           </v-combobox>
 
           <v-menu
-              v-model="dateMenuIsOpen"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              min-width="auto"
-              location="center"
+            v-model="dateMenuIsOpen"
+            :close-on-content-click="false"
+            transition="scale-transition"
+            min-width="auto"
+            location="center"
           >
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-text-field
-                  v-bind="props"
-                  :model-value="formatDate(medication.expiryDate)"
-                  :label="t('dialogCreate.choose-date-title')"
-                  variant="outlined"
-                  color="primary"
-                  hide-details="auto"
-                  rounded="lg"
-                  prepend-inner-icon="mdi-calendar-blank"
-                  readonly
-                  loading
-                  data-cy="expiry-date-input"
-                  class="font-weight-medium cursor-pointer elegant-input"
+                v-bind="props"
+                :model-value="formatDate(medication.expiryDate)"
+                :label="t('dialogCreate.choose-date-title')"
+                variant="outlined"
+                color="primary"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-calendar-blank"
+                readonly
+                loading
+                data-cy="expiry-date-input"
+                class="font-weight-medium cursor-pointer elegant-input"
               >
                 <template #loader>
                   <v-progress-linear
-                      :active="searchLoading"
-                      color="primary"
-                      height="2"
-                      indeterminate
-                  ></v-progress-linear>
+                    :active="searchLoading"
+                    color="primary"
+                    height="2"
+                    indeterminate
+                  />
                 </template>
               </v-text-field>
             </template>
             <v-date-picker
-                :view-mode="viewMode"
-                elevation="4"
-                :min="new Date()"
-                :max="new Date(new Date().getFullYear() + 17, 11, 31)"
-                :year="new Date().getFullYear()"
-                @update:model-value="dateMenuIsOpen = false"
-                hide-header
-                rounded="lg"
-                style="color: rgb(var(--v-theme-primary)) !important"
-                @update:year="updateYear"
-                @update:view-mode="updateViewMode"
-                @update:month="updateMonth"/>
+              :view-mode="viewMode"
+              elevation="4"
+              :min="new Date()"
+              :max="new Date(new Date().getFullYear() + 17, 11, 31)"
+              :year="new Date().getFullYear()"
+              hide-header
+              rounded="lg"
+              style="color: rgb(var(--v-theme-primary)) !important"
+              @update:model-value="dateMenuIsOpen = false"
+              @update:year="updateYear"
+              @update:view-mode="updateViewMode"
+              @update:month="updateMonth"
+            />
           </v-menu>
 
           <!-- Quantity -->
           <v-row>
             <v-col cols="6">
               <v-text-field
-                  v-model.number="medication.numberOfBoxes"
-                  :label="t('dialogCreate.packages')"
-                  type="number"
-                  min="1"
-                  variant="outlined"
-                  color="primary"
-                  hide-details="auto"
-                  rounded="lg"
-                  prepend-inner-icon="mdi-package-variant-closed"
-                  data-cy="packages-input"
-                  class="font-weight-medium elegant-input"
+                v-model.number="medication.numberOfBoxes"
+                :label="t('dialogCreate.packages')"
+                type="number"
+                min="1"
+                variant="outlined"
+                color="primary"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-package-variant-closed"
+                data-cy="packages-input"
+                class="font-weight-medium elegant-input"
               />
             </v-col>
             <v-col cols="6">
               <v-text-field
-                  v-model.number="medication.unitsPerBox"
-                  :label="t('dialogCreate.pillsPerBox')"
-                  type="number"
-                  min="1"
-                  variant="outlined"
-                  color="primary"
-                  hide-details="auto"
-                  rounded="lg"
-                  prepend-inner-icon="mdi-pill"
-                  data-cy="pills-per-box-input"
-                  class="font-weight-medium elegant-input"
+                v-model.number="medication.unitsPerBox"
+                :label="t('dialogCreate.pillsPerBox')"
+                type="number"
+                min="1"
+                variant="outlined"
+                color="primary"
+                hide-details="auto"
+                rounded="lg"
+                prepend-inner-icon="mdi-pill"
+                data-cy="pills-per-box-input"
+                class="font-weight-medium elegant-input"
               />
             </v-col>
           </v-row>
@@ -181,26 +181,26 @@
       <!-- Actions -->
       <v-card-actions class="w-100 justify-center pt-8 gap-3 px-0">
         <v-btn
-            variant="outlined"
-            size="large"
-            color="grey-darken-1"
-            class="flex-grow-1 text-capitalize font-weight-bold"
-            height="48"
-            @click="cancelAndClose"
+          variant="outlined"
+          size="large"
+          color="grey-darken-1"
+          class="flex-grow-1 text-capitalize font-weight-bold"
+          height="48"
+          @click="cancelAndClose"
         >
           {{ t('cancel') }}
         </v-btn>
 
         <v-btn
-            color="primary"
-            variant="flat"
-            size="large"
-            class="flex-grow-1 text-capitalize font-weight-bold"
-            height="48"
-            :loading="loading"
-            :disabled="!medication.name"
-            data-cy="confirm-create-button"
-            @click="onConfirmClick"
+          color="primary"
+          variant="flat"
+          size="large"
+          class="flex-grow-1 text-capitalize font-weight-bold"
+          height="48"
+          :loading="loading"
+          :disabled="!medication.name"
+          data-cy="confirm-create-button"
+          @click="onConfirmClick"
         >
           {{ t('confirm') }}
         </v-btn>
@@ -211,23 +211,23 @@
 
   <!-- Mobile Layout (Bottom Sheet) -->
   <v-dialog
-      v-else
-      v-model="isActive"
-      :persistent="isPersistent"
-      :scrim="scrim"
-      color="transparent"
-      width="100%"
-      class="align-end ma-0"
-      @keydown.esc="cancelAndClose"
+    v-else
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    color="transparent"
+    width="100%"
+    class="align-end ma-0"
+    @keydown.esc="cancelAndClose"
   >
     <v-card class="rounded-t-xl pa-5 pb-8" elevation="0">
       <div class="d-flex flex-column align-center text-center mb-6">
         <!-- Drag Handle -->
         <v-sheet
-            color="grey-lighten-2"
-            height="4"
-            width="40"
-            class="rounded-pill mb-6"
+          color="grey-lighten-2"
+          height="4"
+          width="40"
+          class="rounded-pill mb-6"
         />
 
         <v-avatar color="primary-lighten-5" size="56" class="mb-3">
@@ -245,63 +245,62 @@
       <div class="d-flex flex-column gap-4 mb-6">
         <!-- Medication Name -->
         <v-combobox
-            v-model="medication.name"
-            :items="tunisianMeds"
-            :loading="searchLoading"
-            v-model:search="searchQuery"
-            @update:search="onSearchChange"
-            @update:model-value="onMedicationSelect"
-            item-title="name"
-            item-value="id"
-            :label="t('dialogCreate.medicationLabel')"
-            variant="outlined"
-            hide-details="auto"
-            rounded="lg"
-            class="font-weight-medium"
-            no-filter
-            return-object
+          v-model="medication.name"
+          v-model:search="searchQuery"
+          :items="tunisianMeds"
+          :loading="searchLoading"
+          item-title="name"
+          item-value="id"
+          :label="t('dialogCreate.medicationLabel')"
+          variant="outlined"
+          hide-details="auto"
+          rounded="lg"
+          class="font-weight-medium"
+          no-filter
+          return-object
+          @update:search="onSearchChange"
+          @update:model-value="onMedicationSelect"
         >
-          <template v-slot:no-data>
+          <template #no-data>
             <v-list-item @click="handleCustomName">
               <v-list-item-title>
                 {{ t('dialogCreate.noResults') }} "<strong>{{ searchQuery }}</strong>"
               </v-list-item-title>
-              <template v-slot:append>
+              <template #append>
                 <v-icon icon="mdi-plus" color="primary"/>
               </template>
             </v-list-item>
           </template>
 
-          <template v-slot:selection="{ item }">
+          <template #selection="{ item }">
             <v-chip
-                v-if="item"
-                color="primary"
-                size="small"
-                class="font-weight-bold"
-                closable
-                @click:close="medication.name = null"
+              v-if="item"
+              color="primary"
+              size="small"
+              class="font-weight-bold"
+              closable
+              @click:close="medication.name = null"
             >
-              <v-icon icon="mdi-pill" class="mr-2" size="14"></v-icon>
+              <v-icon icon="mdi-pill" class="mr-2" size="14"/>
               {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
             </v-chip>
           </template>
 
-          <template v-slot:item="{ props, item }">
-            <v-list-item v-bind="props" :subtitle="item.raw.details?.form">
-            </v-list-item>
+          <template #item="{ props, item }">
+            <v-list-item v-bind="props" :subtitle="item.raw.details?.form"/>
           </template>
 
-          <template v-slot:append-inner>
+          <template #append-inner>
             <v-tooltip v-if="selectedCountry === 'FR'" location="top" text="Scan Barcode">
-              <template v-slot:activator="{ props }">
+              <template #activator="{ props }">
                 <v-btn
-                    v-bind="props"
-                    icon="mdi-barcode-scan"
-                    variant="tonal"
-                    color="primary"
-                    size="small"
-                    class="ms-1"
-                    @click="isScannerOpen = true"
+                  v-bind="props"
+                  icon="mdi-barcode-scan"
+                  variant="tonal"
+                  color="primary"
+                  size="small"
+                  class="ms-1"
+                  @click="isScannerOpen = true"
                 />
               </template>
             </v-tooltip>
@@ -310,48 +309,48 @@
 
         <!-- Expiry Date -->
         <v-menu
-            v-model="dateMenuIsOpen"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            min-width="auto"
-            location="center"
+          v-model="dateMenuIsOpen"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          min-width="auto"
+          location="center"
         >
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-text-field
-                v-bind="props"
-                :model-value="formatDate(medication.expiryDate)"
-                :label="t('dialogCreate.choose-date-title')"
-                variant="outlined"
-                color="primary"
-                hide-details="auto"
-                rounded="lg"
-                prepend-inner-icon="mdi-calendar-blank"
-                readonly
-                loading
-                class="font-weight-medium cursor-pointer"
+              v-bind="props"
+              :model-value="formatDate(medication.expiryDate)"
+              :label="t('dialogCreate.choose-date-title')"
+              variant="outlined"
+              color="primary"
+              hide-details="auto"
+              rounded="lg"
+              prepend-inner-icon="mdi-calendar-blank"
+              readonly
+              loading
+              class="font-weight-medium cursor-pointer"
             >
-              <template v-slot:loader>
+              <template #loader>
                 <v-progress-linear
-                    :active="searchLoading"
-                    color="primary"
-                    height="2"
-                    indeterminate
-                ></v-progress-linear>
+                  :active="searchLoading"
+                  color="primary"
+                  height="2"
+                  indeterminate
+                />
               </template>
             </v-text-field>
           </template>
           <v-date-picker
-              :view-mode="viewMode"
-              elevation="4"
-              :min="new Date()"
-              :max="new Date(new Date().getFullYear() + 17, 11, 31)"
-              @update:model-value="dateMenuIsOpen = false"
-              hide-header
-              rounded="lg"
-              style="color: rgb(var(--v-theme-primary)) !important"
-              @update:year="updateYear"
-              @update:view-mode="updateViewMode"
-              @update:month="updateMonth"
+            :view-mode="viewMode"
+            elevation="4"
+            :min="new Date()"
+            :max="new Date(new Date().getFullYear() + 17, 11, 31)"
+            hide-header
+            rounded="lg"
+            style="color: rgb(var(--v-theme-primary)) !important"
+            @update:model-value="dateMenuIsOpen = false"
+            @update:year="updateYear"
+            @update:view-mode="updateViewMode"
+            @update:month="updateMonth"
           />
         </v-menu>
 
@@ -359,32 +358,32 @@
         <v-row>
           <v-col cols="6">
             <v-text-field
-                v-model.number="medication.numberOfBoxes"
-                label="Packages"
-                type="number"
-                min="1"
-                variant="outlined"
-                color="primary"
-                hide-details="auto"
-                rounded="lg"
-                prepend-inner-icon="mdi-package-variant-closed"
-                data-cy="packages-input-mobile"
-                class="font-weight-medium elegant-input"
+              v-model.number="medication.numberOfBoxes"
+              label="Packages"
+              type="number"
+              min="1"
+              variant="outlined"
+              color="primary"
+              hide-details="auto"
+              rounded="lg"
+              prepend-inner-icon="mdi-package-variant-closed"
+              data-cy="packages-input-mobile"
+              class="font-weight-medium elegant-input"
             />
           </v-col>
           <v-col cols="6">
             <v-text-field
-                v-model.number="medication.unitsPerBox"
-                label="Pills/Box"
-                type="number"
-                min="1"
-                variant="outlined"
-                color="primary"
-                hide-details="auto"
-                rounded="lg"
-                prepend-inner-icon="mdi-pill"
-                data-cy="pills-per-box-input-mobile"
-                class="font-weight-medium elegant-input"
+              v-model.number="medication.unitsPerBox"
+              label="Pills/Box"
+              type="number"
+              min="1"
+              variant="outlined"
+              color="primary"
+              hide-details="auto"
+              rounded="lg"
+              prepend-inner-icon="mdi-pill"
+              data-cy="pills-per-box-input-mobile"
+              class="font-weight-medium elegant-input"
             />
           </v-col>
         </v-row>
@@ -396,24 +395,24 @@
       <!-- Mobile Actions -->
       <div class="d-flex flex-column w-100 gap-3">
         <v-btn
-            block
-            color="primary"
-            variant="flat"
-            size="x-large"
-            class="text-capitalize font-weight-bold rounded-lg"
-            :loading="loading"
-            @click="onConfirmClick"
+          block
+          color="primary"
+          variant="flat"
+          size="x-large"
+          class="text-capitalize font-weight-bold rounded-lg"
+          :loading="loading"
+          @click="onConfirmClick"
         >
           {{ t('confirm') }}
         </v-btn>
 
         <v-btn
-            block
-            variant="text"
-            size="large"
-            color="grey-darken-1"
-            class="text-capitalize font-weight-bold mt-2"
-            @click="cancelAndClose"
+          block
+          variant="text"
+          size="large"
+          color="grey-darken-1"
+          class="text-capitalize font-weight-bold mt-2"
+          @click="cancelAndClose"
         >
           {{ t('cancel') }}
         </v-btn>
@@ -426,23 +425,23 @@
 </template>
 
 <script lang="ts" setup>
-import {useI18n} from "vue-i18n"
-import {useMedicationsStore} from "~/store/medications"
-import {useBarcodeParser} from "~/composables/useBarcodeParser"
-import {openToast} from "~/composables/openToast"
-import type {Medication} from "~/types/medication"
-import {format} from 'date-fns'
-import {fr, enUS} from 'date-fns/locale'
-import ScannerDialog from "~/components/molecules/ScannerDialog.vue"
-import DuplicateConfirmDialog from "~/components/molecules/DuplicateConfirmDialog.vue"
-import type {Country} from "~/types/country"
-import {useTunisianMedicationsStore} from "~/store/tunisian_medications"
-import type {GetMedicationDetailsResponse} from "~/types/api"
+import { useI18n } from 'vue-i18n'
+import { useMedicationsStore } from '~/store/medications'
+import { useBarcodeParser } from '~/composables/useBarcodeParser'
+import { openToast } from '~/composables/openToast'
+import type { Medication } from '~/types/medication'
+import { format } from 'date-fns'
+import { fr, enUS } from 'date-fns/locale'
+import ScannerDialog from '~/components/molecules/ScannerDialog.vue'
+import DuplicateConfirmDialog from '~/components/molecules/DuplicateConfirmDialog.vue'
+import type { Country } from '~/types/country'
+import { useTunisianMedicationsStore } from '~/store/tunisian_medications'
+import type { GetMedicationDetailsResponse } from '~/types/api'
 
-const {t, locale} = useI18n()
-const {$device, $open} = useNuxtApp()
+const { t, locale } = useI18n()
+const { $device, $open } = useNuxtApp()
 
-const locales: Record<string, any> = {en: enUS, fr: fr}
+const locales: Record<string, any> = { en: enUS, fr: fr }
 
 const isActive = ref(true)
 const loading = ref(false)
@@ -457,7 +456,7 @@ const tunisianMedicationStore = useTunisianMedicationsStore()
 
 const tunisianMeds = ref<GetMedicationDetailsResponse[]>([])
 
-const {close, createMedication, userUid, email, medications, selectedCountry} = defineProps<{
+const { close, createMedication, userUid, email, medications, selectedCountry } = defineProps<{
   close: (value: QueueToastType) => void
   isPersistent: boolean
   scrim: boolean
@@ -478,7 +477,7 @@ const medication = ref<Medication>({
   name: null as any,
   bareCode: '',
   medicationId: crypto.randomUUID(),
-  image: "pill-1",
+  image: 'pill-1',
   email,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -496,7 +495,7 @@ watch(
 
 const selectedYear = ref()
 const selectedMonth = ref()
-const viewMode = ref<"month" | "months" | "year">('year')
+const viewMode = ref<'month' | 'months' | 'year'>('year')
 
 const updateViewMode = (mode: 'year' | 'months') => {
   viewMode.value = mode === 'year' ? 'year' : 'months'
@@ -514,7 +513,7 @@ const updateMonth = (month: number) => {
 
 const formatDate = (date: Date | string) => {
   if (!date) return ''
-  return format(new Date(date), 'MMMM yyyy', {locale: locales[locale.value] || enUS})
+  return format(new Date(date), 'MMMM yyyy', { locale: locales[locale.value] || enUS })
 }
 
 // Barcode Handling
@@ -522,8 +521,8 @@ const onBarcodeDetected = async (code: string) => {
   searchLoading.value = true
   try {
     // 1. Parse Code
-    const {parseBarcode} = useBarcodeParser()
-    const {cip13, expiryDate} = parseBarcode(code)
+    const { parseBarcode } = useBarcodeParser()
+    const { cip13, expiryDate } = parseBarcode(code)
 
     if (expiryDate) {
       medication.value.expiryDate = expiryDate

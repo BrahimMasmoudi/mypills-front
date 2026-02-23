@@ -1,16 +1,16 @@
 <template>
   <v-text-field
-      :model-value="modelValue"
-      @update:model-value="$emit('update:modelValue', $event)"
-      :label="label"
-      :placeholder="placeholder"
-      variant="solo"
-      density="comfortable"
-      hide-details
-      single-line
-      clearable
-      rounded="pill"
-      class="search-input"
+    :model-value="modelValue"
+    :label="label"
+    :placeholder="placeholder"
+    variant="solo"
+    density="comfortable"
+    hide-details
+    single-line
+    clearable
+    rounded="pill"
+    class="search-input"
+    @update:model-value="$emit('update:modelValue', $event)"
   >
     <template #prepend-inner>
       <v-icon icon="mdi-magnify" color="primary"/>

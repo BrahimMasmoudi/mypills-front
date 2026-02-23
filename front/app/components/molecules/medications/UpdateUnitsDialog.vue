@@ -1,20 +1,20 @@
 <template>
   <v-dialog
-      v-model="isActive"
-      :persistent="isPersistent"
-      :scrim="scrim"
-      :class="$device.isMobile ? 'align-end ma-0' : ''"
-      width="400"
-      content-class="elevation-0"
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    :class="$device.isMobile ? 'align-end ma-0' : ''"
+    width="400"
+    content-class="elevation-0"
   >
     <v-card class="rounded-xl pa-0 d-flex flex-column" elevation="24">
       <div class="pa-6 pb-0">
         <v-sheet
-            v-if="$device.isMobile"
-            color="grey-lighten-2 mx-auto"
-            height="4"
-            width="40"
-            class="rounded-pill mb-6"
+          v-if="$device.isMobile"
+          color="grey-lighten-2 mx-auto"
+          height="4"
+          width="40"
+          class="rounded-pill mb-6"
         />
 
         <div class="d-flex flex-column align-center text-center mb-4">
@@ -32,15 +32,15 @@
 
       <v-card-text class="pa-6">
         <v-text-field
-            v-model.number="units"
-            type="number"
-            :label="t('dialogUpdateUnits.label') || 'Pills per box'"
-            variant="outlined"
-            rounded="lg"
-            class="font-weight-bold text-h6"
-            prepend-inner-icon="mdi-pill"
-            :rules="[v => v > 0 || 'Must be greater than 0']"
-            autofocus
+          v-model.number="units"
+          type="number"
+          :label="t('dialogUpdateUnits.label') || 'Pills per box'"
+          variant="outlined"
+          rounded="lg"
+          class="font-weight-bold text-h6"
+          prepend-inner-icon="mdi-pill"
+          :rules="[v => v > 0 || 'Must be greater than 0']"
+          autofocus
         />
       </v-card-text>
 
@@ -48,24 +48,24 @@
 
       <v-card-actions class="pa-6 gap-3">
         <v-btn
-            variant="outlined"
-            size="large"
-            color="grey-darken-1"
-            class="flex-grow-1 text-capitalize font-weight-bold"
-            height="48"
-            @click="cancel"
+          variant="outlined"
+          size="large"
+          color="grey-darken-1"
+          class="flex-grow-1 text-capitalize font-weight-bold"
+          height="48"
+          @click="cancel"
         >
           {{ t('cancel') }}
         </v-btn>
         <v-btn
-            color="primary"
-            variant="flat"
-            size="large"
-            class="flex-grow-1 text-capitalize font-weight-bold"
-            height="48"
-            :loading="loading"
-            :disabled="!isValid"
-            @click="confirm"
+          color="primary"
+          variant="flat"
+          size="large"
+          class="flex-grow-1 text-capitalize font-weight-bold"
+          height="48"
+          :loading="loading"
+          :disabled="!isValid"
+          @click="confirm"
         >
           {{ t('confirm') }}
         </v-btn>

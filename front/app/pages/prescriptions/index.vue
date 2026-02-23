@@ -6,53 +6,74 @@
         <p class="text-body-1 text-medium-emphasis">{{ t('prescriptions.subtitle') }}</p>
       </div>
       <v-responsive :max-width="$device.isDesktop ? '300px' : '100%'" class="mt-4 mt-sm-0">
-        <v-text-field v-model="searchQuery" :placeholder="t('prescriptions.search')" prepend-inner-icon="mdi-magnify"
-                      variant="outlined" density="comfortable" rounded="pill" hide-details clearable color="primary"/>
+        <v-text-field
+          v-model="searchQuery"
+          :placeholder="t('prescriptions.search')"
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          density="comfortable"
+          rounded="pill"
+          hide-details
+          clearable
+          color="primary"
+        />
       </v-responsive>
     </div>
 
-    <v-row v-if="docStore.isLoading" justify="center" align="center" class="fill-height">
+    <v-row
+      v-if="docStore.isLoading"
+      justify="center"
+      align="center"
+      class="fill-height"
+    >
       <v-progress-circular indeterminate color="primary" size="64"/>
     </v-row>
 
-    <v-sheet v-else-if="filteredDocuments.length === 0" height="80%"
-             class="d-flex flex-column align-center justify-center">
-      <v-icon :icon="searchQuery ? 'mdi-file-search-outline' : 'mdi-file-hidden'" size="80" color="grey-lighten-1"
-              class="mb-4"/>
+    <v-sheet
+      v-else-if="filteredDocuments.length === 0"
+      height="80%"
+      class="d-flex flex-column align-center justify-center"
+    >
+      <v-icon
+        :icon="searchQuery ? 'mdi-file-search-outline' : 'mdi-file-hidden'"
+        size="80"
+        color="grey-lighten-1"
+        class="mb-4"
+      />
       <p class="text-h6 text-medium-emphasis">{{
-          searchQuery ? t('prescriptions.noResults') : t('prescriptions.empty')
-        }}</p>
+        searchQuery ? t('prescriptions.noResults') : t('prescriptions.empty')
+      }}</p>
     </v-sheet>
 
     <OrganismsPrescriptionsPrescriptionExpansionList
-        v-else
-        v-model:opened-panels="openedPanels"
-        :visible-folders="visibleFolders"
-        :get-docs="getDocsByFolder"
-        :format-date="formatDate"
-        @view="viewDocument"
-        @renameFolder="handleRenameFolder"
-        @deleteFolder="openDeleteFolderDialog"
-        @renameDoc="handleRenameDoc"
-        @deleteDoc="confirmDelete"
-        @shareDoc="handleShare"
+      v-else
+      v-model:opened-panels="openedPanels"
+      :visible-folders="visibleFolders"
+      :get-docs="getDocsByFolder"
+      :format-date="formatDate"
+      @view="viewDocument"
+      @rename-folder="handleRenameFolder"
+      @delete-folder="openDeleteFolderDialog"
+      @rename-doc="handleRenameDoc"
+      @delete-doc="confirmDelete"
+      @share-doc="handleShare"
     />
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import {useI18n} from 'vue-i18n'
-import {format} from 'date-fns'
-import {fr, enUS} from 'date-fns/locale'
-import {useDocumentsStore} from "~/store/documents";
-import type {ToastType} from "~/composables/openToast";
-import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue";
-import MoleculesShareDialog from "~/components/molecules/ShareDialog.vue";
+import { useI18n } from 'vue-i18n'
+import { format } from 'date-fns'
+import { fr, enUS } from 'date-fns/locale'
+import { useDocumentsStore } from '~/store/documents';
+import type { ToastType } from '~/composables/openToast';
+import ValidationWithWarningDialog from '~/components/molecules/ValidationWithWarningDialog.vue';
+import MoleculesShareDialog from '~/components/molecules/ShareDialog.vue';
 
-const {t, locale} = useI18n()
+const { t, locale } = useI18n()
 const docStore = useDocumentsStore()
-const {$open} = useNuxtApp()
-const dateLocales: Record<string, any> = {fr, en: enUS}
+const { $open } = useNuxtApp()
+const dateLocales: Record<string, any> = { fr, en: enUS }
 
 const searchQuery = ref('')
 const openedPanels = ref<string[]>([])
@@ -77,7 +98,7 @@ const getDocsByFolder = (folderName: string) => filteredDocuments.value.filter(d
 const formatDate = (timestamp: any) => {
   if (!timestamp) return ''
   const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
-  return format(date, 'dd MMM yyyy', {locale: dateLocales[locale.value] || enUS})
+  return format(date, 'dd MMM yyyy', { locale: dateLocales[locale.value] || enUS })
 }
 
 const viewDocument = (url: string) => window.open(url, '_blank')

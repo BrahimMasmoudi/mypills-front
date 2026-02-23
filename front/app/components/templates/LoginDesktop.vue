@@ -2,13 +2,18 @@
   <div class="d-flex h-screen w-screen overflow-hidden position-relative transition-all" :class="isDark ? 'bg-surface' : 'bg-soft-gradient'">
     
     <!-- Gradient Overlay for Dark Mode Texture -->
-    <div v-if="isDark" class="dark-gradient-overlay"></div>
+    <div v-if="isDark" class="dark-gradient-overlay"/>
 
     <v-container fluid class="fill-height pa-0 position-relative z-10">
       <v-row no-gutters class="fill-height">
         
         <!-- LEFT SIDE: Branding & Onboarding (Desktop) -->
-        <v-col cols="12" md="6" lg="7" class="d-none d-md-flex align-center justify-center pa-12">
+        <v-col
+          cols="12"
+          md="6"
+          lg="7"
+          class="d-none d-md-flex align-center justify-center pa-12"
+        >
           <div class="d-flex flex-column max-width-600 w-100">
             
             <!-- App Logo & Name -->
@@ -27,9 +32,11 @@
             <!-- Feature Highlights List -->
             <div class="feature-list d-flex flex-column gap-4">
               
-              <div class="feature-item d-flex align-center gap-4 pa-4 rounded-xl backdrop-blur animate-slide-right" 
-                   :class="isDark ? 'bg-surface-light border-subtle' : 'bg-white-10'"
-                   style="animation-delay: 0.3s">
+              <div
+                class="feature-item d-flex align-center gap-4 pa-4 rounded-xl backdrop-blur animate-slide-right" 
+                :class="isDark ? 'bg-surface-light border-subtle' : 'bg-white-10'"
+                style="animation-delay: 0.3s"
+              >
                 <div class="icon-circle" :class="isDark ? 'bg-surface text-blue' : 'bg-white text-blue'">
                   <v-icon icon="mdi-package-variant-closed" size="24" />
                 </div>
@@ -39,10 +46,12 @@
                 </div>
               </div>
 
-              <div class="feature-item d-flex align-center gap-4 pa-4 rounded-xl backdrop-blur animate-slide-right"
-                   :class="isDark ? 'bg-surface-light border-subtle' : 'bg-white-10'"
-                   style="animation-delay: 0.4s">
-                 <div class="icon-circle" :class="isDark ? 'bg-surface text-purple' : 'bg-white text-purple'">
+              <div
+                class="feature-item d-flex align-center gap-4 pa-4 rounded-xl backdrop-blur animate-slide-right"
+                :class="isDark ? 'bg-surface-light border-subtle' : 'bg-white-10'"
+                style="animation-delay: 0.4s"
+              >
+                <div class="icon-circle" :class="isDark ? 'bg-surface text-purple' : 'bg-white text-purple'">
                   <v-icon icon="mdi-bell-ring-outline" size="24" />
                 </div>
                 <div>
@@ -51,10 +60,12 @@
                 </div>
               </div>
 
-              <div class="feature-item d-flex align-center gap-4 pa-4 rounded-xl backdrop-blur animate-slide-right"
-                   :class="isDark ? 'bg-surface-light border-subtle' : 'bg-white-10'"
-                   style="animation-delay: 0.5s">
-                 <div class="icon-circle" :class="isDark ? 'bg-surface text-green' : 'bg-white text-green'">
+              <div
+                class="feature-item d-flex align-center gap-4 pa-4 rounded-xl backdrop-blur animate-slide-right"
+                :class="isDark ? 'bg-surface-light border-subtle' : 'bg-white-10'"
+                style="animation-delay: 0.5s"
+              >
+                <div class="icon-circle" :class="isDark ? 'bg-surface text-green' : 'bg-white text-green'">
                   <v-icon icon="mdi-barcode-scan" size="24" />
                 </div>
                 <div>
@@ -63,10 +74,12 @@
                 </div>
               </div>
 
-               <div class="feature-item d-flex align-center gap-4 pa-4 rounded-xl backdrop-blur animate-slide-right"
-                    :class="isDark ? 'bg-surface-light border-subtle' : 'bg-white-10'"
-                    style="animation-delay: 0.6s">
-                 <div class="icon-circle" :class="isDark ? 'bg-surface text-orange' : 'bg-white text-orange'">
+              <div
+                class="feature-item d-flex align-center gap-4 pa-4 rounded-xl backdrop-blur animate-slide-right"
+                :class="isDark ? 'bg-surface-light border-subtle' : 'bg-white-10'"
+                style="animation-delay: 0.6s"
+              >
+                <div class="icon-circle" :class="isDark ? 'bg-surface text-orange' : 'bg-white text-orange'">
                   <v-icon icon="mdi-shield-lock-outline" size="24" />
                 </div>
                 <div>
@@ -80,7 +93,12 @@
         </v-col>
 
         <!-- RIGHT SIDE: Login Card -->
-        <v-col cols="12" md="6" lg="5" class="d-flex align-center justify-center">
+        <v-col
+          cols="12"
+          md="6"
+          lg="5"
+          class="d-flex align-center justify-center"
+        >
           <v-card class="login-card w-100 max-width-450 rounded-xxl elevation-16 pa-8 pa-md-10 position-relative overflow-visible animate-zoom-in" :color="isDark ? 'surface' : 'white'">
             
             <!-- Absolute Theme Controls -->
@@ -99,33 +117,43 @@
               </div>
 
               <v-btn
-          @click.prevent="emit('login')"
-          height="56"
-          block
-          color="primary"
-          class="google-btn mb-6 font-weight-bold text-body-1 rounded-lg"
-          :loading="isLoading"
-          variant="outlined"
-          elevation="0"
-       >
-          <template #prepend>
-             <div class="mr-3 d-flex">
-                <nuxt-icon filled name="google" class="google-icon"/>
-             </div>
-          </template>
-          {{ t('login.google') }}
-       </v-btn>
+                height="56"
+                block
+                color="primary"
+                class="google-btn mb-6 font-weight-bold text-body-1 rounded-lg"
+                :loading="isLoading"
+                variant="outlined"
+                elevation="0"
+                @click.prevent="emit('login')"
+              >
+                <template #prepend>
+                  <div class="mr-3 d-flex">
+                    <nuxt-icon filled name="google" class="google-icon"/>
+                  </div>
+                </template>
+                {{ t('login.google') }}
+              </v-btn>
               <div class="d-flex justify-center gap-2 mt-4">
-          <v-chip size="x-small" variant="tonal" color="success" class="font-weight-medium">
-             <v-icon start icon="mdi-lock" size="12"/> {{ t('login.badges.encrypted') }}
-          </v-chip>
-          <v-chip size="x-small" variant="tonal" color="primary" class="font-weight-medium">
-             <v-icon start icon="mdi-cloud-check" size="12"/> {{ t('login.badges.cloud') }}
-          </v-chip>
-       </div>
+                <v-chip
+                  size="x-small"
+                  variant="tonal"
+                  color="success"
+                  class="font-weight-medium"
+                >
+                  <v-icon start icon="mdi-lock" size="12"/> {{ t('login.badges.encrypted') }}
+                </v-chip>
+                <v-chip
+                  size="x-small"
+                  variant="tonal"
+                  color="primary"
+                  class="font-weight-medium"
+                >
+                  <v-icon start icon="mdi-cloud-check" size="12"/> {{ t('login.badges.cloud') }}
+                </v-chip>
+              </div>
 
               <div class="d-flex align-center justify-center gap-2 pa-3 rounded-lg text-caption text-medium-emphasis">
-                 {{ t('login.privacy') }}
+                {{ t('login.privacy') }}
               </div>
             </div>
           </v-card>
@@ -136,12 +164,12 @@
 </template>
 
 <script lang="ts" setup>
-import {useI18n} from "vue-i18n"
+import { useI18n } from 'vue-i18n'
 import { useTheme } from 'vuetify'
-import MoleculesLanguageMenu from "~/components/molecules/LanguageMenu.vue"
-import MoleculesThemeSwitcher from "~/components/molecules/ThemeSwitcher.vue"
+import MoleculesLanguageMenu from '~/components/molecules/LanguageMenu.vue'
+import MoleculesThemeSwitcher from '~/components/molecules/ThemeSwitcher.vue'
 
-const {t} = useI18n()
+const { t } = useI18n()
 const theme = useTheme()
 const isDark = computed(() => theme.global.current.value.dark)
 

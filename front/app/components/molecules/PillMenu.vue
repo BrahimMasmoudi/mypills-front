@@ -1,27 +1,27 @@
 <template>
   <div class="position-absolute top-0 right-0 ma-1 z-index-1">
     <v-menu location="bottom end">
-      <template v-slot:activator="{ props }">
+      <template #activator="{ props }">
         <v-btn
-            v-bind="props"
-            icon="mdi-dots-vertical"
-            variant="text"
-            color="medium-emphasis"
-            size="small"
-            density="comfortable"
-            data-cy="pill-menu-button"
-            :loading="loadingAction !== null"
-            @click.stop
+          v-bind="props"
+          icon="mdi-dots-vertical"
+          variant="text"
+          color="medium-emphasis"
+          size="small"
+          density="comfortable"
+          data-cy="pill-menu-button"
+          :loading="loadingAction !== null"
+          @click.stop
         />
       </template>
       <v-list density="compact" class="rounded-lg">
         <!-- Add Box -->
         <v-list-item
-            v-if="(medication.unitsPerBox || 1) > 1"
-            class="menu-item"
-            @click="handleIncrement(medication.unitsPerBox)"
+          v-if="(medication.unitsPerBox || 1) > 1"
+          class="menu-item"
+          @click="handleIncrement(medication.unitsPerBox)"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon icon="mdi-plus-box-outline" color="primary" size="small"/>
           </template>
           <v-list-item-title class="text-body-2">
@@ -31,12 +31,12 @@
 
         <!-- Remove Box -->
         <v-list-item
-            v-if="(medication.unitsPerBox || 1) > 1"
-            class="menu-item"
-            @click="handleDecrement(medication.unitsPerBox)"
-            :disabled="medication.quantity < (medication.unitsPerBox || 1)"
+          v-if="(medication.unitsPerBox || 1) > 1"
+          class="menu-item"
+          :disabled="medication.quantity < (medication.unitsPerBox || 1)"
+          @click="handleDecrement(medication.unitsPerBox)"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon icon="mdi-minus-box-outline" color="warning" size="small"/>
           </template>
           <v-list-item-title class="text-body-2">
@@ -48,10 +48,10 @@
 
         <!-- Update Box -->
         <v-list-item
-            @click="openUpdateUnitsDialog"
-            class="menu-item"
+          class="menu-item"
+          @click="openUpdateUnitsDialog"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon icon="mdi-package-variant-closed" color="primary" size="small"/>
           </template>
           <v-list-item-title class="text-body-2">
@@ -63,12 +63,12 @@
 
         <!-- Delete -->
         <v-list-item
-            @click="confirmDelete"
-            color="error"
-            class="menu-item"
-            data-cy="menu-delete-button"
+          color="error"
+          class="menu-item"
+          data-cy="menu-delete-button"
+          @click="confirmDelete"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon icon="mdi-delete-outline" color="error" size="small"/>
           </template>
           <v-list-item-title class="text-body-2 text-error">
@@ -81,17 +81,17 @@
 </template>
 
 <script setup lang="ts">
-import type {Medication} from "~/types/medication"
-import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
-import UpdateUnitsDialog from "~/components/molecules/medications/UpdateUnitsDialog.vue"
-import Toast from "~/components/molecules/Toast.vue"
-import {useI18n} from "vue-i18n"
-import type {ToastType} from "~/composables/openToast"
+import type { Medication } from '~/types/medication'
+import ValidationWithWarningDialog from '~/components/molecules/ValidationWithWarningDialog.vue'
+import UpdateUnitsDialog from '~/components/molecules/medications/UpdateUnitsDialog.vue'
+import Toast from '~/components/molecules/Toast.vue'
+import { useI18n } from 'vue-i18n'
+import type { ToastType } from '~/composables/openToast'
 
-const {$open} = useNuxtApp()
-const {t} = useI18n()
+const { $open } = useNuxtApp()
+const { t } = useI18n()
 
-const {medication} = defineProps<{
+const { medication } = defineProps<{
   medication: Medication
 }>()
 

@@ -1,12 +1,12 @@
 <template>
   <v-dialog
-      v-if="$device.isDesktop"
-      v-model="isActive"
-      :persistent="isPersistent"
-      :scrim="scrim"
-      data-cy="country-dialog"
-      width="450"
-      content-class="elevation-0"
+    v-if="$device.isDesktop"
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    data-cy="country-dialog"
+    width="450"
+    content-class="elevation-0"
   >
     <v-card class="rounded-xl pa-6" elevation="24">
       <div class="d-flex flex-column align-center text-center mb-6">
@@ -23,24 +23,24 @@
 
       <v-card-actions class="d-flex flex-column gap-3 px-0">
         <v-btn
-            block
-            color="primary"
-            variant="flat"
-            size="large"
-            height="52"
-            class="text-none font-weight-bold rounded-lg"
-            @click="confirm('FR')"
+          block
+          color="primary"
+          variant="flat"
+          size="large"
+          height="52"
+          class="text-none font-weight-bold rounded-lg"
+          @click="confirm('FR')"
         >
           {{ t('countryDialog.confirmFr') }}
         </v-btn>
 
         <v-btn
-            block
-            variant="outlined"
-            color="primary"
-            height="52"
-            class="text-none font-weight-bold"
-            @click="confirm(null)"
+          block
+          variant="outlined"
+          color="primary"
+          height="52"
+          class="text-none font-weight-bold"
+          @click="confirm(null)"
         >
           {{ t('countryDialog.confirmElseWhere') }}
         </v-btn>
@@ -49,16 +49,21 @@
   </v-dialog>
 
   <v-dialog
-      v-else
-      v-model="isActive"
-      :persistent="isPersistent"
-      :scrim="scrim"
-      width="100%"
-      class="align-end ma-0"
+    v-else
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    width="100%"
+    class="align-end ma-0"
   >
     <v-card class="rounded-t-xl pa-6 pb-8">
       <div class="d-flex flex-column align-center text-center">
-        <v-sheet color="grey-lighten-2" height="4" width="40" class="rounded-pill mb-6"/>
+        <v-sheet
+          color="grey-lighten-2"
+          height="4"
+          width="40"
+          class="rounded-pill mb-6"
+        />
 
         <v-avatar color="blue-lighten-5" size="56" class="mb-3">
           <v-icon icon="mdi-map-marker-radius" color="primary" size="32"/>
@@ -70,22 +75,22 @@
         </p>
 
         <v-btn
-            block
-            color="primary"
-            variant="flat"
-            size="x-large"
-            class="text-none font-weight-bold rounded-lg mb-3"
-            @click="confirm('FR')"
+          block
+          color="primary"
+          variant="flat"
+          size="x-large"
+          class="text-none font-weight-bold rounded-lg mb-3"
+          @click="confirm('FR')"
         >
           {{ t('countryDialog.confirmFr') }}
         </v-btn>
 
         <v-btn
-            block
-            variant="text"
-            color="grey-darken-1"
-            class="text-none font-weight-bold"
-            @click="confirm(null)"
+          block
+          variant="text"
+          color="grey-darken-1"
+          class="text-none font-weight-bold"
+          @click="confirm(null)"
         >
           {{ t('countryDialog.confirmElseWhere') }}
         </v-btn>
@@ -95,10 +100,10 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from 'vue-i18n'
+import { useI18n } from 'vue-i18n'
 
-const {t} = useI18n()
-const {$device} = useNuxtApp()
+const { t } = useI18n()
+const { $device } = useNuxtApp()
 
 const props = defineProps<{
   close: (value: string | null) => void
