@@ -14,18 +14,18 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
+const {
+  variant = 'outlined',
+  color = 'primary',
+  title = '',
+  size = 'small'
+} = defineProps<{
   sortOrder: 'asc' | 'desc'
   title?: string
   variant?: 'text' | 'flat' | 'elevated' | 'outlined' | 'plain' | 'tonal'
   size?: string
   color?: string
-}>(), {
-  variant: 'outlined',
-  color: 'primary',
-  title: '',
-  size: 'small'
-})
+}>()
 
 defineEmits<{
   toggle: []

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 export default defineNuxtConfig({
+    compatibilityDate: '2026-02-23',
     experimental: {
         viewTransition: true
     },
@@ -12,6 +13,9 @@ export default defineNuxtConfig({
         timeline: {
             enabled: true
         }
+    },
+    devServer: {
+        host: '127.0.0.1'
     },
     devServerHandlers: [],
     app: {

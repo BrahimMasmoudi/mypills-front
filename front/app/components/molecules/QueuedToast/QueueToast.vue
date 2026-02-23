@@ -44,13 +44,15 @@
 <script lang="ts" setup>
 import type { QueueToastType } from '~/composables/useQueueToast';
 
-const { type, actions } = withDefaults(defineProps<{
+const { 
+  type, 
+  message, 
+  actions = [] 
+} = defineProps<{
   type: QueueToastType,
   message: string,
   actions?: { label: string, onClick: () => void }[]
-}>(), {
-  actions: () => []
-})
+}>()
 defineEmits(['close'])
 
 const color = computed(() => {
