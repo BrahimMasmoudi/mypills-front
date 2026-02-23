@@ -4,9 +4,11 @@ const config: StorybookConfig = {
   "stories": [
     "../app/components/**/*.stories.@(js|jsx|ts|tsx|mdx)"
   ],
-  "addons": ["@storybook/addon-a11y",
+  "addons": [
+    "@storybook/addon-a11y",
     "@storybook/addon-docs",
     "@storybook/addon-backgrounds",
+    "@chromatic-com/storybook"
   ],
   "framework": "@storybook-vue/nuxt"
 };
