@@ -1,16 +1,21 @@
 <template>
   <v-menu
-      location="bottom end"
-      transition="slide-y-transition"
-      :offset="12"
-      content-class="user-menu-popover"
+    location="bottom end"
+    transition="slide-y-transition"
+    :offset="12"
+    content-class="user-menu-popover"
   >
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <div class="user-menu-activator" v-bind="props">
         <div class="avatar-wrapper shadow-premium">
           <v-avatar size="44" class="main-avatar">
             <v-img v-if="userStore.user?.photoURL" :src="userStore.user.photoURL" cover/>
-            <v-icon v-else icon="mdi-account" size="28" color="white"/>
+            <v-icon
+              v-else
+              icon="mdi-account"
+              size="28"
+              color="white"
+            />
           </v-avatar>
         </div>
       </div>
@@ -34,9 +39,9 @@
       <v-list density="comfortable" nav class="pa-3">
         <!-- Theme Toggle -->
         <v-list-item
-            @click="toggleColorMode"
-            class="menu-item-premium mb-2"
-            :ripple="{ class: 'text-primary' }"
+          class="menu-item-premium mb-2"
+          :ripple="{ class: 'text-primary' }"
+          @click="toggleColorMode"
         >
           <template #prepend>
             <div class="icon-container mr-3" :class="colorMode.value === 'dark' ? 'icon-amber' : 'icon-blue'">
@@ -57,10 +62,10 @@
 
         <!-- Language Switcher -->
         <v-menu location="start top" transition="scale-transition" :offset="12">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-list-item
-                v-bind="props"
-                class="mb-2"
+              v-bind="props"
+              class="mb-2"
             >
               <template #prepend>
                 <div class="icon-container icon-indigo mr-3">
@@ -76,14 +81,19 @@
             </v-list-item>
           </template>
 
-          <v-list density="compact" elevation="12" class=" py-2 pa-2" min-width="180">
+          <v-list
+            density="compact"
+            elevation="12"
+            class=" py-2 pa-2"
+            min-width="180"
+          >
             <v-list-item
-                v-for="lang in languages"
-                :key="lang.code"
-                @click="switchLocale(lang.code)"
-                :active="locale === lang.code"
-                class="lang-item mb-1"
-                color="primary"
+              v-for="lang in languages"
+              :key="lang.code"
+              :active="locale === lang.code"
+              class="lang-item mb-1"
+              color="primary"
+              @click="switchLocale(lang.code)"
             >
               <template #prepend>
                 <nuxt-icon :name="`flag-${lang.code}`" filled class="flag-icon-mini mr-3"/>
@@ -97,9 +107,9 @@
 
         <!-- Country Switcher -->
         <v-list-item
-            @click="openCountryDialog"
-            class="menu-item-premium mb-2"
-            :ripple="{ class: 'text-primary' }"
+          class="menu-item-premium mb-2"
+          :ripple="{ class: 'text-primary' }"
+          @click="openCountryDialog"
         >
           <template #prepend>
             <div class="icon-container icon-teal mr-3">
@@ -110,7 +120,12 @@
             {{ t('user-menu.change-country') }}
           </v-list-item-title>
           <template #append>
-             <nuxt-icon v-if="selectedCountry" :name="`flag-${selectedCountry?.toLowerCase()}`" filled class="flag-icon-mini ml-2"/>
+            <nuxt-icon
+              v-if="selectedCountry"
+              :name="`flag-${selectedCountry?.toLowerCase()}`"
+              filled
+              class="flag-icon-mini ml-2"
+            />
           </template>
         </v-list-item>
 
@@ -118,9 +133,9 @@
 
         <!-- Disconnect -->
         <v-list-item
-            @click="handleSignOut"
-            class="menu-item-logout text-error"
-            :ripple="{ class: 'text-error' }"
+          class="menu-item-logout text-error"
+          :ripple="{ class: 'text-error' }"
+          @click="handleSignOut"
         >
           <template #prepend>
             <div class="icon-container icon-error mr-3">
@@ -137,21 +152,21 @@
 </template>
 
 <script setup lang="ts">
-import {useUserStore} from "~/store/userStore";
-import {useI18n} from "vue-i18n";
-import {useTheme} from 'vuetify'
-import {useCountryStore} from "~/store/country";
-import CountryDialog from "~/components/molecules/CountryDialog.vue";
-import {useLanguageStore} from "~/store/language";
+import { useUserStore } from '~/store/userStore';
+import { useI18n } from 'vue-i18n';
+import { useTheme } from 'vuetify'
+import { useCountryStore } from '~/store/country';
+import CountryDialog from '~/components/molecules/CountryDialog.vue';
+import { useLanguageStore } from '~/store/language';
 
 const userStore = useUserStore()
-const {t, locale} = useI18n()
+const { t, locale } = useI18n()
 const theme = useTheme()
 const colorMode = useColorMode()
-const {$open} = useNuxtApp()
-const {confirmFrance, clearCountry} = useCountryStore()
+const { $open } = useNuxtApp()
+const { confirmFrance, clearCountry } = useCountryStore()
 
-const {selectedCountry} = storeToRefs(useCountryStore())
+const { selectedCountry } = storeToRefs(useCountryStore())
 const langStore = useLanguageStore()
 
 const handleSignOut = async () => {
@@ -165,8 +180,8 @@ const toggleColorMode = () => {
 
 
 const languages = [
-  {code: 'en', name: 'English'},
-  {code: 'fr', name: 'Français'}
+  { code: 'en', name: 'English' },
+  { code: 'fr', name: 'Français' }
 ]
 
 const switchLocale = (newLocale: string) => {
@@ -176,7 +191,7 @@ const switchLocale = (newLocale: string) => {
 
 watch(() => colorMode.value, (val) => {
   theme.change(val)
-}, {immediate: true})
+}, { immediate: true })
 
 const openCountryDialog = async () => {
   const result = await $open<string | null>(CountryDialog, {

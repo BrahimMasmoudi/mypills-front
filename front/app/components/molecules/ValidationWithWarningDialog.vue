@@ -1,14 +1,14 @@
 <template>
   <!-- Desktop Layout -->
   <v-dialog
-      v-if="$device.isDesktop"
-      v-model="isActive"
-      :persistent="isPersistent"
-      :scrim="scrim"
-      :width="width"
-      data-cy="validation-with-warning-dialog"
-      content-class="elevation-0"
-      @keydown.esc="cancelAndClose"
+    v-if="$device.isDesktop"
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    :width="width"
+    data-cy="validation-with-warning-dialog"
+    content-class="elevation-0"
+    @keydown.esc="cancelAndClose"
   >
     <v-card class="rounded-xl pa-6" elevation="24">
       <div class="d-flex flex-column align-center text-center">
@@ -30,25 +30,25 @@
         <!-- Actions -->
         <v-card-actions class="w-100 justify-center pt-6 gap-4">
           <v-btn
-              variant="outlined"
-              size="large"
-              color="grey-darken-1"
-              class="flex-grow-1 text-capitalize font-weight-bold"
-              height="48"
-              @click="cancelAndClose"
+            variant="outlined"
+            size="large"
+            color="grey-darken-1"
+            class="flex-grow-1 text-capitalize font-weight-bold"
+            height="48"
+            @click="cancelAndClose"
           >
             {{ t('cancel') }}
           </v-btn>
 
           <v-btn
-              color="error"
-              variant="flat"
-              size="large"
-              class="flex-grow-1 text-capitalize font-weight-bold"
-              height="48"
-              data-cy="confirm-deletion-button"
-              :loading="loading"
-              @click="onConfirmClick"
+            color="error"
+            variant="flat"
+            size="large"
+            class="flex-grow-1 text-capitalize font-weight-bold"
+            height="48"
+            data-cy="confirm-deletion-button"
+            :loading="loading"
+            @click="onConfirmClick"
           >
             {{ t('confirm') }}
           </v-btn>
@@ -59,23 +59,23 @@
 
   <!-- Mobile Layout (Bottom Sheet Style) -->
   <v-dialog
-      v-else
-      v-model="isActive"
-      :persistent="isPersistent"
-      :scrim="scrim"
-      color="transparent"
-      width="100%"
-      class="align-end ma-0"
-      @keydown.esc="cancelAndClose"
+    v-else
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    color="transparent"
+    width="100%"
+    class="align-end ma-0"
+    @keydown.esc="cancelAndClose"
   >
     <v-card class="rounded-t-xl pa-5 pb-8" elevation="0">
       <div class="d-flex flex-column align-center text-center">
         <!-- Drag Handle Indicator -->
         <v-sheet
-            color="grey-lighten-2"
-            height="4"
-            width="40"
-            class="rounded-pill mb-6"
+          color="grey-lighten-2"
+          height="4"
+          width="40"
+          class="rounded-pill mb-6"
         />
 
         <v-avatar color="red-lighten-5" size="72" class="mb-4">
@@ -92,25 +92,25 @@
 
         <div class="d-flex flex-column w-100 gap-3">
           <v-btn
-              block
-              color="error"
-              variant="flat"
-              size="x-large"
-              data-cy="confirm-deletion-button"
-              class="text-capitalize font-weight-bold rounded-lg"
-              :loading="loading"
-              @click="onConfirmClick"
+            block
+            color="error"
+            variant="flat"
+            size="x-large"
+            data-cy="confirm-deletion-button"
+            class="text-capitalize font-weight-bold rounded-lg"
+            :loading="loading"
+            @click="onConfirmClick"
           >
             {{ t('confirm') }}
           </v-btn>
 
           <v-btn
-              block
-              variant="text"
-              size="large"
-              color="grey-darken-1"
-              class="text-capitalize font-weight-bold mt-2"
-              @click="cancelAndClose"
+            block
+            variant="text"
+            size="large"
+            color="grey-darken-1"
+            class="text-capitalize font-weight-bold mt-2"
+            @click="cancelAndClose"
           >
             {{ t('cancel') }}
           </v-btn>
@@ -121,13 +121,13 @@
 </template>
 
 <script lang="ts" setup>
-import {useI18n} from "vue-i18n";
-import type {ToastType} from "~/composables/openToast";
+import { useI18n } from 'vue-i18n';
+import type { ToastType } from '~/composables/openToast';
 
-const {t} = useI18n()
+const { t } = useI18n()
 const isActive = ref(true)
 const loading = ref(false)
-const {close, width = 600} = defineProps<{
+const { close, width = 600 } = defineProps<{
   close: (toastType: ToastType) => void
   isPersistent: boolean
   scrim: boolean

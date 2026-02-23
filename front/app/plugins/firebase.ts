@@ -1,17 +1,17 @@
-import type {Firestore} from '@firebase/firestore/lite'
-import type {Functions} from '@firebase/functions'
-import type {Messaging} from '@firebase/messaging'
-import type {FirebaseStorage} from '@firebase/storage'
+import type { Firestore } from '@firebase/firestore/lite'
+import type { Functions } from '@firebase/functions'
+import type { Messaging } from '@firebase/messaging'
+import type { FirebaseStorage } from '@firebase/storage'
 import {
     getAnalytics,
     type Analytics,
     setUserId,
     setUserProperties,
 } from '@firebase/analytics'
-import {connectFunctionsEmulator, getFunctions} from '@firebase/functions'
-import {getStorage, connectStorageEmulator} from '@firebase/storage'
-import {useFirebaseApp, useFirestore, getCurrentUser} from 'vuefire'
-import {getMessaging} from 'firebase/messaging'
+import { connectFunctionsEmulator, getFunctions } from '@firebase/functions'
+import { getStorage, connectStorageEmulator } from '@firebase/storage'
+import { useFirebaseApp, useFirestore, getCurrentUser } from 'vuefire'
+import { getMessaging } from 'firebase/messaging'
 
 type RemoteConfig = Record<string, any>
 
@@ -46,7 +46,7 @@ declare module '@vue/runtime-core' {
     }
 }
 
-export default defineNuxtPlugin(async ({provide, $config}) => {
+export default defineNuxtPlugin(async ({ provide, $config }) => {
     const {
         functions: functionsConfig,
         analytics: analyticsConfig,

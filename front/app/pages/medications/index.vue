@@ -1,27 +1,27 @@
 <template>
   <TemplatesPills
-      :medications="medications ?? []"
-      :medication-loading="isLoading"
-      @decrement-pills="(med, amount, done) => decrementPills(med, amount, done)"
-      @increment-pills="(med, amount, done) => incrementPills(med, amount, done)"
-      @delete-pills="(med, done) => deletePills(med, done)"
-      @update-medication-name="(med, name, done) => updateMedicationName(med, name, done)"
-      @create-medication="createMedication"
+    :medications="medications ?? []"
+    :medication-loading="isLoading"
+    @decrement-pills="(med, amount, done) => decrementPills(med, amount, done)"
+    @increment-pills="(med, amount, done) => incrementPills(med, amount, done)"
+    @delete-pills="(med, done) => deletePills(med, done)"
+    @update-medication-name="(med, name, done) => updateMedicationName(med, name, done)"
+    @create-medication="createMedication"
   />
 </template>
 
 <script setup lang="ts">
-import {useMedicationsStore} from "~/store/medications"
-import type {Medication} from "~/types/medication"
-import {useI18n} from "vue-i18n";
+import { useMedicationsStore } from '~/store/medications'
+import type { Medication } from '~/types/medication'
+import { useI18n } from 'vue-i18n';
 
-const {t} = useI18n()
+const { t } = useI18n()
 useSeoMeta({
   title: () => t('nav.medications')
 })
 
 const medicationStore = useMedicationsStore()
-const {isLoading, medications} = storeToRefs(medicationStore)
+const { isLoading, medications } = storeToRefs(medicationStore)
 
 const createMedication = async (medication: Medication) => {
   await medicationStore.createMedication(medication)
@@ -69,5 +69,5 @@ watch(medications, async (newMeds: Medication[] | undefined) => {
   if (newMeds.length > 0) {
     await handleExpiredMedications(newMeds as Medication[])
   }
-}, {immediate: true})
+}, { immediate: true })
 </script>

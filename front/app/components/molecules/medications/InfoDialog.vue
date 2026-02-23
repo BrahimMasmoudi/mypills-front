@@ -1,24 +1,37 @@
 <template>
-  <v-dialog v-model="isActive" width="550" :persistent="isPersistent" :scrim="scrim">
+  <v-dialog
+    v-model="isActive"
+    width="550"
+    :persistent="isPersistent"
+    :scrim="scrim"
+  >
     <v-card class="rounded-xl overflow-hidden elevation-24 border-0">
 
       <v-sheet
-          :color="$colorMode.value === 'dark' ? 'surface' : 'primary'"
-          class="pt-4 pl-4 pr-0 pb-12 text-white position-relative"
+        :color="$colorMode.value === 'dark' ? 'surface' : 'primary'"
+        class="pt-4 pl-4 pr-0 pb-12 text-white position-relative"
       >
         <div class="d-flex justify-space-between align-start z-index-2 position-relative">
           <div class="w-100 d-flex flex-column">
             <div class="d-flex align-center justify-space-between">
               <div class="text-overline opacity-80 mb-1 mt-1">{{ data.details?.company }}</div>
-              <v-btn icon="mdi-close" variant="text" color="white" @click="close"/>
+              <v-btn
+                icon="mdi-close"
+                variant="text"
+                color="white"
+                @click="close"
+              />
             </div>
             <h2 class="text-h5 font-weight-black leading-tight mt-2 pr-4">
               {{ data.name }}
             </h2>
           </div>
         </div>
-        <v-icon icon="mdi-pill" class="position-absolute"
-                style="right: -20px; bottom: 0px; font-size: 140px; opacity: 0.1; transform: rotate(-20deg);"/>
+        <v-icon
+          icon="mdi-pill"
+          class="position-absolute"
+          style="right: -20px; bottom: 0px; font-size: 140px; opacity: 0.1; transform: rotate(-20deg);"
+        />
       </v-sheet>
 
       <v-card-text class="pa-6 pb-0 bg-surface content-sheet">
@@ -27,8 +40,11 @@
             <v-icon icon="mdi-molecule" class="mr-2" size="20"/>
             {{ t('detailsDialog.substances') }}
           </div>
-          <div v-for="comp in details?.ingredients" :key="comp.substance"
-               class="d-flex justify-space-between align-center mb-1">
+          <div
+            v-for="comp in details?.ingredients"
+            :key="comp.substance"
+            class="d-flex justify-space-between align-center mb-1"
+          >
             <div>
               <div class="text-body-1 font-weight-bold leading-tight">{{ comp.substance }}</div>
               <div class="text-caption text-medium-emphasis">{{ t('detailsDialog.activeComponent') }}</div>
@@ -49,7 +65,12 @@
           </v-col>
           <v-col cols="6">
             <v-card variant="outlined" class="pa-4 rounded-lg bg-surface border-light h-100">
-              <v-icon icon="mdi-form-select" color="medium-emphasis" size="24" class="mb-2"/>
+              <v-icon
+                icon="mdi-form-select"
+                color="medium-emphasis"
+                size="24"
+                class="mb-2"
+              />
               <div class="text-caption text-medium-emphasis">{{ t('detailsDialog.form') }}</div>
               <div class="text-body-2 font-weight-bold capitalize">{{ details?.form }}</div>
             </v-card>
@@ -60,7 +81,12 @@
           <v-col cols="12">
             <v-card variant="outlined" class="pa-4 rounded-lg bg-surface border-light">
               <div class="d-flex align-center">
-                <v-icon icon="mdi-pill" color="medium-emphasis" size="24" class="mr-3"/>
+                <v-icon
+                  icon="mdi-pill"
+                  color="medium-emphasis"
+                  size="24"
+                  class="mr-3"
+                />
                 <div>
                   <div class="text-caption text-medium-emphasis">{{ t('meds.quantity') }}</div>
                   <div class="text-body-2 font-weight-bold">
@@ -72,10 +98,17 @@
           </v-col>
         </v-row>
 
-        <div class="rounded-lg pa-4 d-flex align-center justify-space-between mb-6 info-banner bg-surface"
-             v-if="mainPresentation">
+        <div
+          v-if="mainPresentation"
+          class="rounded-lg pa-4 d-flex align-center justify-space-between mb-6 info-banner bg-surface"
+        >
           <div class="d-flex align-center">
-            <v-icon icon="mdi-cash-check" color="secondary" class="mr-3" size="28"/>
+            <v-icon
+              icon="mdi-cash-check"
+              color="secondary"
+              class="mr-3"
+              size="28"
+            />
             <div>
               <div class="text-caption opacity-80 font-weight-bold uppercase leading-tight">
                 {{ t('detailsDialog.refund') }}
@@ -92,7 +125,15 @@
       </v-card-text>
 
       <v-card-actions class="pa-6 pt-2 bg-surface">
-        <v-btn block color="primary" variant="flat" height="52" rounded="lg" @click="handleClose" class="text-none font-weight-bold">
+        <v-btn
+          block
+          color="primary"
+          variant="flat"
+          height="52"
+          rounded="lg"
+          class="text-none font-weight-bold"
+          @click="handleClose"
+        >
           {{ t('close') }}
         </v-btn>
       </v-card-actions>
@@ -101,8 +142,8 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from "vue-i18n";
-import type {Medication} from "~/types/medication";
+import { useI18n } from 'vue-i18n';
+import type { Medication } from '~/types/medication';
 
 const props = defineProps<{
   close: (value?: any) => void
@@ -111,7 +152,7 @@ const props = defineProps<{
   data: Medication
 }>()
 
-const {t} = useI18n()
+const { t } = useI18n()
 const isActive = ref(true)
 const details = computed(() => props.data.details)
 const mainPresentation = computed(() => details.value?.presentations?.[0])

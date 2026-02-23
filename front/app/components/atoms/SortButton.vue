@@ -1,11 +1,11 @@
 <template>
   <v-btn
-      v-bind="$attrs"
-      color="primary"
-      :variant="isActive ? 'elevated' : 'outlined'"
-      size="large"
-      rounded="pill"
-      class="sort-btn"
+    v-bind="$attrs"
+    color="primary"
+    :variant="isActive ? 'elevated' : 'outlined'"
+    size="large"
+    rounded="pill"
+    class="sort-btn"
   >
     <v-icon :icon="sortIcon" class="mr-2"/>
     <span>{{ sortLabel }}</span>

@@ -2,12 +2,12 @@
   <div class="toast-container">
     <TransitionGroup name="toast-slide">
       <QueueToast
-          v-for="item in toasts"
-          :key="item.id"
-          :message="item.message"
-          :type="item.type"
-          :actions="item.actions"
-          @close="removeToast(item.id)"
+        v-for="item in toasts"
+        :key="item.id"
+        :message="item.message"
+        :type="item.type"
+        :actions="item.actions"
+        @close="removeToast(item.id)"
       />
     </TransitionGroup>
   </div>
@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 
-import QueueToast from "~/components/molecules/QueuedToast/QueueToast.vue";
+import QueueToast from '~/components/molecules/QueuedToast/QueueToast.vue';
 
 const { toasts, removeToast } = useQueueToast()
 </script>

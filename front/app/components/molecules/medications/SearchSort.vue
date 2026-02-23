@@ -4,41 +4,41 @@
       <v-sheet class="d-flex align-center justify-space-between" width="100%">
         <!-- Left Side: Discovery -->
         <AtomsSearchInput
-            :model-value="searchQuery"
-            @update:model-value="$emit('update:searchQuery', $event)"
-            :label="t('search')"
-            class="search-input-desktop"
+          :model-value="searchQuery"
+          :label="t('search')"
+          class="search-input-desktop"
+          @update:model-value="$emit('update:searchQuery', $event)"
         />
 
         <!-- Right Side: Actions & Controls -->
         <div class="d-flex align-center">
           <AtomsSortToggleButton
-              v-if="sortBy"
-              :sort-order="sortOrder"
-              color="primary"
-              size="small"
-              class="mr-4"
-              @toggle="$emit('toggleSortOrder')"
+            v-if="sortBy"
+            :sort-order="sortOrder"
+            color="primary"
+            size="small"
+            class="mr-4"
+            @toggle="$emit('toggleSortOrder')"
           />
           
           <MoleculesSortMenu
-              :sort-by="sortBy"
-              :sort-order="sortOrder"
-              :sort-options="sortOptions"
-              @update:sort-by="$emit('update:sortBy', $event)"
-              @clear="$emit('update:sortBy', null)"
+            :sort-by="sortBy"
+            :sort-order="sortOrder"
+            :sort-options="sortOptions"
+            @update:sort-by="$emit('update:sortBy', $event)"
+            @clear="$emit('update:sortBy', null)"
           />
 
 
           <v-btn-toggle
-              :model-value="viewType"
-              @update:model-value="handleViewTypeUpdate"
-              mandatory
-              color="primary"
-              variant="outlined"
-              density="comfortable"
-              rounded="pill"
+            :model-value="viewType"
+            mandatory
+            color="primary"
+            variant="outlined"
+            density="comfortable"
+            rounded="pill"
             class="ml-4 view-toggle"
+            @update:model-value="handleViewTypeUpdate"
           >
             <v-btn value="grid" icon="mdi-view-grid-outline" />
             <v-btn value="table" icon="mdi-view-list" />
@@ -52,40 +52,40 @@
     <div v-else class="w-100 mb-3">
       <div class="d-flex align-center">
         <AtomsSearchInput
-            :model-value="searchQuery"
-            @update:model-value="$emit('update:searchQuery', $event)"
-            :label="t('search')"
-            class="flex-grow-1"
+          :model-value="searchQuery"
+          :label="t('search')"
+          class="flex-grow-1"
+          @update:model-value="$emit('update:searchQuery', $event)"
         />
         
         <v-btn
-            icon="'mdi-sort'"
-            color="primary"
-            class="ml-2"
-            @click="sortSheetOpen = true"
+          icon="'mdi-sort'"
+          color="primary"
+          class="ml-2"
+          @click="sortSheetOpen = true"
         >
           <v-icon v-if="sortBy" :icon="currentSortIcon"/>
           <v-icon v-else icon="mdi-sort"/>
         </v-btn>
         
         <AtomsSortToggleButton
-            v-if="sortBy"
-            :sort-order="sortOrder"
-            @toggle="$emit('toggleSortOrder')"
-            variant="outlined"
-            color="primary"
-            class="ml-2"
+          v-if="sortBy"
+          :sort-order="sortOrder"
+          variant="outlined"
+          color="primary"
+          class="ml-2"
+          @toggle="$emit('toggleSortOrder')"
         />
       </div>
       
       <MoleculesSortBottomSheet
-          v-model="sortSheetOpen"
-          :sort-by="sortBy"
-          :sort-order="sortOrder"
-          :sort-options="sortOptions"
-          @update:sort-by="$emit('update:sortBy', $event)"
-          @toggle-order="$emit('toggleSortOrder')"
-          @clear="$emit('update:sortBy', null)"
+        v-model="sortSheetOpen"
+        :sort-by="sortBy"
+        :sort-order="sortOrder"
+        :sort-options="sortOptions"
+        @update:sort-by="$emit('update:sortBy', $event)"
+        @toggle-order="$emit('toggleSortOrder')"
+        @clear="$emit('update:sortBy', null)"
       />
     </div>
   </div>
@@ -98,7 +98,7 @@ import { logEvent } from 'firebase/analytics'
 const { t } = useI18n()
 const { $analytics } = useNuxtApp()
 
-const {sortBy, sortOptions} = defineProps<{
+const { sortBy, sortOptions } = defineProps<{
   searchQuery: string
   sortBy: string | null
   sortOrder: 'asc' | 'desc'

@@ -1,15 +1,20 @@
 <template>
-  <v-card border elevation="0" rounded="xl" class="bg-surface overflow-hidden mt-2">
+  <v-card
+    border
+    elevation="0"
+    rounded="xl"
+    class="bg-surface overflow-hidden mt-2"
+  >
     <v-data-table
-        :headers="headers"
-        :items="items"
-        :loading="loading"
-        hover
-        fixed-header
-        height="calc(100vh - 220px)"
-        hide-default-footer
-        :items-per-page="-1"
-        class="bg-transparent"
+      :headers="headers"
+      :items="items"
+      :loading="loading"
+      hover
+      fixed-header
+      height="calc(100vh - 220px)"
+      hide-default-footer
+      :items-per-page="-1"
+      class="bg-transparent"
     >
       <template v-for="header in headers" :key="header.key" #[`header.${header.key}`]="{ column }">
         <span class="text-overline font-weight-black text-medium-emphasis">
@@ -29,12 +34,12 @@
       <template #[`item.medName`]="{ item }">
         <div class="d-flex flex-wrap" style="gap: 6px">
           <v-sheet
-              v-for="name in item.medNames"
-              :key="name"
-              border
-              rounded="pill"
-              class="px-3 py-1 d-flex align-center"
-              elevation="0"
+            v-for="name in item.medNames"
+            :key="name"
+            border
+            rounded="pill"
+            class="px-3 py-1 d-flex align-center"
+            elevation="0"
           >
             <v-icon icon="mdi-pill" size="14" class="mr-2 text-primary"/>
             <span class="text-caption font-weight-bold text-truncate" style="max-width: 120px;">
@@ -45,7 +50,12 @@
       </template>
 
       <template #[`item.dateRange`]="{ item }">
-        <v-sheet border rounded="pill" class="px-3 py-1 d-flex align-center" width="fit-content">
+        <v-sheet
+          border
+          rounded="pill"
+          class="px-3 py-1 d-flex align-center"
+          width="fit-content"
+        >
           <span class="text-caption font-weight-bold">{{ formatDate(item.startDate) }}</span>
           <v-icon icon="mdi-arrow-right" size="12" class="mx-2 opacity-50"/>
           <span class="text-caption font-weight-bold">{{ formatDate(item.endDate) }}</span>
@@ -55,13 +65,18 @@
       <template #[`item.doses`]="{ item }">
         <div class="d-flex flex-wrap" style="gap: 8px">
           <v-sheet
-              v-for="dose in item.doses"
-              :key="dose.time"
-              border
-              rounded="pill"
-              class="px-3 py-1 bg-primary d-flex align-center"
+            v-for="dose in item.doses"
+            :key="dose.time"
+            border
+            rounded="pill"
+            class="px-3 py-1 bg-primary d-flex align-center"
           >
-            <v-icon icon="mdi-clock-outline" size="14" color="white" class="mr-2"/>
+            <v-icon
+              icon="mdi-clock-outline"
+              size="14"
+              color="white"
+              class="mr-2"
+            />
             <span class="text-caption font-weight-black text-white">{{ dose.time }}</span>
             <v-divider vertical class="mx-2 border-opacity-50" color="white"/>
             <span class="text-caption font-weight-medium text-white opacity-90">{{ dose.quantity }}x</span>
@@ -71,11 +86,11 @@
 
       <template #[`item.status`]="{ item }">
         <v-chip
-            :color="statusConfig[item.status].color"
-            :prepend-icon="statusConfig[item.status].icon"
-            size="x-small"
-            variant="flat"
-            class="text-uppercase font-weight-black px-3"
+          :color="statusConfig[item.status].color"
+          :prepend-icon="statusConfig[item.status].icon"
+          size="x-small"
+          variant="flat"
+          class="text-uppercase font-weight-black px-3"
         >
           {{ t(`status.${item.status}`) }}
         </v-chip>
@@ -85,48 +100,48 @@
         <div class="d-flex align-center justify-end" style="gap: 8px">
           <template v-if="item.status === 'pending'">
             <v-btn
-                icon="mdi-check-circle-outline"
-                variant="tonal"
-                color="success"
-                size="small"
-                :loading="getLoading(item, 'sent')"
-                :disabled="isAnyLoading(item)"
-                @click="handleAction(item, 'finish-treatment', 'done')"
+              icon="mdi-check-circle-outline"
+              variant="tonal"
+              color="success"
+              size="small"
+              :loading="getLoading(item, 'sent')"
+              :disabled="isAnyLoading(item)"
+              @click="handleAction(item, 'finish-treatment', 'done')"
             />
           </template>
 
           <v-divider v-if="item.status === 'pending'" vertical class="mx-1" />
 
           <v-btn
-              v-if="item.status === 'pending'"
-              icon="mdi-pencil-outline"
-              variant="tonal"
-              color="primary"
-              size="small"
-              :loading="getLoading(item, 'edit')"
-              :disabled="isAnyLoading(item)"
-              @click="handleAction(item, 'edit')"
+            v-if="item.status === 'pending'"
+            icon="mdi-pencil-outline"
+            variant="tonal"
+            color="primary"
+            size="small"
+            :loading="getLoading(item, 'edit')"
+            :disabled="isAnyLoading(item)"
+            @click="handleAction(item, 'edit')"
           />
 
           <v-btn
-              v-else-if="item.status === 'done'"
-              icon="mdi-reload"
-              variant="tonal"
-              color="primary"
-              size="small"
-              :loading="getLoading(item, 'edit')"
-              :disabled="isAnyLoading(item)"
-              @click="handleAction(item, 'edit')"
+            v-else-if="item.status === 'done'"
+            icon="mdi-reload"
+            variant="tonal"
+            color="primary"
+            size="small"
+            :loading="getLoading(item, 'edit')"
+            :disabled="isAnyLoading(item)"
+            @click="handleAction(item, 'edit')"
           />
 
           <v-btn
-              icon="mdi-delete-outline"
-              variant="tonal"
-              color="error"
-              size="small"
-              :loading="getLoading(item, 'delete')"
-              :disabled="isAnyLoading(item)"
-              @click="handleAction(item, 'delete')"
+            icon="mdi-delete-outline"
+            variant="tonal"
+            color="error"
+            size="small"
+            :loading="getLoading(item, 'delete')"
+            :disabled="isAnyLoading(item)"
+            @click="handleAction(item, 'delete')"
           />
         </div>
       </template>
@@ -138,7 +153,7 @@
 import { format } from 'date-fns'
 import { enUS, fr } from 'date-fns/locale'
 import type { ReminderGroup } from '~/types/reminder'
-import { useI18n } from "vue-i18n"
+import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 
 const props = defineProps<{
@@ -185,10 +200,10 @@ const handleAction = async (item: ReminderGroup, emitName: 'delete' | 'finish-tr
   }
 }
 
-const locales: Record<string, any> = {en: enUS, fr: fr}
+const locales: Record<string, any> = { en: enUS, fr: fr }
 const formatDate = (date: Date | string) => {
   if (!date) return ''
-  return format(new Date(date), 'dd MMM', {locale: locales[locale.value] || enUS})
+  return format(new Date(date), 'dd MMM', { locale: locales[locale.value] || enUS })
 }
 </script>
 

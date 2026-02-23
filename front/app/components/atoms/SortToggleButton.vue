@@ -1,29 +1,31 @@
 <template>
   <v-btn
-      icon
-      :variant="variant"
-      :size="size"
-      :color="color"
-      @click="$emit('toggle')"
-      :title="title"
-      v-bind="$attrs"
-      class="sort-toggle-btn"
+    icon
+    :variant="variant"
+    :size="size"
+    :color="color"
+    :title="title"
+    v-bind="$attrs"
+    class="sort-toggle-btn"
+    @click="$emit('toggle')"
   >
     <v-icon :icon="sortOrder === 'asc' ? 'mdi-sort-ascending' : 'mdi-sort-descending'"/>
   </v-btn>
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
+const {
+  variant = 'outlined',
+  color = 'primary',
+  title = '',
+  size = 'small'
+} = defineProps<{
   sortOrder: 'asc' | 'desc'
   title?: string
   variant?: 'text' | 'flat' | 'elevated' | 'outlined' | 'plain' | 'tonal'
   size?: string
   color?: string
-}>(), {
-  variant: 'outlined',
-  color: 'primary'
-})
+}>()
 
 defineEmits<{
   toggle: []

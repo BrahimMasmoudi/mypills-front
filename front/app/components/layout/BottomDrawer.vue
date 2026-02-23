@@ -1,8 +1,8 @@
 <template>
   <v-bottom-navigation
-      grow
-      color="primary"
-      app
+    grow
+    color="primary"
+    app
   >
     <v-btn to="/medications">
       <v-icon>mdi-pill</v-icon>
@@ -22,9 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from "vue-i18n";
+import { useI18n } from 'vue-i18n';
 
-const {t} = useI18n()
+const { t } = useI18n()
 </script>
 
 <style scoped>

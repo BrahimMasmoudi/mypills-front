@@ -1,9 +1,11 @@
 <template>
-  <v-dialog v-model="isActive"
-            :persistent="isPersistent"
-            :scrim="scrim"
-            max-width="400"
-            @update:modelValue="close">
+  <v-dialog
+    v-model="isActive"
+    :persistent="isPersistent"
+    :scrim="scrim"
+    max-width="400"
+    @update:model-value="close"
+  >
     <v-card class="rounded-xl pa-6">
       <!-- Header -->
       <div class="d-flex flex-column align-center text-center mb-4">
@@ -25,21 +27,23 @@
       <!-- Actions -->
       <v-card-actions class="pa-0 d-flex flex-column gap-3">
         <v-btn
-            block
-            color="primary"
-            variant="flat"
-            size="large"
-            class="text-capitalize font-weight-bold"
-            @click="close('increment')">
+          block
+          color="primary"
+          variant="flat"
+          size="large"
+          class="text-capitalize font-weight-bold"
+          @click="close('increment')"
+        >
           {{ t('duplicate.increment') }}
         </v-btn>
         <v-btn
-            block
-            variant="outlined"
-            color="grey-darken-1"
-            size="large"
-            class="text-capitalize font-weight-bold"
-            @click="close('cancel')">
+          block
+          variant="outlined"
+          color="grey-darken-1"
+          size="large"
+          class="text-capitalize font-weight-bold"
+          @click="close('cancel')"
+        >
           {{ t('duplicate.cancel') }}
         </v-btn>
       </v-card-actions>
@@ -48,7 +52,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useI18n } from "vue-i18n"
+import { useI18n } from 'vue-i18n'
 import { format } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
 

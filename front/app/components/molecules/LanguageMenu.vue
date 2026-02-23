@@ -1,27 +1,33 @@
 <template>
   <v-menu location="bottom end" transition="slide-y-transition" :offset="8">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <v-btn
-          v-bind="props"
-          icon
-          variant="text"
-          :ripple="false"
-          class="language-btn"
+        v-bind="props"
+        icon
+        variant="text"
+        :ripple="false"
+        class="language-btn"
       >
         <nuxt-icon :name="currentLanguage" class="flag-icon" />
       </v-btn>
     </template>
 
-    <v-list density="compact" rounded="lg" elevation="8" class="py-2" min-width="150">
+    <v-list
+      density="compact"
+      rounded="lg"
+      elevation="8"
+      class="py-2"
+      min-width="150"
+    >
       <v-list-item
-          v-for="lang in languages"
-          :key="lang.code"
-          :value="lang.code"
-          @click="() => switchLocale(lang.code)"
-          :active="locale === lang.code"
-          color="primary"
-          rounded="lg"
-          class="mb-1 mx-2"
+        v-for="lang in languages"
+        :key="lang.code"
+        :value="lang.code"
+        :active="locale === lang.code"
+        color="primary"
+        rounded="lg"
+        class="mb-1 mx-2"
+        @click="() => switchLocale(lang.code)"
       >
         <template #prepend>
           <nuxt-icon :name="`flag-${lang.code}`" filled class="flag-icon-small mr-3"/>
@@ -36,7 +42,7 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import {useLanguageStore} from "~/store/language";
+import { useLanguageStore } from '~/store/language';
 
 const { locale } = useI18n()
 const langStore = useLanguageStore()

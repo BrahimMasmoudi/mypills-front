@@ -1,12 +1,13 @@
 <template>
   <v-btn
-      variant="outlined"
-      :ripple="false"
-      style="border-radius: 4px !important; border: 1px solid gray;"
-      height="56"
-      width="100%"
-      :loading="loading"
-      class="d-flex align-center justify-space-between pl-2">
+    variant="outlined"
+    :ripple="false"
+    style="border-radius: 4px !important; border: 1px solid gray;"
+    height="56"
+    width="100%"
+    :loading="loading"
+    class="d-flex align-center justify-space-between pl-2"
+  >
     <template #default>
       <slot name="default"/>
       <slot name="menu"/>

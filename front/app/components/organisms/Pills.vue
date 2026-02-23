@@ -3,39 +3,44 @@
     <MoleculesMedicationsSkeletonLoader/>
   </v-sheet>
 
-  <v-sheet v-else width="100%" height="calc(100vh - 64px)" class="d-flex flex-column align-start mb-2 overflow-hidden pa-4">
+  <v-sheet
+    v-else
+    width="100%"
+    height="calc(100vh - 64px)"
+    class="d-flex flex-column align-start mb-2 overflow-hidden pa-4"
+  >
     <div class="w-100 flex-shrink-0">
       <MoleculesMedicationsSearchSort
-          v-model:search-query="searchQuery"
-          v-model:sort-by="sortBy"
-          v-model:view-type="viewType"
-          :sort-order="sortOrder"
-          :sort-options="sortOptions"
-          :is-mobile="$device.isMobile"
-          @toggle-sort-order="toggleSortOrder"
+        v-model:search-query="searchQuery"
+        v-model:sort-by="sortBy"
+        v-model:view-type="viewType"
+        :sort-order="sortOrder"
+        :sort-options="sortOptions"
+        :is-mobile="$device.isMobile"
+        @toggle-sort-order="toggleSortOrder"
       />
     </div>
 
     <div class="w-100 flex-grow-1 overflow-hidden d-flex flex-column">
       <MoleculesMedicationsTabs
-          v-model="tab"
-          :view-type="viewType"
-          :all-medication="allMedication"
-          :valid-medication="validMedication"
-          :expired-medication="expiredMedication"
-          @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
-          @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
-          @delete-pills="(med, done) => $emit('delete-pills', med, done)"
-          @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
+        v-model="tab"
+        :view-type="viewType"
+        :all-medication="allMedication"
+        :valid-medication="validMedication"
+        :expired-medication="expiredMedication"
+        @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
+        @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
+        @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+        @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
       />
     </div>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import type {Medication} from "~/types/medication"
+import type { Medication } from '~/types/medication'
 
-const {medications} = defineProps<{
+const { medications } = defineProps<{
   medications: Medication[] | undefined
   medicationLoading: boolean
 }>()
@@ -55,9 +60,9 @@ const sortOrder = ref<'asc' | 'desc'>('asc')
 const tab = ref<string>('all')
 
 const sortOptions = [
-  {value: 'name' as const, label: 'sort.name', icon: 'mdi-alphabetical'},
-  {value: 'expiryDate' as const, label: 'sort.expiryDate', icon: 'mdi-calendar-clock'},
-  {value: 'quantity' as const, label: 'sort.quantity', icon: 'mdi-counter'}
+  { value: 'name' as const, label: 'sort.name', icon: 'mdi-alphabetical' },
+  { value: 'expiryDate' as const, label: 'sort.expiryDate', icon: 'mdi-calendar-clock' },
+  { value: 'quantity' as const, label: 'sort.quantity', icon: 'mdi-counter' }
 ]
 
 const toggleSortOrder = () => {

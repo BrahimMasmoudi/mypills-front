@@ -1,11 +1,12 @@
 <template>
   <v-btn
-      :ripple="false"
-      class="change-mode-btn"
-      icon
-      :color="colorMode.value === 'dark' ? 'amber' : 'black'"
-      variant="text"
-      @click="toggleColorMode">
+    :ripple="false"
+    class="change-mode-btn"
+    icon
+    :color="colorMode.value === 'dark' ? 'amber' : 'black'"
+    variant="text"
+    @click="toggleColorMode"
+  >
     <v-icon>{{ colorMode.value === 'dark' ? 'mdi-weather-night' : 'mdi-white-balance-sunny'}}</v-icon>
   </v-btn>
 </template>
@@ -19,7 +20,7 @@ const toggleColorMode = () => {
 
 watch(() => colorMode.value, (val) => {
   theme.change(val)
-}, {immediate: true})
+}, { immediate: true })
 </script>
 
 <style scoped>

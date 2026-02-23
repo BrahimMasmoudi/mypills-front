@@ -1,18 +1,18 @@
 <template>
-  <v-sheet width="100%" v-if="medications?.length ?? 0 > 0">
+  <v-sheet v-if="medications?.length ?? 0 > 0" width="100%">
     <v-row class="d-flex align-stretch justify-start mt-0 px-1">
       <v-col
-          md="3"
-          cols="6"
-          v-for="medication in medications"
-          :key="medication.medicationId"
+        v-for="medication in medications"
+        :key="medication.medicationId"
+        md="3"
+        cols="6"
       >
         <AtomsPill
-            :medication="medication"
-            @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
-            @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
-            @delete-pills="(med, done) => $emit('delete-pills', med, done)"
-            @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
+          :medication="medication"
+          @decrement-pills="(med, amount, done) => $emit('decrement-pills', med, amount, done)"
+          @increment-pills="(med, amount, done) => $emit('increment-pills', med, amount, done)"
+          @delete-pills="(med, done) => $emit('delete-pills', med, done)"
+          @update-medication-name="(med, name, done) => $emit('update-medication-name', med, name, done)"
         />
       </v-col>
     </v-row>

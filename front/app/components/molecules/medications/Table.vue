@@ -1,32 +1,32 @@
 <template>
   <v-data-table
-      :headers="headers"
-      :items="medications"
-      class="elevation-2 medication-table rounded-xl"
-      fixed-header
-      height="90vh"
-      hide-default-footer
-      :items-per-page="-1"
+    :headers="headers"
+    :items="medications"
+    class="elevation-2 medication-table rounded-xl"
+    fixed-header
+    height="90vh"
+    hide-default-footer
+    :items-per-page="-1"
   >
     <template #[`item.details`]="{ item }">
       <div v-if="item.bareCode">
         <v-btn
-            icon="mdi-barcode-scan"
-            variant="text"
-            size="small"
-            color="primary"
-            density="comfortable"
-            @click.stop="showMedicationDetails(item)"
+          icon="mdi-barcode-scan"
+          variant="text"
+          size="small"
+          color="primary"
+          density="comfortable"
+          @click.stop="showMedicationDetails(item)"
         />
       </div>
       <div v-else-if="item.details">
         <v-btn
-            icon="mdi-information-outline"
-            variant="text"
-            size="small"
-            color="primary"
-            density="comfortable"
-            @click.stop="showMedicationDetails(item)"
+          icon="mdi-information-outline"
+          variant="text"
+          size="small"
+          color="primary"
+          density="comfortable"
+          @click.stop="showMedicationDetails(item)"
         />
       </div>
     </template>
@@ -40,10 +40,10 @@
     <template #[`item.numberOfBoxes`]="{ item }">
       <div class="d-flex flex-column align-start">
         <v-chip
-            size="small"
-            class="font-weight-bold"
-            color="secondary"
-            variant="flat"
+          size="small"
+          class="font-weight-bold"
+          color="secondary"
+          variant="flat"
         >
           {{ item.numberOfBoxes }}
         </v-chip>
@@ -53,10 +53,10 @@
     <template #[`item.quantity`]="{ item }">
       <div class="d-flex flex-column align-start">
         <v-chip
-            size="small"
-            class="font-weight-bold"
-            :color="item.expired ? 'error' : 'primary'"
-            variant="flat"
+          size="small"
+          class="font-weight-bold"
+          :color="item.expired ? 'error' : 'primary'"
+          variant="flat"
         >
           {{ item.quantity }}
         </v-chip>
@@ -65,10 +65,10 @@
 
     <template #[`item.expiryDate`]="{ item }">
       <v-chip
-          :color="item.expired ? 'error' : 'success'"
-          :variant="item.expired ? 'flat' : 'tonal'"
-          size="small"
-          class="font-weight-medium"
+        :color="item.expired ? 'error' : 'success'"
+        :variant="item.expired ? 'flat' : 'tonal'"
+        size="small"
+        class="font-weight-medium"
       >
         <v-icon start icon="mdi-calendar-clock" size="x-small"/>
         {{ parseDate(item.expiryDate) }}
@@ -78,49 +78,49 @@
     <template #[`item.actions`]="{ item }">
       <div class="d-flex align-center justify-end">
         <v-btn
-            icon="mdi-minus"
-            size="x-small"
-            variant="tonal"
-            color="warning"
-            class="mr-2 action-btn"
-            :disabled="item.quantity <= 1"
-            @click.stop="handleDecrement(item)"
-            :loading="loadingStates[item.medicationId]?.decrement"
+          icon="mdi-minus"
+          size="x-small"
+          variant="tonal"
+          color="warning"
+          class="mr-2 action-btn"
+          :disabled="item.quantity <= 1"
+          :loading="loadingStates[item.medicationId]?.decrement"
+          @click.stop="handleDecrement(item)"
         />
 
         <v-btn
-            icon="mdi-plus"
-            size="x-small"
-            variant="tonal"
-            color="success"
-            class="mr-2 action-btn"
-            @click.stop="handleIncrement(item)"
-            :loading="loadingStates[item.medicationId]?.increment"
+          icon="mdi-plus"
+          size="x-small"
+          variant="tonal"
+          color="success"
+          class="mr-2 action-btn"
+          :loading="loadingStates[item.medicationId]?.increment"
+          @click.stop="handleIncrement(item)"
         />
 
         <v-btn
-            icon="mdi-pencil-outline"
-            size="x-small"
-            variant="tonal"
-            color="info"
-            class="mr-2 action-btn"
-            @click.stop="handleRename(item)"
-            :loading="loadingStates[item.medicationId]?.rename"
+          icon="mdi-pencil-outline"
+          size="x-small"
+          variant="tonal"
+          color="info"
+          class="mr-2 action-btn"
+          :loading="loadingStates[item.medicationId]?.rename"
+          @click.stop="handleRename(item)"
         />
 
         <v-btn
-            icon="mdi-delete-outline"
-            size="x-small"
-            variant="tonal"
-            color="error"
-            class="action-btn"
-            @click.stop="confirmDelete(item)"
-            :loading="loadingStates[item.medicationId]?.delete"
+          icon="mdi-delete-outline"
+          size="x-small"
+          variant="tonal"
+          color="error"
+          class="action-btn"
+          :loading="loadingStates[item.medicationId]?.delete"
+          @click.stop="confirmDelete(item)"
         />
       </div>
     </template>
 
-    <template #bottom></template>
+    <template #bottom/>
   </v-data-table>
 
   <v-dialog v-model="renameDialog" max-width="400">
@@ -128,22 +128,35 @@
       <v-card-title class="text-h6 font-weight-bold mx-auto">{{ t('dialogRename.title') }}</v-card-title>
       <v-card-text>
         <v-text-field
-            v-model="editedName"
-            :label="t('medicationName')"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-            autofocus
-            @keydown.enter="saveRename"
+          v-model="editedName"
+          :label="t('medicationName')"
+          variant="outlined"
+          density="comfortable"
+          hide-details
+          autofocus
+          @keydown.enter="saveRename"
         />
       </v-card-text>
       <v-card-actions class="w-100 justify-center pt-2 gap-4">
-        <v-btn variant="outlined" size="large" color="grey-darken-1"
-               class="flex-grow-1 text-capitalize font-weight-bold" height="48" @click="renameDialog = false">
+        <v-btn
+          variant="outlined"
+          size="large"
+          color="grey-darken-1"
+          class="flex-grow-1 text-capitalize font-weight-bold"
+          height="48"
+          @click="renameDialog = false"
+        >
           {{ t('cancel') }}
         </v-btn>
-        <v-btn color="primary" variant="flat" size="large" class="flex-grow-1 text-capitalize font-weight-bold"
-               height="48" :loading="selectedMed ? loadingStates[selectedMed.medicationId]?.rename : false" @click="saveRename">
+        <v-btn
+          color="primary"
+          variant="flat"
+          size="large"
+          class="flex-grow-1 text-capitalize font-weight-bold"
+          height="48"
+          :loading="selectedMed ? loadingStates[selectedMed.medicationId]?.rename : false"
+          @click="saveRename"
+        >
           {{ t('save') }}
         </v-btn>
       </v-card-actions>
@@ -154,10 +167,10 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import type { Medication } from '~/types/medication'
-import { parseDate } from "~/composables/parseDate"
-import ValidationWithWarningDialog from "~/components/molecules/ValidationWithWarningDialog.vue"
-import InfoDialog from "~/components/molecules/medications/InfoDialog.vue"
-import type {ToastType} from "~/composables/openToast";
+import { parseDate } from '~/composables/parseDate'
+import ValidationWithWarningDialog from '~/components/molecules/ValidationWithWarningDialog.vue'
+import InfoDialog from '~/components/molecules/medications/InfoDialog.vue'
+import type { ToastType } from '~/composables/openToast';
 
 const { t } = useI18n()
 const { $open } = useNuxtApp()

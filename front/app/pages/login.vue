@@ -16,22 +16,27 @@
 
     <!-- Global Loading Overlay (Backup) -->
     <v-overlay
-        :model-value="isLoading"
-        class="align-center justify-center backdrop-blur"
-        persistent
-        z-index="2000"
+      :model-value="isLoading"
+      class="align-center justify-center backdrop-blur"
+      persistent
+      z-index="2000"
     >
       <v-card class="pa-8 d-flex flex-column align-center rounded-xl elevation-24 bg-surface" min-width="200">
-         <v-progress-circular indeterminate color="primary" size="48" class="mb-4"/>
-         <span class="font-weight-bold text-primary">{{ t('login.completing') }}</span>
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          size="48"
+          class="mb-4"
+        />
+        <span class="font-weight-bold text-primary">{{ t('login.completing') }}</span>
       </v-card>
     </v-overlay>
   </v-app>
 </template>
 
 <script lang="ts" setup>
-import {useUserStore} from "~/store/userStore"
-import {useI18n} from "vue-i18n"
+import { useUserStore } from '~/store/userStore'
+import { useI18n } from 'vue-i18n'
 
 
 const userStore = useUserStore()

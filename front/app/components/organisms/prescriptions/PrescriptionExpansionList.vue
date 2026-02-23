@@ -3,22 +3,29 @@
     <v-expansion-panel v-for="folder in visibleFolders" :key="folder" :value="folder">
       <v-expansion-panel-title>
         <MoleculesPrescriptionsFolderHeader
-            :folder-name="folder"
-            :doc-count-label="t('scanDocumentDialog.documents', getDocs(folder).length)"
-            @rename="(oldN, newN, done) => $emit('renameFolder', oldN, newN, done)"
-            @delete="(name) => $emit('deleteFolder', name)"
+          :folder-name="folder"
+          :doc-count-label="t('scanDocumentDialog.documents', getDocs(folder).length)"
+          @rename="(oldN, newN, done) => $emit('renameFolder', oldN, newN, done)"
+          @delete="(name) => $emit('deleteFolder', name)"
         />
       </v-expansion-panel-title>
       <v-expansion-panel-text class="pt-4">
         <v-row>
-          <v-col v-for="doc in getDocs(folder)" :key="doc.id" cols="12" sm="6" md="4" lg="3">
+          <v-col
+            v-for="doc in getDocs(folder)"
+            :key="doc.id"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+          >
             <MoleculesPrescriptionsDocumentCard
-                :doc="doc"
-                :formatted-date="formatDate(doc.uploadedAt)"
-                @view="(url) => $emit('view', url)"
-                @delete="(d) => $emit('deleteDoc', d)"
-                @rename="(d, newN, done) => $emit('renameDoc', d, newN, done)"
-                @share="(d) => $emit('shareDoc', d)"
+              :doc="doc"
+              :formatted-date="formatDate(doc.uploadedAt)"
+              @view="(url) => $emit('view', url)"
+              @delete="(d) => $emit('deleteDoc', d)"
+              @rename="(d, newN, done) => $emit('renameDoc', d, newN, done)"
+              @share="(d) => $emit('shareDoc', d)"
             />
           </v-col>
         </v-row>
@@ -28,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import {useI18n} from "vue-i18n";
+import { useI18n } from 'vue-i18n';
 
 defineProps<{
   visibleFolders: string[];
@@ -37,5 +44,5 @@ defineProps<{
 }>()
 const emit = defineEmits(['renameFolder', 'deleteFolder', 'renameDoc', 'deleteDoc', 'view', 'shareDoc'])
 const internalPanels = defineModel<string[]>('openedPanels')
-const {t} = useI18n()
+const { t } = useI18n()
 </script>

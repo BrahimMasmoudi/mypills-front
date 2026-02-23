@@ -2,22 +2,27 @@
   <v-card variant="outlined" class="rounded-lg hover-card">
     <div class="d-flex flex-column pa-3">
       <div class="d-flex align-center mb-2">
-        <v-avatar color="primary-lighten-5" rounded="lg" size="48" class="mr-3">
+        <v-avatar
+          color="primary-lighten-5"
+          rounded="lg"
+          size="48"
+          class="mr-3"
+        >
           <v-icon icon="mdi-file-pdf-box" color="primary" size="32"/>
         </v-avatar>
 
         <div class="overflow-hidden flex-grow-1">
           <v-text-field
-              v-if="isEditing"
-              v-model="localName"
-              density="compact"
-              :loading="isLoading"
-              variant="plain"
-              hide-details
-              class="text-subtitle-1 font-weight-bold"
-              @keyup.enter="save"
-              append-inner-icon="mdi-check"
-              @click:append-inner="save"
+            v-if="isEditing"
+            v-model="localName"
+            density="compact"
+            :loading="isLoading"
+            variant="plain"
+            hide-details
+            class="text-subtitle-1 font-weight-bold"
+            append-inner-icon="mdi-check"
+            @keyup.enter="save"
+            @click:append-inner="save"
           />
           <div v-else class="text-subtitle-1 font-weight-bold text-truncate">{{ doc.name }}</div>
           <div class="text-caption text-medium-emphasis">{{ formattedDate }}</div>
@@ -28,10 +33,34 @@
     <v-divider/>
 
     <v-card-actions class="justify-end px-2 py-1">
-      <v-btn icon="mdi-share-variant-outline" variant="text" color="primary" size="small" @click="$emit('share', doc)"/>
-      <v-btn icon="mdi-eye-outline" variant="text" color="primary" size="small" @click="$emit('view', doc.fileUrl)"/>
-      <v-btn icon="mdi-pencil-outline" variant="text" color="grey-darken-1" size="small" @click="toggleEdit"/>
-      <v-btn icon="mdi-delete-outline" variant="text" color="error" size="small" @click="$emit('delete', doc)"/>
+      <v-btn
+        icon="mdi-share-variant-outline"
+        variant="text"
+        color="primary"
+        size="small"
+        @click="$emit('share', doc)"
+      />
+      <v-btn
+        icon="mdi-eye-outline"
+        variant="text"
+        color="primary"
+        size="small"
+        @click="$emit('view', doc.fileUrl)"
+      />
+      <v-btn
+        icon="mdi-pencil-outline"
+        variant="text"
+        color="grey-darken-1"
+        size="small"
+        @click="toggleEdit"
+      />
+      <v-btn
+        icon="mdi-delete-outline"
+        variant="text"
+        color="error"
+        size="small"
+        @click="$emit('delete', doc)"
+      />
     </v-card-actions>
   </v-card>
 </template>

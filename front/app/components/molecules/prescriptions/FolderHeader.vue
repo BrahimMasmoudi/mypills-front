@@ -3,23 +3,23 @@
 
     <div class="flex-grow-1 overflow-hidden mr-2">
       <v-text-field
-          v-if="isEditing"
-          v-model="localFolderName"
-          density="compact"
-          variant="plain"
-          color="primary"
-          hide-details
-          :loading="isLoading"
-          autofocus
-          class="font-weight-bold"
-          @click.stop
-          @keyup.enter="save"
-          append-inner-icon="mdi-check"
-          @click:append-inner="save"
+        v-if="isEditing"
+        v-model="localFolderName"
+        density="compact"
+        variant="plain"
+        color="primary"
+        hide-details
+        :loading="isLoading"
+        autofocus
+        class="font-weight-bold"
+        append-inner-icon="mdi-check"
+        @click.stop
+        @keyup.enter="save"
+        @click:append-inner="save"
       />
       <span
-          v-else
-          class="text-subtitle-1 text-sm-h6 font-weight-bold text-truncate d-block"
+        v-else
+        class="text-subtitle-1 text-sm-h6 font-weight-bold text-truncate d-block"
       >
         {{ folderName }}
       </span>
@@ -27,28 +27,28 @@
 
     <div class="d-flex align-center no-wrap flex-shrink-0">
       <v-chip
-          size="x-small"
-          variant="tonal"
-          color="primary"
-          class="mr-1 mr-sm-2 d-none d-xss-inline-flex"
+        size="x-small"
+        variant="tonal"
+        color="primary"
+        class="mr-1 mr-sm-2 d-none d-xss-inline-flex"
       >
         {{ docCountLabel.split(' ')[0] }} </v-chip>
 
       <v-btn
-          icon="mdi-pencil-outline"
-          variant="text"
-          color="primary"
-          size="small"
-          density="comfortable"
-          @click.stop="toggleEdit"
+        icon="mdi-pencil-outline"
+        variant="text"
+        color="primary"
+        size="small"
+        density="comfortable"
+        @click.stop="toggleEdit"
       />
       <v-btn
-          icon="mdi-delete-outline"
-          variant="text"
-          color="error"
-          size="small"
-          density="comfortable"
-          @click.stop="$emit('delete', folderName)"
+        icon="mdi-delete-outline"
+        variant="text"
+        color="error"
+        size="small"
+        density="comfortable"
+        @click.stop="$emit('delete', folderName)"
       />
     </div>
   </div>

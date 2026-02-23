@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/vue3";
+import type { Preview } from '@storybook/vue3';
 import { setup } from '@storybook/vue3';
 import { createI18n } from 'vue-i18n';
 import fr from '../app/locales/fr.json';
@@ -9,6 +9,8 @@ import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import 'vuetify/styles';
+
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 
 const i18n = createI18n({
   legacy: false,
@@ -27,11 +29,11 @@ const vuetify = createVuetify({
       light: {
         colors: {
           primary: '#3643BA',
-          "dark-primary": '#2E399E',
+          'dark-primary': '#2E399E',
           gray: '#a0a0a0',
           'dark-gray': '#4E5D6BCC',
-          "primary-light": '#D9ECF5',
-          "light-blue": '#9ADDFF',
+          'primary-light': '#D9ECF5',
+          'light-blue': '#9ADDFF',
           'completed': '#149B65',
           'in_progress': '#0113B6FF',
           'to_be_processed': '#EC6607',
@@ -69,8 +71,6 @@ setup((app) => {
   app.config.globalProperties.$open = nuxtAppMock.$open;
   app.config.globalProperties.$colorMode = nuxtAppMock.$colorMode;
 });
-
-import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 
 const preview: Preview = {
   parameters: {
