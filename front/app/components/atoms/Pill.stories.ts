@@ -68,16 +68,4 @@ export const Scanned: Story = {
             expiryDate: new Date(2023, 0, 1),
         },
     },
-};
-
-export const Mobile: Story = {
-    args: {
-        medication: { ...baseMedication },
-    },
-    globals: {
-        viewport: {
-            value: 'iphone6',
-            isRotated: false
-        }
-    },
-};
+}
