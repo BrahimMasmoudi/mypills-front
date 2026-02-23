@@ -44,7 +44,7 @@
                 <nuxt-icon name="cup" class="text-medium-emphasis d-block oral"/>
               </suspense>
               <div class="text-caption text-medium-emphasis">{{ t('detailsDialog.method') }}</div>
-              <div class="text-body-2 font-weight-bold capitalize">{{ details?.administrationRoutes[0] }}</div>
+              <div class="text-body-2 font-weight-bold capitalize">{{ details?.administrationRoutes?.[0] }}</div>
             </v-card>
           </v-col>
           <v-col cols="6">
