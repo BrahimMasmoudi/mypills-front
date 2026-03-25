@@ -35,7 +35,6 @@ export default defineNuxtConfig({
         '@vite-pwa/nuxt',
         '@nuxtjs/color-mode',
         '@vueuse/nuxt',
-        '@nuxtjs/storybook',
         '@nuxt/eslint',
     ],
     colorMode: {
