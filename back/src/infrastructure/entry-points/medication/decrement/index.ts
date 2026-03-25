@@ -4,7 +4,7 @@ import { $firebaseConnector } from '../../../config/firebase'
 import { DecrementMedication } from '../../../../application/usecases/medication/decrement-medication/decrement-medication'
 import { Medication } from '../../../../domain/entities/medication'
 
-export const decrementMedication = onCall({ region: 'europe-west3', enforceAppCheck: true }, async ({ data, auth }) => {
+export const decrementMedication = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async ({ data, auth }) => {
     if (!auth) {
         throw new HttpsError(
             'unauthenticated',

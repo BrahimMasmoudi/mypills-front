@@ -3,7 +3,7 @@ import { SaveUserToken } from '../../../../application/usecases/scheduler/user-t
 import { FirestoreUserRepositoryAdapter } from '../../../adapters/scheduler/firestore-user-repository-adapter'
 import { $firebaseConnector } from '../../../config/firebase'
 
-export const saveUserToken = onCall({ region: 'europe-west3', enforceAppCheck: true }, async (request) => {
+export const saveUserToken = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async (request) => {
     if (!request.auth) {
         throw new HttpsError('unauthenticated', 'User must be logged in.')
     }

@@ -5,7 +5,7 @@ import { GiygasApiAdapter } from '../../../adapters/external/giygas-api-adapter'
 import { GetMedicationDetails } from '../../../../application/usecases/medication/get-details/get-medication-details'
 import {Cip13} from "../../../../types/cip13";
 
-export const getMedicationDetails = onCall({ region: 'europe-west3', enforceAppCheck: true }, async ({ data, auth }) => {
+export const getMedicationDetails = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async ({ data, auth }) => {
     if (!auth) {
         throw new HttpsError(
             'unauthenticated',

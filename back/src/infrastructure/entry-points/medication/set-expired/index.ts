@@ -3,7 +3,7 @@ import { FirestoreMedicationRepositoryAdapter } from '../../../adapters/persiste
 import { $firebaseConnector } from '../../../config/firebase'
 import { SetExpiredStatus } from '../../../../application/usecases/medication/set-expired-status/set-expired-status'
 
-export const setExpiredStatus = onCall({ region: 'europe-west3', enforceAppCheck: true }, async ({ data, auth }) => {
+export const setExpiredStatus = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async ({ data, auth }) => {
     if (!auth) {
         throw new HttpsError(
             'unauthenticated',

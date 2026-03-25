@@ -4,7 +4,7 @@ import { IncrementMedication } from '../../../../application/usecases/medication
 import { $firebaseConnector } from '../../../config/firebase'
 import { Medication } from '../../../../domain/entities/medication'
 
-export const incrementMedication = onCall({ region: 'europe-west3', enforceAppCheck: true }, async ({ data, auth }) => {
+export const incrementMedication = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async ({ data, auth }) => {
     if (!auth) {
         throw new HttpsError(
             'unauthenticated',

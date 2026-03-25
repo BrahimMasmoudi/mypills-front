@@ -17,7 +17,7 @@ import { getMessaging } from 'firebase/messaging'
 // being reported as invalid in the Firebase console.
 if (import.meta.client && process.env.NODE_ENV !== 'production') {
     // @ts-ignore
-    self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APP_CHECK_DEBUG_TOKEN ?? true
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.FIREBASE_APPCHECK_DEBUG_TOKEN ?? true
 }
 
 type RemoteConfig = Record<string, any>

@@ -7,7 +7,7 @@ import {
     FetchTunisianMedication,
 } from '../../../../application/usecases/medication/fetch-tunisian-medication/fetch-tunisian-medication'
 
-export const searchTunisianMeds = onCall({ region: 'europe-west3', enforceAppCheck: true }, async ({ data, auth }) => {
+export const searchTunisianMeds = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async ({ data, auth }) => {
     if (!auth) {
         throw new HttpsError(
             'unauthenticated',
