@@ -191,7 +191,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Medication } from '~/types/medication'
+import { VALID_FORMS, type MedicationForm, type Medication } from '~/types/medication'
 import { parseDate } from '~/composables/parseDate'
 import InfoDialog from '~/components/molecules/medications/InfoDialog.vue'
 import { useI18n } from 'vue-i18n'
@@ -203,6 +203,7 @@ const { t } = useI18n()
 const { medication } = defineProps<{
   medication: Medication
 }>()
+
 
 const emit = defineEmits<{
   (e: 'increment-pills', medication: Medication, amount: number, done: () => void): void
@@ -276,11 +277,15 @@ const showMedicationDetails = async () => {
 
 const getTranslatedForm = (form: string) => {
   if (!form) return ''
-  // Try to find translation for first word if full form not found (e.g. "Comprimé pelliculé" -> "Tablet")
-  const key = form.toLowerCase().split(' ')[0]
-  // Check if translation exists, otherwise return original
-  return t(`forms.${key}`, form) !== `forms.${key}` ? t(`forms.${key}`) : form
+  const key = form.toLowerCase().split(' ')[0] as MedicationForm
+  
+  if (VALID_FORMS.includes(key)) {
+    return t(`forms.${key}`)
+  }
+  
+  return t('meds.quantity')
 }
+
 
 </script>
 
