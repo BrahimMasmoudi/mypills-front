@@ -58,7 +58,6 @@ export default defineNuxtConfig({
         storage: 'localStorage'
     },
     vuefire: {
-
         analytics: {
             enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || '')
         },
@@ -72,6 +71,12 @@ export default defineNuxtConfig({
                 auth: '127.0.0.1:9099',
                 storage: '127.0.0.1:9199',
             },
+        },
+        appCheck: {
+            enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || ''),
+            provider: 'ReCaptchaV3',
+            key: process.env.FIREBASE_APP_CHECK_SITE_KEY ?? '',
+            isTokenAutoRefreshEnabled: true,
         },
         config: {
             apiKey: process.env.FIREBASE_API_KEY,

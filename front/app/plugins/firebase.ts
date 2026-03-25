@@ -9,9 +9,16 @@ import {
     setUserProperties,
 } from '@firebase/analytics'
 import { connectFunctionsEmulator, getFunctions } from '@firebase/functions'
-import { getStorage, connectStorageEmulator } from '@firebase/storage'
 import { useFirebaseApp, useFirestore, getCurrentUser } from 'vuefire'
 import { getMessaging } from 'firebase/messaging'
+
+// Enable App Check debug token in non-production environments.
+// Set FIREBASE_APP_CHECK_DEBUG_TOKEN in your .env to avoid all requests
+// being reported as invalid in the Firebase console.
+if (import.meta.client && process.env.NODE_ENV !== 'production') {
+    // @ts-ignore
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APP_CHECK_DEBUG_TOKEN ?? true
+}
 
 type RemoteConfig = Record<string, any>
 
