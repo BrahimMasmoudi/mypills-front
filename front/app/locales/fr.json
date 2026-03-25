@@ -84,7 +84,24 @@
     "pilule": "Pilule | Pilules",
     "ampoule": "Ampoule | Ampoules",
     "suspension": "Suspension buvable | Suspensions buvables",
-    "unidose": "Unidose | Multidoses"
+    "unidose": "Unidose | Multidoses",
+    "aérosol": "Aérosol | Aérosols",
+    "patch": "Patch | Patches",
+    "ovule": "Ovule | Ovules",
+    "suppositoire": "Suppositoire | Suppositoires",
+    "crème": "Crème | Crèmes",
+    "pommade": "Pommade | Pommades",
+    "gel": "Gel | Gels",
+    "liquide": "Liquide | Liquides",
+    "gouttes": "Gouttes | Gouttes",
+    "spray": "Spray | Sprays",
+    "inhalateur": "Inhalateur | Inhalateurs",
+    "collutoire": "Collutoire | Collutoires",
+    "collyre": "Collyre | Collyres",
+    "pill": "Pilule | Pilules",
+    "lozenge": "Lozenge | Lozenges",
+    "capsule": "Capsule | Capsules",
+    "tablet": "Tablet | Tablets"
   },
   "home": {
     "title": "Bienvenu à MY PILLS"
