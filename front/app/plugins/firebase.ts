@@ -9,16 +9,9 @@ import {
     setUserProperties,
 } from '@firebase/analytics'
 import { connectFunctionsEmulator, getFunctions } from '@firebase/functions'
-import { useFirebaseApp, useFirestore, getCurrentUser } from 'vuefire'
+import { useFirebaseApp, useFirestore, getCurrentUser, useFirebaseStorage } from 'vuefire'
 import { getMessaging } from 'firebase/messaging'
-
-// Enable App Check debug token in non-production environments.
-// Set FIREBASE_APP_CHECK_DEBUG_TOKEN in your .env to avoid all requests
-// being reported as invalid in the Firebase console.
-if (import.meta.client && process.env.NODE_ENV !== 'production') {
-    // @ts-ignore
-    self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.FIREBASE_APPCHECK_DEBUG_TOKEN ?? true
-}
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
 
 type RemoteConfig = Record<string, any>
 
@@ -60,6 +53,23 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
     } = $config.public.firebase
 
     const firebaseApp = useFirebaseApp()
+
+    if (import.meta.client) {
+        // Enable App Check debug token in non-production environments.
+        if (process.env.NODE_ENV !== 'production') {
+            // @ts-ignore
+            self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN || true
+        }
+
+        try {
+            initializeAppCheck(firebaseApp, {
+                provider: new ReCaptchaV3Provider(import.meta.env.VITE_FIREBASE_APP_CHECK_SITE_KEY || 'dummy-key'),
+                isTokenAutoRefreshEnabled: true,
+            })
+        } catch (e) {
+            console.debug('App Check already initialized or failed:', e)
+        }
+    }
 
     const firestoreInstance = useFirestore()
     const storageInstance = useFirebaseStorage()
