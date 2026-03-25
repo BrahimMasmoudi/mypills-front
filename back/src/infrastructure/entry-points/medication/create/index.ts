@@ -4,7 +4,7 @@ import { CreateMedication } from '../../../../application/usecases/medication/cr
 import { Medication } from '../../../../domain/entities/medication'
 import { $firebaseConnector } from '../../../config/firebase'
 
-export const createMedication = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async ({ data, auth }) => {
+export const createMedication = onCall({ region: 'europe-west3', enforceAppCheck: true }, async ({ data, auth }) => {
     if (!auth) {
         throw new HttpsError(
             'unauthenticated',

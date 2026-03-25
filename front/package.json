@@ -5,14 +5,12 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "nuxt build",
-    "dev": "yarn --cwd ../back build & yarn firebase emulators:exec --import=./mydir --export-on-exit mydir --ui --only firestore,auth,functions,storage 'yarn --cwd ../back migrate && NODE_OPTIONS=\"--openssl-legacy-provider --dns-result-order=ipv4first\" nuxi dev'",
+    "dev": "yarn --cwd ../back build & yarn firebase emulators:exec --import=./mydir --export-on-exit mydir --ui --only firestore,auth,functions,storage 'yarn --cwd ../back migrate && NODE_OPTIONS=--openssl-legacy-provider nuxi dev'",
     "kill": "lsof -t -i:8080 -i:3000 -i:6006 -i:4400 -i:4500 -i:9150 -i:9099 -i:5000 -i:5001 -i:4000 -i:9229 | xargs kill -9 ",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "start": "nuxt start",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
     "prepare": "husky"
   },
   "devDependencies": {

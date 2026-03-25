@@ -3,7 +3,7 @@ import { FirebaseStorageAdapter } from '../../adapters/document/firebase-storage
 import { FirestoreSharedLinkRepository } from '../../adapters/document/firestore-shared-link-repository'
 import { CreateSharedLink } from '../../../application/usecases/document/create-shared-link'
 
-export const generateSharedLink = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async ({ data, auth }) => {
+export const generateSharedLink = onCall({ region: 'europe-west3', enforceAppCheck: true}, async ({ data, auth }) => {
     // 1. Verify Authentication
     if (!auth) {
         throw new HttpsError('unauthenticated', 'User must be logged in.')

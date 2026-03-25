@@ -4,7 +4,7 @@ import { Medication } from '../../../../domain/entities/medication'
 import { $firebaseConnector } from '../../../config/firebase'
 import { DeleteMedication } from '../../../../application/usecases/medication/delete-medication/delete-medication'
 
-export const deleteMedication = onCall({ region: 'europe-west3', enforceAppCheck: process.env.FUNCTIONS_EMULATOR !== 'true' }, async ({ data, auth }) => {
+export const deleteMedication = onCall({ region: 'europe-west3', enforceAppCheck: true }, async ({ data, auth }) => {
     if (!auth) {
         throw new HttpsError(
             'unauthenticated',
