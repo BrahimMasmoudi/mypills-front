@@ -1,10 +1,10 @@
-import { FirebaseAIAdvisorAdapter } from './firebase-ai-advisor-adapter'
-import { FirebaseAiConnector } from '../connectors/firebase-ai-connector'
+import { GoogleAIAdvisorAdapter } from './google-ai-advisor-adapter'
+import { GoogleAiConnector } from '../connectors/google-ai-connector'
 import { Medication } from '../../../domain/entities/medication'
 
-describe('FirebaseAIAdvisorAdapter', () => {
-    let mockConnector: jest.Mocked<FirebaseAiConnector>
-    let adapter: FirebaseAIAdvisorAdapter
+describe('GoogleAIAdvisorAdapter', () => {
+    let mockConnector: jest.Mocked<GoogleAiConnector>
+    let adapter: GoogleAIAdvisorAdapter
     let mockModel: any
 
     beforeEach(() => {
@@ -14,9 +14,9 @@ describe('FirebaseAIAdvisorAdapter', () => {
 
         mockConnector = {
             getModel: jest.fn().mockReturnValue(mockModel)
-        } as unknown as jest.Mocked<FirebaseAiConnector>
+        } as unknown as jest.Mocked<GoogleAiConnector>
 
-        adapter = new FirebaseAIAdvisorAdapter(mockConnector)
+        adapter = new GoogleAIAdvisorAdapter(mockConnector)
     })
 
     const createCabinet = (): Medication[] => [
@@ -41,17 +41,17 @@ describe('FirebaseAIAdvisorAdapter', () => {
             explanation: "Take Doliprane for your headache.",
             usableMedicationIds: ["med-1"]
         })
-        
+
         mockModel.generateContent.mockResolvedValueOnce({
             response: { text: () => fakeAIResponse }
         })
 
         const cabinet = createCabinet()
         const result = await adapter.getAdvice('headache', cabinet, 'en')
-        
-        expect(mockConnector.getModel).toHaveBeenCalledWith("gemini-1.5-flash", true)
+
+        expect(mockConnector.getModel).toHaveBeenCalledWith("gemini-2.5-flash", true)
         expect(mockModel.generateContent).toHaveBeenCalled()
-        
+
         expect(result.explanation).toBe("Take Doliprane for your headache.")
         expect(result.usableMedications).toHaveLength(1)
         expect(result.usableMedications[0].medicationId).toBe('med-1')

@@ -295,13 +295,16 @@
     "loading": "Génération du lien..."
   },
   "medicationAdvisor": {
-    "title": "Conseiller en Médication",
+    "title": "Conseiller IA",
     "description": "Décrivez vos symptômes pour voir lesquels de vos médicaments pourraient être appropriés.",
     "placeholder": "Exemple : J'ai un terrible mal de tête et un peu de fièvre...",
     "button": "Obtenir des conseils",
     "buttonLoading": "Consultation de l'armoire...",
     "suggestions": "Suggestions du conseiller",
     "disclaimer": "Avis de non-responsabilité : Ces conseils sont générés par IA et peuvent être inexacts. Vérifiez toujours auprès d'un professionnel de la santé.",
-    "errorEmpty": "Veuillez d'abord saisir votre symptôme."
+    "errorEmpty": "Veuillez d'abord saisir votre symptôme.",
+    "disclaimerTitle": "Avertissement Médical",
+    "strictDisclaimer": "Je suis un assistant IA et NON un médecin. Cet outil se base uniquement sur les médicaments enregistrés dans votre armoire. Consultez toujours un professionnel de la santé et vérifiez la notice avant de prendre le moindre médicament.",
+    "usableMedications": "Médicaments utilisables"
   }
 }

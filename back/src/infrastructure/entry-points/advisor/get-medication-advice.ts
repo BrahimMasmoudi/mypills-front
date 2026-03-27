@@ -1,14 +1,14 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
 import { FirestoreMedicationRepositoryAdapter } from '../../adapters/persistence/firestore-medication-repository-adapter'
-import { FirebaseAIAdvisorAdapter } from '../../adapters/external/firebase-ai-advisor-adapter'
+import { GoogleAIAdvisorAdapter } from '../../adapters/external/google-ai-advisor-adapter'
 import { GetMedicationAdvice } from '../../../application/usecases/advisor/get-medication-advice'
 import { $firebaseConnector, $aiConnector } from '../../config/firebase'
 
 export const getMedicationAdvice = onCall(
-    { 
-        region: 'europe-west3', 
+    {
+        region: 'europe-west3',
         enforceAppCheck: true
-    }, 
+    },
     async ({ data, auth }) => {
         if (!auth) {
             throw new HttpsError(
@@ -25,8 +25,8 @@ export const getMedicationAdvice = onCall(
         }
 
         const medicationRepo = new FirestoreMedicationRepositoryAdapter($firebaseConnector)
-        const advisorGateway = new FirebaseAIAdvisorAdapter($aiConnector)
-        
+        const advisorGateway = new GoogleAIAdvisorAdapter($aiConnector)
+
         const getMedicationAdviceUseCase = new GetMedicationAdvice(medicationRepo, advisorGateway)
 
         try {

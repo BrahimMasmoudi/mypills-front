@@ -1,10 +1,12 @@
 import { AdvisorGateway } from '../../../domain/gateway/advisor-gateway'
 import { Medication } from '../../../domain/entities/medication'
-import { FirebaseAiConnector } from '../connectors/firebase-ai-connector'
+import { GoogleAiConnector } from '../connectors/google-ai-connector'
 import { StructuredAdvice } from '../../../domain/entities/structured-advice'
 
-export class FirebaseAIAdvisorAdapter implements AdvisorGateway {
-    constructor(private readonly firebaseConnector: FirebaseAiConnector) { }
+export class GoogleAIAdvisorAdapter implements AdvisorGateway {
+
+    // Updated constructor type to the new GoogleAiConnector
+    constructor(private readonly aiConnector: GoogleAiConnector) { }
 
     async getAdvice(symptom: string, cabinet: Medication[], language: string): Promise<StructuredAdvice> {
         if (cabinet.length === 0) {
@@ -16,21 +18,22 @@ export class FirebaseAIAdvisorAdapter implements AdvisorGateway {
             }
         }
 
-        const systemInstruction = `
-            You are a Medication Advisor AI. 
-            STRICT RULES:
-            1. You are NOT a doctor. You must state this disclaimer clearly in your explanation and advise the user to consult a medical professional.
-            2. You must explain your reasoning in the explanation field.
-            3. ONLY suggest medications that are explicitly listed in the "User's Medication Cabinet" provided below. Do NOT suggest any external medications.
-            4. Expired medications must NOT go into usableMedications; they should be warned about in the explanation.
-            5. If no medication matches the symptom, state clearly in the explanation that nothing is appropriate and leave usableMedications empty.
-            6. You must respond entirely in the following language code: ${language}. If language is 'fr', respond in French. If 'en', in English, etc.
-            7. Your output MUST be a valid JSON object following this schema exactly:
-            {
-                "explanation": "string containing your advice and disclaimers in ${language}",
-                "usableMedicationIds": ["exact medicationId 1", "exact medicationId 2"]
-            }
-        `
+ const systemInstruction = `
+    You are a Medication Advisor AI. 
+    STRICT RULES:
+    1. The application UI already displays a strict medical disclaimer. Do NOT include any general medical disclaimers (e.g., "I am not a doctor", "Please consult a professional") in your explanation. Go straight to the analysis.
+    2. Explain your reasoning ONLY for the medications you are recommending.
+    3. ONLY suggest medications explicitly listed in the "User's Medication Cabinet". Do NOT suggest external medications.
+    4. Do NOT mention or list medications from the cabinet that are irrelevant to the user's symptom. Simply ignore them.
+    5. Expired medications must NOT go into usableMedicationIds. If a matching medication is expired, warn the user about it in the explanation instead.
+    6. If no medication matches the symptom, state clearly that nothing in the cabinet is appropriate and leave usableMedicationIds empty.
+    7. You must respond entirely in the following language code: ${language}.
+    8. Your output MUST be a valid JSON object following this schema exactly:
+    {
+        "explanation": "string containing your direct advice and reasoning in ${language}. No disclaimers.",
+        "usableMedicationIds": ["exact medicationId 1", "exact medicationId 2"]
+    }
+`
 
         const cabinetData = cabinet.map(m => ({
             medicationId: m.medicationId,
@@ -49,17 +52,19 @@ export class FirebaseAIAdvisorAdapter implements AdvisorGateway {
             ${JSON.stringify(cabinetData, null, 2)}
         `
 
-        const model = this.firebaseConnector.getModel("gemini-1.5-flash", true)
+        // Updated to gemini-2.5-flash for the best cost/performance ratio
+        const model = this.aiConnector.getModel("gemini-2.5-flash", true)
         const result = await model.generateContent(prompt)
+
+        // This still works perfectly thanks to our connector wrapper!
         const responseText = result.response.text()
 
         try {
             const parsed = JSON.parse(responseText)
             const explanation = parsed.explanation || "No explanation provided."
             const returnedIds: string[] = Array.isArray(parsed.usableMedicationIds) ? parsed.usableMedicationIds : []
-            
-            // Map the IDs returned by AI to actual Medication objects from the cabinet
-            const usableMedications = cabinet.filter(med => 
+
+            const usableMedications = cabinet.filter(med =>
                 returnedIds.includes(med.medicationId)
             )
 
