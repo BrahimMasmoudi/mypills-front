@@ -59,22 +59,33 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
 
     if (import.meta.client) {
         const siteKey = import.meta.env.VITE_FIREBASE_APP_CHECK_SITE_KEY || 'dummy-key'
-        const isDebug = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN || (window as any).Cypress
+        const windowDebugToken = (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN
+        const envDebugToken = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN
+        const isCypress = (window as any).Cypress
 
-        try {
-            initializeAppCheck(firebaseApp, {
-                provider: isDebug
-                    ? new CustomProvider({
+        if (windowDebugToken || envDebugToken || isCypress) {
+            try {
+                initializeAppCheck(firebaseApp, {
+                    provider: new CustomProvider({
                         getToken: () => Promise.resolve({
-                            token: typeof isDebug === 'string' ? isDebug : 'placeholder-token',
+                            token: windowDebugToken || envDebugToken || 'placeholder-token',
                             expireTimeMillis: Date.now() + 3600000
                         })
-                    })
-                    : new ReCaptchaV3Provider(siteKey),
-                isTokenAutoRefreshEnabled: true,
-            })
-        } catch (e) {
-            console.debug('App Check already initialized or failed:', e)
+                    }),
+                    isTokenAutoRefreshEnabled: true,
+                })
+            } catch (e) {
+                console.debug('App Check already initialized or failed:', e)
+            }
+        } else {
+            try {
+                initializeAppCheck(firebaseApp, {
+                    provider: new ReCaptchaV3Provider(siteKey),
+                    isTokenAutoRefreshEnabled: true,
+                })
+            } catch (e) {
+                console.debug('App Check already initialized or failed:', e)
+            }
         }
     }
 
