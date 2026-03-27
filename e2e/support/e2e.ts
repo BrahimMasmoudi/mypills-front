@@ -40,8 +40,11 @@ if (isLocal) {
 attachCustomCommands({ Cypress, cy, firebase })
  
 Cypress.on('window:before:load', (win) => {
-    // Inject the App Check debug token for staging/CI
-    (win as any).FIREBASE_APPCHECK_DEBUG_TOKEN = '4F7470AD-E8A7-4CEF-B830-6E9433163A05'
+    // Inject the App Check debug token for staging/CI from environment
+    const debugToken = Cypress.env('FIREBASE_APPCHECK_DEBUG_TOKEN')
+    if (debugToken) {
+        (win as any).FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken
+    }
 })
 
 
