@@ -123,6 +123,14 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         }
     }
 
+    async list(auth: AuthData): Promise<Medication[]> {
+        const snapshot = await this.collection
+            .where('uid', '==', auth.uid)
+            .get()
+
+        return snapshot.docs.map(doc => doc.data() as Medication)
+    }
+
     async fetchTunisianMedications(query: string): Promise<(GetMedicationDetailsResponse & { id: string })[]> {
         const snapshot = await this.tunisianMedicationCollection
             .where('name', '>=', query)

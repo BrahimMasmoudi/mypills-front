@@ -145,6 +145,19 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         return (result.data as GetMedicationDetailsResponse) || undefined
     }
 
+    const getMedicationAdvice = async (symptom: string, language: string): Promise<{ explanation: string; usableMedications: Medication[] }> => {
+        const getAdvice = httpsCallable($functions, 'getMedicationAdvice')
+        const result = await getAdvice({ symptom, language })
+        const data = result.data as { reply: { explanation: string; usableMedications: Medication[] } }
+        
+        $analytics && logEvent($analytics, 'get_medication_advice', {
+            symptom_length: symptom.length,
+            language
+        })
+        
+        return data.reply
+    }
+
     const findDuplicateMedication = (list: Medication[], name: string, expiryDate: Date): Medication | null => {
         const targetMonth = expiryDate.getMonth()
         const targetYear = expiryDate.getFullYear()
@@ -169,6 +182,7 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         updateMedication,
         checkAndUpdateExpiredMedications,
         getMedicationDetails,
+        getMedicationAdvice,
         findDuplicateMedication,
     }
 })
