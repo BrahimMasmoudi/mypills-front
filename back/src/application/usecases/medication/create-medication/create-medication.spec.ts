@@ -24,6 +24,7 @@ describe('IncrementMedication Use Case', () => {
             setExpiredStatus: jest.fn().mockResolvedValue(undefined),
             fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
             get: jest.fn().mockResolvedValue(undefined),
+            list: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new CreateMedication(mockRepo)
@@ -104,6 +105,7 @@ describe('IncrementMedication Use Case', () => {
             setExpiredStatus: jest.fn().mockResolvedValue(undefined),
             fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
             get: jest.fn().mockResolvedValue(existingMedication),
+            list: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new CreateMedication(mockRepo)

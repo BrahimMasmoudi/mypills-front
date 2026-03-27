@@ -24,6 +24,7 @@ describe('DeleteMedication Use Case', () => {
             setExpiredStatus: jest.fn().mockResolvedValue(undefined),
             fetchTunisianMedications: jest.fn().mockResolvedValue(undefined),
             get: jest.fn().mockResolvedValue(undefined),
+            list: jest.fn().mockResolvedValue(undefined),
         }
 
         const useCase = new DeleteMedication(mockRepo)
