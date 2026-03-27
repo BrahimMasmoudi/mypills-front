@@ -46,6 +46,7 @@ jobs:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
           FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
+          VITE_FIREBASE_APP_CHECK_SITE_KEY: ${{ secrets.FIREBASE_APP_CHECK_SITE_KEY }}
       # Build Firebase Functions
       - name: Build Firebase Functions
         run: cd back && yarn build

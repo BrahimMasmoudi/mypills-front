@@ -4,7 +4,7 @@ import { FirestoreReminderRepositoryAdapter } from '../../adapters/reminder/Fire
 import { UpdateRemindersStatus } from '../../../application/usecases/reminder/update-reminders-status'
 import { createSchedulerAdapter } from '../../config/scheduler'
 
-export const updateRemindersStatus = onCall({ region: 'europe-west3' }, async (request) => {
+export const updateRemindersStatus = onCall({ region: 'europe-west3', enforceAppCheck: true }, async (request) => {
     const { ids, status } = request.data
 
     // Validation

@@ -39,6 +39,14 @@ if (isLocal) {
 
 attachCustomCommands({ Cypress, cy, firebase })
 
+Cypress.on('window:before:load', (win) => {
+    // Inject the App Check debug token for staging/CI from environment
+    const debugToken = Cypress.env('FIREBASE_APPCHECK_DEBUG_TOKEN')
+    if (debugToken) {
+        (win as any).FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken
+    }
+})
+
 
 export const testEmail = 'test.test@test.com'
 export const testUid = 'test-user-123'

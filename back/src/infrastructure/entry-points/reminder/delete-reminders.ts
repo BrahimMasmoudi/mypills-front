@@ -4,7 +4,7 @@ import { FirestoreReminderRepositoryAdapter } from '../../adapters/reminder/Fire
 import { DeleteReminders } from '../../../application/usecases/reminder/delete-reminders'
 import { createSchedulerAdapter } from '../../config/scheduler'
 
-export const deleteReminders = onCall({ region: 'europe-west3' }, async (request) => {
+export const deleteReminders = onCall({ region: 'europe-west3', enforceAppCheck: true }, async (request) => {
     if (!Array.isArray(request.data)) {
         throw new HttpsError('invalid-argument', 'The function must be called with an array of IDs.')
     }

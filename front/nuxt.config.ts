@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 export default defineNuxtConfig({
-    compatibilityDate: '2026-02-23',
+    compatibilityDate: '2026-03-25',
     experimental: {
         viewTransition: true
     },
@@ -14,13 +14,14 @@ export default defineNuxtConfig({
             enabled: true
         }
     },
-    devServer: {
-        host: '127.0.0.1'
-    },
     devServerHandlers: [],
     app: {
         head: {
             title: 'MyPills',
+            meta: [
+                { charset: 'utf-8' },
+                { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+            ],
         },
         pageTransition: { name: 'page', mode: 'default' }
     },
@@ -38,7 +39,6 @@ export default defineNuxtConfig({
         '@vite-pwa/nuxt',
         '@nuxtjs/color-mode',
         '@vueuse/nuxt',
-        '@nuxtjs/storybook',
         '@nuxt/eslint',
     ],
     colorMode: {
@@ -58,7 +58,6 @@ export default defineNuxtConfig({
         storage: 'localStorage'
     },
     vuefire: {
-
         analytics: {
             enabled: ['production', 'staging'].includes(process.env.ENVIRONMENT || '')
         },

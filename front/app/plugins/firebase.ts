@@ -9,9 +9,12 @@ import {
     setUserProperties,
 } from '@firebase/analytics'
 import { connectFunctionsEmulator, getFunctions } from '@firebase/functions'
-import { getStorage, connectStorageEmulator } from '@firebase/storage'
-import { useFirebaseApp, useFirestore, getCurrentUser } from 'vuefire'
+import { useFirebaseApp, useFirestore, getCurrentUser, useFirebaseStorage } from 'vuefire'
 import { getMessaging } from 'firebase/messaging'
+import { onAuthStateChanged } from 'firebase/auth'
+import { initializeAppCheck, ReCaptchaV3Provider, CustomProvider } from 'firebase/app-check'
+import { useUserStore } from '~/store/userStore'
+import { useFirebaseAuth } from 'vuefire'
 
 type RemoteConfig = Record<string, any>
 
@@ -53,6 +56,50 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
     } = $config.public.firebase
 
     const firebaseApp = useFirebaseApp()
+
+    if (import.meta.client) {
+        const siteKey = import.meta.env.VITE_FIREBASE_APP_CHECK_SITE_KEY || 'dummy-key'
+        const windowDebugToken = (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN
+        const envDebugToken = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN
+        const isCypress = (window as any).Cypress
+
+        if (windowDebugToken || envDebugToken || isCypress) {
+            try {
+                initializeAppCheck(firebaseApp, {
+                    provider: new CustomProvider({
+                        getToken: () => {
+                            const debugToken = (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN 
+                                || import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN 
+                                || 'placeholder-token'
+                            return Promise.resolve({
+                                token: debugToken,
+                                expireTimeMillis: Date.now() + 3600000
+                            })
+                        }
+                    }),
+                    isTokenAutoRefreshEnabled: true,
+                })
+            } catch (e) {
+                console.debug('App Check already initialized or failed:', e)
+            }
+        } else {
+            try {
+                initializeAppCheck(firebaseApp, {
+                    provider: new ReCaptchaV3Provider(siteKey),
+                    isTokenAutoRefreshEnabled: true,
+                })
+            } catch (e) {
+                console.debug('App Check already initialized or failed:', e)
+            }
+        }
+    }
+
+    // Sync Auth State to Pinia for Cypress/Persistence
+    const userStore = useUserStore()
+    const auth = useFirebaseAuth()
+    onAuthStateChanged(auth!, (u) => {
+        userStore.user = u ?? undefined
+    })
 
     const firestoreInstance = useFirestore()
     const storageInstance = useFirebaseStorage()

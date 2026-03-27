@@ -3,7 +3,7 @@ import { $firebaseConnector } from '../../config/firebase'
 import { FirestoreReminderRepositoryAdapter } from '../../adapters/reminder/FirestoreReminderRepositoryAdapter'
 import { createSchedulerAdapter } from '../../config/scheduler'
 
-export const updateReminderTime = onCall({ region: 'europe-west3' }, async (request) => {
+export const updateReminderTime = onCall({ region: 'europe-west3', enforceAppCheck: true }, async (request) => {
     if (!request.auth?.uid) throw new HttpsError('unauthenticated', 'no user found for this request.')
 
     const { id, newTime } = request.data
