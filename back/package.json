@@ -20,6 +20,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google/genai": "^1.46.0",
     "@qualdesk/firestore-big-batch": "^0.0.2",
     "cors": "^2.8.5",
     "date-fns-tz": "^3.2.0",

@@ -9,6 +9,11 @@
       <span>{{ t('nav.medications') }}</span>
     </v-btn>
 
+    <v-btn to="/advisor">
+      <v-icon>mdi-robot-outline</v-icon>
+      <span>{{ t('medicationAdvisor.title') }}</span>
+    </v-btn>
+
     <v-btn to="/reminders">
       <v-icon>mdi-calendar-clock</v-icon>
       <span>{{ t('nav.reminders') }}</span>

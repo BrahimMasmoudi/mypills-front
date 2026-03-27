@@ -24,6 +24,22 @@
       </v-list-item>
 
       <v-list-item
+        to="/advisor"
+        rounded="pill"
+        class="mb-2 nav-pill"
+        active-class="active-pill"
+        link
+      >
+        <template #prepend>
+          <v-icon icon="mdi-robot-outline" size="20" class="ml-2 mr-n3"/>
+        </template>
+
+        <v-list-item-title class="font-weight-bold ml-4">
+          {{ t('medicationAdvisor.title') }}
+        </v-list-item-title>
+      </v-list-item>
+
+      <v-list-item
         to="/reminders"
         rounded="pill"
         class="mb-2 nav-pill"

@@ -1,70 +1,95 @@
 <template>
-  <div class="max-w-2xl mx-auto p-4 space-y-6 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
-    <div class="space-y-2">
-      <h2 class="text-2xl font-bold text-slate-900 dark:text-white">
-        {{ t('medicationAdvisor.title') }}
-      </h2>
-      <p class="text-slate-600 dark:text-slate-400">
-        {{ t('medicationAdvisor.description') }}
-      </p>
-    </div>
+  <v-container max-width="800" class="pa-4">
+    <v-card class="rounded-xl border pa-sm-4" elevation="1">
+      <v-card-item>
+        <v-card-title class="text-h5 font-weight-bold text-high-emphasis mb-1">
+          {{ t('medicationAdvisor.title') }}
+        </v-card-title>
+        <v-card-subtitle class="text-body-1 text-medium-emphasis text-wrap">
+          {{ t('medicationAdvisor.description') }}
+        </v-card-subtitle>
+      </v-card-item>
 
-    <div class="space-y-4">
-      <div class="relative">
-        <textarea
+      <v-card-text class="pt-4">
+        <v-textarea
           v-model="symptomInput"
-          rows="4"
-          class="w-full p-4 text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none resize-none"
           :placeholder="t('medicationAdvisor.placeholder')"
-        ></textarea>
-      </div>
+          variant="outlined"
+          color="primary"
+          auto-grow
+          rows="4"
+          hide-details="auto"
+          class="mb-4"
+        ></v-textarea>
 
-      <button
-        @click="getAdvice"
-        :disabled="isLoading"
-        class="w-full py-3 px-6 text-white font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 disabled:cursor-not-allowed rounded-lg shadow-md transition-all flex items-center justify-center space-x-2"
-      >
-        <span v-if="isLoading" class="flex items-center space-x-2">
-          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <span>{{ t('medicationAdvisor.buttonLoading') }}</span>
-        </span>
-        <span v-else>{{ t('medicationAdvisor.button') }}</span>
-      </button>
+        <v-btn
+          @click="getAdvice"
+          :loading="isLoading"
+          :disabled="isLoading || !symptomInput.trim()"
+          color="primary"
+          size="x-large"
+          block
+          elevation="2"
+          class="text-none font-weight-bold rounded-lg mb-4"
+        >
+          <template v-slot:prepend>
+            <v-icon icon="mdi-robot-outline" />
+          </template>
+          {{ isLoading ? t('medicationAdvisor.buttonLoading') : t('medicationAdvisor.button') }}
+        </v-btn>
 
-      <!-- Error Message -->
-      <div v-if="errorMessage" class="p-4 bg-red-50 border border-red-200 rounded-lg">
-        <p class="text-red-700 text-sm font-medium">
-          {{ errorMessage }}
-        </p>
-      </div>
+        <v-expand-transition>
+          <v-alert
+            v-if="errorMessage"
+            type="error"
+            variant="tonal"
+            icon="mdi-alert-circle-outline"
+            class="mb-4 rounded-lg"
+          >
+            {{ errorMessage }}
+          </v-alert>
+        </v-expand-transition>
 
-      <!-- AI Response -->
-      <div v-if="aiResponse" class="mt-8 space-y-4">
-        <div class="flex items-center space-x-2 text-primary font-semibold">
-          <v-icon icon="mdi-robot-outline" class="text-blue-600" />
-          <span>{{ t('medicationAdvisor.suggestions') }}</span>
-        </div>
-        <div class="p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl space-y-4">
-          <div class="prose prose-blue dark:prose-invert max-w-none whitespace-pre-wrap text-slate-800 dark:text-slate-200">
-            {{ aiResponse.explanation }}
+        <v-expand-transition>
+          <div v-if="aiResponse" class="mt-6">
+            <v-card variant="tonal" color="primary" class="rounded-xl border border-primary border-opacity-25">
+              <v-card-title class="d-flex align-center text-primary pb-0 pt-4">
+                <v-icon icon="mdi-robot-outline" class="mr-2" />
+                <span class="text-h6">{{ t('medicationAdvisor.suggestions') }}</span>
+              </v-card-title>
+
+              <v-card-text class="pt-4 pb-6 text-body-1 text-high-emphasis">
+                <div class="mb-6" style="white-space: pre-wrap;">
+                  {{ aiResponse.explanation }}
+                </div>
+
+                <div v-if="aiResponse.usableMedications && aiResponse.usableMedications.length > 0">
+                  <div class="text-subtitle-1 font-weight-bold mb-4 text-high-emphasis">
+                    Usable Medications:
+                  </div>
+                  <TemplatesPills
+                    :medications="aiResponse.usableMedications"
+                    :medication-loading="false"
+                    @decrement-pills="(med, amount, done) => decrementPills(med, amount, done)"
+                    @increment-pills="(med, amount, done) => incrementPills(med, amount, done)"
+                    @delete-pills="(med, done) => deletePills(med, done)"
+                    @update-medication-name="(med, name, done) => updateMedicationName(med, name, done)"
+                    @create-medication="createMedication"
+                  />
+                </div>
+              </v-card-text>
+            </v-card>
+
+            <div class="text-caption text-medium-emphasis text-center font-italic mt-4 px-4">
+              {{ t('medicationAdvisor.disclaimer') }}
+            </div>
           </div>
-          <div v-if="aiResponse.usableMedications && aiResponse.usableMedications.length > 0" class="mt-4">
-            <h4 class="font-semibold text-slate-900 dark:text-white mb-2">Usable Medications:</h4>
-            <ul class="list-disc pl-5 text-slate-800 dark:text-slate-200">
-              <li v-for="med in aiResponse.usableMedications" :key="med.medicationId || med.name">{{ med.name }} {{ med.quantity > 0 ? `(${med.quantity} remaining)` : '' }}</li>
-            </ul>
-          </div>
-        </div>
-        <p class="text-xs text-slate-400 italic">
-          {{ t('medicationAdvisor.disclaimer') }}
-        </p>
-      </div>
-    </div>
-  </div>
+        </v-expand-transition>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
+
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useMedicationsStore } from '~/store/medications'
@@ -97,6 +122,26 @@ const getAdvice = async () => {
     } finally {
         isLoading.value = false
     }
+}
+
+const createMedication = async (medication: Medication) => {
+  await medicationsStore.createMedication(medication)
+}
+
+const incrementPills = async (medication: Medication, amount: number, done: () => void) => {
+  try { await medicationsStore.incrementPills(medication, amount) } finally { done() }
+}
+
+const decrementPills = async (medication: Medication, amount: number, done: () => void) => {
+  try { await medicationsStore.decrementPills(medication, amount) } finally { done() }
+}
+
+const deletePills = async (medication: Medication, done: () => void) => {
+  try { await medicationsStore.deletePills(medication) } finally { done() }
+}
+
+const updateMedicationName = async (medication: Medication, newName: string, done: () => void) => {
+  try { await medicationsStore.updateMedicationName(medication, newName) } finally { done() }
 }
 </script>
 <style scoped>
