@@ -67,10 +67,15 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
             try {
                 initializeAppCheck(firebaseApp, {
                     provider: new CustomProvider({
-                        getToken: () => Promise.resolve({
-                            token: windowDebugToken || envDebugToken || 'placeholder-token',
-                            expireTimeMillis: Date.now() + 3600000
-                        })
+                        getToken: () => {
+                            const debugToken = (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN 
+                                || import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN 
+                                || 'placeholder-token'
+                            return Promise.resolve({
+                                token: debugToken,
+                                expireTimeMillis: Date.now() + 3600000
+                            })
+                        }
                     }),
                     isTokenAutoRefreshEnabled: true,
                 })
