@@ -41,7 +41,7 @@ attachCustomCommands({ Cypress, cy, firebase })
 
 Cypress.on('window:before:load', (win) => {
     // Inject the App Check debug token for staging/CI from environment
-    const debugToken = (Cypress.config('env') as any).FIREBASE_APPCHECK_DEBUG_TOKEN
+    const debugToken = Cypress.env('FIREBASE_APPCHECK_DEBUG_TOKEN')
     if (debugToken) {
         (win as any).FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken
     }
