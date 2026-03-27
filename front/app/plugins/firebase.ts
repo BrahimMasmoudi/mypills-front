@@ -11,7 +11,10 @@ import {
 import { connectFunctionsEmulator, getFunctions } from '@firebase/functions'
 import { useFirebaseApp, useFirestore, getCurrentUser, useFirebaseStorage } from 'vuefire'
 import { getMessaging } from 'firebase/messaging'
-import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'
+import { onAuthStateChanged } from 'firebase/auth'
+import { initializeAppCheck, ReCaptchaV3Provider, CustomProvider } from 'firebase/app-check'
+import { useUserStore } from '~/store/userStore'
+import { useFirebaseAuth } from 'vuefire'
 
 type RemoteConfig = Record<string, any>
 
@@ -55,21 +58,32 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
     const firebaseApp = useFirebaseApp()
 
     if (import.meta.client) {
-        // Enable App Check debug token in non-production environments.
-        if (process.env.NODE_ENV !== 'production') {
-            // @ts-ignore
-            self.FIREBASE_APPCHECK_DEBUG_TOKEN = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN || true
-        }
+        const siteKey = import.meta.env.VITE_FIREBASE_APP_CHECK_SITE_KEY || 'dummy-key'
+        const isDebug = import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN || (window as any).Cypress
 
         try {
             initializeAppCheck(firebaseApp, {
-                provider: new ReCaptchaV3Provider(import.meta.env.VITE_FIREBASE_APP_CHECK_SITE_KEY || 'dummy-key'),
+                provider: isDebug
+                    ? new CustomProvider({
+                        getToken: () => Promise.resolve({
+                            token: typeof isDebug === 'string' ? isDebug : 'placeholder-token',
+                            expireTimeMillis: Date.now() + 3600000
+                        })
+                    })
+                    : new ReCaptchaV3Provider(siteKey),
                 isTokenAutoRefreshEnabled: true,
             })
         } catch (e) {
             console.debug('App Check already initialized or failed:', e)
         }
     }
+
+    // Sync Auth State to Pinia for Cypress/Persistence
+    const userStore = useUserStore()
+    const auth = useFirebaseAuth()
+    onAuthStateChanged(auth!, (u) => {
+        userStore.user = u ?? undefined
+    })
 
     const firestoreInstance = useFirestore()
     const storageInstance = useFirebaseStorage()
