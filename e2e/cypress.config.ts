@@ -14,7 +14,8 @@ export default defineConfig({
         defaultCommandTimeout: 30000,
         video: true,
         env: {
-            GCLOUD_PROJECT: 'my-pills-staging-460b5'
+            GCLOUD_PROJECT: 'my-pills-staging-460b5',
+            FIREBASE_APPCHECK_DEBUG_TOKEN: process.env.CYPRESS_FIREBASE_APPCHECK_DEBUG_TOKEN
         },
         setupNodeEvents(on, config) {
             const projectId = 'my-pills-staging-460b5'
