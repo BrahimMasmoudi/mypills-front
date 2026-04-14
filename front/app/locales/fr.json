@@ -295,7 +295,7 @@
     "loading": "Génération du lien..."
   },
   "medicationAdvisor": {
-    "title": "Conseiller IA",
+    "title": "Agent IA",
     "description": "Décrivez vos symptômes pour voir lesquels de vos médicaments pourraient être appropriés.",
     "placeholder": "Exemple : J'ai un terrible mal de tête et un peu de fièvre...",
     "button": "Obtenir des conseils",

@@ -13,10 +13,9 @@
       <!-- Header -->
       <div class="advisor-header" :class="{ 'header-compact': !!aiResponse }">
         <div class="header-badge">
-          <v-icon icon="mdi-robot-outline" size="14" />
+          <v-icon icon="mdi-robot-outline" size="20" />
           <span>AI · Gemini Flash</span>
         </div>
-        <h1 class="advisor-title">{{ t('medicationAdvisor.title') }}</h1>
         <p class="advisor-subtitle" v-if="!aiResponse">{{ t('medicationAdvisor.description') }}</p>
       </div>
 
@@ -283,9 +282,9 @@ const getAdvice = async () => {
   gap: 6px;
   font-size: 0.72rem;
   line-height: 1.5;
-  color: rgba(var(--v-theme-on-surface), 0.48);
-  background: rgba(var(--v-theme-on-surface), 0.04);
-  border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+  color: rgb(var(--v-theme-warning));
+  background: rgba(var(--v-theme-warning), 0.1);
+  border: 1px solid rgba(var(--v-theme-warning), 0.08);
   border-radius: 12px;
   padding: 10px 14px;
   margin-bottom: 18px;
