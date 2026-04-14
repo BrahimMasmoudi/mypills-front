@@ -17,6 +17,6 @@ export interface MedicationRepository {
     ): Promise<void>
 
     setExpiredStatus(medicationIds: Medication['medicationId'][], auth: AuthData): Promise<{ updated: number }>
-
+    list(auth: AuthData): Promise<Medication[]>
     fetchTunisianMedications(query: string): Promise<(GetMedicationDetailsResponse & { id: string })[]>
 }

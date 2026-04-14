@@ -34,7 +34,6 @@ export class CreateMedication implements CreateMedicationUseCase {
             if (unitsPerBox) {
                 medication.quantity = unitsPerBox * addedBoxes
             }
-            // If unitsPerBox is undefined, we trust medication.quantity is set by caller or remains undefined
 
             await this.medicationRepo.create(medication, auth)
         }
