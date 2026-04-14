@@ -37,13 +37,25 @@
               color="primary"
               :rows="$vuetify.display.smAndDown ? 3 : 5"
               hide-details="auto"
+              :disabled="hasReachedLimit"
               class="mb-4"
             ></v-textarea>
+
+            <v-alert
+              v-if="hasReachedLimit"
+              type="error"
+              variant="tonal"
+              density="compact"
+              icon="mdi-clock-alert-outline"
+              class="mb-4 rounded-lg"
+            >
+              {{ t('medicationAdvisor.quotaExceeded') }}
+            </v-alert>
 
             <v-btn
               @click="getAdvice"
               :loading="isLoading"
-              :disabled="isLoading || !symptomInput.trim()"
+              :disabled="isLoading || !symptomInput.trim() || hasReachedLimit"
               color="primary"
               size="x-large"
               block
@@ -134,11 +146,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useMedicationsStore } from '~/store/medications'
 import { useI18n } from 'vue-i18n'
 import type { Medication } from '~/types/medication'
 
 const medicationsStore = useMedicationsStore()
+const { hasReachedLimit } = storeToRefs(medicationsStore)
 const { t, locale } = useI18n()
 
 const symptomInput = ref('')
@@ -164,26 +178,6 @@ const getAdvice = async () => {
     } finally {
         isLoading.value = false
     }
-}
-
-const createMedication = async (medication: Medication) => {
-  await medicationsStore.createMedication(medication)
-}
-
-const incrementPills = async (medication: Medication, amount: number, done: () => void) => {
-  try { await medicationsStore.incrementPills(medication, amount) } finally { done() }
-}
-
-const decrementPills = async (medication: Medication, amount: number, done: () => void) => {
-  try { await medicationsStore.decrementPills(medication, amount) } finally { done() }
-}
-
-const deletePills = async (medication: Medication, done: () => void) => {
-  try { await medicationsStore.deletePills(medication) } finally { done() }
-}
-
-const updateMedicationName = async (medication: Medication, newName: string, done: () => void) => {
-  try { await medicationsStore.updateMedicationName(medication, newName) } finally { done() }
 }
 </script>
 

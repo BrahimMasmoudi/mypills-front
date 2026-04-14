@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { httpsCallable } from 'firebase/functions'
 import type { Medication } from '~/types/medication'
-import { collection, orderBy, query, where } from 'firebase/firestore'
+import { collection, orderBy, query, where, doc } from 'firebase/firestore'
 import { logEvent } from '@firebase/analytics'
 import type { GetMedicationDetailsResponse } from '../types/api'
-import { useCollection, getCurrentUser } from 'vuefire'
+import { useCollection, useDocument, getCurrentUser } from 'vuefire'
 import { ref, computed } from 'vue'
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
@@ -17,11 +17,15 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
 
     // The sourceQuery is the "trigger". useCollection watches this.
     const sourceQuery = ref<any>(null)
+    const usageDocSource = ref<any>(null)
 
     // Setup the collection sync at the top level
     const collectionData = useCollection(() => sourceQuery.value, {
         target: medications,
     })
+    
+    // Listen to current user's AI usage document
+    const { data: aiUsageData } = useDocument(() => usageDocSource.value)
 
     /* ------------------------------------------------------------------
      * COMPUTED
@@ -31,6 +35,12 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         if (!sourceQuery.value) return true
         // 2. Otherwise, return the actual Firestore pending status
         return collectionData.pending.value
+    })
+
+    const hasReachedLimit = computed(() => {
+        if (!aiUsageData.value) return false
+        const today = new Date().toISOString().split('T')[0]
+        return aiUsageData.value.lastResetDate === today && aiUsageData.value.currentCount >= 5
     })
 
     /* ------------------------------------------------------------------
@@ -58,6 +68,8 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
             where('email', '==', user.email),
             orderBy('createdAt', 'desc')
         )
+        
+        usageDocSource.value = doc($firestore, 'ai_usage', user.uid)
     }
 
     /* ------------------------------------------------------------------
@@ -184,5 +196,6 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
         getMedicationDetails,
         getMedicationAdvice,
         findDuplicateMedication,
+        hasReachedLimit,
     }
 })

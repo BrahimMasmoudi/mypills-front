@@ -321,6 +321,7 @@
     "errorEmpty": "Please enter your symptom first.",
     "disclaimerTitle": "Medical Disclaimer",
     "strictDisclaimer": "I am an AI assistant, NOT a doctor. This tool only reads your saved cabinet data. Always consult a healthcare professional and check the physical label before taking any medication.",
-    "usableMedications": "Usable Medications"
+    "usableMedications": "Usable Medications",
+    "quotaExceeded": "You have reached your daily limit of 5 searches. Please try again tomorrow."
   }
 }

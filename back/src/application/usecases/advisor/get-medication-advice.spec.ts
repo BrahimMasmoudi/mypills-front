@@ -1,12 +1,14 @@
 import { GetMedicationAdvice } from './get-medication-advice'
 import { MedicationRepository } from '../../../domain/repositories/medication/medication-repository'
 import { AdvisorGateway } from '../../../domain/gateway/advisor-gateway'
+import { UsageGateway } from '../../../domain/gateway/usage-gateway'
 import { AuthData } from 'firebase-functions/v2/tasks'
 import { Medication } from '../../../domain/entities/medication'
 
 describe('GetMedicationAdvice', () => {
     let mockMedicationRepository: jest.Mocked<MedicationRepository>
     let mockAdvisorGateway: jest.Mocked<AdvisorGateway>
+    let mockUsageGateway: jest.Mocked<UsageGateway>
     let useCase: GetMedicationAdvice
 
     const fakeAuth = { uid: 'u123' } as AuthData
@@ -29,10 +31,14 @@ describe('GetMedicationAdvice', () => {
             getAdvice: jest.fn()
         } as unknown as jest.Mocked<AdvisorGateway>
 
-        useCase = new GetMedicationAdvice(mockMedicationRepository, mockAdvisorGateway)
+        mockUsageGateway = {
+            checkAndIncrementUsage: jest.fn().mockResolvedValue(undefined)
+        } as unknown as jest.Mocked<UsageGateway>
+
+        useCase = new GetMedicationAdvice(mockMedicationRepository, mockAdvisorGateway, mockUsageGateway)
     })
 
-    it('should retrieve medications and pass to the gateway', async () => {
+    it('should check quota, retrieve medications and pass to the gateway', async () => {
         const mockCabinet = [{ medicationId: 'm1' } as Medication]
         mockMedicationRepository.list.mockResolvedValueOnce(mockCabinet)
         mockAdvisorGateway.getAdvice.mockResolvedValueOnce({ 
@@ -42,6 +48,7 @@ describe('GetMedicationAdvice', () => {
 
         const result = await useCase.execute('headache', 'en', fakeAuth)
 
+        expect(mockUsageGateway.checkAndIncrementUsage).toHaveBeenCalledWith('u123', 5)
         expect(mockMedicationRepository.list).toHaveBeenCalledWith(fakeAuth)
         expect(mockAdvisorGateway.getAdvice).toHaveBeenCalledWith('headache', mockCabinet, 'en')
         expect(result.explanation).toBe('AI advice')
