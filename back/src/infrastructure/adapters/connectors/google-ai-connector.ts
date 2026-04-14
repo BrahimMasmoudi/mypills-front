@@ -13,7 +13,6 @@ export class GoogleAiConnector {
             config.responseMimeType = "application/json"
         }
 
-        // Return a proxy object that mimics the old Firebase AI logic interface
         return {
             generateContent: async (prompt: string) => {
 
@@ -23,7 +22,6 @@ export class GoogleAiConnector {
                     config: config
                 })
 
-                // Mimic the old result.response.text() method structure
                 return {
                     response: {
                         text: () => result.text || ""

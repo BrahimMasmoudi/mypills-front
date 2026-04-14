@@ -5,7 +5,6 @@ import { StructuredAdvice } from '../../../domain/entities/structured-advice'
 
 export class GoogleAIAdvisorAdapter implements AdvisorGateway {
 
-    // Updated constructor type to the new GoogleAiConnector
     constructor(private readonly aiConnector: GoogleAiConnector) { }
 
     async getAdvice(symptom: string, cabinet: Medication[], language: string): Promise<StructuredAdvice> {
@@ -64,12 +63,9 @@ export class GoogleAIAdvisorAdapter implements AdvisorGateway {
             User's Medication Cabinet:
             ${JSON.stringify(cabinetData, null, 2)}
         `
-
-        // Updated to gemini-2.5-flash for the best cost/performance ratio
         const model = this.aiConnector.getModel("gemini-2.5-flash", true)
         const result = await model.generateContent(prompt)
 
-        // This still works perfectly thanks to our connector wrapper!
         const responseText = result.response.text()
 
         try {

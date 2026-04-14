@@ -35,7 +35,6 @@ export const getMedicationAdvice = onCall(
             const reply = await getMedicationAdviceUseCase.execute(symptom, language, auth)
             return { reply }
         } catch (error: any) {
-            // Re-throw HttpsErrors as-is (e.g. resource-exhausted for quota)
             if (error?.httpErrorCode) throw error
             console.error('Advisor Error:', error)
             throw new HttpsError('internal', error.message || 'Failed to generate AI advice.')
