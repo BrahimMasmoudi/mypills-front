@@ -64,6 +64,7 @@ jobs:
         env:
           TZ: UTC
           GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Cleanup SA Key
         if: always()
@@ -121,6 +122,9 @@ jobs:
 
       - name: Build Backend (Functions)
         run: cd back && yarn build
+
+      - name: Set Backend Environment Variables
+        run: echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > back/.env
 
       - name: '🚀 Deploy to Firebase'
         uses: w9jds/firebase-action@v15.10.1
