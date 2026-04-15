@@ -70,6 +70,23 @@
         </div>
       </v-list-item>
 
+      <v-divider class="my-3 mx-2" />
+
+      <!-- Support -->
+      <v-list-item
+        rounded="pill"
+        class="mb-2 nav-pill"
+        link
+        @click="openSupportEmail"
+      >
+        <template #prepend>
+          <v-icon icon="mdi-lifebuoy" size="20" class="ml-2 mr-n3" />
+        </template>
+        <v-list-item-title class="font-weight-bold ml-4">
+          {{ t('user-menu.support') }}
+        </v-list-item-title>
+      </v-list-item>
+
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -78,6 +95,17 @@
 import { useI18n } from 'vue-i18n'
 const drawer = defineModel<boolean>()
 const { t } = useI18n()
+
+const openSupportEmail = () => {
+  const email = 'masmoudi.brahim@gmail.com'
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  
+  if (isMobile) {
+    window.location.href = `mailto:${email}`
+  } else {
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`, '_blank')
+  }
+}
 </script>
 
 <style scoped>

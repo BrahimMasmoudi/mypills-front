@@ -8,7 +8,7 @@
     <template #activator="{ props }">
       <div class="user-menu-activator" v-bind="props">
         <div class="avatar-wrapper shadow-premium">
-          <v-avatar size="44" class="main-avatar">
+          <v-avatar size="40" class="main-avatar">
             <v-img v-if="userStore.user?.photoURL" :src="userStore.user.photoURL" cover/>
             <v-icon
               v-else
@@ -17,6 +17,9 @@
               color="white"
             />
           </v-avatar>
+          <div class="menu-arrow-badge">
+            <v-icon icon="mdi-chevron-down" size="14" />
+          </div>
         </div>
       </div>
     </template>
@@ -131,6 +134,22 @@
 
         <v-divider class="my-3 border-opacity-25 mx-4"/>
 
+        <!-- Support -->
+        <v-list-item
+          class="menu-item-premium mb-2"
+          :ripple="{ class: 'text-primary' }"
+          @click="openSupportEmail"
+        >
+          <template #prepend>
+            <div class="icon-container icon-blue mr-3">
+              <v-icon icon="mdi-lifebuoy" size="20"/>
+            </div>
+          </template>
+          <v-list-item-title class="font-weight-bold text-body-2">
+            {{ t('user-menu.support') }}
+          </v-list-item-title>
+        </v-list-item>
+
         <!-- Disconnect -->
         <v-list-item
           class="menu-item-logout text-error"
@@ -176,6 +195,17 @@ const handleSignOut = async () => {
 
 const toggleColorMode = () => {
   colorMode.preference = colorMode.value === 'light' ? 'dark' : 'light'
+}
+
+const openSupportEmail = () => {
+  const email = 'masmoudi.brahim@gmail.com'
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  
+  if (isMobile) {
+    window.location.href = `mailto:${email}`
+  } else {
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`, '_blank')
+  }
 }
 
 
@@ -244,17 +274,14 @@ const openCountryDialog = async () => {
 .avatar-wrapper {
   position: relative;
   border-radius: 50%;
-  padding: 3px;
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
 }
 
 .main-avatar {
   background-color: #1e293b;
-  border: 2px solid white;
 }
 
 :deep(.v-theme--dark) .main-avatar {
-  border: 2px solid #0f172a;
+  background-color: #0f172a;
 }
 
 .status-dot {
@@ -271,6 +298,29 @@ const openCountryDialog = async () => {
 
 :deep(.v-theme--dark) .status-dot {
   border: 2px solid #0f172a;
+}
+
+.menu-arrow-badge {
+  position: absolute;
+  bottom: -2px;
+  right: 1px;
+  width: 12px;
+  height: 12px;
+  background-color: rgb(var(--v-theme-surface));
+  border: 1.5px solid rgb(var(--v-theme-background));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  color: rgb(var(--v-theme-on-surface));
+}
+
+:deep(.v-theme--dark) .menu-arrow-badge {
+  background-color: #1e293b;
+  border-color: #0f172a;
+  color: white;
 }
 
 .avatar-glow {

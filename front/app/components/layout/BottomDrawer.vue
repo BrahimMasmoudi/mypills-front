@@ -21,7 +21,7 @@
       <!-- ✦ AI Advisor — hero tab -->
     <v-btn to="/advisor" class="nav-btn advisor-tab">
       <span class="advisor-icon-bubble">
-        <v-icon size="20">mdi-robot-outline</v-icon>
+        <v-icon size="16">mdi-robot-outline</v-icon>
         <span class="pulse-dot" aria-hidden="true" />
       </span>
       <span class="advisor-tab-label">{{ t('medicationAdvisor.title') }}</span>
@@ -59,8 +59,8 @@ const { t } = useI18n()
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 12px;
   background: linear-gradient(135deg, rgb(var(--v-theme-primary)), #818cf8);
   box-shadow: 0 3px 12px rgba(var(--v-theme-primary), 0.38);
@@ -85,8 +85,8 @@ const { t } = useI18n()
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 7px;
-  height: 7px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: #34d399;
   box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.6);
