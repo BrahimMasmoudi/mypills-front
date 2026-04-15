@@ -1,7 +1,5 @@
 <template>
   <div class="advisor-shell">
-
-    <!-- Animated mesh gradient background -->
     <div class="mesh-bg" aria-hidden="true">
       <div class="mesh-orb orb-1" />
       <div class="mesh-orb orb-2" />
@@ -10,25 +8,19 @@
 
     <v-container max-width="860" class="advisor-container">
 
-      <!-- Header -->
       <div class="advisor-header" :class="{ 'header-compact': !!aiResponse }">
         <div class="header-badge">
-          <v-icon icon="mdi-robot-outline" size="20" />
-          <span>AI · Gemini Flash</span>
+          <v-icon icon="mdi-robot-outline" size="20" class="mr-1" />
+          <span>{{ t('medicationAdvisor.title') }}</span>
         </div>
         <p class="advisor-subtitle" v-if="!aiResponse">{{ t('medicationAdvisor.description') }}</p>
       </div>
 
-      <!-- Disclaimer strip -->
       <div class="disclaimer-strip" v-if="!aiResponse">
-        <v-icon icon="mdi-shield-alert-outline" size="16" class="mr-2 flex-shrink-0" />
+        <v-icon icon="mdi-shield-alert-outline" size="36" class="mr-2 flex-shrink-0" />
         <span>{{ t('medicationAdvisor.strictDisclaimer') }}</span>
       </div>
-
-      <!-- Input card -->
       <div class="glass-card input-card" :class="{ 'input-card-compact': !!aiResponse }">
-
-        <!-- Quota exhausted overlay -->
         <div v-if="hasReachedLimit" class="quota-banner">
           <v-icon icon="mdi-clock-alert-outline" class="mr-2" />
           {{ t('medicationAdvisor.quotaExceeded') }}
@@ -72,7 +64,9 @@
           <div class="loading-signal">
             <span class="dot" /><span class="dot" /><span class="dot" />
           </div>
-          <p class="loading-label">{{ t('medicationAdvisor.buttonLoading') }}</p>
+          <Transition name="fade" mode="out-in">
+            <p :key="currentLoadingMessage" class="loading-label">{{ currentLoadingMessage }}</p>
+          </Transition>
         </div>
       </Transition>
 
@@ -132,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMedicationsStore } from '~/store/medications'
 import { useI18n } from 'vue-i18n'
@@ -140,12 +134,28 @@ import type { Medication } from '~/types/medication'
 
 const medicationsStore = useMedicationsStore()
 const { hasReachedLimit } = storeToRefs(medicationsStore)
-const { t, locale } = useI18n()
+const { tm, t, locale } = useI18n()
 
 const symptomInput = ref('')
 const isLoading = ref(false)
 const aiResponse = ref<{ explanation: string; usableMedications: Medication[] } | null>(null)
 const errorMessage = ref('')
+
+const loadingMessageIndex = ref(0)
+let loadingInterval: any = null
+
+const loadingPhrases = computed(() => {
+  const phrases = tm('medicationAdvisor.loadingPhrases')
+  return Array.isArray(phrases) ? phrases : [t('medicationAdvisor.buttonLoading')]
+})
+
+const currentLoadingMessage = computed(() => {
+  return loadingPhrases.value[loadingMessageIndex.value % loadingPhrases.value.length]
+})
+
+onUnmounted(() => {
+  if (loadingInterval) clearInterval(loadingInterval)
+})
 
 const getAdvice = async () => {
   if (!symptomInput.value.trim()) {
@@ -157,6 +167,11 @@ const getAdvice = async () => {
   aiResponse.value = null
   errorMessage.value = ''
 
+  loadingMessageIndex.value = 0
+  loadingInterval = setInterval(() => {
+    loadingMessageIndex.value++
+  }, 1200)
+
   try {
     aiResponse.value = await medicationsStore.getMedicationAdvice(symptomInput.value, locale.value)
   } catch (error: any) {
@@ -164,6 +179,7 @@ const getAdvice = async () => {
     errorMessage.value = error.message || t('error')
   } finally {
     isLoading.value = false
+    if (loadingInterval) clearInterval(loadingInterval)
   }
 }
 </script>
@@ -231,7 +247,7 @@ const getAdvice = async () => {
 /* ─── Header ─────────────────────────────────────── */
 .advisor-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 16px;
   transition: margin 0.4s ease;
 }
 
@@ -280,7 +296,7 @@ const getAdvice = async () => {
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  font-size: 0.72rem;
+  font-size: 0.875rem;
   line-height: 1.5;
   color: rgb(var(--v-theme-warning));
   background: rgba(var(--v-theme-warning), 0.1);
@@ -509,6 +525,15 @@ const getAdvice = async () => {
 .fade-up-enter-from {
   opacity: 0;
   transform: translateY(18px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 @keyframes pop-in {

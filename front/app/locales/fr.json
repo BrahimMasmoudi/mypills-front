@@ -306,6 +306,13 @@
     "disclaimerTitle": "Avertissement Médical",
     "strictDisclaimer": "Je suis un assistant IA et NON un médecin. Cet outil se base uniquement sur les médicaments enregistrés dans votre armoire. Consultez toujours un professionnel de la santé et vérifiez la notice avant de prendre le moindre médicament.",
     "usableMedications": "Médicaments utilisables",
-    "quotaExceeded": "Vous avez atteint votre limite quotidienne de 5 recherches. Veuillez réessayer demain."
+    "quotaExceeded": "Vous avez atteint votre limite quotidienne de 5 recherches. Veuillez réessayer demain.",
+    "loadingPhrases": [
+      "Réflexion...",
+      "Consultation de l'armoire...",
+      "Analyse des symptômes...",
+      "En attente de la réponse...",
+      "Presque fini..."
+    ]
   }
 }
