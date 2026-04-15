@@ -97,7 +97,14 @@ const drawer = defineModel<boolean>()
 const { t } = useI18n()
 
 const openSupportEmail = () => {
-  window.open('https://mail.google.com/mail/?view=cm&fs=1&to=masmoudi.brahim@gmail.com', '_blank')
+  const email = 'masmoudi.brahim@gmail.com'
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  
+  if (isMobile) {
+    window.location.href = `mailto:${email}`
+  } else {
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`, '_blank')
+  }
 }
 </script>
 
