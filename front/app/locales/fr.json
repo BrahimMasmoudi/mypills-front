@@ -116,7 +116,8 @@
     "disconnect": "Déconnexion",
     "change-theme": "Changer le thème",
     "change-country": "Changer le pays",
-    "change-language": "Changer le langage"
+    "change-language": "Changer le langage",
+    "support": "Support"
   },
   "login": {
     "welcome": "Bienvenue sur MyPills",

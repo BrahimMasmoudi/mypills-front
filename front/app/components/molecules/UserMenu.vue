@@ -131,6 +131,22 @@
 
         <v-divider class="my-3 border-opacity-25 mx-4"/>
 
+        <!-- Support -->
+        <v-list-item
+          class="menu-item-premium mb-2"
+          :ripple="{ class: 'text-primary' }"
+          @click="openSupportEmail"
+        >
+          <template #prepend>
+            <div class="icon-container icon-blue mr-3">
+              <v-icon icon="mdi-lifebuoy" size="20"/>
+            </div>
+          </template>
+          <v-list-item-title class="font-weight-bold text-body-2">
+            {{ t('user-menu.support') }}
+          </v-list-item-title>
+        </v-list-item>
+
         <!-- Disconnect -->
         <v-list-item
           class="menu-item-logout text-error"
@@ -176,6 +192,10 @@ const handleSignOut = async () => {
 
 const toggleColorMode = () => {
   colorMode.preference = colorMode.value === 'light' ? 'dark' : 'light'
+}
+
+const openSupportEmail = () => {
+  window.open('https://mail.google.com/mail/?view=cm&fs=1&to=support@example.com', '_blank')
 }
 
 

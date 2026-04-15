@@ -120,7 +120,8 @@
     "disconnect": "Disconnect",
     "change-theme": "Change theme",
     "change-country": "Change country",
-    "change-language": "Change language"
+    "change-language": "Change language",
+    "support": "Support"
   },
   "login": {
     "welcome": "Welcome to MyPills",
