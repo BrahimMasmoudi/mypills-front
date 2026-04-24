@@ -1,5 +1,5 @@
 <template>
-  <div class="advisor-shell">
+  <v-sheet class="advisor-shell">
     <div class="mesh-bg" aria-hidden="true">
       <div class="mesh-orb orb-1" />
       <div class="mesh-orb orb-2" />
@@ -45,10 +45,11 @@
           </span>
           <v-btn
             class="ask-btn"
+            color="primary"
+            variant="tonal"
             :loading="isLoading"
             :disabled="isLoading || !symptomInput.trim() || hasReachedLimit || symptomInput.length > 300"
             @click="getAdvice"
-            elevation="0"
           >
             <template #prepend>
               <v-icon icon="mdi-sparkles" />
@@ -122,7 +123,7 @@
       </Transition>
 
     </v-container>
-  </div>
+  </v-sheet>
 </template>
 
 <script setup lang="ts">
@@ -366,8 +367,6 @@ const getAdvice = async () => {
 
 /* ─── Ask Button ─────────────────────────────────── */
 .ask-btn {
-  background: linear-gradient(135deg, rgb(var(--v-theme-primary)), #818cf8) !important;
-  color: #fff !important;
   font-weight: 700;
   font-size: 0.875rem;
   letter-spacing: 0;
@@ -375,12 +374,6 @@ const getAdvice = async () => {
   padding: 0 20px !important;
   height: 42px !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 18px rgba(var(--v-theme-primary), 0.35) !important;
-}
-
-.ask-btn:not(:disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(var(--v-theme-primary), 0.5) !important;
 }
 
 /* ─── Loading card ───────────────────────────────── */
