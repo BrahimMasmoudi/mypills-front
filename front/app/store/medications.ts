@@ -8,7 +8,8 @@ import { useCollection, useDocument, getCurrentUser } from 'vuefire'
 import { ref, computed } from 'vue'
 
 export const useMedicationsStore = defineStore('medicationsStore', () => {
-    const { $functions, $firestore, $analytics } = useNuxtApp()
+    const { $functions, $analytics } = useNuxtApp()
+    const firestore = useFirestore()
 
     /* ------------------------------------------------------------------
      * STATE
@@ -64,12 +65,12 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
 
         // Just updating this ref triggers the useCollection above
         sourceQuery.value = query(
-            collection($firestore, 'medications'),
+            collection(firestore, 'medications'),
             where('email', '==', user.email),
             orderBy('createdAt', 'desc')
         )
         
-        usageDocSource.value = doc($firestore, 'ai_usage', user.uid)
+        usageDocSource.value = doc(firestore, 'ai_usage', user.uid)
     }
 
     /* ------------------------------------------------------------------

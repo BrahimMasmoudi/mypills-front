@@ -6,7 +6,8 @@ import type { CreateReminderRequest, Reminder, ReminderGroup, ReminderStatus } f
 import { logEvent } from '@firebase/analytics'
 
 export const useReminderStore = defineStore('reminder', () => {
-    const { $functions, $firestore, $analytics } = useNuxtApp()
+    const { $functions, $analytics } = useNuxtApp()
+    const firestore = useFirestore()
 
     const reminderSource = ref<any[]>([])
     const sourceQuery = ref<any>(null)
@@ -25,7 +26,7 @@ export const useReminderStore = defineStore('reminder', () => {
         if (!user) return
 
         sourceQuery.value = query(
-            collection($firestore, 'reminders'),
+            collection(firestore, 'reminders'),
             where('userId', '==', user.uid),
             orderBy('scheduledTime', 'desc')
         )

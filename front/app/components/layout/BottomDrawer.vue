@@ -19,7 +19,7 @@
     </v-btn>
 
       <!-- ✦ AI Advisor — hero tab -->
-    <v-btn to="/advisor" class="nav-btn advisor-tab">
+    <v-btn v-if="userStore.isSuperUser" to="/advisor" class="nav-btn advisor-tab">
       <span class="advisor-icon-bubble">
         <v-icon size="16">mdi-robot-outline</v-icon>
         <span class="pulse-dot" aria-hidden="true" />
@@ -32,7 +32,10 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '~/store/userStore'
+
 const { t } = useI18n()
+const userStore = useUserStore()
 </script>
 
 <style scoped>
