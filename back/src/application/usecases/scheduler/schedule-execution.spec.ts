@@ -22,6 +22,7 @@ describe('ScheduleExecution Use Case', () => {
             reminderId: 'rem-abc',
             userId: 'user-123',
             medName: 'Doliprane',
+            medicationId: 'med-123',
             quantity: 2, // Number input
             scheduledTime: new Date('2026-01-20T10:00:00Z'),
             status: 'pending',
@@ -37,6 +38,7 @@ describe('ScheduleExecution Use Case', () => {
             {
                 userId: 'user-123',
                 medName: 'Doliprane',
+                medicationId: 'med-123',
                 quantity: '2', // Verify it was converted to a string
                 reminderId: 'rem-abc',
             }
@@ -53,6 +55,7 @@ describe('ScheduleExecution Use Case', () => {
             reminderId: 'rem-abc',
             userId: 'user-123',
             medName: 'Doliprane',
+            medicationId: 'med-123',
             quantity: 1,
             scheduledTime: new Date(),
             status: 'pending',

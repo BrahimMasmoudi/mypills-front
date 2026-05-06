@@ -27,12 +27,16 @@ const dictionary = {
     en: {
         title: 'Medication Time 💊',
         body: (q, name) => `Take ${q}x ${name}`,
+        lowStockTitle: 'Low Stock Warning ⚠️',
+        lowStockBody: (q, name) => `You only have ${q} pills of ${name} left. Please restock soon!`,
         postpone1h: 'Postpone 1h ⏳',
         postponeLater: 'Postpone later 📅'
     },
     fr: {
         title: 'L\'heure de prendre vos médicaments 💊',
         body: (q, name) => `Prenez ${q}x ${name}`,
+        lowStockTitle: 'Alerte Stock Bas ⚠️',
+        lowStockBody: (q, name) => `Il ne vous reste que ${q} comprimés de ${name}. Pensez à vous réapprovisionner !`,
         postpone1h: 'Repousser d\'1h ⏳',
         postponeLater: 'Repousser plus tard 📅'
     }
@@ -54,14 +58,21 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 onBackgroundMessage(messaging, (payload) => {
+    const type = payload.data?.type || 'reminder';
     const medName = payload.data?.medName || 'Medication';
     const quantity = payload.data?.quantity || '1';
 
     const browserLang = (navigator.language || 'en').split('-')[0];
     const lang = dictionary[browserLang] ? browserLang : 'en';
 
-    const title = dictionary[lang].title;
-    const body = dictionary[lang].body(quantity, medName);
+    let title, body;
+    if (type === 'low_stock') {
+        title = dictionary[lang].lowStockTitle;
+        body = dictionary[lang].lowStockBody(quantity, medName);
+    } else {
+        title = dictionary[lang].title;
+        body = dictionary[lang].body(quantity, medName);
+    }
 
     return self.registration.showNotification(title, {
         body: body,
@@ -69,14 +80,7 @@ onBackgroundMessage(messaging, (payload) => {
         data: payload.data,
         vibrate: [200, 100, 200],
         requireInteraction: true,
-        silent: false,
-        actions: [
-            {
-                action: 'postpone-later',
-                title: dictionary[lang].postponeLater,
-                icon: '/icons/calendar.png'
-            }
-        ]
+        silent: false
     });
 });
 
@@ -95,16 +99,8 @@ self.addEventListener('notificationclick', (event) => {
     // Ensure we handle the base URL correctly for the PWA scope
     const urlBase = self.registration.scope.replace(/\/$/, '');
 
-    switch (action) {
-        case 'postpone-later':
-            targetUrl = `${urlBase}/reminders?action=postpone-later&reminderId=${reminderId}&t=${Date.now()}`;
-            break;
-
-        default:
-            // User clicked the body of the notification
-            targetUrl = `${urlBase}/reminders`;
-            break;
-    }
+    // Always use confirm action when clicking the notification
+    targetUrl = `${urlBase}/reminders?action=confirm&reminderId=${reminderId}&t=${Date.now()}`;
 
     // 3. The "Focus or Open" Pattern
     const promiseChain = clients.matchAll({
