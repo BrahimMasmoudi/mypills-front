@@ -11,10 +11,6 @@ export class FirebaseFcmAdapter implements NotificationGateway {
                 quantity: quantity,
                 reminderId: reminderId
             },
-            notification: {
-                title: 'Medication Time 💊',
-                body: `Take ${quantity}x ${medName}`
-            },
             android: {
                 priority: 'high',
                 notification: {
