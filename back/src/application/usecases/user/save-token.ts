@@ -1,4 +1,4 @@
-import { UserRepository } from '../../../../domain/repositories/reminder/user-repository'
+import { UserRepository } from '../../../domain/repositories/user/user-repository'
 
 export class SaveUserToken {
     constructor(private userRepo: UserRepository) {}

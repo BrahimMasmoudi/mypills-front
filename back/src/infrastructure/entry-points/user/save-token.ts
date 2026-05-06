@@ -1,7 +1,7 @@
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
-import { SaveUserToken } from '../../../../application/usecases/scheduler/user-token/save-token'
-import { FirestoreUserRepositoryAdapter } from '../../../adapters/scheduler/firestore-user-repository-adapter'
-import { $firebaseConnector } from '../../../config/firebase'
+import { FirestoreUserRepositoryAdapter } from '../../adapters/user/firestore-user-repository-adapter'
+import { SaveUserToken } from '../../../application/usecases/user/save-token'
+import { $firebaseConnector } from '../../config/firebase'
 
 export const saveUserToken = onCall({ region: 'europe-west3', enforceAppCheck: true }, async (request) => {
     if (!request.auth) {

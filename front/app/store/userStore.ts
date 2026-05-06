@@ -1,11 +1,32 @@
 import { defineStore } from 'pinia'
 import { GoogleAuthProvider, signInWithPopup, signOut, type User, type UserCredential } from '@firebase/auth'
-import { useFirebaseAuth } from 'vuefire'
+import { useFirebaseAuth, useDocument } from 'vuefire'
+import { doc } from 'firebase/firestore'
+import { ref, computed } from 'vue'
+import type { UserProfile } from '~/types/user'
+import { httpsCallable } from 'firebase/functions'
 
 export const useUserStore = defineStore('userStore', () => {
+    const firestore = useFirestore()
     const auth = useFirebaseAuth()
     const userCredentials = ref<UserCredential>()
     const user = ref<User>()
+
+    // Profile source and data
+    const userDocSource = computed(() => user.value ? doc(firestore, 'users', user.value.uid) : null)
+    const { data: profile } = useDocument<UserProfile>(userDocSource)
+
+    const isSuperUser = computed(() => profile.value?.role === 'super_user')
+
+    const saveUserProfile = async (u: User) => {
+        const { $functions } = useNuxtApp()
+        const save = httpsCallable($functions, 'saveUser')
+        await save({
+            name: u.displayName,
+            email: u.email
+        })
+    }
+
     const login = async () => {
         userCredentials.value = await signInWithPopup(auth!, new GoogleAuthProvider())
         user.value = userCredentials.value?.user
@@ -21,5 +42,8 @@ export const useUserStore = defineStore('userStore', () => {
         logOut,
         userCredentials,
         user,
+        profile,
+        isSuperUser,
+        saveUserProfile,
     }
 }, { persist: { paths: ['user'] } })

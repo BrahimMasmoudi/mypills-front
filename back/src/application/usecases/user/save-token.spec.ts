@@ -1,5 +1,5 @@
 import { SaveUserToken } from './save-token'
-import { UserRepository } from '../../../../domain/repositories/reminder/user-repository'
+import { UserRepository } from '../../../domain/repositories/user/user-repository'
 
 describe('SaveUserToken Use Case', () => {
     let mockUserRepo: jest.Mocked<UserRepository>
@@ -10,6 +10,7 @@ describe('SaveUserToken Use Case', () => {
         mockUserRepo = {
             saveFcmToken: jest.fn().mockResolvedValue(undefined),
             getDeviceToken: jest.fn(),
+            saveUser: jest.fn().mockResolvedValue(undefined),
         }
 
         useCase = new SaveUserToken(mockUserRepo)

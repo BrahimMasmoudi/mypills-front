@@ -1,6 +1,6 @@
 import { FirestoreConnector } from '../connectors/firestore-connector'
 import { CollectionReference, Timestamp } from 'firebase-admin/firestore'
-import { UserRepository } from '../../../domain/repositories/reminder/user-repository'
+import { UserRepository } from '../../../domain/repositories/user/user-repository'
 
 export class FirestoreUserRepositoryAdapter implements UserRepository {
     private readonly collection: CollectionReference
@@ -26,5 +26,14 @@ export class FirestoreUserRepositoryAdapter implements UserRepository {
 
         const data = doc.data()
         return data?.fcmToken || null
+    }
+
+    async saveUser(userId: string, name: string, email: string): Promise<void> {
+        await this.collection.doc(userId).set({
+            userId,
+            displayName: name,
+            email,
+            lastUpdated: Timestamp.now(),
+        }, { merge: true })
     }
 }

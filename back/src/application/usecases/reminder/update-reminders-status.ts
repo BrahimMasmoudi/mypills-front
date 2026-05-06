@@ -3,7 +3,7 @@ import { UpdateRemindersStatusUseCase } from '../../ports/input/reminder/update-
 import { TaskSchedulerPort } from '../../../domain/gateway/scheduler/task-scheduler-port'
 import { ReminderStatus } from '../../../domain/entities/reminder'
 import { MedicationRepository } from '../../../domain/repositories/medication/medication-repository'
-import { UserRepository } from '../../../domain/repositories/reminder/user-repository'
+import { UserRepository } from '../../../domain/repositories/user/user-repository'
 import { NotificationGateway } from '../../../domain/gateway/scheduler/notification-gateway'
 
 export class UpdateRemindersStatus implements UpdateRemindersStatusUseCase {
@@ -33,7 +33,7 @@ export class UpdateRemindersStatus implements UpdateRemindersStatusUseCase {
                 if (reminder.medicationId) {
                     const auth = { uid: reminder.userId, token: {} } as any
                     const medication = await this.medicationRepo.get(reminder.medicationId, auth)
-                    
+
                     if (medication) {
                         const quantityToDecrement = Number(reminder.quantity) || 1
                         await this.medicationRepo.decrement(medication, auth, quantityToDecrement)

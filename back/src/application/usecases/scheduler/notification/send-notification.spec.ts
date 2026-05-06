@@ -1,6 +1,6 @@
 import { SendReminderNotification, SendNotificationCommand } from './send-notification'
-import { UserRepository } from '../../../../domain/repositories/reminder/user-repository'
 import { NotificationGateway } from '../../../../domain/gateway/scheduler/notification-gateway'
+import { UserRepository } from '../../../../domain/repositories/user/user-repository'
 
 describe('SendReminderNotification Use Case', () => {
     let mockUserRepo: jest.Mocked<UserRepository>
@@ -12,6 +12,7 @@ describe('SendReminderNotification Use Case', () => {
         mockUserRepo = {
             getDeviceToken: jest.fn(),
             saveFcmToken: jest.fn(),
+            saveUser: jest.fn(),
         }
 
         mockNotificationGateway = {

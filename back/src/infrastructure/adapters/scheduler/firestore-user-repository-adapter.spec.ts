@@ -1,6 +1,6 @@
-import { FirestoreUserRepositoryAdapter } from './firestore-user-repository-adapter'
 import { FirestoreConnector } from '../connectors/firestore-connector'
 import { Timestamp } from 'firebase-admin/firestore'
+import { FirestoreUserRepositoryAdapter } from '../user/firestore-user-repository-adapter'
 
 describe('FirestoreUserRepositoryAdapter', () => {
     let mockConnector: jest.Mocked<FirestoreConnector>
