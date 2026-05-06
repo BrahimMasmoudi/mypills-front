@@ -90,7 +90,6 @@ import { useI18n } from 'vue-i18n';
 import { useReminderStore } from '~/store/reminder';
 import { useMedicationsStore } from '~/store/medications';
 import EditReminderDialog from '~/components/molecules/reminder/EditDialog.vue';
-import MoleculesReminderConfirmationDialog from '~/components/molecules/reminder/ConfirmationDialog.vue';
 
 const { t } = useI18n()
 const { $open, $device } = useNuxtApp()
@@ -102,7 +101,7 @@ const viewType = ref<'grid' | 'table'>('grid')
 
 const route = useRoute()
 
-const handlePostponeActions = async (action: 'confirm' | 'taken' | 'postpone-1h' | 'postpone-later' | undefined, reminderId: string | undefined) => {
+const handlePostponeActions = async (action: 'postpone-1h' | 'postpone-later' | undefined, reminderId: string | undefined) => {
   if (!action || !reminderId) return
 
   // Wait for reminders to load
@@ -116,40 +115,7 @@ const handlePostponeActions = async (action: 'confirm' | 'taken' | 'postpone-1h'
     return
   }
 
-  const reminder = reminders.value.find(r => r.reminderId === reminderId)
-  if (!reminder) return
-
-  if (action === 'confirm') {
-    const result = await $open<string>(MoleculesReminderConfirmationDialog, {
-      item: reminder,
-      scrim: true,
-      isPersistent: true,
-    })
-
-    if (result === 'taken') {
-      await handlePostponeActions('taken', reminderId)
-    } else if (result === 'postpone-1h') {
-      await handlePostponeActions('postpone-1h', reminderId)
-    } else if (result === 'postpone-later') {
-      await handlePostponeActions('postpone-later', reminderId)
-    }
-    return
-  }
-
-  if (action === 'taken') {
-    const result = await reminderStore.updateRemindersStatus([reminderId as string], 'done')
-    openToast('success', t('reminderDialog.toast.successUpdate'))
-
-    if (result?.lowStockItems && result.lowStockItems.length > 0) {
-      result.lowStockItems.forEach(item => {
-        openToast('warning', t('meds.lowStockWarning', {
-          name: item.medicationName,
-          count: item.remainingQuantity
-        }))
-      })
-    }
-
-  } else if (action === 'postpone-1h') {
+  if (action === 'postpone-1h') {
     await reminderStore.postponeReminderBy1h(reminderId as string)
     openToast('success', t('reminderDialog.toast.successUpdate'))
 
@@ -168,12 +134,12 @@ const handlePostponeActions = async (action: 'confirm' | 'taken' | 'postpone-1h'
 onMounted(async () => {
   medicationStore.initMedications()
   const { action, reminderId } = route.query
-  handlePostponeActions(action as 'confirm' | 'taken' | 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
+  handlePostponeActions(action as 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
 })
 
 watch(() => route.query, (newQuery) => {
   const { action, reminderId } = newQuery
-  handlePostponeActions(action as 'confirm' | 'taken' | 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
+  handlePostponeActions(action as 'postpone-1h' | 'postpone-later' | undefined, reminderId as string | undefined)
 })
 
 useSeoMeta({
@@ -277,15 +243,7 @@ const finishTreatment = async (ids: string[], status: ReminderStatus, done: () =
   }
 
   try {
-    const result = await reminderStore.updateRemindersStatus(ids, status)
-    if (status === 'done' && result?.lowStockItems && result.lowStockItems.length > 0) {
-      result.lowStockItems.forEach(item => {
-        openToast('warning', t('meds.lowStockWarning', {
-          name: item.medicationName,
-          count: item.remainingQuantity
-        }))
-      })
-    }
+    await reminderStore.updateRemindersStatus(ids, status)
   } finally {
     done()
   }

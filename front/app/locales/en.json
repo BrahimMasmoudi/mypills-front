@@ -70,7 +70,6 @@
     "delete": "Delete",
     "numberOfBoxes": "Box | Boxes",
     "pills": "Pill | Pills",
-    "lowStockWarning": "Low Stock Warning ⚠️: You only have {count} pills of {name} left. Please restock soon!",
     "toast": {
       "updated": "Box size updated successfully",
       "error": "Failed to update box size"
@@ -205,28 +204,14 @@
     "reminderNameLabel": "Sickness name",
     "reminderNamePlaceholder": "e.g., Flu, Hypertension...",
     "sicknessNameLabel": "Treatment",
-    "longTermLabel": "Long-term treatment",
-    "longTermDesc": "Up to 90 days of treatment",
-    "standardTermDesc": "Short treatment (max 15 days)",
     "maxDurationHint": "Maximum treatment duration is {days} days",
     "maxDosesHint": "Maximum {count} doses reached",
-    "insufficientStockShort": "Insufficient Stock",
-    "inventoryWarningTitle": "Insufficient Stock",
-    "inventoryWarningMessage": "You need {needed} pills for this treatment, but you only have {available} left. Do you want to create the reminder anyway?",
     "toast": {
       "success": "The reminder is created successfully",
       "error": "An error happened while creating the reminder",
       "successUpdate": "Reminder updated successfully",
       "errorUpdate": "Failed to update reminder"
-    },
-    "step1Title": "Treatment Info",
-    "step1Subtitle": "What are we treating today?",
-    "step2Title": "Duration & Mode",
-    "step2Subtitle": "Define how long this treatment will last.",
-    "step3Title": "Scheduling",
-    "step3Subtitle": "Set your daily dose frequency.",
-    "back": "Back",
-    "next": "Next"
+    }
   },
   "reminderDialogValidate": {
     "message": "Are you sure you took all your pills?"
@@ -346,12 +331,5 @@
       "Waiting for response...",
       "Almost there..."
     ]
-  },
-  "reminderConfirmation": {
-    "title": "Medication Confirmation",
-    "message": "It's time to take {quantity}x {medName}. Did you take it?",
-    "taken": "Yes, I took it",
-    "postpone1h": "In 1 hour",
-    "postponeLater": "Later..."
   }
 }

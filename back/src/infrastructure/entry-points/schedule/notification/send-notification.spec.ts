@@ -10,7 +10,7 @@ describe('sendFCMNotification Webhook', () => {
 
         // Mock Express Request and Response
         const req = {
-            body: { userId: 'u1', medName: 'Doli', medicationId: 'med-123', quantity: '1', reminderId: 'rem-123' },
+            body: { userId: 'u1', medName: 'Doli', quantity: '1' },
         }
         const res = {
             status: jest.fn().mockReturnThis(),
@@ -24,9 +24,7 @@ describe('sendFCMNotification Webhook', () => {
         expect(useCaseSpy).toHaveBeenCalledWith({
             userId: 'u1',
             medName: 'Doli',
-            medicationId: 'med-123',
             quantity: '1',
-            reminderId: 'rem-123',
         })
         expect(res.status).toHaveBeenCalledWith(200)
     })

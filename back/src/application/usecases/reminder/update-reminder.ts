@@ -32,7 +32,6 @@ export class UpdateReminder {
                         reminderId: this.reminderRepo.nextId(),
                         userId,
                         medName: med.name,
-                        medicationId: med.medicationId,
                         quantity: dose.quantity,
                         scheduledTime,
                         status: 'pending',

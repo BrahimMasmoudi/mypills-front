@@ -24,7 +24,6 @@ export class CreateReminder {
                     reminderId: this.reminderRepo.nextId(),
                     userId,
                     medName: request.medication.name,
-                    medicationId: request.medication.medicationId,
                     quantity: dose.quantity,
                     scheduledTime,
                     status: 'pending',

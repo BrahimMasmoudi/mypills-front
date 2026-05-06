@@ -74,11 +74,8 @@ export const useReminderStore = defineStore('reminder', () => {
     }
 
     const updateRemindersStatus = async (ids: string[], status: ReminderStatus) => {
-        const callUpdate = httpsCallable<any, {
-            success: boolean,
-            lowStockItems?: { medicationName: string, remainingQuantity: number }[]
-        }>($functions, 'updateRemindersStatus')
-        const result = await callUpdate({ ids, status, isAppActive: true })
+        const callUpdate = httpsCallable($functions, 'updateRemindersStatus')
+        await callUpdate({ ids, status })
 
         if ($analytics) {
             logEvent($analytics, 'update_reminder_status', {
@@ -86,8 +83,6 @@ export const useReminderStore = defineStore('reminder', () => {
                 count: ids.length
             })
         }
-
-        return result.data
     }
 
     const updateReminder = async (payload: any) => {

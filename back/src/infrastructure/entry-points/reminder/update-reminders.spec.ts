@@ -38,7 +38,7 @@ describe('updateRemindersStatus onCall Function', () => {
 
         // 6. Assertions
         expect(useCaseSpy).toHaveBeenCalledTimes(1)
-        expect(useCaseSpy).toHaveBeenCalledWith(mockData.ids, mockData.status, undefined)
+        expect(useCaseSpy).toHaveBeenCalledWith(mockData.ids, mockData.status)
         expect(result).toEqual({ success: true })
     })
 

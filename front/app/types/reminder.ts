@@ -21,7 +21,6 @@ export interface Reminder {
     reminderId: string
     userId: string
     medName: string
-    medicationId: string
     quantity: string | number
     scheduledTime: Date
     status: ReminderStatus

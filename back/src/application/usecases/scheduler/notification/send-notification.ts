@@ -4,7 +4,6 @@ import { UserRepository } from '../../../../domain/repositories/reminder/user-re
 export interface SendNotificationCommand {
     userId: string
     medName: string
-    medicationId: string
     quantity: string
     reminderId: string
 }
@@ -26,7 +25,6 @@ export class SendReminderNotification {
         await this.notificationGateway.sendMedicationReminder(
             token,
             command.medName,
-            command.medicationId,
             command.quantity,
             command.reminderId
         )

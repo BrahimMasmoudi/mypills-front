@@ -10,6 +10,8 @@
         rounded="lg"
         prepend-inner-icon="mdi-calendar-range"
         class="font-weight-medium cursor-pointer"
+        persistent-hint
+        :hint="t('reminderDialog.maxDurationHint', { days: MAX_DURATION_DAYS })"
       />
     </template>
     <v-date-picker
@@ -32,18 +34,14 @@ import { enUS, fr } from 'date-fns/locale'
 
 const { t, locale } = useI18n()
 const locales: Record<string, any> = { en: enUS, fr: fr }
-const props = withDefaults(defineProps<{
-  maxDays?: number
-}>(), {
-  maxDays: 15
-})
+const MAX_DURATION_DAYS = 15
 
 const startDate = defineModel<Date>('startDate', { required: true })
 const endDate = defineModel<Date>('endDate', { required: true })
 
 const dateMenu = ref(false)
 const minDate = new Date()
-const maxDate = computed(() => addDays(minDate, props.maxDays - 1))
+const maxDate = addDays(minDate, MAX_DURATION_DAYS - 1)
 
 // Internal range value for the picker
 const rangeValue = ref<Date[]>([startDate.value, endDate.value])
@@ -71,8 +69,8 @@ const handleDateChange = (val: Date[]) => {
     const start = sorted[0]!
     let end = sorted[sorted.length - 1]!
 
-    if (differenceInDays(end, start) >= props.maxDays) {
-      end = addDays(start, props.maxDays - 1)
+    if (differenceInDays(end, start) >= MAX_DURATION_DAYS) {
+      end = addDays(start, MAX_DURATION_DAYS - 1)
     }
 
     startDate.value = start

@@ -70,7 +70,6 @@
     "delete": "Supprimer",
     "numberOfBoxes": "Boite | Boites",
     "pills": "Comprimé | Comprimés",
-    "lowStockWarning": "Alerte Stock Bas ⚠️: Il ne vous reste que {count} comprimés de {name}. Pensez à vous réapprovisionner !",
     "toast": {
       "updated": "Taille de la boîte mise à jour avec succès",
       "error": "Échec de la mise à jour de la taille de la boîte"
@@ -189,28 +188,14 @@
     "reminderNameLabel": "Nom de la maladie",
     "reminderNamePlaceholder": "ex: Grippe, Hypertension...",
     "sicknessNameLabel": "Nom du traitement",
-    "longTermLabel": "Traitement de longue durée",
-    "longTermDesc": "Jusqu'à 90 jours de traitement",
-    "standardTermDesc": "Traitement court (max 15 jours)",
     "maxDurationHint": "La durée maximale du traitement est de {days} jours",
     "maxDosesHint": "Maximum {count} doses atteint",
-    "insufficientStockShort": "Stock Insuffisant",
-    "inventoryWarningTitle": "Stock Insuffisant",
-    "inventoryWarningMessage": "Vous avez besoin de {needed} comprimés pour ce traitement, mais vous n'en avez que {available}. Voulez-vous quand même créer le rappel ?",
     "toast": {
-      "success": "Le rappel a été créé avec succès",
-      "error": "Une erreur est survenue lors de la création du rappel",
-      "successUpdate": "Rappel mis à jour avec succès",
-      "errorUpdate": "Échec de la mise à jour du rappel"
-    },
-    "step1Title": "Infos Traitement",
-    "step1Subtitle": "Que soignons-nous aujourd'hui ?",
-    "step2Title": "Durée & Mode",
-    "step2Subtitle": "Définissez la durée de ce traitement.",
-    "step3Title": "Planification",
-    "step3Subtitle": "Réglez vos prises quotidiennes.",
-    "back": "Retour",
-    "next": "Suivant"
+      "success": "Le rappel est crée avec succés",
+      "error": "Échec lors de la creation d'un rappel",
+      "successUpdate": "Le rappel a été mis à jour avec succès",
+      "errorUpdate": "Échec lors de la mise à jour du rappel"
+    }
   },
   "reminderDialogValidate": {
     "message": "Es-tu sûr d'avoir pris tous tes médicaments ?"
@@ -330,12 +315,5 @@
       "En attente de la réponse...",
       "Presque fini..."
     ]
-  },
-  "reminderConfirmation": {
-    "title": "Confirmation de prise",
-    "message": "C'est l'heure de prendre {quantity}x {medName}. L'avez-vous pris ?",
-    "taken": "Oui, c'est fait",
-    "postpone1h": "Dans 1 heure",
-    "postponeLater": "Plus tard..."
   }
 }
