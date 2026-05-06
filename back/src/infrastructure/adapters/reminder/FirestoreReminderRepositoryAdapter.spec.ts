@@ -63,6 +63,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
                     sicknessName: 'sickness',
                     userId: 'u1',
                     medName: 'Doli',
+                    medicationId: 'med-123',
                     quantity: 1,
                     scheduledTime: new Date(),
                     status: 'pending',
@@ -103,6 +104,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
                     sicknessName: 'sickness',
                     userId: 'u1',
                     medName: 'Doli',
+                    medicationId: 'med-123',
                     quantity: 1,
                     scheduledTime: Timestamp.fromDate(mockDate),
                     status: 'pending',
@@ -118,6 +120,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
                 reminderId: 'id-1',
                 userId: 'u1',
                 medName: 'Doli',
+                medicationId: 'med-123',
                 quantity: 1,
                 scheduledTime: mockDate,
                 status: 'pending',
@@ -179,6 +182,7 @@ describe('FirestoreReminderRepositoryAdapter', () => {
                     scheduledTime: { toDate: () => mockScheduledTime },
                     userId: 'user-1',
                     medName: 'Med',
+                    medicationId: 'med-1',
                     quantity: 1,
                     status: 'pending'
                 })

@@ -13,6 +13,7 @@ export class ScheduleExecution implements ScheduleReminderExecutionUseCase {
             {
                 userId: reminder.userId,
                 medName: reminder.medName,
+                medicationId: reminder.medicationId,
                 quantity: String(reminder.quantity),
                 reminderId: reminder.reminderId,
             }

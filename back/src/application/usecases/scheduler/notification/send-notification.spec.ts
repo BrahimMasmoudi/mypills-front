@@ -16,6 +16,7 @@ describe('SendReminderNotification Use Case', () => {
 
         mockNotificationGateway = {
             sendMedicationReminder: jest.fn().mockResolvedValue(undefined),
+            sendLowStockNotification: jest.fn().mockResolvedValue(undefined),
         }
 
         useCase = new SendReminderNotification(mockUserRepo, mockNotificationGateway)
@@ -30,6 +31,7 @@ describe('SendReminderNotification Use Case', () => {
         const command: SendNotificationCommand = {
             userId: 'user-123',
             medName: 'Doliprane',
+            medicationId: 'med-123',
             quantity: '1',
             reminderId: 'reminder-123',
         }
@@ -43,6 +45,7 @@ describe('SendReminderNotification Use Case', () => {
         expect(mockNotificationGateway.sendMedicationReminder).toHaveBeenCalledWith(
             'fcm-token-xyz',
             'Doliprane',
+            'med-123',
             '1',
             'reminder-123'
         )
@@ -53,6 +56,7 @@ describe('SendReminderNotification Use Case', () => {
         const command: SendNotificationCommand = {
             userId: 'user-no-token',
             medName: 'Doliprane',
+            medicationId: 'med-123',
             quantity: '1',
             reminderId: 'reminder-123',
         }
@@ -73,7 +77,7 @@ describe('SendReminderNotification Use Case', () => {
         mockNotificationGateway.sendMedicationReminder.mockRejectedValue(new Error('FCM Error'))
 
         // Act & Assert
-        await expect(useCase.execute({ userId: 'u1', medName: 'm1', quantity: '1', reminderId: 'r1' }))
+        await expect(useCase.execute({ userId: 'u1', medName: 'm1', medicationId: 'med-1', quantity: '1', reminderId: 'r1' }))
             .rejects
             .toThrow('FCM Error')
     })
