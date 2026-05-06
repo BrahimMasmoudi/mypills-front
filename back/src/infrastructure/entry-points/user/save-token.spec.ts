@@ -1,9 +1,10 @@
 import firebaseFunctionsTest from 'firebase-functions-test'
-import { SaveUserToken } from '../../../../application/usecases/scheduler/user-token/save-token'
-import * as functions from '../../https-functions'
+import * as functions from '../https-functions'
+import { SaveUserToken } from '../../../application/usecases/user/save-token'
 
 const testEnv = firebaseFunctionsTest()
-jest.mock('../../../../application/usecases/scheduler/user-token/save-token')
+jest.mock('../../../application/usecases/user/save-token')
+jest.mock('../../adapters/user/firestore-user-repository-adapter')
 
 describe('saveUserToken Entry Point', () => {
     it('should call SaveUserToken use case', async () => {

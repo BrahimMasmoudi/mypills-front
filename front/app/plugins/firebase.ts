@@ -68,8 +68,8 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
                 initializeAppCheck(firebaseApp, {
                     provider: new CustomProvider({
                         getToken: () => {
-                            const debugToken = (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN 
-                                || import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN 
+                            const debugToken = (window as any).FIREBASE_APPCHECK_DEBUG_TOKEN
+                                || import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN
                                 || 'placeholder-token'
                             return Promise.resolve({
                                 token: debugToken,
@@ -97,8 +97,11 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
     // Sync Auth State to Pinia for Cypress/Persistence
     const userStore = useUserStore()
     const auth = useFirebaseAuth()
-    onAuthStateChanged(auth!, (u) => {
+    onAuthStateChanged(auth!, async (u) => {
         userStore.user = u ?? undefined
+        if (u) {
+            await userStore.saveUserProfile(u)
+        }
     })
 
     const firestoreInstance = useFirestore()

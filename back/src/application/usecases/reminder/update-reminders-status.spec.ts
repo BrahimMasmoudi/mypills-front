@@ -2,7 +2,7 @@ import { UpdateRemindersStatus } from './update-reminders-status'
 import { ReminderRepository } from '../../../domain/repositories/reminder/reminder-repository'
 import { TaskSchedulerPort } from '../../../domain/gateway/scheduler/task-scheduler-port'
 import { MedicationRepository } from '../../../domain/repositories/medication/medication-repository'
-import { UserRepository } from '../../../domain/repositories/reminder/user-repository'
+import { UserRepository } from '../../../domain/repositories/user/user-repository'
 import { NotificationGateway } from '../../../domain/gateway/scheduler/notification-gateway'
 
 describe('UpdateRemindersStatus Use Case', () => {
