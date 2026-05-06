@@ -86,13 +86,8 @@
           <v-window-item :value="3">
             <div class="d-flex flex-column pt-2">
               <!-- Inventory Warning Banner -->
-              <v-alert
-                v-if="totalPillsNeeded > (form.medication?.quantity || 0)"
-                type="warning"
-                variant="tonal"
-                class="mb-6 rounded-xl border-warning"
-                density="comfortable"
-              >
+              <v-alert v-if="totalPillsNeeded > (form.medication?.quantity || 0)" type="warning" variant="tonal"
+                class="mb-6 rounded-xl border-warning" density="comfortable">
                 <template #prepend>
                   <v-icon icon="mdi-alert-circle-outline" size="24" />
                 </template>
@@ -107,25 +102,57 @@
                 </div>
               </v-alert>
 
-              <div v-for="(item, index) in form.doses" :key="index"
-                class="dose-row d-flex align-center mb-4 pa-4 rounded-xl border-premium bg-white-glass">
-                <v-avatar color="primary-lighten-5" size="40" class="mr-4 font-weight-black text-primary">
-                  {{ index + 1 }}
-                </v-avatar>
+              <!-- Desktop Layout: Clean & Linear -->
+              <template v-if="!$device.isMobile">
+                <div v-for="(item, index) in form.doses" :key="index"
+                  class="dose-row d-flex align-center mb-4 pa-4 rounded-xl border-premium bg-white-glass transition-all">
+                  <v-avatar color="primary-lighten-5" size="40" class="mr-4 font-weight-black text-primary">
+                    {{ index + 1 }}
+                  </v-avatar>
 
-                <MoleculesTimePicker v-model="item.time" class="mr-4 flex-grow-1" />
+                  <MoleculesTimePicker v-model="item.time" class="mr-4 flex-grow-1" />
 
-                <div class="quantity-control d-flex align-center px-2 py-1 rounded-pill bg-grey-lighten-4">
-                  <v-btn icon="mdi-minus" variant="text" size="x-small"
-                    @click="item.quantity = Math.max(1, item.quantity - 1)" />
-                  <div class="mx-3 font-weight-bold" style="min-width: 20px; text-align: center">{{ item.quantity }}
+                  <div class="quantity-control d-flex align-center px-2 py-1 rounded-pill bg-grey-lighten-4">
+                    <v-btn icon="mdi-minus" variant="text" size="x-small"
+                      @click="item.quantity = Math.max(1, item.quantity - 1)" />
+                    <div class="mx-3 font-weight-bold" style="min-width: 20px; text-align: center">{{ item.quantity }}
+                    </div>
+                    <v-btn icon="mdi-plus" variant="text" size="x-small" @click="item.quantity++" />
                   </div>
-                  <v-btn icon="mdi-plus" variant="text" size="x-small" @click="item.quantity++" />
-                </div>
 
-                <v-btn v-if="index !== 0" icon="mdi-delete-outline" variant="text" color="error" class="ml-2"
-                  @click="removeDose(index)" />
-              </div>
+                  <v-btn v-if="index !== 0" icon="mdi-delete-outline" variant="text" color="error" class="ml-2"
+                    @click="removeDose(index)" />
+                </div>
+              </template>
+
+              <!-- Mobile Layout: Ergonomic & Dynamic -->
+              <template v-else>
+                <div v-for="(item, index) in form.doses" :key="index"
+                  class="mobile-dose-row d-flex align-center mb-4 pa-3 rounded-2xl border-premium bg-white-glass shadow-sm transition-all overflow-hidden">
+
+                  <div class="mobile-index-badge d-flex align-center justify-center mr-3 flex-shrink-0">
+                    <div :style="{ borderColor: `rgb(var(--v-theme-primary))` }" />
+                    <span class="text-caption font-weight-black text-primary relative-z">{{ index + 1 }}</span>
+                  </div>
+
+                  <div class="flex-grow-1 mr-2" style="min-width: 0;">
+                    <MoleculesTimePicker v-model="item.time" class="compact-time-picker" />
+                  </div>
+
+                  <div
+                    class="mobile-qty-control d-flex align-center rounded-pill bg-primary-lighten-5 px-1 py-1 flex-shrink-0">
+                    <v-btn icon="mdi-minus" variant="text" size="x-small" density="comfortable" color="primary"
+                      @click="item.quantity = Math.max(1, item.quantity - 1)" />
+                    <div class="mx-1 font-weight-black text-primary text-center"
+                      style="min-width: 18px; font-size: 13px;">{{ item.quantity }}</div>
+                    <v-btn icon="mdi-plus" variant="text" size="x-small" density="comfortable" color="primary"
+                      @click="item.quantity++" />
+                  </div>
+
+                  <v-btn v-if="index !== 0" icon="mdi-close" variant="text" color="error" size="small"
+                    class="ml-2 flex-shrink-0" @click="removeDose(index)" />
+                </div>
+              </template>
 
               <v-btn variant="flat" color="primary-lighten-5" prepend-icon="mdi-plus-circle"
                 class="rounded-xl text-capitalize font-weight-bold text-primary py-6 mb-4" block
@@ -408,6 +435,47 @@ const cancelAndClose = () => close('canceled')
 .bg-footer-glass {
   background: rgba(255, 255, 255, 0.4) !important;
   backdrop-filter: blur(10px);
+}
+
+.mobile-dose-row {
+  position: relative;
+  border: 1px solid rgba(var(--v-theme-primary), 0.08);
+
+  &:active {
+    transform: scale(0.98);
+    background: white !important;
+  }
+}
+
+.mobile-index-badge {
+  width: 28px;
+  height: 28px;
+  background: rgba(var(--v-theme-primary), 0.1);
+  border-radius: 10px;
+  position: relative;
+}
+
+.compact-time-picker {
+  :deep(.v-field) {
+    border-radius: 12px !important;
+    padding-inline-start: 8px !important;
+
+    .v-field__prepend-inner {
+      padding-top: 0 !important;
+      margin-inline-end: 4px !important;
+
+      .v-icon {
+        font-size: 18px !important;
+      }
+    }
+
+    input {
+      font-size: 14px !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      min-height: 40px !important;
+    }
+  }
 }
 
 .shadow-primary {
