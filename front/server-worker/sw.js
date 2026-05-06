@@ -126,6 +126,5 @@ self.addEventListener('notificationclick', (event) => {
             return clients.openWindow(targetUrl);
         }
     });
-
     event.waitUntil(promiseChain);
 });
