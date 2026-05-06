@@ -30,6 +30,7 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
                 sicknessName: reminder.sicknessName,
                 userId: reminder.userId,
                 medName: reminder.medName,
+                medicationId: reminder.medicationId,
                 quantity: reminder.quantity,
                 scheduledTime: Timestamp.fromDate(reminder.scheduledTime),
                 status: reminder.status,
@@ -47,7 +48,7 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
             return null
         }
 
-        const data = doc.data() as Reminder
+        const data = doc.data() as any
         if (!data) return null
 
         return {
@@ -55,10 +56,11 @@ export class FirestoreReminderRepositoryAdapter implements ReminderRepository {
             reminderId: doc.id,
             userId: data.userId,
             medName: data.medName,
+            medicationId: data.medicationId,
             quantity: data.quantity,
             scheduledTime: (data.scheduledTime as unknown as Timestamp).toDate(),
             status: data.status,
-        }
+        } as Reminder
     }
 
     async updateRemindersStatus(ids: string[], status: 'pending' | 'done' | 'failed'): Promise<void> {

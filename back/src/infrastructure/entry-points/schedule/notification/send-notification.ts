@@ -5,14 +5,14 @@ import { FirebaseFcmAdapter } from '../../../adapters/messaging/firebase-fcm-ada
 import { SendReminderNotification } from '../../../../application/usecases/scheduler/notification/send-notification'
 
 export const sendFCMNotification = onRequest({ region: 'europe-west3' }, async (req, res) => {
-    const { userId, medName, quantity, reminderId } = req.body
+    const { userId, medName, medicationId, quantity, reminderId } = req.body
 
     const userRepo = new FirestoreUserRepositoryAdapter($firebaseConnector)
     const notificationGateway = new FirebaseFcmAdapter()
     const sendNotificationUseCase = new SendReminderNotification(userRepo, notificationGateway)
 
     try {
-        await sendNotificationUseCase.execute({ userId, medName, quantity, reminderId })
+        await sendNotificationUseCase.execute({ userId, medName, medicationId, quantity, reminderId })
 
         res.status(200).json({ success: true })
     } catch (error) {

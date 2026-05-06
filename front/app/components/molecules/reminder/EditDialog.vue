@@ -272,6 +272,7 @@ const handleSave = async () => {
       remindersToDelete: item.ids,
       medications: form.value.medications.map(med => ({
         name: med.medication.name,
+        medicationId: med.medication.medicationId,
         startDate: med.startDate.toLocaleDateString('en-CA'),
         endDate: med.endDate.toLocaleDateString('en-CA'),
         doses: med.doses.map(d => ({ time: d.time, quantity: d.quantity }))

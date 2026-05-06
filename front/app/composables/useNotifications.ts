@@ -36,7 +36,18 @@ export const useNotifications = () => {
 
             const actions: { label: string, onClick: () => void }[] = [
                 {
-                    label: 'Postpone 1h',
+                    label: $i18n.t('reminderConfirmation.taken'),
+                    onClick: () => {
+                        if (reminderId) {
+                            navigateTo(`/reminders?action=confirm&reminderId=${reminderId}`)
+                            if (toastId !== undefined) {
+                                removeToast(toastId)
+                            }
+                        }
+                    }
+                },
+                {
+                    label: $i18n.t('reminderConfirmation.postpone1h'),
                     onClick: () => {
                         if (reminderId) {
                             navigateTo(`/reminders?action=postpone-1h&reminderId=${reminderId}`)
@@ -47,7 +58,7 @@ export const useNotifications = () => {
                     }
                 },
                 {
-                    label: 'Later',
+                    label: $i18n.t('reminderConfirmation.postponeLater'),
                     onClick: () => {
                         if (reminderId) {
                             navigateTo(`/reminders?action=postpone-later&reminderId=${reminderId}`)

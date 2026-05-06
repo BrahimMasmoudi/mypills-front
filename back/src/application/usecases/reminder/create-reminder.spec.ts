@@ -22,7 +22,7 @@ describe('CreateSchedule Use Case', () => {
         // Arrange: 2 days, 2 doses per day = 4 reminders total
         const request: ScheduleRequestDto = {
             sicknessName: 'sickness',
-            medication: { name: 'Doliprane' },
+            medication: { name: 'Doliprane', medicationId: 'med-123' },
             startDate: '2024-01-01',
             endDate: '2024-01-02',
             timezone: 'Africa/Tunis',
@@ -49,6 +49,7 @@ describe('CreateSchedule Use Case', () => {
         expect(savedReminders[0]).toMatchObject({
             userId: 'user-123',
             medName: 'Doliprane',
+            medicationId: 'med-123',
             status: 'pending',
         })
 
@@ -63,7 +64,7 @@ describe('CreateSchedule Use Case', () => {
         // Arrange
         const request: ScheduleRequestDto = {
             sicknessName: 'sickness',
-            medication: { name: 'Aspegic' },
+            medication: { name: 'Aspegic', medicationId: 'med-456' },
             startDate: '2024-05-01',
             endDate: '2024-05-01',
             timezone: 'UTC',
@@ -82,7 +83,7 @@ describe('CreateSchedule Use Case', () => {
     it('should not call saveBatch if no doses are provided', async () => {
         const request: ScheduleRequestDto = {
             sicknessName: 'sickness',
-            medication: { name: 'Test' },
+            medication: { name: 'Test', medicationId: 'med-789' },
             startDate: '2024-01-01',
             endDate: '2024-01-02',
             timezone: 'UTC',
