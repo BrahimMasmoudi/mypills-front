@@ -17,7 +17,7 @@ export class FirestoreUsageRepositoryAdapter implements UsageGateway {
             if (!doc.exists) {
                 transaction.set(docRef, {
                     currentCount: 1,
-                    lastResetDate: today
+                    lastResetDate: today,
                 })
                 return
             }
@@ -28,13 +28,13 @@ export class FirestoreUsageRepositoryAdapter implements UsageGateway {
                     throw new HttpsError('resource-exhausted', 'Daily AI usage quota exceeded.')
                 }
                 transaction.update(docRef, {
-                    currentCount: data.currentCount + 1
+                    currentCount: data.currentCount + 1,
                 })
             } else {
                 // New day, reset the count
                 transaction.update(docRef, {
                     currentCount: 1,
-                    lastResetDate: today
+                    lastResetDate: today,
                 })
             }
         })

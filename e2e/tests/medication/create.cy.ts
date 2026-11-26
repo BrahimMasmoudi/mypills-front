@@ -11,8 +11,8 @@ describe('Medication Management', () => {
         cy.get('[data-cy="confirm-create-button"]').click()
 
         // FIX: Explicitly wait for the dialog to be removed from DOM
-        // Increase timeout to 10s for Staging latency
-        cy.get('[data-cy="create-medication-dialog"]', { timeout: 10000 }).should('not.exist')
+        // Allow sufficient headroom for Cloud Functions emulator cold start
+        cy.get('[data-cy="create-medication-dialog"]', { timeout: 20000 }).should('not.exist')
 
         cy.contains('Doliprane 1000mg').should('be.visible')
         cy.contains('8').should('be.visible')

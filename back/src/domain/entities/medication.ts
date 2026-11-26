@@ -34,6 +34,6 @@ export type MedicationDetails = {
         barcode13: number
         refundRate: string
         price: number
-    }[],
+    }[]
     quantity: number
 }

@@ -71,7 +71,7 @@ describe('updateReminderTask Trigger', () => {
             userId: 'user-123',
             medName: 'Med',
             quantity: 1,
-            status: 'pending'
+            status: 'pending',
         }, 'reminders/reminder-1')
 
         const afterSnap = testEnv.firestore.makeDocumentSnapshot({
@@ -79,14 +79,14 @@ describe('updateReminderTask Trigger', () => {
             userId: 'user-123',
             medName: 'Med',
             quantity: 1,
-            status: 'pending'
+            status: 'pending',
         }, 'reminders/reminder-1')
 
         const change = testEnv.makeChange(beforeSnap, afterSnap)
 
         await wrapped({
             data: change,
-            params: { id: 'reminder-1' }
+            params: { id: 'reminder-1' },
         } as any)
 
         expect(createSchedulerAdapter).toHaveBeenCalled()
@@ -109,20 +109,20 @@ describe('updateReminderTask Trigger', () => {
         const beforeSnap = testEnv.firestore.makeDocumentSnapshot({
             scheduledTime: time,
             userId: 'user-123',
-            sicknessName: 'flu'
+            sicknessName: 'flu',
         }, 'reminders/reminder-1')
 
         const afterSnap = testEnv.firestore.makeDocumentSnapshot({
             scheduledTime: time,
             userId: 'user-123',
-            sicknessName: 'cold' // Changed, but time is same
+            sicknessName: 'cold', // Changed, but time is same
         }, 'reminders/reminder-1')
 
         const change = testEnv.makeChange(beforeSnap, afterSnap)
 
         await wrapped({
             data: change,
-            params: { id: 'reminder-1' }
+            params: { id: 'reminder-1' },
         } as any)
 
         expect(mockScheduler.cancelNotificationTask).not.toHaveBeenCalled()

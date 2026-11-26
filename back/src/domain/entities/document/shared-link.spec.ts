@@ -39,7 +39,7 @@ describe('SharedLink Entity', () => {
             expect(sharedLink.isExpired()).toBe(false)
 
             // Wait 11 seconds
-            await new Promise(resolve => setTimeout(resolve, 11000))
+            await new Promise((resolve) => setTimeout(resolve, 11000))
 
             // Should be expired now
             expect(sharedLink.isExpired()).toBe(true)

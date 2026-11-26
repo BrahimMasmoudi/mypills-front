@@ -30,6 +30,7 @@
           <v-combobox
             v-model="medication.name"
             v-model:search="searchQuery"
+            v-model:menu="isMenuOpen"
             :items="tunisianMeds"
             :loading="searchLoading"
             item-title="name"
@@ -40,13 +41,14 @@
             rounded="lg"
             class="font-weight-medium"
             data-cy="medication-name-input"
+            :hide-no-data="!searchQuery"
             no-filter
             return-object
             @update:search="onSearchChange"
             @update:model-value="onMedicationSelect"
           >
             <template #no-data>
-              <v-list-item @click="handleCustomName">
+              <v-list-item data-cy="custom-medication-option" @click="handleCustomName">
                 <v-list-item-title>
                   {{ t('dialogCreate.noResults') }} "<strong>{{ searchQuery }}</strong>"
                 </v-list-item-title>
@@ -63,7 +65,7 @@
                 size="small"
                 class="font-weight-bold"
                 closable
-                @click:close="medication.name = null as any"
+                @click:close="medication.name = null"
               >
                 <v-icon icon="mdi-pill" class="mr-2" size="14"/>
                 {{ typeof item.raw === 'object' ? item.raw.name : item.raw }}
@@ -84,6 +86,7 @@
                     color="primary"
                     size="small"
                     class="ms-1"
+                    data-cy="scan-barcode-button"
                     @click="isScannerOpen = true"
                   />
                 </template>
@@ -247,6 +250,7 @@
         <v-combobox
           v-model="medication.name"
           v-model:search="searchQuery"
+          v-model:menu="isMenuOpen"
           :items="tunisianMeds"
           :loading="searchLoading"
           item-title="name"
@@ -256,13 +260,14 @@
           hide-details="auto"
           rounded="lg"
           class="font-weight-medium"
+          :hide-no-data="!searchQuery"
           no-filter
           return-object
           @update:search="onSearchChange"
           @update:model-value="onMedicationSelect"
         >
           <template #no-data>
-            <v-list-item @click="handleCustomName">
+            <v-list-item data-cy="custom-medication-option" @click="handleCustomName">
               <v-list-item-title>
                 {{ t('dialogCreate.noResults') }} "<strong>{{ searchQuery }}</strong>"
               </v-list-item-title>
@@ -300,6 +305,7 @@
                   color="primary"
                   size="small"
                   class="ms-1"
+                  data-cy="scan-barcode-button"
                   @click="isScannerOpen = true"
                 />
               </template>
@@ -401,6 +407,8 @@
           size="x-large"
           class="text-capitalize font-weight-bold rounded-lg"
           :loading="loading"
+          :disabled="!medication.name"
+          data-cy="confirm-create-button"
           @click="onConfirmClick"
         >
           {{ t('confirm') }}
@@ -428,7 +436,7 @@
 import { useI18n } from 'vue-i18n'
 import { useMedicationsStore } from '~/store/medications'
 import { useBarcodeParser } from '~/composables/useBarcodeParser'
-import { openToast } from '~/composables/openToast'
+import { useQueueToast, type QueueToastType } from '~/composables/useQueueToast'
 import type { Medication } from '~/types/medication'
 import { format } from 'date-fns'
 import { fr, enUS } from 'date-fns/locale'
@@ -448,6 +456,7 @@ const loading = ref(false)
 
 const dateMenuIsOpen = ref(false)
 const isScannerOpen = ref(false)
+const isMenuOpen = ref(false)
 
 const searchLoading = ref(false)
 const searchQuery = ref('')
@@ -455,6 +464,8 @@ const searchQuery = ref('')
 const tunisianMedicationStore = useTunisianMedicationsStore()
 
 const tunisianMeds = ref<GetMedicationDetailsResponse[]>([])
+
+const { addToast } = useQueueToast()
 
 const { close, createMedication, userUid, email, medications, selectedCountry } = defineProps<{
   close: (value: QueueToastType) => void
@@ -467,14 +478,14 @@ const { close, createMedication, userUid, email, medications, selectedCountry } 
   selectedCountry: Country,
 }>()
 
-const medication = ref<Medication>({
+const medication = ref<Omit<Medication, 'name'> & { name: string | null }>({
   expiryDate: new Date(),
   uid: userUid,
   expired: false,
   quantity: 1,
   unitsPerBox: 1,
   numberOfBoxes: 1,
-  name: null as any,
+  name: null,
   bareCode: '',
   medicationId: crypto.randomUUID(),
   image: 'pill-1',
@@ -497,7 +508,7 @@ const selectedYear = ref()
 const selectedMonth = ref()
 const viewMode = ref<'month' | 'months' | 'year'>('year')
 
-const updateViewMode = (mode: 'year' | 'months') => {
+const updateViewMode = (mode: 'month' | 'months' | 'year') => {
   viewMode.value = mode === 'year' ? 'year' : 'months'
 }
 
@@ -536,20 +547,21 @@ const onBarcodeDetected = async (code: string) => {
 
     if (!cip13) {
       console.warn('No valid CIP13 found in code:', code)
-      searchLoading.value = false
+      medication.value.bareCode = ''
+      addToast('error', t('scanner.invalid_barcode_message'))
       return
     }
+
+    medication.value.bareCode = cip13
 
     // 2. Call Backend via Store
     const medicationsStore = useMedicationsStore()
     const data = await medicationsStore.getMedicationDetails(cip13)
 
-
     if (!data) {
       console.warn('Backend lookup failed: No data returned')
-      openToast('error', t('scanner.not_found_message'))
+      addToast('error', t('scanner.not_found_message'))
     } else {
-      medication.value.bareCode = cip13
       medication.value.name = data.name
       medication.value.details = data.details
 
@@ -580,11 +592,17 @@ const onBarcodeDetected = async (code: string) => {
 
         if (result === 'increment') {
           // Increment by the quantity of the scanned/selected medication (e.g., 30)
-          await medicationsStore.incrementPills(duplicate, medication.value.quantity)
-          openToast('success', t('success'))
-          close('success')
+          try {
+            await medicationsStore.incrementPills(duplicate, medication.value.quantity)
+            close('success')
+          } catch (incrementError) {
+            console.error('Duplicate increment error:', incrementError)
+            addToast('error', t('error'))
+            return
+          }
         } else {
           medication.value.name = null
+          medication.value.bareCode = ''
           medication.value.expiryDate = new Date()
           // Reset quantity fields if canceled? Or leave them as is since name is cleared
         }
@@ -594,7 +612,15 @@ const onBarcodeDetected = async (code: string) => {
     }
   } catch (e: any) {
     console.error('Barcode lookup error:', e)
-    openToast('error', t('scanner.not_found_message'))
+    const code = e?.code
+    if (code === 'functions/not-found') {
+      addToast('error', t('scanner.not_found_message'))
+    } else if (code === 'functions/invalid-argument') {
+      medication.value.bareCode = ''
+      addToast('error', t('scanner.invalid_barcode_message'))
+    } else {
+      addToast('error', t('scanner.external_api_error_message'))
+    }
   } finally {
     searchLoading.value = false
     isScannerOpen.value = false
@@ -602,16 +628,21 @@ const onBarcodeDetected = async (code: string) => {
 }
 
 const performCreation = async () => {
+  if (!medication.value.name) return
   medication.value.expiryDate = new Date(medication.value.expiryDate)
   try {
     loading.value = true
     medication.value.quantity = Number(medication.value.quantity)
-    await createMedication(medication.value)
+    await createMedication({
+      ...medication.value,
+      name: medication.value.name,
+    })
     loading.value = false
     close('success')
   } catch (e) {
+    console.error('Medication creation error:', e)
     loading.value = false
-    close('error')
+    addToast('error', t('error'))
   }
 }
 
@@ -639,8 +670,8 @@ const handleCustomName = () => {
   if (!searchQuery.value) return
   medication.value.name = searchQuery.value
   medication.value.details = undefined
-  medication.value.bareCode = ''
   tunisianMeds.value = []
+  isMenuOpen.value = false
 }
 
 const onMedicationSelect = (val: any) => {
@@ -648,8 +679,6 @@ const onMedicationSelect = (val: any) => {
 
   if (typeof val === 'object' && val.name) {
     medication.value.name = val.name
-    medication.value.details = val.details
-
     medication.value.details = val.details
 
     if (val.details?.quantity) {

@@ -3,7 +3,7 @@ import { Medication } from '../../../../domain/entities/medication'
 
 export const onMedicationUpdate = onDocumentWritten({
     document: 'medications/{medicationId}',
-    region: 'europe-west3'
+    region: 'europe-west3',
 }, async (event) => {
     if (!event.data) return
 
@@ -28,6 +28,6 @@ export const onMedicationUpdate = onDocumentWritten({
 
     return event.data.after.ref.update({
         numberOfBoxes: newNumberOfBoxes,
-        updatedAt: new Date()
+        updatedAt: new Date(),
     })
 })

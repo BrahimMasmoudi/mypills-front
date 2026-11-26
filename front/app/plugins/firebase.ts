@@ -1,4 +1,6 @@
-import type { Firestore } from '@firebase/firestore/lite'
+import type { FirebaseApp } from 'firebase/app'
+import { connectFirestoreEmulator, getFirestore, initializeFirestore, type Firestore } from 'firebase/firestore'
+import { connectStorageEmulator, getStorage } from 'firebase/storage'
 import type { Functions } from '@firebase/functions'
 import type { Messaging } from '@firebase/messaging'
 import type { FirebaseStorage } from '@firebase/storage'
@@ -9,12 +11,19 @@ import {
     setUserProperties,
 } from '@firebase/analytics'
 import { connectFunctionsEmulator, getFunctions } from '@firebase/functions'
-import { useFirebaseApp, useFirestore, getCurrentUser, useFirebaseStorage } from 'vuefire'
+import {
+    getCurrentUser,
+    useFirebaseApp,
+    useFirebaseAuth,
+    useFirebaseStorage,
+    useFirestore,
+} from 'vuefire'
 import { getMessaging } from 'firebase/messaging'
-import { onAuthStateChanged } from 'firebase/auth'
+import { connectAuthEmulator, onAuthStateChanged } from 'firebase/auth'
 import { initializeAppCheck, ReCaptchaV3Provider, CustomProvider } from 'firebase/app-check'
 import { useUserStore } from '~/store/userStore'
-import { useFirebaseAuth } from 'vuefire'
+
+const connectedEmulatorApps = new WeakSet<FirebaseApp>()
 
 type RemoteConfig = Record<string, any>
 
@@ -51,6 +60,12 @@ declare module '@vue/runtime-core' {
 
 export default defineNuxtPlugin(async ({ provide, $config }) => {
     const {
+        useEmulators,
+        authEmulatorUrl,
+        firestoreEmulatorHost,
+        firestoreEmulatorPort,
+        storageEmulatorHost,
+        storageEmulatorPort,
         functions: functionsConfig,
         analytics: analyticsConfig,
     } = $config.public.firebase
@@ -94,9 +109,38 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
         }
     }
 
-    // Sync Auth State to Pinia for Cypress/Persistence
+    // Connect emulators before any Firestore/Storage composable triggers listeners or RPCs
     const userStore = useUserStore()
     const auth = useFirebaseAuth()
+
+    if (useEmulators && !connectedEmulatorApps.has(firebaseApp)) {
+        connectedEmulatorApps.add(firebaseApp)
+        if (auth) {
+            connectAuthEmulator(auth, authEmulatorUrl)
+        }
+        let emulatorFirestore: Firestore
+        try {
+            emulatorFirestore = initializeFirestore(firebaseApp, {
+                experimentalForceLongPolling: true,
+            })
+        } catch {
+            emulatorFirestore = getFirestore(firebaseApp)
+        }
+        connectFirestoreEmulator(
+            emulatorFirestore,
+            firestoreEmulatorHost,
+            firestoreEmulatorPort
+        )
+        connectStorageEmulator(
+            getStorage(firebaseApp),
+            storageEmulatorHost,
+            storageEmulatorPort
+        )
+    }
+
+    const firestoreInstance = useFirestore()
+    const storageInstance = useFirebaseStorage()
+
     onAuthStateChanged(auth!, async (u) => {
         userStore.user = u ?? undefined
         if (u) {
@@ -104,16 +148,17 @@ export default defineNuxtPlugin(async ({ provide, $config }) => {
         }
     })
 
-    const firestoreInstance = useFirestore()
-    const storageInstance = useFirebaseStorage()
-
     provide('firestore', firestoreInstance)
     provide('storage', storageInstance)
 
     if (functionsConfig.enable) {
         const functionsInstance = getFunctions(firebaseApp, 'europe-west3')
-        if (functionsConfig.enableEmulator) {
-            connectFunctionsEmulator(functionsInstance, '127.0.0.1', 5001)
+        if (useEmulators) {
+            connectFunctionsEmulator(
+                functionsInstance,
+                functionsConfig.emulatorHost,
+                functionsConfig.emulatorPort
+            )
         }
         provide('functions', functionsInstance)
     }

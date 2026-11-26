@@ -422,14 +422,16 @@ const onFileSelected = async (event: Event) => {
   }
 
   // Auto-fill name if first file
-  if (pages.value.length > 0 && !scanData.name && !isPdfMode.value) {
-    scanData.name = pages.value[0].file.name.split('.')[0]
+  const firstPage = pages.value[0]
+  if (firstPage && !scanData.name && !isPdfMode.value) {
+    scanData.name = firstPage.file.name.split('.')[0] ?? ''
   }
   input.value = ''
 }
 
 const removePage = (index: number) => {
-  if (pages.value[index].previewUrl) URL.revokeObjectURL(pages.value[index].previewUrl)
+  const page = pages.value[index]
+  if (page?.previewUrl) URL.revokeObjectURL(page.previewUrl)
   pages.value.splice(index, 1)
 }
 

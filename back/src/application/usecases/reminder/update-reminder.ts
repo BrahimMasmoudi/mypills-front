@@ -16,7 +16,7 @@ export class UpdateReminder {
         // 2. Create new reminders
         const reminders: Reminder[] = []
 
-        request.medications.forEach(med => {
+        request.medications.forEach((med) => {
             let currentDate = parse(med.startDate, 'yyyy-MM-dd', new Date())
             const end = parse(med.endDate, 'yyyy-MM-dd', new Date())
 

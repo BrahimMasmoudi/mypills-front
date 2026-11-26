@@ -153,9 +153,17 @@ export const useMedicationsStore = defineStore('medicationsStore', () => {
     }
 
     const getMedicationDetails = async (cip13: string): Promise<GetMedicationDetailsResponse | undefined> => {
-        const getDetails = httpsCallable($functions, 'getMedicationDetails')
-        const result = await getDetails({ cip13 })
-        return (result.data as GetMedicationDetailsResponse) || undefined
+        try {
+            const getDetails = httpsCallable($functions, 'getMedicationDetails')
+            const result = await getDetails({ cip13 })
+            return (result.data as GetMedicationDetailsResponse) || undefined
+        } catch (e: unknown) {
+            const errorCode = (e as { code?: string } | null)?.code ?? 'unknown'
+            if ($analytics) {
+                logEvent($analytics, 'barcode_lookup_failed', { error_code: errorCode })
+            }
+            throw e
+        }
     }
 
     const getMedicationAdvice = async (symptom: string, language: string): Promise<{ explanation: string; usableMedications: Medication[] }> => {

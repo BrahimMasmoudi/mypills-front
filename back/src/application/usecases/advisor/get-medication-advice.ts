@@ -16,13 +16,13 @@ export class GetMedicationAdvice {
         await this.usageGateway.checkAndIncrementUsage(auth.uid, 5)
 
         const medications = await this.medicationRepository.list(auth)
-        
+
         if (medications.length === 0) {
             return {
-                explanation: language === 'fr'
-                    ? "Vous n'avez pas de médicaments dans votre armoire. Veuillez consulter un médecin."
-                    : "You don't have any medications in your cabinet to check. Please consult a doctor.",
-                usableMedications: []
+                explanation: language === 'fr' ?
+                    'Vous n\'avez pas de médicaments dans votre armoire. Veuillez consulter un médecin.' :
+                    'You don\'t have any medications in your cabinet to check. Please consult a doctor.',
+                usableMedications: [],
             }
         }
 

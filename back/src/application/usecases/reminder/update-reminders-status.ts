@@ -16,7 +16,7 @@ export class UpdateRemindersStatus implements UpdateRemindersStatusUseCase {
     ) {
     }
 
-    async execute(ids: string[], status: ReminderStatus, isAppActive: boolean = false): Promise<any[]> {
+    async execute(ids: string[], status: ReminderStatus, isAppActive = false): Promise<any[]> {
         await this.reminderRepo.updateRemindersStatus(ids, status)
 
         const lowStockItems: any[] = []
@@ -43,7 +43,7 @@ export class UpdateRemindersStatus implements UpdateRemindersStatusUseCase {
                         if (updatedMed && updatedMed.quantity <= 3) {
                             lowStockItems.push({
                                 medicationName: medication.name,
-                                remainingQuantity: updatedMed.quantity
+                                remainingQuantity: updatedMed.quantity,
                             })
 
                             // Only send push notification if NOT in app

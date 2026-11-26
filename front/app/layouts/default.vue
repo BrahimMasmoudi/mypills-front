@@ -176,14 +176,17 @@ const validMedications = computed(() =>
 )
 const openAddMedicationDialog = async () => {
   const user = await getCurrentUser()
+  if (!user?.uid) return
   const toastType = await $open<ToastType>(CreateMedicationDialog, {
     scrim: true,
     isPersistent: true,
-    createMedication: async (med: Medication) => await medicationStore.createMedication(med),
-    userUid: user?.uid,
-    email: user?.email,
+    createMedication: async (med: Medication) => {
+      await medicationStore.createMedication(med)
+    },
+    userUid: user.uid,
+    email: user.email ?? '',
     medications: medications.value,
-    selectedCountry: selectedCountry.value,
+    selectedCountry: selectedCountry.value ?? 'OTHER',
   })
   if (toastType && toastType !== 'canceled') openToast(toastType, t(toastType))
 }
@@ -212,15 +215,17 @@ const openScanDocumentDialog = async () => {
 
       if (isPdfMode) {
         for (let i = 0; i < files.length; i++) {
+          const file = files[i]
+          if (!file) continue
           let finalName: string
 
           if (name && name.trim() !== '') {
             finalName = files.length > 1 ? `${name}_${i + 1}` : name
           } else {
-            finalName = files[i].name.replace(/\.[^/.]+$/, '')
+            finalName = file.name.replace(/\.[^/.]+$/, '')
           }
 
-          await docStore.uploadDocument(folder, finalName, files[i])
+          await docStore.uploadDocument(folder, finalName, file)
         }
       } else {
         const finalBlob = await pdfService.generatePdf(files)

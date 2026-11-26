@@ -65,7 +65,7 @@ describe('SetExpiredStatus Use Case', () => {
                         price: 2.18,
                     },
                 ],
-                quantity: 8
+                quantity: 8,
             },
         }
         const medication2: Medication = {
@@ -106,7 +106,7 @@ describe('SetExpiredStatus Use Case', () => {
                         price: 2.18,
                     },
                 ],
-                quantity: 8
+                quantity: 8,
             },
         }
 

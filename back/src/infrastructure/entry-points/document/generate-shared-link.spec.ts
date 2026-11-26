@@ -17,7 +17,7 @@ describe('generateSharedLink', () => {
     beforeEach(() => {
         mockExecute = jest.fn();
         (CreateSharedLink as unknown as jest.Mock).mockImplementation(() => ({
-            execute: mockExecute
+            execute: mockExecute,
         }))
     })
 

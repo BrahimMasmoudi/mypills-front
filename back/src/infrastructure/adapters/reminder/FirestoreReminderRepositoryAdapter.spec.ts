@@ -184,8 +184,8 @@ describe('FirestoreReminderRepositoryAdapter', () => {
                     medName: 'Med',
                     medicationId: 'med-1',
                     quantity: 1,
-                    status: 'pending'
-                })
+                    status: 'pending',
+                }),
             })
 
             // Act

@@ -66,7 +66,7 @@ describe('IncrementMedication Use Case', () => {
                         price: 2.18,
                     },
                 ],
-                quantity: 8
+                quantity: 8,
             },
         }
 
@@ -113,7 +113,7 @@ describe('IncrementMedication Use Case', () => {
             ...existingMedication,
             quantity: 10,
             numberOfBoxes: 1,
-            unitsPerBox: 10
+            unitsPerBox: 10,
         }
 
         // 2. Act
@@ -170,7 +170,7 @@ describe('IncrementMedication Use Case', () => {
             ...existingMedication,
             quantity: 1,
             numberOfBoxes: 2,
-            unitsPerBox: undefined
+            unitsPerBox: undefined,
         }
 
         // 2. Act
