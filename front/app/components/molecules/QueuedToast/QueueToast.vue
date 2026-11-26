@@ -1,5 +1,5 @@
 <template>
-  <div class="toast-wrapper py-2">
+  <div class="toast-wrapper py-2" :data-cy="`queue-toast-${type}`">
     <v-card
       elevation="4"
       class="d-flex align-center pa-4"

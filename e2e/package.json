@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "cy:run:local": "CYPRESS_BASE_URL=http://localhost:5000 cypress run --browser chrome"
+  },
   "devDependencies": {
     "cypress": "15.13.0",
     "cypress-firebase": "4.2.2",
     "firebase-admin": "^13.6.0",
+    "firebase-tools": "^14.26.0",
     "typescript": "5.9.3"
   },
   "dependencies": {

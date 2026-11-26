@@ -1,15 +1,28 @@
 <template>
-  <v-dialog v-model="isActive" width="550" content-class="elevation-0" :class="$device.isMobile ? 'align-end ma-0' : ''"
-    @keydown.esc="cancelAndClose">
-    <v-card class="reminder-card rounded-xl pa-0 d-flex flex-column overflow-hidden" elevation="24"
-      :max-height="$device.isMobile ? '90vh' : '85vh'">
+  <v-dialog
+    v-model="isActive"
+    width="550"
+    content-class="elevation-0"
+    :class="$device.isMobile ? 'align-end ma-0' : ''"
+    @keydown.esc="cancelAndClose"
+  >
+    <v-card
+      class="reminder-card rounded-xl pa-0 d-flex flex-column overflow-hidden"
+      elevation="24"
+      :max-height="$device.isMobile ? '90vh' : '85vh'"
+    >
       <!-- Premium Background Decor -->
       <div class="glass-mesh-bg" />
 
       <!-- Custom Stepper Header -->
       <div class="pa-6 pb-0 flex-shrink-0 relative-z">
-        <v-sheet v-if="$device.isMobile" color="grey-lighten-2 mx-auto" height="4" width="40"
-          class="rounded-pill mb-6 opacity-50" />
+        <v-sheet
+          v-if="$device.isMobile"
+          color="grey-lighten-2 mx-auto"
+          height="4"
+          width="40"
+          class="rounded-pill mb-6 opacity-50"
+        />
 
         <div class="d-flex flex-column align-center text-center mb-6">
           <v-avatar class="step-avatar mb-3" :color="currentStepColor" size="64">
@@ -38,12 +51,30 @@
           <!-- Step 1: Medication -->
           <v-window-item :value="1">
             <div class="d-flex flex-column pt-2">
-              <v-combobox v-model="form.sicknessName" :items="uniqueSicknessNames"
-                :label="t('reminderDialog.sicknessNameLabel')" variant="outlined" hide-details="auto" rounded="lg"
-                color="primary" class="premium-input mb-4" :return-object="false" />
-              <v-select v-model="form.medication" :items="validMedications" :label="t('dialogCreate.medicationLabel')"
-                variant="outlined" rounded="lg" color="primary" item-title="name" item-value="id" return-object
-                prepend-inner-icon="mdi-pill" class="premium-input">
+              <v-combobox
+                v-model="form.sicknessName"
+                :items="uniqueSicknessNames"
+                :label="t('reminderDialog.sicknessNameLabel')"
+                variant="outlined"
+                hide-details="auto"
+                rounded="lg"
+                color="primary"
+                class="premium-input mb-4"
+                :return-object="false"
+              />
+              <v-select
+                v-model="form.medication"
+                :items="validMedications"
+                :label="t('dialogCreate.medicationLabel')"
+                variant="outlined"
+                rounded="lg"
+                color="primary"
+                item-title="name"
+                item-value="id"
+                return-object
+                prepend-inner-icon="mdi-pill"
+                class="premium-input"
+              >
                 <template #item="{ props, item }">
                   <v-list-item v-bind="props" :subtitle="`${item.raw.quantity} pills available`" />
                 </template>
@@ -54,14 +85,21 @@
           <!-- Step 2: Duration -->
           <v-window-item :value="2">
             <div class="d-flex flex-column pt-2">
-              <v-card variant="flat" :color="isLongTerm ? 'primary' : 'grey-lighten-4'"
+              <v-card
+                variant="flat"
+                :color="isLongTerm ? 'primary' : 'grey-lighten-4'"
                 class="mb-6 rounded-xl w-full border-premium transition-all cursor-pointer mode-card"
-                :class="{ 'active-mode': isLongTerm }" @click="isLongTerm = !isLongTerm">
+                :class="{ 'active-mode': isLongTerm }"
+                @click="isLongTerm = !isLongTerm"
+              >
                 <div class="pa-5 d-flex align-center justify-space-between">
                   <div class="d-flex align-center">
                     <v-avatar :color="isLongTerm ? 'white' : 'grey-darken-1'" size="48" class="mr-4 elevation-2">
-                      <v-icon :icon="isLongTerm ? 'mdi-infinity' : 'mdi-calendar-check'"
-                        :color="isLongTerm ? 'primary' : 'white'" size="28" />
+                      <v-icon
+                        :icon="isLongTerm ? 'mdi-infinity' : 'mdi-calendar-check'"
+                        :color="isLongTerm ? 'primary' : 'white'"
+                        size="28"
+                      />
                     </v-avatar>
                     <div>
                       <div class="text-subtitle-1 font-weight-bold" :class="isLongTerm ? 'text-white' : ''">
@@ -72,13 +110,22 @@
                       </div>
                     </div>
                   </div>
-                  <v-checkbox-btn v-model="isLongTerm" :color="isLongTerm ? 'white' : 'primary'" hide-details
-                    class="ma-0" @click.stop />
+                  <v-checkbox-btn
+                    v-model="isLongTerm"
+                    :color="isLongTerm ? 'white' : 'primary'"
+                    hide-details
+                    class="ma-0"
+                    @click.stop
+                  />
                 </div>
               </v-card>
 
-              <MoleculesReminderDatePicker v-model:start-date="form.startDate" v-model:end-date="form.endDate"
-                :max-days="maxDays" class="premium-date-picker" />
+              <MoleculesReminderDatePicker
+                v-model:start-date="form.startDate"
+                v-model:end-date="form.endDate"
+                :max-days="maxDays"
+                class="premium-date-picker"
+              />
             </div>
           </v-window-item>
 
@@ -86,8 +133,13 @@
           <v-window-item :value="3">
             <div class="d-flex flex-column pt-2">
               <!-- Inventory Warning Banner -->
-              <v-alert v-if="totalPillsNeeded > (form.medication?.quantity || 0)" type="warning" variant="tonal"
-                class="mb-6 rounded-xl border-warning" density="comfortable">
+              <v-alert
+                v-if="totalPillsNeeded > (form.medication?.quantity || 0)"
+                type="warning"
+                variant="tonal"
+                class="mb-6 rounded-xl border-warning"
+                density="comfortable"
+              >
                 <template #prepend>
                   <v-icon icon="mdi-alert-circle-outline" size="24" />
                 </template>
@@ -104,8 +156,11 @@
 
               <!-- Desktop Layout: Clean & Linear -->
               <template v-if="!$device.isMobile">
-                <div v-for="(item, index) in form.doses" :key="index"
-                  class="dose-row d-flex align-center mb-4 pa-4 rounded-xl border-premium bg-white-glass transition-all">
+                <div
+                  v-for="(item, index) in form.doses"
+                  :key="index"
+                  class="dose-row d-flex align-center mb-4 pa-4 rounded-xl border-premium bg-white-glass transition-all"
+                >
                   <v-avatar color="primary-lighten-5" size="40" class="mr-4 font-weight-black text-primary">
                     {{ index + 1 }}
                   </v-avatar>
@@ -113,22 +168,40 @@
                   <MoleculesTimePicker v-model="item.time" class="mr-4 flex-grow-1" />
 
                   <div class="quantity-control d-flex align-center px-2 py-1 rounded-pill bg-grey-lighten-4">
-                    <v-btn icon="mdi-minus" variant="text" size="x-small"
-                      @click="item.quantity = Math.max(1, item.quantity - 1)" />
+                    <v-btn
+                      icon="mdi-minus"
+                      variant="text"
+                      size="x-small"
+                      @click="item.quantity = Math.max(1, item.quantity - 1)"
+                    />
                     <div class="mx-3 font-weight-bold" style="min-width: 20px; text-align: center">{{ item.quantity }}
                     </div>
-                    <v-btn icon="mdi-plus" variant="text" size="x-small" @click="item.quantity++" />
+                    <v-btn
+                      icon="mdi-plus"
+                      variant="text"
+                      size="x-small"
+                      @click="item.quantity++"
+                    />
                   </div>
 
-                  <v-btn v-if="index !== 0" icon="mdi-delete-outline" variant="text" color="error" class="ml-2"
-                    @click="removeDose(index)" />
+                  <v-btn
+                    v-if="index !== 0"
+                    icon="mdi-delete-outline"
+                    variant="text"
+                    color="error"
+                    class="ml-2"
+                    @click="removeDose(index)"
+                  />
                 </div>
               </template>
 
               <!-- Mobile Layout: Ergonomic & Dynamic -->
               <template v-else>
-                <div v-for="(item, index) in form.doses" :key="index"
-                  class="mobile-dose-row d-flex align-center mb-4 pa-3 rounded-2xl border-premium bg-white-glass shadow-sm transition-all overflow-hidden">
+                <div
+                  v-for="(item, index) in form.doses"
+                  :key="index"
+                  class="mobile-dose-row d-flex align-center mb-4 pa-3 rounded-2xl border-premium bg-white-glass shadow-sm transition-all overflow-hidden"
+                >
 
                   <div class="mobile-index-badge d-flex align-center justify-center mr-3 flex-shrink-0">
                     <div :style="{ borderColor: `rgb(var(--v-theme-primary))` }" />
@@ -140,23 +213,51 @@
                   </div>
 
                   <div
-                    class="mobile-qty-control d-flex align-center rounded-pill bg-primary-lighten-5 px-1 py-1 flex-shrink-0">
-                    <v-btn icon="mdi-minus" variant="text" size="x-small" density="comfortable" color="primary"
-                      @click="item.quantity = Math.max(1, item.quantity - 1)" />
-                    <div class="mx-1 font-weight-black text-primary text-center"
-                      style="min-width: 18px; font-size: 13px;">{{ item.quantity }}</div>
-                    <v-btn icon="mdi-plus" variant="text" size="x-small" density="comfortable" color="primary"
-                      @click="item.quantity++" />
+                    class="mobile-qty-control d-flex align-center rounded-pill bg-primary-lighten-5 px-1 py-1 flex-shrink-0"
+                  >
+                    <v-btn
+                      icon="mdi-minus"
+                      variant="text"
+                      size="x-small"
+                      density="comfortable"
+                      color="primary"
+                      @click="item.quantity = Math.max(1, item.quantity - 1)"
+                    />
+                    <div
+                      class="mx-1 font-weight-black text-primary text-center"
+                      style="min-width: 18px; font-size: 13px;"
+                    >{{ item.quantity }}</div>
+                    <v-btn
+                      icon="mdi-plus"
+                      variant="text"
+                      size="x-small"
+                      density="comfortable"
+                      color="primary"
+                      @click="item.quantity++"
+                    />
                   </div>
 
-                  <v-btn v-if="index !== 0" icon="mdi-close" variant="text" color="error" size="small"
-                    class="ml-2 flex-shrink-0" @click="removeDose(index)" />
+                  <v-btn
+                    v-if="index !== 0"
+                    icon="mdi-close"
+                    variant="text"
+                    color="error"
+                    size="small"
+                    class="ml-2 flex-shrink-0"
+                    @click="removeDose(index)"
+                  />
                 </div>
               </template>
 
-              <v-btn variant="flat" color="primary-lighten-5" prepend-icon="mdi-plus-circle"
-                class="rounded-xl text-capitalize font-weight-bold text-primary py-6 mb-4" block
-                :disabled="form.doses.length >= MAX_DOSES" @click="addDose">
+              <v-btn
+                variant="flat"
+                color="primary-lighten-5"
+                prepend-icon="mdi-plus-circle"
+                class="rounded-xl text-capitalize font-weight-bold text-primary py-6 mb-4"
+                block
+                :disabled="form.doses.length >= MAX_DOSES"
+                @click="addDose"
+              >
                 {{ t('reminderDialog.addDose') }}
               </v-btn>
 
@@ -172,25 +273,54 @@
 
       <!-- Dynamic Footer -->
       <v-card-actions class="w-100 justify-center pa-6 gap-3 flex-shrink-0 relative-z bg-footer-glass">
-        <v-btn v-if="step === 1" variant="outlined" size="large" color="grey-darken-1"
-          class="flex-grow-1 rounded-xl text-capitalize font-weight-bold border-opacity-25" height="54"
-          @click="cancelAndClose">
+        <v-btn
+          v-if="step === 1"
+          variant="outlined"
+          size="large"
+          color="grey-darken-1"
+          class="flex-grow-1 rounded-xl text-capitalize font-weight-bold border-opacity-25"
+          height="54"
+          @click="cancelAndClose"
+        >
           {{ t('cancel') }}
         </v-btn>
-        <v-btn v-else variant="tonal" size="large" color="primary"
-          class="flex-grow-1 rounded-xl text-capitalize font-weight-bold" height="54" prepend-icon="mdi-arrow-left"
-          @click="step--">
+        <v-btn
+          v-else
+          variant="tonal"
+          size="large"
+          color="primary"
+          class="flex-grow-1 rounded-xl text-capitalize font-weight-bold"
+          height="54"
+          prepend-icon="mdi-arrow-left"
+          @click="step--"
+        >
           {{ t('back') }}
         </v-btn>
 
-        <v-btn v-if="step < 3" :disabled="isCurrentStepInvalid" color="primary" variant="flat" size="large"
-          class="flex-grow-1 rounded-xl text-capitalize font-weight-bold elevation-4 shadow-primary" height="54"
-          append-icon="mdi-arrow-right" @click="step++">
+        <v-btn
+          v-if="step < 3"
+          :disabled="isCurrentStepInvalid"
+          color="primary"
+          variant="flat"
+          size="large"
+          class="flex-grow-1 rounded-xl text-capitalize font-weight-bold elevation-4 shadow-primary"
+          height="54"
+          append-icon="mdi-arrow-right"
+          @click="step++"
+        >
           {{ t('next') }}
         </v-btn>
-        <v-btn v-else :disabled="isFormInvalid" color="primary" variant="flat" size="large"
-          class="flex-grow-1 rounded-xl text-capitalize font-weight-bold elevation-8 shadow-primary" height="54"
-          :loading="loading" @click="handleSave">
+        <v-btn
+          v-else
+          :disabled="isFormInvalid"
+          color="primary"
+          variant="flat"
+          size="large"
+          class="flex-grow-1 rounded-xl text-capitalize font-weight-bold elevation-8 shadow-primary"
+          height="54"
+          :loading="loading"
+          @click="handleSave"
+        >
           {{ t('confirm') }}
         </v-btn>
       </v-card-actions>

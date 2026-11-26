@@ -46,4 +46,4 @@ export const useUserStore = defineStore('userStore', () => {
         isSuperUser,
         saveUserProfile,
     }
-}, { persist: { paths: ['user'] } })
+}, { persist: { pick: ['user'] } })

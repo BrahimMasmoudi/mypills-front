@@ -45,7 +45,7 @@ describe('updateReminderTime', () => {
         const newTimeStr = '2026-02-10T12:00:00.000Z'
         const data = {
             id: 'reminder-abc',
-            newTime: newTimeStr
+            newTime: newTimeStr,
         }
 
         mockUpdateReminderTime.mockResolvedValue(undefined)

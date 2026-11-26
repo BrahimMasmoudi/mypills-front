@@ -28,11 +28,11 @@ describe('GetMedicationAdvice', () => {
         } as unknown as jest.Mocked<MedicationRepository>
 
         mockAdvisorGateway = {
-            getAdvice: jest.fn()
+            getAdvice: jest.fn(),
         } as unknown as jest.Mocked<AdvisorGateway>
 
         mockUsageGateway = {
-            checkAndIncrementUsage: jest.fn().mockResolvedValue(undefined)
+            checkAndIncrementUsage: jest.fn().mockResolvedValue(undefined),
         } as unknown as jest.Mocked<UsageGateway>
 
         useCase = new GetMedicationAdvice(mockMedicationRepository, mockAdvisorGateway, mockUsageGateway)
@@ -41,9 +41,9 @@ describe('GetMedicationAdvice', () => {
     it('should check quota, retrieve medications and pass to the gateway', async () => {
         const mockCabinet = [{ medicationId: 'm1' } as Medication]
         mockMedicationRepository.list.mockResolvedValueOnce(mockCabinet)
-        mockAdvisorGateway.getAdvice.mockResolvedValueOnce({ 
-            explanation: 'AI advice', 
-            usableMedications: mockCabinet 
+        mockAdvisorGateway.getAdvice.mockResolvedValueOnce({
+            explanation: 'AI advice',
+            usableMedications: mockCabinet,
         })
 
         const result = await useCase.execute('headache', 'en', fakeAuth)
@@ -56,12 +56,12 @@ describe('GetMedicationAdvice', () => {
 
     it('should immediately return empty explanation if cabinet is empty', async () => {
         mockMedicationRepository.list.mockResolvedValueOnce([])
-        
+
         const result = await useCase.execute('headache', 'en', fakeAuth)
-        
+
         expect(mockMedicationRepository.list).toHaveBeenCalledWith(fakeAuth)
         expect(mockAdvisorGateway.getAdvice).not.toHaveBeenCalled()
         expect(result.usableMedications).toEqual([])
-        expect(result.explanation).toContain("You don't have any medications")
+        expect(result.explanation).toContain('You don\'t have any medications')
     })
 })

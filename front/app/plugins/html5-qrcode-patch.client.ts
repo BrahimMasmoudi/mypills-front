@@ -12,6 +12,8 @@ declare module 'vue' {
     }
 }
 
+let emulatorEnabled = false
+
 class PatchedHtml5Qrcode extends Html5Qrcode {
 
     constructor(elementId: string, configOrVerbosityFlag?: boolean | any) {
@@ -19,6 +21,17 @@ class PatchedHtml5Qrcode extends Html5Qrcode {
 
         // @ts-ignore
         this.foreverScan = this.patchedForeverScan.bind(this);
+    }
+
+    override start(
+        ...[cameraIdOrConfig, configuration, qrCodeSuccessCallback, qrCodeErrorCallback]: Parameters<Html5Qrcode['start']>
+    ): ReturnType<Html5Qrcode['start']> {
+        const e2eBarcode = (globalThis as { __E2E_BARCODE__?: string }).__E2E_BARCODE__;
+        if (emulatorEnabled && e2eBarcode) {
+            qrCodeSuccessCallback?.(e2eBarcode, { decodedText: e2eBarcode, result: { text: e2eBarcode } });
+            return Promise.resolve(null);
+        }
+        return super.start(cameraIdOrConfig, configuration, qrCodeSuccessCallback, qrCodeErrorCallback);
     }
 
     // @ts-ignore
@@ -126,5 +139,6 @@ class PatchedHtml5Qrcode extends Html5Qrcode {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.provide('html5QrCode', PatchedHtml5Qrcode)
+    emulatorEnabled = Boolean(nuxtApp.$config.public.firebase.useEmulators);
+    nuxtApp.provide('html5QrCode', PatchedHtml5Qrcode);
 });

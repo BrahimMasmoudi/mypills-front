@@ -1,4 +1,4 @@
-name: Deploy to Firebase Hosting on PR
+name: Verify & E2E on PR
 on: pull_request
 
 env:
@@ -27,15 +27,19 @@ jobs:
           path: |
             front/node_modules
             back/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
+            e2e/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock', 'e2e/yarn.lock') }}
 
       - name: Install All Dependencies
         if: steps.cache-modules.outputs.cache-hit != 'true'
+        env:
+          CYPRESS_INSTALL_BINARY: 0
         run: |
           cd front && yarn install --frozen-lockfile --ignore-scripts
           cd ../back && yarn install --frozen-lockfile
+          cd ../e2e && yarn install --frozen-lockfile
 
-  # JOB 2: Run Backend Tests
+  # JOB 2: Static Verification, Offline Unit Tests, and E2E Bundle Build
   test:
     needs: install
     runs-on: ubuntu-latest
@@ -52,29 +56,62 @@ jobs:
           path: |
             front/node_modules
             back/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
+            e2e/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock', 'e2e/yarn.lock') }}
 
-      - name: Create SA Key for Integration Tests
+      - name: Verify Backend (Lint, Typecheck, Build, Offline Tests)
         run: |
-          mkdir -p back
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > back/serviceAccountKey.json
-
-      - name: Run Backend Tests
-        run: cd back && yarn test
+          cd back
+          yarn lint
+          yarn typecheck
+          yarn build
+          yarn test
         env:
           TZ: UTC
-          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
-      - name: Cleanup SA Key
-        if: always()
-        run: rm -f back/serviceAccountKey.json
+      - name: Prepare Frontend Types
+        run: yarn --cwd front nuxi prepare
+        env:
+          NUXT_TELEMETRY_DISABLED: 1
 
-  # JOB 3: Build & Deploy (Only runs if 'test' passes)
-  deploy:
+      - name: Verify & Generate Frontend (Lint, Typecheck, Unit Tests, Emulator Bundle)
+        run: |
+          cd front
+          yarn lint
+          yarn typecheck
+          yarn test
+          yarn generate
+        env:
+          NUXT_TELEMETRY_DISABLED: 1
+          NUXT_PUBLIC_USE_EMULATORS: true
+          FIREBASE_API_KEY: AIzaSyD8L9ygNvkH0FO46dceDGmneRwQ7WuaFBk
+          FIREBASE_AUTH_DOMAIN: my-pills-staging-460b5.firebaseapp.com
+          FIREBASE_PROJECT_ID: my-pills-staging-460b5
+          FIREBASE_STORAGE_BUCKET: my-pills-staging-460b5.firebasestorage.app
+          FIREBASE_MESSAGING_SENDER_ID: 824429090964
+          FIREBASE_APP_ID: 1:824429090964:web:7e0cb8ae45c2424b8afc81
+
+      - name: Typecheck E2E
+        run: yarn --cwd e2e typecheck
+
+      - name: Upload Compiled Backend Functions
+        uses: actions/upload-artifact@v7
+        with:
+          name: back-lib
+          path: back/lib
+          retention-days: 1
+
+      - name: Upload Static Frontend Bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: front-public
+          path: front/.output/public
+          retention-days: 1
+
+  # JOB 3: Ephemeral Emulator E2E Tests
+  e2e-test:
     needs: test
     runs-on: ubuntu-latest
-    environment: staging
     steps:
       - uses: actions/checkout@v6
       - name: Use Node.js 24
@@ -82,84 +119,44 @@ jobs:
         with:
           node-version: 24
 
-      - name: Restore Cache
+      - name: Restore Node Modules Cache
         uses: actions/cache@v5
         with:
           path: |
             front/node_modules
             back/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock') }}
+            e2e/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('front/yarn.lock', 'back/yarn.lock', 'e2e/yarn.lock') }}
 
-      - name: Create SA Key for Migrations & Deploy
-        run: |
-          mkdir -p back
-          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > back/serviceAccountKey.json
+      - name: Cache Cypress Binary
+        id: cache-cypress
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('e2e/yarn.lock') }}
 
-      - name: Run Backend Migrations
-        run: cd back && yarn migrate:prod
+      - name: Install Cypress Binary
+        if: steps.cache-cypress.outputs.cache-hit != 'true'
+        run: yarn --cwd e2e cypress install
+
+      - name: Download Compiled Backend Functions
+        uses: actions/download-artifact@v7
+        with:
+          name: back-lib
+          path: back/lib
+
+      - name: Download Static Frontend Bundle
+        uses: actions/download-artifact@v7
+        with:
+          name: front-public
+          path: front/.output/public
+
+      - name: Run Emulator E2E Suite
+        run: yarn --cwd e2e firebase emulators:exec --only auth,firestore,functions,storage,hosting "yarn cy:run:local"
         env:
           GCLOUD_PROJECT: my-pills-staging-460b5
-          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
-
-      - name: Generate Frontend
-        run: |
-          cd front
-          npx nuxi prepare
-          yarn generate
-        env:
-          NODE_ENV: production
-          ENVIRONMENT: staging
-          FUNCTIONS_URL: ${{ secrets.FUNCTIONS_URL }}
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
-          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-          FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
-          FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
-          VITE_FIREBASE_APP_CHECK_SITE_KEY: ${{ secrets.FIREBASE_APP_CHECK_SITE_KEY }}
-
-      - name: Build Backend (Functions)
-        run: cd back && yarn build
-
-      - name: Set Backend Environment Variables
-        run: echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > back/.env
-
-      - name: '🚀 Deploy to Firebase'
-        uses: w9jds/firebase-action@v15.10.1
-        with:
-          args: deploy --only functions,hosting,firestore,storage --project my-pills-staging-460b5 --force
-        env:
-          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
-
-      - name: Cleanup SA Key
-        if: always()
-        run: rm -f back/serviceAccountKey.json
-
-  # JOB 4: E2E Tests on Staging
-  e2e-test:
-    needs: deploy
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-      - uses: actions/checkout@v6
-      - name: Use Node.js 24
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-      - name: Cypress run
-        uses: cypress-io/github-action@v7
-        env:
-          CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
-          CYPRESS_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
-          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
-          CYPRESS_FIREBASE_APPCHECK_DEBUG_TOKEN: ${{ secrets.CYPRESS_FIREBASE_APPCHECK_DEBUG_TOKEN }}
-        with:
-          working-directory: e2e
-          browser: firefox
-          install-command: yarn install --frozen-lockfile
-          summary-title: 'Chrome Staging E2E'
+          GEMINI_API_KEY: test-gemini-key
+          FUNCTIONS_DISCOVERY_TIMEOUT: 60
 
       - name: Upload Cypress artifacts
         uses: actions/upload-artifact@v7

@@ -1,35 +1,46 @@
 import { MedicamentResponse } from '../types/medicationApi'
 import { MedicationDetailDto } from '../types/medicationDto'
 
+const asString = (value: unknown): string => (typeof value === 'string' ? value : '')
+
+const asObjectArray = (value: unknown): Record<string, unknown>[] => {
+    if (!Array.isArray(value)) return []
+    return value.filter((item): item is Record<string, unknown> => Boolean(item) && typeof item === 'object')
+}
+
 export const toMedicationDto = (data: MedicamentResponse): MedicationDetailDto => {
+    const presentations = asObjectArray(data.presentation).map((p) => ({
+        label: asString(p.libelle),
+        barcode13: typeof p.cip13 === 'number' && Number.isFinite(p.cip13) ? p.cip13 : 0,
+        refundRate: asString(p.tauxRemboursement),
+        price: typeof p.prix === 'number' && Number.isFinite(p.prix) ? p.prix : 0,
+    }))
+
     return {
-        form: data.formePharmaceutique,
-        administrationRoutes: data.voiesAdministration,
-        authStatus: data.statusAutorisation,
-        procedureType: data.typeProcedure,
-        marketingStatus: data.etatComercialisation,
-        approvalDate: data.dateAMM,
-        company: data.titulaire,
-        enhancedSurveillance: data.surveillanceRenforcee?.toLowerCase() === 'oui',
-
-        ingredients: (data.composition || []).map((c) => ({
-            substance: c.denominationSubstance,
-            dosage: c.dosage,
-            reference: c.referenceDosage,
+        form: asString(data.formePharmaceutique),
+        administrationRoutes: Array.isArray(data.voiesAdministration) ?
+            data.voiesAdministration.filter((route): route is string => typeof route === 'string') :
+            [],
+        authStatus: asString(data.statusAutorisation),
+        procedureType: asString(data.typeProcedure),
+        marketingStatus: asString(data.etatComercialisation),
+        approvalDate: asString(data.dateAMM),
+        company: asString(data.titulaire),
+        enhancedSurveillance:
+            typeof data.surveillanceRenforcee === 'string' &&
+            data.surveillanceRenforcee.toLowerCase() === 'oui',
+        ingredients: asObjectArray(data.composition).map((c) => ({
+            substance: asString(c.denominationSubstance),
+            dosage: asString(c.dosage),
+            reference: asString(c.referenceDosage),
         })),
-
-        presentations: (data.presentation || []).map((p) => ({
-            label: p.libelle,
-            barcode13: p.cip13,
-            refundRate: p.tauxRemboursement,
-            price: p.prix,
-        })),
-        quantity: parseMedicationUnit(data.presentation?.[0]?.libelle)
+        presentations,
+        quantity: parseMedicationUnit(presentations[0]?.label),
     }
 }
 
-const parseMedicationUnit = (label?: string): number => {
-    if (!label) return 1
+const parseMedicationUnit = (label?: unknown): number => {
+    if (typeof label !== 'string' || !label) return 1
 
     // Try to extract the number of units from the label (e.g., "Boîte de 30 comprimés", "B/24 sachets")
     // Use optional space and 's' for plural

@@ -55,7 +55,7 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         return data
     }
 
-    async increment(medication: Medication, auth: AuthData, amount: number = 1): Promise<void> {
+    async increment(medication: Medication, auth: AuthData, amount = 1): Promise<void> {
         const docRef = await this.getSecureDocRef(medication.medicationId, auth)
         await docRef.update({
             quantity: FieldValue.increment(amount),
@@ -63,7 +63,7 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
         })
     }
 
-    async decrement(medication: Medication, auth: AuthData, amount: number = 1): Promise<void> {
+    async decrement(medication: Medication, auth: AuthData, amount = 1): Promise<void> {
         const docRef = await this.getSecureDocRef(medication.medicationId, auth)
         await docRef.update({
             quantity: FieldValue.increment(-amount),
@@ -128,7 +128,7 @@ export class FirestoreMedicationRepositoryAdapter implements MedicationRepositor
             .where('uid', '==', auth.uid)
             .get()
 
-        return snapshot.docs.map(doc => doc.data() as Medication)
+        return snapshot.docs.map((doc) => doc.data() as Medication)
     }
 
     async fetchTunisianMedications(query: string): Promise<(GetMedicationDetailsResponse & { id: string })[]> {

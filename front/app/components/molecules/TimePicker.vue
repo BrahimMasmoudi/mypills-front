@@ -28,7 +28,7 @@
           full-width
           color="primary"
           :title="t('reminderDialog.time-picker-title')"
-          @update:model-value="$emit('update:modelValue', $event)"
+          @update:model-value="modelValue = $event ?? ''"
           @update:minute="isOpen = false"
         />
       </v-card>

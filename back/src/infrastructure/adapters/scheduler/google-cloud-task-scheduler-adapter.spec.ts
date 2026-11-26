@@ -103,7 +103,7 @@ describe('GoogleCloudTaskSchedulerAdapter', () => {
             await adapter.cancelNotificationTask('rem-123', scheduledTime)
 
             expect(mockClientInstance.deleteTask).toHaveBeenCalledWith({
-                name: `projects/test/locations/loc/queues/q/tasks/rem-123-${scheduledTime.getTime()}`
+                name: `projects/test/locations/loc/queues/q/tasks/rem-123-${scheduledTime.getTime()}`,
             })
         })
 

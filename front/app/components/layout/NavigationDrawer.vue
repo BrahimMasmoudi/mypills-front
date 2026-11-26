@@ -1,8 +1,20 @@
 <template>
-  <v-navigation-drawer v-model="drawer" temporary close-delay="0" elevation="0" border="e">
+  <v-navigation-drawer
+    v-model="drawer"
+    temporary
+    close-delay="0"
+    elevation="0"
+    border="e"
+  >
     <v-list nav class="pa-4">
 
-      <v-list-item to="/medications" rounded="pill" class="mb-2 nav-pill" active-class="active-pill" link>
+      <v-list-item
+        to="/medications"
+        rounded="pill"
+        class="mb-2 nav-pill"
+        active-class="active-pill"
+        link
+      >
         <template #prepend>
           <v-icon icon="mdi-pill" size="20" class="ml-2 mr-n3" />
         </template>
@@ -11,7 +23,13 @@
         </v-list-item-title>
       </v-list-item>
 
-      <v-list-item to="/reminders" rounded="pill" class="mb-2 nav-pill" active-class="active-pill" link>
+      <v-list-item
+        to="/reminders"
+        rounded="pill"
+        class="mb-2 nav-pill"
+        active-class="active-pill"
+        link
+      >
         <template #prepend>
           <v-icon icon="mdi-calendar-clock" size="20" class="ml-2 mr-n3" />
         </template>
@@ -20,7 +38,13 @@
         </v-list-item-title>
       </v-list-item>
 
-      <v-list-item to="/prescriptions" rounded="pill" class="mb-2 nav-pill" active-class="active-pill" link>
+      <v-list-item
+        to="/prescriptions"
+        rounded="pill"
+        class="mb-2 nav-pill"
+        active-class="active-pill"
+        link
+      >
         <template #prepend>
           <v-icon icon="mdi-folder-upload-outline" size="20" class="ml-2 mr-n3" />
         </template>
@@ -36,8 +60,14 @@
 
 
         <!-- ✦ AI Advisor — premium card item -->
-        <v-list-item v-if="userStore.isSuperUser" to="/advisor" rounded="xl" class="advisor-nav-item"
-          active-class="advisor-nav-active" link>
+        <v-list-item
+          v-if="userStore.isSuperUser"
+          to="/advisor"
+          rounded="xl"
+          class="advisor-nav-item"
+          active-class="advisor-nav-active"
+          link
+        >
           <template #prepend>
             <span class="advisor-icon-chip ml-1 mr-1">
               <v-icon icon="mdi-robot-outline" size="18" />
@@ -55,7 +85,12 @@
       <v-divider class="my-3 mx-2" />
 
       <!-- Support -->
-      <v-list-item rounded="pill" class="mb-2 nav-pill" link @click="openSupportEmail">
+      <v-list-item
+        rounded="pill"
+        class="mb-2 nav-pill"
+        link
+        @click="openSupportEmail"
+      >
         <template #prepend>
           <v-icon icon="mdi-lifebuoy" size="20" class="ml-2 mr-n3" />
         </template>

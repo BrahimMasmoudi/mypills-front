@@ -28,7 +28,9 @@
     "title": "Scanner un code-barres",
     "gs1_only": "Seuls les codes GS1 DataMatrix sont acceptés",
     "instruction": "Pointez votre caméra sur le code carré (DataMatrix) sur la boîte",
-    "not_found_message": "Désolé, médicament introuvable. Veuillez scanner à nouveau ou saisir les données manuellement."
+    "not_found_message": "Désolé, médicament introuvable. Veuillez scanner à nouveau ou saisir les données manuellement.",
+    "external_api_error_message": "Le service des médicaments est indisponible. Veuillez saisir les informations manuellement.",
+    "invalid_barcode_message": "Format de code-barres invalide. Veuillez saisir les informations manuellement."
   },
   "duplicate": {
     "title": "Médicament Déjà Existant",

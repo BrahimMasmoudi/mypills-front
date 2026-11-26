@@ -13,8 +13,8 @@ describe('GoogleAiConnector', () => {
         // 2. Mock the structure of the GoogleGenAI instance
         aiMock = {
             models: {
-                generateContent: generateContentMock
-            }
+                generateContent: generateContentMock,
+            },
         }
 
         // 3. Inject the mock into our connector
@@ -36,8 +36,8 @@ describe('GoogleAiConnector', () => {
             model: 'gemini-2.5-flash',
             contents: prompt,
             config: {
-                temperature: 0.1
-            }
+                temperature: 0.1,
+            },
         })
 
         // Assert 2: Did our proxy object correctly wrap the result so the old code doesn't break?
@@ -60,8 +60,8 @@ describe('GoogleAiConnector', () => {
             contents: prompt,
             config: {
                 temperature: 0.1,
-                responseMimeType: 'application/json'
-            }
+                responseMimeType: 'application/json',
+            },
         })
     })
 

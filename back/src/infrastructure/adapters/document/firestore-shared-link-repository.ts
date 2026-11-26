@@ -5,7 +5,7 @@ import { Firestore } from 'firebase-admin/firestore'
 
 export class FirestoreSharedLinkRepository implements SharedLinkRepositoryPort {
     private firestore: Firestore
-    private collection: string = 'sharedLinks'
+    private collection = 'sharedLinks'
 
     constructor() {
         this.firestore = $firestore
@@ -16,7 +16,7 @@ export class FirestoreSharedLinkRepository implements SharedLinkRepositoryPort {
             storagePath: sharedLink.storagePath,
             userId: sharedLink.userId,
             expiresAt: sharedLink.expiresAt,
-            createdAt: sharedLink.createdAt
+            createdAt: sharedLink.createdAt,
         })
     }
 

@@ -11,7 +11,7 @@ describe('UpdateMedication Use Case', () => {
             uid: 'user-123',
             email: 'test@example.com',
         } as any,
-        rawToken: '' as any
+        rawToken: '' as any,
     }
 
     it('should execute the repository update method with the correct argument order', async () => {

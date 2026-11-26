@@ -13,10 +13,10 @@
           <v-icon icon="mdi-robot-outline" size="20" class="mr-1" />
           <span>{{ t('medicationAdvisor.title') }}</span>
         </div>
-        <p class="advisor-subtitle" v-if="!aiResponse">{{ t('medicationAdvisor.description') }}</p>
+        <p v-if="!aiResponse" class="advisor-subtitle">{{ t('medicationAdvisor.description') }}</p>
       </div>
 
-      <div class="disclaimer-strip" v-if="!aiResponse">
+      <div v-if="!aiResponse" class="disclaimer-strip">
         <v-icon icon="mdi-shield-alert-outline" size="36" class="mr-2 flex-shrink-0" />
         <span>{{ t('medicationAdvisor.strictDisclaimer') }}</span>
       </div>

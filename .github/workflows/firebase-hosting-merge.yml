@@ -19,24 +19,40 @@ jobs:
         with:
           node-version: 24
 
-      # Root deps (optional)
-      - name: Install root dependencies
-        run: if [ -f package.json ]; then yarn install --frozen-lockfile; fi
-
-      # Frontend deps
-      - name: Install frontend dependencies
-        run: cd front && yarn install --frozen-lockfile
-
-      # Firebase Functions deps
-      - name: Install Firebase Functions dependencies
-        run: cd back && yarn install --frozen-lockfile
-
-      # Build frontend
-      - name: Build frontend
-        run: cd front && yarn generate
+      # Install Dependencies
+      - name: Install Dependencies
         env:
+          CYPRESS_INSTALL_BINARY: 0
+        run: |
+          cd front && yarn install --frozen-lockfile --ignore-scripts
+          cd ../back && yarn install --frozen-lockfile
+          cd ../e2e && yarn install --frozen-lockfile
+
+      # Verify Backend
+      - name: Verify Backend (Lint, Typecheck, Build, Offline Tests)
+        run: |
+          cd back
+          yarn lint
+          yarn typecheck
+          yarn build
+          yarn test
+        env:
+          TZ: UTC
+
+      # Verify & Build Frontend
+      - name: Prepare, Verify, and Generate Frontend
+        run: |
+          cd front
+          yarn nuxi prepare
+          yarn lint
+          yarn typecheck
+          yarn test
+          yarn generate
+        env:
+          NUXT_TELEMETRY_DISABLED: 1
           NODE_ENV: production
           ENVIRONMENT: production
+          NUXT_PUBLIC_USE_EMULATORS: false
           FUNCTIONS_URL: ${{ secrets.FUNCTIONS_URL }}
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
@@ -47,9 +63,10 @@ jobs:
           FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
           FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
           VITE_FIREBASE_APP_CHECK_SITE_KEY: ${{ secrets.FIREBASE_APP_CHECK_SITE_KEY }}
-      # Build Firebase Functions
-      - name: Build Firebase Functions
-        run: cd back && yarn build
+
+      # Verify E2E Types
+      - name: Typecheck E2E
+        run: yarn --cwd e2e typecheck
 
       - name: Set Backend Environment Variables
         run: echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > back/.env
@@ -65,7 +82,8 @@ jobs:
           GCLOUD_PROJECT: mypills-prod
 
       - name: Cleanup SA Key
-        run: rm $HOME/gcloud.json
+        if: always()
+        run: rm -f $HOME/gcloud.json
 
       - name: '🚀 Deploy to Firebase'
         uses: w9jds/firebase-action@v15.10.1

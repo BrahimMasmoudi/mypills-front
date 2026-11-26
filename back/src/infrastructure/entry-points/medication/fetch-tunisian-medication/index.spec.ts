@@ -34,7 +34,7 @@ describe('HTTPS Functions Entry Point: searchTunisianMeds', () => {
         // 1. Arrange
         const mockResults = [
             { id: '1', name: 'DOLIPRANE', dosage: '500mg' },
-            { id: '2', name: 'DOLIPRANE', dosage: '1000mg' }
+            { id: '2', name: 'DOLIPRANE', dosage: '1000mg' },
         ]
 
         const useCaseSpy = FetchTunisianMedication.prototype.execute as jest.Mock

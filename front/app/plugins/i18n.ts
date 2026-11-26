@@ -1,10 +1,10 @@
-import { createI18n, type I18n } from 'vue-i18n'
+import { createI18n, type Composer } from 'vue-i18n'
 import fr from '../locales/fr.json'
 import en from '../locales/en.json'
 
 declare module '#app' {
     interface NuxtApp {
-        $i18n: I18n
+        $i18n: Composer
     }
 }
 

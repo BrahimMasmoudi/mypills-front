@@ -9,7 +9,7 @@ export class FirebaseFcmAdapter implements NotificationGateway {
                 medName: medName,
                 medicationId: medicationId,
                 quantity: quantity,
-                reminderId: reminderId
+                reminderId: reminderId,
             },
             android: {
                 priority: 'high',
@@ -17,14 +17,14 @@ export class FirebaseFcmAdapter implements NotificationGateway {
                     channelId: 'medication_reminders',
                     sound: 'default',
                     priority: 'max',
-                    visibility: 'public'
+                    visibility: 'public',
                 },
             },
             webpush: {
                 headers: {
-                    Urgency: 'high'
-                }
-            }
+                    Urgency: 'high',
+                },
+            },
         })
     }
 
@@ -34,11 +34,11 @@ export class FirebaseFcmAdapter implements NotificationGateway {
             data: {
                 type: 'low_stock',
                 medName: medName,
-                quantity: String(quantity)
+                quantity: String(quantity),
             },
             android: {
-                priority: 'high'
-            }
+                priority: 'high',
+            },
         })
     }
 }

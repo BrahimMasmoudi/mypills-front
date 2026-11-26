@@ -65,7 +65,7 @@ describe('IncrementMedication Use Case', () => {
                         price: 2.18,
                     },
                 ],
-                quantity: 8
+                quantity: 8,
             },
         }
 

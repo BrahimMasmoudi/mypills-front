@@ -1,5 +1,10 @@
 <template>
-  <v-bottom-navigation grow color="primary" app class="bottom-nav">
+  <v-bottom-navigation
+    grow
+    color="primary"
+    app
+    class="bottom-nav"
+  >
 
     <v-btn to="/medications" class="nav-btn">
       <v-icon>mdi-pill</v-icon>
@@ -18,7 +23,7 @@
       <span>{{ t('nav.prescriptions') }}</span>
     </v-btn>
 
-      <!-- ✦ AI Advisor — hero tab -->
+    <!-- ✦ AI Advisor — hero tab -->
     <v-btn v-if="userStore.isSuperUser" to="/advisor" class="nav-btn advisor-tab">
       <span class="advisor-icon-bubble">
         <v-icon size="16">mdi-robot-outline</v-icon>

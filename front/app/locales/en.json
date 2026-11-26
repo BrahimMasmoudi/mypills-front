@@ -28,7 +28,9 @@
     "title": "Scan Barcode",
     "gs1_only": "Only GS1 DataMatrix codes are accepted",
     "instruction": "Point your camera at the square dot-matrix code on the box",
-    "not_found_message": "Sorry, medication not found. Please scan again or enter data manually."
+    "not_found_message": "Sorry, medication not found. Please scan again or enter data manually.",
+    "external_api_error_message": "Medication service is unavailable. Please enter medication details manually.",
+    "invalid_barcode_message": "Invalid barcode format. Please enter medication details manually."
   },
   "duplicate": {
     "title": "Medication Already Exists",

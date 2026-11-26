@@ -70,7 +70,7 @@ describe('HTTPS Functions Entry Point - getMedicationAdvice', () => {
         // Then
         await expect(wrapped({
             data: { symptom: 'fever' },
-            auth: undefined
+            auth: undefined,
         } as any)).rejects.toThrow(/must be called while authenticated/i)
     })
 
@@ -81,7 +81,7 @@ describe('HTTPS Functions Entry Point - getMedicationAdvice', () => {
         // Then
         await expect(wrapped({
             data: { language: 'fr' },
-            auth: mockAuth
+            auth: mockAuth,
         } as any)).rejects.toThrow(/Symptom is required/i)
     })
 

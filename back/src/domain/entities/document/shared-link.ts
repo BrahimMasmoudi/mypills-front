@@ -21,7 +21,7 @@ export class SharedLink {
             storagePath: this.storagePath,
             userId: this.userId,
             expiresAt: this.expiresAt.toISOString(),
-            createdAt: this.createdAt.toISOString()
+            createdAt: this.createdAt.toISOString(),
         }
     }
 

@@ -10,15 +10,15 @@ describe('FirestoreUsageRepositoryAdapter', () => {
         mockTransaction = {
             get: jest.fn(),
             set: jest.fn(),
-            update: jest.fn()
+            update: jest.fn(),
         }
 
         mockConnector = {
             collection: jest.fn().mockReturnThis(),
             doc: jest.fn().mockReturnThis(),
             firestore: {
-                runTransaction: jest.fn((callback) => callback(mockTransaction))
-            }
+                runTransaction: jest.fn((callback) => callback(mockTransaction)),
+            },
         } as unknown as jest.Mocked<FirestoreConnector>
 
         adapter = new FirestoreUsageRepositoryAdapter(mockConnector)
@@ -37,7 +37,7 @@ describe('FirestoreUsageRepositoryAdapter', () => {
 
         expect(mockTransaction.set).toHaveBeenCalledWith(expect.anything(), {
             currentCount: 1,
-            lastResetDate: '2026-04-14'
+            lastResetDate: '2026-04-14',
         })
         expect(mockTransaction.update).not.toHaveBeenCalled()
     })
@@ -45,20 +45,20 @@ describe('FirestoreUsageRepositoryAdapter', () => {
     it('should increment currentCount if document exists and is on the same day under limit', async () => {
         mockTransaction.get.mockResolvedValueOnce({
             exists: true,
-            data: () => ({ currentCount: 3, lastResetDate: '2026-04-14' })
+            data: () => ({ currentCount: 3, lastResetDate: '2026-04-14' }),
         })
 
         await adapter.checkAndIncrementUsage('user1', 5)
 
         expect(mockTransaction.update).toHaveBeenCalledWith(expect.anything(), {
-            currentCount: 4
+            currentCount: 4,
         })
     })
 
     it('should throw an error if document exists, is on the same day, and reached the limit', async () => {
         mockTransaction.get.mockResolvedValueOnce({
             exists: true,
-            data: () => ({ currentCount: 5, lastResetDate: '2026-04-14' })
+            data: () => ({ currentCount: 5, lastResetDate: '2026-04-14' }),
         })
 
         await expect(adapter.checkAndIncrementUsage('user1', 5)).rejects.toThrow('Daily AI usage quota exceeded.')
@@ -67,14 +67,14 @@ describe('FirestoreUsageRepositoryAdapter', () => {
     it('should reset currentCount to 1 if document exists but is from a previous day', async () => {
         mockTransaction.get.mockResolvedValueOnce({
             exists: true,
-            data: () => ({ currentCount: 5, lastResetDate: '2026-04-13' }) // different day
+            data: () => ({ currentCount: 5, lastResetDate: '2026-04-13' }), // different day
         })
 
         await adapter.checkAndIncrementUsage('user1', 5)
 
         expect(mockTransaction.update).toHaveBeenCalledWith(expect.anything(), {
             currentCount: 1,
-            lastResetDate: '2026-04-14'
+            lastResetDate: '2026-04-14',
         })
     })
 })

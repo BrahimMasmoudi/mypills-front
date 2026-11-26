@@ -16,7 +16,7 @@ describe('Mapper Utils', () => {
         composition: [],
         generiques: [],
         presentation: [],
-        conditions: []
+        conditions: [],
     }
 
     describe('toMedicationDto', () => {
@@ -40,8 +40,8 @@ describe('Mapper Utils', () => {
             presentation: label ? [{
                 cis: 1, cip7: 1, libelle: label,
                 statusAdministratif: '', etatComercialisation: '', dateDeclaration: '',
-                cip13: 1, agreement: '', tauxRemboursement: '', prix: 0
-            }] : []
+                cip13: 1, agreement: '', tauxRemboursement: '', prix: 0,
+            }] : [],
         })
 
         it('should parse standard format "30 comprimés"', () => {
@@ -76,7 +76,6 @@ describe('Mapper Utils', () => {
 
         it('should default to 1 if label is undefined', () => {
             const response = createResponseWithLabel(undefined)
-            // @ts-ignore - simulating missing presentation logic in mapper if array is empty but we test the parser
             expect(toMedicationDto(response).quantity).toBe(1)
         })
 

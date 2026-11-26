@@ -26,11 +26,11 @@ describe('onMedicationUpdate Trigger', () => {
             quantity: 10,
             unitsPerBox: 10,
             numberOfBoxes: 1,
-            medicationId: 'med-1'
+            medicationId: 'med-1',
         }
         const afterData: Partial<Medication> = {
             ...beforeData,
-            quantity: 11 // Changed
+            quantity: 11, // Changed
         }
 
         const beforeSnap = testEnv.firestore.makeDocumentSnapshot(beforeData, 'medications/med-1')
@@ -39,20 +39,19 @@ describe('onMedicationUpdate Trigger', () => {
         const change = testEnv.makeChange(beforeSnap, afterSnap)
 
         const updateStub = jest.fn().mockResolvedValue({})
-        // @ts-ignore
-        afterSnap.ref.update = updateStub
+        Object.assign(afterSnap.ref, { update: updateStub })
 
         // Act
         await internalFunction({
             data: change,
-            params: { medicationId: 'med-1' }
+            params: { medicationId: 'med-1' },
         })
 
         // Assert
         // 11 / 10 = 1.1 -> ceil -> 2
         expect(updateStub).toHaveBeenCalledWith({
             numberOfBoxes: 2,
-            updatedAt: expect.any(Date)
+            updatedAt: expect.any(Date),
         })
     })
 
@@ -62,11 +61,11 @@ describe('onMedicationUpdate Trigger', () => {
             quantity: 10,
             unitsPerBox: 10,
             numberOfBoxes: 1,
-            medicationId: 'med-1'
+            medicationId: 'med-1',
         }
         const afterData: Partial<Medication> = {
             ...beforeData,
-            unitsPerBox: 5 // Changed
+            unitsPerBox: 5, // Changed
         }
 
         const beforeSnap = testEnv.firestore.makeDocumentSnapshot(beforeData, 'medications/med-1')
@@ -75,20 +74,19 @@ describe('onMedicationUpdate Trigger', () => {
         const change = testEnv.makeChange(beforeSnap, afterSnap)
 
         const updateStub = jest.fn().mockResolvedValue({})
-        // @ts-ignore
-        afterSnap.ref.update = updateStub
+        Object.assign(afterSnap.ref, { update: updateStub })
 
         // Act
         await internalFunction({
             data: change,
-            params: { medicationId: 'med-1' }
+            params: { medicationId: 'med-1' },
         })
 
         // Assert
         // 10 / 5 = 2
         expect(updateStub).toHaveBeenCalledWith({
             numberOfBoxes: 2,
-            updatedAt: expect.any(Date)
+            updatedAt: expect.any(Date),
         })
     })
 
@@ -98,12 +96,12 @@ describe('onMedicationUpdate Trigger', () => {
             quantity: 10,
             unitsPerBox: 10,
             numberOfBoxes: 1,
-            medicationId: 'med-1'
+            medicationId: 'med-1',
         }
         // Even if triggered (e.g. name changed), if boxes are correct, don't update
         const afterData: Partial<Medication> = {
             ...beforeData,
-            name: 'New Name'
+            name: 'New Name',
         }
 
         const beforeSnap = testEnv.firestore.makeDocumentSnapshot(beforeData, 'medications/med-1')
@@ -111,13 +109,12 @@ describe('onMedicationUpdate Trigger', () => {
 
         const change = testEnv.makeChange(beforeSnap, afterSnap)
         const updateStub = jest.fn().mockResolvedValue({})
-        // @ts-ignore
-        afterSnap.ref.update = updateStub
+        Object.assign(afterSnap.ref, { update: updateStub })
 
         // Act
         await internalFunction({
             data: change,
-            params: { medicationId: 'med-1' }
+            params: { medicationId: 'med-1' },
         })
 
         // Assert
@@ -130,11 +127,11 @@ describe('onMedicationUpdate Trigger', () => {
             quantity: 10,
             unitsPerBox: null as any,
             numberOfBoxes: 1,
-            medicationId: 'med-1'
+            medicationId: 'med-1',
         }
         const afterData: Partial<Medication> = {
             ...beforeData,
-            quantity: 15
+            quantity: 15,
         }
 
         const beforeSnap = testEnv.firestore.makeDocumentSnapshot(beforeData, 'medications/med-1')
@@ -142,13 +139,12 @@ describe('onMedicationUpdate Trigger', () => {
 
         const change = testEnv.makeChange(beforeSnap, afterSnap)
         const updateStub = jest.fn().mockResolvedValue({})
-        // @ts-ignore
-        afterSnap.ref.update = updateStub
+        Object.assign(afterSnap.ref, { update: updateStub })
 
         // Act
         await internalFunction({
             data: change,
-            params: { medicationId: 'med-1' }
+            params: { medicationId: 'med-1' },
         })
 
         // Assert
@@ -159,7 +155,7 @@ describe('onMedicationUpdate Trigger', () => {
         // Arrange
         const beforeData: Partial<Medication> = {
             quantity: 10,
-            medicationId: 'med-1'
+            medicationId: 'med-1',
         }
 
         const beforeSnap = testEnv.firestore.makeDocumentSnapshot(beforeData, 'medications/med-1')
@@ -171,7 +167,7 @@ describe('onMedicationUpdate Trigger', () => {
         // Act
         await internalFunction({
             data: change,
-            params: { medicationId: 'med-1' }
+            params: { medicationId: 'med-1' },
         })
 
         // Assert - no error, simply returns

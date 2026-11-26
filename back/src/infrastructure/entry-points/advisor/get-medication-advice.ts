@@ -8,7 +8,7 @@ import { $firebaseConnector, $aiConnector } from '../../config/firebase'
 export const getMedicationAdvice = onCall(
     {
         region: 'europe-west3',
-        enforceAppCheck: true
+        enforceAppCheck: true,
     },
     async ({ data, auth }) => {
         if (!auth) {

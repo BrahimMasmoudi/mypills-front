@@ -9,9 +9,11 @@ export const usePdfService = () => {
         })
 
         for (let i = 0; i < files.length; i++) {
+            const file = files[i]
+            if (!file) continue
             if (i > 0) doc.addPage()
 
-            const imgData = await fileToDataUrl(files[i])
+            const imgData = await fileToDataUrl(file)
             const imgProps = doc.getImageProperties(imgData)
 
             const pdfWidth = doc.internal.pageSize.getWidth()

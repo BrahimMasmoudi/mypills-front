@@ -4,16 +4,15 @@ import { GoogleAiConnector } from '../connectors/google-ai-connector'
 import { StructuredAdvice } from '../../../domain/entities/structured-advice'
 
 export class GoogleAIAdvisorAdapter implements AdvisorGateway {
-
     constructor(private readonly aiConnector: GoogleAiConnector) { }
 
     async getAdvice(symptom: string, cabinet: Medication[], language: string): Promise<StructuredAdvice> {
         if (cabinet.length === 0) {
             return {
-                explanation: language === 'fr'
-                    ? "Vous n'avez pas de médicaments dans votre armoire. Veuillez consulter un médecin."
-                    : "You don't have any medications in your cabinet. Please consult a doctor.",
-                usableMedications: []
+                explanation: language === 'fr' ?
+                    'Vous n\'avez pas de médicaments dans votre armoire. Veuillez consulter un médecin.' :
+                    'You don\'t have any medications in your cabinet. Please consult a doctor.',
+                usableMedications: [],
             }
         }
 
@@ -47,12 +46,12 @@ export class GoogleAIAdvisorAdapter implements AdvisorGateway {
     }
 `
 
-        const cabinetData = cabinet.map(m => ({
+        const cabinetData = cabinet.map((m) => ({
             medicationId: m.medicationId,
             name: m.name,
             ingredients: m.details?.ingredients?.map((i: any) => i.substance).join(', ') || 'N/A',
             expiryDate: m.expiryDate,
-            expired: m.expired
+            expired: m.expired,
         }))
 
         const prompt = `
@@ -63,23 +62,23 @@ export class GoogleAIAdvisorAdapter implements AdvisorGateway {
             User's Medication Cabinet:
             ${JSON.stringify(cabinetData, null, 2)}
         `
-        const model = this.aiConnector.getModel("gemini-2.5-flash", true)
+        const model = this.aiConnector.getModel('gemini-2.5-flash', true)
         const result = await model.generateContent(prompt)
 
         const responseText = result.response.text()
 
         try {
             const parsed = JSON.parse(responseText)
-            const explanation = parsed.explanation || "No explanation provided."
+            const explanation = parsed.explanation || 'No explanation provided.'
             const returnedIds: string[] = Array.isArray(parsed.usableMedicationIds) ? parsed.usableMedicationIds : []
 
-            const usableMedications = cabinet.filter(med =>
+            const usableMedications = cabinet.filter((med) =>
                 returnedIds.includes(med.medicationId)
             )
 
             return {
                 explanation,
-                usableMedications
+                usableMedications,
             }
         } catch (e: any) {
             throw new Error('Failed to parse AI advice: ' + responseText)

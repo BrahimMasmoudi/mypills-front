@@ -1,0 +1,110 @@
+name: Deploy & Verify Staging (Manual)
+on: workflow_dispatch
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy_and_verify_staging:
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Install Dependencies
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+        run: |
+          cd front && yarn install --frozen-lockfile --ignore-scripts
+          cd ../back && yarn install --frozen-lockfile
+          cd ../e2e && yarn install --frozen-lockfile
+
+      - name: Verify Backend (Lint, Typecheck, Build, Offline Tests)
+        run: |
+          cd back
+          yarn lint
+          yarn typecheck
+          yarn build
+          yarn test
+        env:
+          TZ: UTC
+
+      - name: Prepare, Verify, and Generate Frontend
+        run: |
+          cd front
+          yarn nuxi prepare
+          yarn lint
+          yarn typecheck
+          yarn test
+          yarn generate
+        env:
+          NUXT_TELEMETRY_DISABLED: 1
+          NODE_ENV: production
+          ENVIRONMENT: staging
+          NUXT_PUBLIC_USE_EMULATORS: false
+          FUNCTIONS_URL: ${{ secrets.FUNCTIONS_URL }}
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
+          FIREBASE_VAPID_KEY: ${{ secrets.FIREBASE_VAPID_KEY }}
+          VITE_FIREBASE_APP_CHECK_SITE_KEY: ${{ secrets.FIREBASE_APP_CHECK_SITE_KEY }}
+
+      - name: Typecheck E2E
+        run: yarn --cwd e2e typecheck
+
+      - name: Create SA Key for Migrations & Deploy
+        run: |
+          mkdir -p back
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}' > back/serviceAccountKey.json
+
+      - name: Run Backend Migrations
+        run: cd back && yarn migrate:prod
+        env:
+          GCLOUD_PROJECT: my-pills-staging-460b5
+          GOOGLE_APPLICATION_CREDENTIALS: ./serviceAccountKey.json
+
+      - name: Set Backend Environment Variables
+        run: echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > back/.env
+
+      - name: '🚀 Deploy to Firebase Staging'
+        uses: w9jds/firebase-action@v15.10.1
+        with:
+          args: deploy --only functions,hosting,firestore,storage --project my-pills-staging-460b5 --force
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+
+      - name: Cleanup SA Key
+        if: always()
+        run: rm -f back/serviceAccountKey.json
+
+      - name: Cypress run on Staging
+        uses: cypress-io/github-action@v7
+        env:
+          CYPRESS_BASE_URL: https://my-pills-staging-460b5.web.app/
+          CYPRESS_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MY_PILLS_STAGING_460B5 }}
+          CYPRESS_FIREBASE_APPCHECK_DEBUG_TOKEN: ${{ secrets.CYPRESS_FIREBASE_APPCHECK_DEBUG_TOKEN }}
+        with:
+          working-directory: e2e
+          browser: chrome
+          install-command: yarn --cwd e2e cypress install
+          summary-title: 'Chrome Staging E2E'
+
+      - name: Upload Cypress artifacts
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: cypress-results
+          path: |
+            ${{ github.workspace }}/e2e/cypress/screenshots
+            ${{ github.workspace }}/e2e/cypress/videos
+          if-no-files-found: warn

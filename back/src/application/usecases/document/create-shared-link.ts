@@ -55,7 +55,7 @@ export class CreateSharedLink implements CreateSharedLinkUseCase {
 
         return {
             url,
-            expires: expiresAt.toISOString()
+            expires: expiresAt.toISOString(),
         }
     }
 }

@@ -65,12 +65,7 @@ export default defineNuxtConfig({
         firestore: { enable: true },
         storage: { enable: true },
         emulators: {
-            enabled: process.env.NODE_ENV !== 'production',
-            hosts: {
-                firestore: '127.0.0.1:8080',
-                auth: '127.0.0.1:9099',
-                storage: '127.0.0.1:9199',
-            },
+            enabled: false,
         },
         config: {
             apiKey: process.env.FIREBASE_API_KEY,
@@ -90,15 +85,20 @@ export default defineNuxtConfig({
             env: 'localhost',
             version: 'local',
             firebase: {
+                useEmulators: process.env.NUXT_PUBLIC_USE_EMULATORS === 'true' || process.env.NODE_ENV !== 'production',
+                authEmulatorUrl: 'http://localhost:9099',
+                firestoreEmulatorHost: 'localhost',
+                firestoreEmulatorPort: 8080,
+                storageEmulatorHost: 'localhost',
+                storageEmulatorPort: 9199,
                 firestore: {
                     enable: true,
                 },
                 functions: {
                     enable: true,
                     location: 'europe-west3',
-                    enableEmulator: process.env.NODE_ENV !== 'production',
                     emulatorPort: 5001,
-                    emulatorHost: '127.0.0.1',
+                    emulatorHost: 'localhost',
                 },
                 analytics: {
                     enable: ['production', 'staging'].includes(process.env.ENVIRONMENT!),
@@ -109,9 +109,6 @@ export default defineNuxtConfig({
                 storage: {
                     enable: true,
                     location: 'europe-west3',
-                    enableEmulator: process.env.NODE_ENV !== 'production',
-                    emulatorPort: 9199,
-                    emulatorHost: '127.0.0.1',
                 }
             },
         }

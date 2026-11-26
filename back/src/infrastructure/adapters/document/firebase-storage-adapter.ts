@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { DocumentStoragePort } from '../../../domain/gateway/document/document-storage-port'
 import { $storage } from '../../config/firebase'
 
@@ -23,11 +24,11 @@ export class FirebaseStorageAdapter implements DocumentStoragePort {
                 token = String(metadata.metadata.firebaseStorageDownloadTokens)
             } else {
                 // Generate a new token if one doesn't exist
-                token = require('crypto').randomUUID()
+                token = randomUUID()
                 await file.setMetadata({
                     metadata: {
-                        firebaseStorageDownloadTokens: String(token)
-                    }
+                        firebaseStorageDownloadTokens: String(token),
+                    },
                 })
             }
 
@@ -45,11 +46,11 @@ export class FirebaseStorageAdapter implements DocumentStoragePort {
             token = String(metadata.metadata.firebaseStorageDownloadTokens)
         } else {
             // Generate a new token if one doesn't exist
-            token = require('crypto').randomUUID()
+            token = randomUUID()
             await file.setMetadata({
                 metadata: {
-                    firebaseStorageDownloadTokens: String(token)
-                }
+                    firebaseStorageDownloadTokens: String(token),
+                },
             })
         }
 

@@ -24,7 +24,7 @@ describe('UpdateRemindersStatus Use Case', () => {
                 medName: 'm1',
                 medicationId: 'med-1',
                 quantity: 1,
-                status: 'pending'
+                status: 'pending',
             })),
             updateRemindersStatus: jest.fn().mockResolvedValue(undefined),
             delete: jest.fn(),
